@@ -27,6 +27,7 @@ export declare class Grade10CalcController {
             diff: number;
             safetyCategory: "SAFE" | "VERY_SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
             trend: "UP" | "DOWN" | "STABLE";
+            advice: string;
             probability: number;
             historicalAvg: number;
             last3YearsScores: {

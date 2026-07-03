@@ -134,6 +134,23 @@ export class Grade10CalcService {
       if (probability > 99) probability = 99;
       if (probability < 1) probability = 1;
 
+      let advice = '';
+      if (safetyCategory === 'VERY_SAFE') {
+        advice = 'Điểm của bạn vượt trội. Rất an toàn để đặt làm NV2 hoặc NV3.';
+      } else if (safetyCategory === 'SAFE') {
+        advice = trend === 'UP' 
+          ? 'An toàn nhưng điểm trường đang có xu hướng tăng nhẹ. Phù hợp làm NV1 hoặc NV2.' 
+          : 'Lựa chọn an toàn. Rất phù hợp để đặt làm NV1 hoặc NV2 phòng hờ.';
+      } else if (safetyCategory === 'COMPETITIVE') {
+        advice = trend === 'DOWN'
+          ? 'Điểm bám sát điểm chuẩn và trường có xu hướng giảm nhẹ. Rất tốt để làm NV1.'
+          : 'Cạnh tranh cao. Đây là một NV1 lý tưởng, hãy đặt thêm NV2 an toàn hơn.';
+      } else if (safetyCategory === 'RISKY') {
+        advice = 'Trường có điểm chuẩn nhỉnh hơn một chút. Phù hợp làm NV1 (thử thách) nếu nỗ lực bứt phá.';
+      } else {
+        advice = 'Xác suất đỗ khá thấp với mức điểm hiện tại. Cần nỗ lực ôn tập đột phá nếu chọn làm NV1.';
+      }
+
       return {
         schoolId: c.school.id,
         schoolName: c.school.name,
@@ -145,6 +162,7 @@ export class Grade10CalcService {
         diff: Number(diff.toFixed(2)),
         safetyCategory,
         trend,
+        advice,
         probability: Math.round(probability),
         historicalAvg: Number(avgNV1.toFixed(2)),
         last3YearsScores: schoolHist.map((h) => ({

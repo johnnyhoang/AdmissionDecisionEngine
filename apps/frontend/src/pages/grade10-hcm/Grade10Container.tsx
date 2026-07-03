@@ -465,6 +465,13 @@ export default function Grade10Container() {
                             <div>TB 3 năm: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span></div>
                             <div>Mức chênh lệch: <span className={`font-bold ${rec.diff >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.diff > 0 ? `+${rec.diff}` : rec.diff}đ</span></div>
                           </div>
+                          
+                          {rec.advice && (
+                            <div className="mt-3 bg-slate-950/40 p-2.5 border border-slate-800/80 rounded-lg text-[11px] text-slate-300 italic flex items-start gap-2">
+                              <span className="text-indigo-400 text-sm leading-none mt-0.5">💡</span>
+                              <span className="leading-relaxed">{rec.advice}</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Right Gauge */}

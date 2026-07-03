@@ -238,14 +238,15 @@ export interface G10RecommendationItem {
   schoolCode: string;
   districtName: string;
   cutoffNV1: number;
-  cutoffNV2?: number;
-  cutoffNV3?: number;
+  cutoffNV2: number | null;
+  cutoffNV3: number | null;
   diff: number;
   safetyCategory: 'VERY_SAFE' | 'SAFE' | 'COMPETITIVE' | 'RISKY' | 'VERY_RISKY';
   trend: 'UP' | 'DOWN' | 'STABLE';
   probability: number;
   historicalAvg: number;
-  last3YearsScores: Array<{ year: number; score: number }>;
+  advice: string;
+  last3YearsScores: { year: number; score: number }[];
 }
 
 export interface G10RecommendationResult {
