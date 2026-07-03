@@ -1,22 +1,50 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { IsString, IsOptional, IsEnum, IsNotEmpty, IsArray } from 'class-validator';
 import { AiAssistantService } from './ai-assistant.service';
 
 export class ChatMessageDto {
+  @IsString()
+  @IsNotEmpty()
   message: string;
 }
 
 export class SearchCutoffsDto {
+  @IsString()
+  @IsOptional()
   password?: string;
+
+  @IsEnum(['GRADE10', 'UNIVERSITY'])
+  @IsNotEmpty()
   type: 'GRADE10' | 'UNIVERSITY';
+
+  @IsString()
+  @IsNotEmpty()
   schoolQuery: string;
+
+  @IsString()
+  @IsOptional()
   majorQuery?: string;
 }
 
 export class ImportCutoffsDto {
+  @IsString()
+  @IsOptional()
   password?: string;
+
+  @IsEnum(['GRADE10', 'UNIVERSITY'])
+  @IsNotEmpty()
   type: 'GRADE10' | 'UNIVERSITY';
+
+  @IsString()
+  @IsNotEmpty()
   schoolCode: string;
+
+  @IsString()
+  @IsOptional()
   majorCode?: string;
+
+  @IsArray()
+  @IsNotEmpty()
   overrides: any[];
 }
 
