@@ -249,6 +249,38 @@
           ]
         }
       ]
+    },
+    {
+      "code": "QTP",
+      "name": "Quận Tân Phú",
+      "schools": [
+        {
+          "code": "TRAN_PHU",
+          "name": "Trường THPT Trần Phú",
+          "address": "18 Lê Thúc Hoạch, Phường Phú Thọ Hoà, Quận Tân Phú, Thành phố Hồ Chí Minh",
+          "website": "https://thpttranphu.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "mapUrl": "https://maps.google.com/?q=Trường+THPT+Trần+Phú+18+Lê+Thúc+Hoạch+Tân+Phú",
+          "quotas": [
+            { "year": 2026, "quota": 945, "registeredCount": 2004, "competitionRatio": 2.12, "programType": "REGULAR" },
+            { "year": 2025, "quota": 810, "registeredCount": 1717, "competitionRatio": 2.12, "programType": "REGULAR" },
+            { "year": 2024, "quota": 675, "registeredCount": 1674, "competitionRatio": 2.48, "programType": "REGULAR" },
+            { "year": 2023, "quota": 945, "registeredCount": 1643, "competitionRatio": 1.74, "programType": "REGULAR" },
+            { "year": 2022, "quota": 810, "registeredCount": 1717, "competitionRatio": 2.12, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2026, "cutoffNV1": 24.25, "cutoffNV2": 24.50, "cutoffNV3": 24.75, "lowestScore": 18.0, "highestScore": 29.5, "programType": "REGULAR" },
+            { "year": 2025, "cutoffNV1": 22.75, "cutoffNV2": 23.25, "cutoffNV3": 23.50, "lowestScore": 17.5, "highestScore": 28.5, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 23.25, "cutoffNV2": 23.25, "cutoffNV3": 23.50, "lowestScore": 18.0, "highestScore": 29.0, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 23.50, "cutoffNV2": 23.75, "cutoffNV3": 24.00, "lowestScore": 18.0, "highestScore": 28.75, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 22.75, "cutoffNV2": 23.00, "cutoffNV3": 23.25, "lowestScore": 17.0, "highestScore": 28.25, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 25.30, "cutoffNV2": 25.80, "cutoffNV3": 26.30, "lowestScore": 19.5, "highestScore": 29.5, "programType": "REGULAR", "notes": "Xét tuyển học bạ học kỳ I" },
+            { "year": 2020, "cutoffNV1": 38.25, "cutoffNV2": 39.25, "cutoffNV3": 40.25, "lowestScore": 30.0, "highestScore": 47.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 35.25, "cutoffNV2": 36.25, "cutoffNV3": 37.25, "lowestScore": 29.5, "highestScore": 46.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 38.25, "cutoffNV2": 38.25, "cutoffNV3": 39.00, "lowestScore": 28.0, "highestScore": 46.25, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -683,23 +683,23 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
               ? Number(scoreNV3)
               : null,
           quota:
-            aiQuotaItem &&
-            aiQuotaItem.quota !== undefined &&
-            aiQuotaItem.quota !== null
+            aiQuotaItem && aiQuotaItem.quota !== undefined && aiQuotaItem.quota !== null
               ? Number(aiQuotaItem.quota)
-              : null,
+              : item.quota !== undefined && item.quota !== null
+                ? Number(item.quota)
+                : null,
           registeredCount:
-            aiQuotaItem &&
-            aiQuotaItem.registeredCount !== undefined &&
-            aiQuotaItem.registeredCount !== null
+            aiQuotaItem && aiQuotaItem.registeredCount !== undefined && aiQuotaItem.registeredCount !== null
               ? Number(aiQuotaItem.registeredCount)
-              : null,
+              : item.registeredCount !== undefined && item.registeredCount !== null
+                ? Number(item.registeredCount)
+                : null,
           competitionRatio:
-            aiQuotaItem &&
-            aiQuotaItem.competitionRatio !== undefined &&
-            aiQuotaItem.competitionRatio !== null
+            aiQuotaItem && aiQuotaItem.competitionRatio !== undefined && aiQuotaItem.competitionRatio !== null
               ? Number(aiQuotaItem.competitionRatio)
-              : null,
+              : item.competitionRatio !== undefined && item.competitionRatio !== null
+                ? Number(item.competitionRatio)
+                : null,
           exists: !!dbRecord || !!dbQuota,
           existingScore: dbRecord
             ? {
