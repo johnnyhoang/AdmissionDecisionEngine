@@ -154,8 +154,19 @@ export class Grade10CalcService {
       };
     });
 
-    // Sort by difference desc (best matches first)
-    results.sort((a, b) => b.diff - a.diff);
+    // Advanced Sorting Strategy:
+    // 1. Prioritize "Reachable" schools where diff >= -1.5
+    // 2. Within the same group, sort by cutoffNV1 DESCENDING (prestigious schools first)
+    results.sort((a, b) => {
+      const aIsReachable = a.diff >= -1.5;
+      const bIsReachable = b.diff >= -1.5;
+
+      if (aIsReachable && !bIsReachable) return -1;
+      if (!aIsReachable && bIsReachable) return 1;
+
+      // Both in same group, sort by cutoffNV1 DESCENDING
+      return b.cutoffNV1 - a.cutoffNV1;
+    });
 
     return {
       candidateScore: totalScore,

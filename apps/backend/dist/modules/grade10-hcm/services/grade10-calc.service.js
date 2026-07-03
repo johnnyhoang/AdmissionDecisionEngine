@@ -136,7 +136,15 @@ let Grade10CalcService = class Grade10CalcService {
                 })),
             };
         });
-        results.sort((a, b) => b.diff - a.diff);
+        results.sort((a, b) => {
+            const aIsReachable = a.diff >= -1.5;
+            const bIsReachable = b.diff >= -1.5;
+            if (aIsReachable && !bIsReachable)
+                return -1;
+            if (!aIsReachable && bIsReachable)
+                return 1;
+            return b.cutoffNV1 - a.cutoffNV1;
+        });
         return {
             candidateScore: totalScore,
             details: {
