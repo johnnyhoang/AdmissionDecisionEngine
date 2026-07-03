@@ -47,4 +47,14 @@ export class UniversityController {
     await this.universityService.seedInitialData();
     return { message: 'Database seeded successfully!' };
   }
+
+  @Get('admin/stats')
+  async getStats() {
+    return this.universityService.getStats();
+  }
+
+  @Get('admin/histories')
+  async getHistories() {
+    return this.universityService.getEvaluationHistory();
+  }
 }

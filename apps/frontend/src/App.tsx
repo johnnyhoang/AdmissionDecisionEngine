@@ -8,7 +8,7 @@ import {
 } from 'recharts';
 import { 
   fetchUniversities, fetchMajors, fetchMajorAnalytics, evaluateProfile, triggerSeedData,
-  optimizePreferences, chatWithAi
+  optimizePreferences, chatWithAi, fetchAdminStats, fetchAdminHistories
 } from './services/api';
 import type { UniversityItem, RecommendationResult, MajorItem } from './services/api';
 import './App.css';
@@ -61,15 +61,40 @@ function App() {
   const [optimizedResult, setOptimizedResult] = useState<{ optimizedList: any[]; warnings: string[] } | null>(null);
   const [optimizing, setOptimizing] = useState(false);
 
-  useEffect(() => {
-    loadInitialData();
-  }, []);
+  // Admin View State
+  const [isAdminView] = useState(window.location.pathname === '/admin');
+  const [adminTab, setAdminTab] = useState<'dashboard' | 'history'>('dashboard');
+  const [adminStats, setAdminStats] = useState<any>(null);
+  const [adminHistories, setAdminHistories] = useState<any[]>([]);
+  const [adminLoading, setAdminLoading] = useState(false);
 
   useEffect(() => {
-    if (activeTab === 'analytics') {
+    if (isAdminView) {
+      loadAdminData();
+    } else {
+      loadInitialData();
+    }
+  }, [isAdminView]);
+
+  useEffect(() => {
+    if (!isAdminView && activeTab === 'analytics') {
       loadMajorAnalytics(selectedMajor);
     }
-  }, [activeTab, selectedMajor]);
+  }, [activeTab, selectedMajor, isAdminView]);
+
+  const loadAdminData = async () => {
+    setAdminLoading(true);
+    try {
+      const stats = await fetchAdminStats();
+      setAdminStats(stats);
+      const historyLogs = await fetchAdminHistories();
+      setAdminHistories(historyLogs);
+    } catch (err) {
+      console.error('Lỗi tải dữ liệu admin', err);
+    } finally {
+      setAdminLoading(false);
+    }
+  };
 
   const loadInitialData = async () => {
     try {
@@ -127,7 +152,11 @@ function App() {
     try {
       await triggerSeedData();
       alert('Đã đồng bộ và làm mới dữ liệu thành công!');
-      loadInitialData();
+      if (isAdminView) {
+        loadAdminData();
+      } else {
+        loadInitialData();
+      }
     } catch (err) {
       alert('Lỗi seeding dữ liệu');
     } finally {
@@ -261,6 +290,198 @@ function App() {
       setOptimizing(false);
     }
   };
+
+  if (isAdminView) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+        {/* Header */}
+        <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
+                <Sliders className="h-6 w-6" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-white m-0">VNU-Admission Admin Portal</h1>
+                <p className="text-xs text-slate-400 m-0">Hệ Thống Thống Kê & Quản Trị Dữ Liệu Tuyển Sinh</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={handleSeed}
+                disabled={seeding}
+                className="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-lg transition"
+              >
+                {seeding ? 'Đang đồng bộ...' : '🔄 Làm mới dữ liệu VNU-HCM'}
+              </button>
+              <a 
+                href="/"
+                className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border border-slate-700 text-slate-300 rounded-lg transition"
+              >
+                Cổng Thí Sinh
+              </a>
+            </div>
+          </div>
+        </header>
+
+        {/* Admin Navigation */}
+        <nav className="bg-slate-900 border-b border-slate-800 px-4">
+          <div className="max-w-7xl mx-auto flex gap-2 py-2">
+            <button
+              onClick={() => setAdminTab('dashboard')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                adminTab === 'dashboard'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <TrendingUp className="h-4 w-4" />
+              Thống kê dữ liệu
+            </button>
+            
+            <button
+              onClick={() => setAdminTab('history')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                adminTab === 'history'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <Layers className="h-4 w-4" />
+              Nhật ký đánh giá tuyển sinh ({adminHistories.length})
+            </button>
+          </div>
+        </nav>
+
+        {/* Admin Content Area */}
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+          {adminLoading ? (
+            <div className="flex flex-col items-center justify-center py-20 bg-slate-900/20 border border-slate-800 rounded-2xl gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500"></div>
+              <span className="text-xs text-slate-400">Đang truy vấn dữ liệu từ hệ thống Supabase...</span>
+            </div>
+          ) : adminTab === 'dashboard' ? (
+            <div className="flex flex-col gap-6">
+              {/* Top stats card grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Trường Đại học</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.universities || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Trường thành viên & liên kết</span>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Cơ sở (Campuses)</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.campuses || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Vị trí địa lý đào tạo</span>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Ngành học</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.majors || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Ngành đào tạo chung</span>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Chương trình tuyển sinh</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.programs || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Ngành con theo trường</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Phương thức tuyển sinh</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.methods || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">THPT, ĐGNL, Học bạ, Kết hợp</span>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Quy tắc tính điểm (Rules)</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.rules || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Công thức tính điểm quy đổi</span>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Bản ghi điểm chuẩn</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.scores || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Dữ liệu Benchmark 2024-2025</span>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Lượt đánh giá</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.histories || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Lịch sử tìm kiếm & đánh giá</span>
+                </div>
+              </div>
+
+              {/* Data quality summary */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
+                <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">Đánh giá chất lượng dữ liệu</h3>
+                <div className="text-xs text-slate-300 leading-relaxed flex flex-col gap-2">
+                  <p>
+                    🔹 Hệ thống hiện tại đang lưu trữ tổng cộng <strong>{(adminStats?.programs || 0) + (adminStats?.rules || 0) + (adminStats?.scores || 0)}</strong> liên kết dữ liệu tuyển sinh.
+                  </p>
+                  <p>
+                    🔹 Các trường thành viên trọng điểm như <strong>Trường Đại học Công nghệ Thông tin (UIT)</strong>, <strong>Đại học Bách Khoa (QSB)</strong>, và <strong>Đại học Khoa học Tự nhiên (QST)</strong> đã được nạp dữ liệu ngành học, chương trình chất lượng cao/đại trà đầy đủ với các năm 2024 và 2025.
+                  </p>
+                  <p>
+                    🔹 Nếu bạn muốn cập nhật thêm dữ liệu tuyển sinh mới, bạn chỉ cần bấm nút <strong>"Làm mới dữ liệu VNU-HCM"</strong> ở góc trên bên phải để đồng bộ lại dữ liệu gốc.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+              <h2 className="text-base font-bold text-white border-b border-slate-800 pb-3 mb-2">Nhật Ký Đánh Giá Tuyển Sinh</h2>
+              {adminHistories.length === 0 ? (
+                <div className="text-center py-10 text-slate-400 text-xs">
+                  Không có lượt đánh giá nào được ghi nhận gần đây.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {adminHistories.map((hist) => {
+                    let parsedScores: any = {};
+                    let parsedCert: any = {};
+                    try {
+                      parsedScores = JSON.parse(hist.examScores || '{}');
+                      parsedCert = JSON.parse(hist.certificates || '{}');
+                    } catch (e) {}
+
+                    return (
+                      <div key={hist.id} className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="font-bold text-white text-sm">{hist.fullName}</span>
+                            <span className="text-[10px] text-slate-500 font-medium">{new Date(hist.createdAt).toLocaleString('vi-VN')}</span>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1 text-slate-400">
+                            <div>Khu vực: <span className="font-semibold text-slate-300">{hist.region || 'N/A'}</span></div>
+                            <div>Ưu tiên: <span className="font-semibold text-slate-300">{hist.priorityGroup || 'Không'}</span></div>
+                            <div>IELTS: <span className="font-semibold text-indigo-400">{parsedCert?.IELTS || 'N/A'}</span></div>
+                            <div>ĐGNL: <span className="font-semibold text-indigo-400">{parsedScores?.DGNL_HCM || 'N/A'}</span></div>
+                          </div>
+
+                          <div className="mt-2 text-[11px] text-slate-500">
+                            Điểm THPT: Toán ({parsedScores?.THPT?.Math || 0}) | Lý ({parsedScores?.THPT?.Physics || 0}) | Hóa ({parsedScores?.THPT?.Chemistry || 0}) | Anh ({parsedScores?.THPT?.English || 0})
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0 border-t md:border-t-0 md:border-l border-slate-800 pt-2 md:pt-0 md:pl-4">
+                          <div className="text-xl font-black text-indigo-400">{hist.recommendedCount}</div>
+                          <span className="text-[10px] text-slate-500 uppercase">Ngành phù hợp</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+
+        <footer className="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500 mt-auto">
+          <p className="m-0">© 2026 Admission Recommendation Engine Admin. Phát triển cho Kỳ thi Đại học Việt Nam.</p>
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">

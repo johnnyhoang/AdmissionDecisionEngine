@@ -1,6 +1,9 @@
-import { Controller, Post, Body, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { RecommendationService, RecommendationItem } from './recommendation.service';
 import { CandidateProfile } from '../database/entities/candidate-profile.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { EvaluationHistory } from '../database/entities/evaluation-history.entity';
 
 export class EvaluateProfileDto {
   fullName?: string;
@@ -32,7 +35,11 @@ export class OptimizePreferencesDto {
 
 @Controller('api/v1/recommendations')
 export class RecommendationController {
-  constructor(private readonly recommendationService: RecommendationService) {}
+  constructor(
+    private readonly recommendationService: RecommendationService,
+    @InjectRepository(EvaluationHistory)
+    private readonly historyRepository: Repository<EvaluationHistory>
+  ) {}
 
   @Post('evaluate')
   @HttpCode(HttpStatus.OK)
@@ -60,7 +67,24 @@ export class RecommendationController {
       majorSector: dto.majorSector
     };
 
-    return this.recommendationService.getRecommendations(profile, filters);
+    const results = await this.recommendationService.getRecommendations(profile, filters);
+
+    // Save evaluation history asynchronously
+    try {
+      const history = this.historyRepository.create({
+        fullName: dto.fullName || 'Thí sinh',
+        region: dto.region || 'KV3',
+        priorityGroup: dto.priorityGroup || '',
+        examScores: JSON.stringify(dto.examScores || {}),
+        certificates: JSON.stringify(dto.certificates || {}),
+        recommendedCount: results.length
+      });
+      await this.historyRepository.save(history);
+    } catch (err) {
+      console.error('Failed to save evaluation log:', err);
+    }
+
+    return results;
   }
 
   @Post('optimize-preferences')

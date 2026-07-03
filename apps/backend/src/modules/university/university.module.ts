@@ -9,6 +9,7 @@ import { Program } from '../database/entities/program.entity';
 import { AdmissionMethod } from '../database/entities/admission-method.entity';
 import { AdmissionRule } from '../database/entities/admission-rule.entity';
 import { AdmissionScore } from '../database/entities/admission-score.entity';
+import { EvaluationHistory } from '../database/entities/evaluation-history.entity';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AdmissionScore } from '../database/entities/admission-score.entity';
       AdmissionMethod,
       AdmissionRule,
       AdmissionScore,
+      EvaluationHistory
     ]),
   ],
   controllers: [UniversityController],

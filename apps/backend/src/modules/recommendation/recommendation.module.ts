@@ -6,10 +6,11 @@ import { RecommendationController } from './recommendation.controller';
 import { Program } from '../database/entities/program.entity';
 import { AdmissionRule } from '../database/entities/admission-rule.entity';
 import { University } from '../database/entities/university.entity';
+import { EvaluationHistory } from '../database/entities/evaluation-history.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Program, AdmissionRule, University]),
+    TypeOrmModule.forFeature([Program, AdmissionRule, University, EvaluationHistory]),
     RuleEngineModule
   ],
   controllers: [RecommendationController],

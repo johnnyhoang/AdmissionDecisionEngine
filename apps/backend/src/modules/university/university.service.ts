@@ -8,6 +8,7 @@ import { Program } from '../database/entities/program.entity';
 import { AdmissionMethod } from '../database/entities/admission-method.entity';
 import { AdmissionRule } from '../database/entities/admission-rule.entity';
 import { AdmissionScore } from '../database/entities/admission-score.entity';
+import { EvaluationHistory } from '../database/entities/evaluation-history.entity';
 
 @Injectable()
 export class UniversityService implements OnApplicationBootstrap {
@@ -26,6 +27,8 @@ export class UniversityService implements OnApplicationBootstrap {
     private readonly ruleRepository: Repository<AdmissionRule>,
     @InjectRepository(AdmissionScore)
     private readonly scoreRepository: Repository<AdmissionScore>,
+    @InjectRepository(EvaluationHistory)
+    private readonly historyRepository: Repository<EvaluationHistory>,
   ) {}
 
   async onApplicationBootstrap() {
@@ -288,5 +291,38 @@ export class UniversityService implements OnApplicationBootstrap {
         ]);
       }
     }
+  }
+
+  async getStats() {
+    const [universities, campuses, majors, programs, methods, rules, scores, histories] = await Promise.all([
+      this.universityRepository.count(),
+      this.campusRepository.count(),
+      this.majorRepository.count(),
+      this.programRepository.count(),
+      this.methodRepository.count(),
+      this.ruleRepository.count(),
+      this.scoreRepository.count(),
+      this.historyRepository.count()
+    ]);
+
+    return {
+      universities,
+      campuses,
+      majors,
+      programs,
+      methods,
+      rules,
+      scores,
+      histories
+    };
+  }
+
+  async getEvaluationHistory() {
+    return this.historyRepository.find({
+      order: {
+        createdAt: 'DESC'
+      },
+      take: 100
+    });
   }
 }

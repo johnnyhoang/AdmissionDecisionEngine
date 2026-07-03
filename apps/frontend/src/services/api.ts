@@ -110,3 +110,24 @@ export const chatWithAi = async (message: string): Promise<{ reply: string; data
   if (!res.ok) throw new Error('AI Assistant phản hồi thất bại');
   return res.json();
 };
+
+export const fetchAdminStats = async (): Promise<{
+  universities: number;
+  campuses: number;
+  majors: number;
+  programs: number;
+  methods: number;
+  rules: number;
+  scores: number;
+  histories: number;
+}> => {
+  const res = await fetch(`${API_BASE_URL}/admin/stats`);
+  if (!res.ok) throw new Error('Không thể tải thống kê admin');
+  return res.json();
+};
+
+export const fetchAdminHistories = async (): Promise<any[]> => {
+  const res = await fetch(`${API_BASE_URL}/admin/histories`);
+  if (!res.ok) throw new Error('Không thể tải nhật ký lịch sử');
+  return res.json();
+};
