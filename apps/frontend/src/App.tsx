@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { 
   Search, TrendingUp, Calculator, Sliders, MapPin, 
-  School, HelpCircle, Info, Sparkles, Layers, ArrowUpDown, MessageSquare, X, Send, Trash2, ArrowUp, ArrowDown, AlertCircle,
-  Database, UploadCloud, History
+  School, HelpCircle, Sparkles, Layers, ArrowUpDown, MessageSquare, X, Send, Trash2, ArrowUp, ArrowDown, AlertCircle,
+  Database, UploadCloud, History, Info
 } from 'lucide-react';
 import { 
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend 
@@ -17,6 +17,9 @@ import './App.css';
 import Grade10Container from './pages/grade10-hcm/Grade10Container';
 import Grade10AdminContainer from './pages/grade10-hcm/Admin/Grade10AdminContainer';
 import AiSearchModal from './components/AiSearchModal';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Login from './pages/Login';
+import AdminPermissions from './pages/AdminPermissions';
 
 interface PreferenceItem {
   programId: string;
@@ -28,7 +31,8 @@ interface PreferenceItem {
   order: number;
 }
 
-function App() {
+function MainApp() {
+  const { user, loading: authLoading, logout, hasPermission } = useAuth();
   const [activeTab, setActiveTab] = useState<'evaluate' | 'search' | 'analytics' | 'compare' | 'optimize'>('evaluate');
   const [universities, setUniversities] = useState<UniversityItem[]>([]);
   const [majors, setMajors] = useState<MajorItem[]>([]);
@@ -319,14 +323,78 @@ function App() {
     }
   };
 
+  // 1. Loading screen
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500" />
+      </div>
+    );
+  }
+
+  // 2. Redirect to Login if not logged in
+  const isLoginPath = window.location.pathname === '/login';
+  if (!user && !isLoginPath) {
+    window.history.replaceState({}, '', '/login');
+    return <Login />;
+  }
+
+  if (isLoginPath) {
+    if (user) {
+      window.history.replaceState({}, '', '/');
+    } else {
+      return <Login />;
+    }
+  }
+
+  // 3. Admin permissions management page
+  const isPermissionsPath = window.location.pathname === '/admin/permissions';
+  if (isPermissionsPath) {
+    if (user.role !== 'ADMIN') {
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
+            <p className="text-xs text-slate-400 mt-2">Bạn không có quyền truy cập trang quản trị này.</p>
+            <a href="/" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Về trang chủ</a>
+          </div>
+        </div>
+      );
+    }
+    return <AdminPermissions />;
+  }
+
+  // 4. Grade 10 routing & guards
   const isGrade10User = window.location.pathname.startsWith('/grade10-hcm');
   const isGrade10Admin = window.location.pathname.startsWith('/admin/grade10-hcm');
 
   if (isGrade10Admin) {
+    if (!hasPermission('GRADE10', 'edit_data', 'view')) {
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
+            <p className="text-xs text-slate-400 mt-2">Yêu cầu quyền chỉnh sửa dữ liệu Lớp 10.</p>
+            <a href="/grade10-hcm" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Quay lại</a>
+          </div>
+        </div>
+      );
+    }
     return <Grade10AdminContainer />;
   }
 
   if (isGrade10User) {
+    if (!hasPermission('GRADE10', 'view_dashboard', 'view')) {
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
+            <p className="text-xs text-slate-400 mt-2">Bạn không có quyền truy cập dữ liệu Lớp 10.</p>
+            <a href="/" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Về Trang Chủ Đại Học</a>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
         <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
@@ -340,10 +408,36 @@ function App() {
                 <p className="text-xs text-slate-400 m-0">Hệ thống Đánh giá & Gợi ý Nguyện vọng Lớp 10 Công lập TP.HCM</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-medium px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full">
-                Hỗ trợ 2025 - 2026
-              </span>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="text-right">
+                  <div className="text-xs font-bold text-white">{user.name}</div>
+                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{user.role}</div>
+                </div>
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full border border-slate-850 object-cover" />
+                ) : (
+                  <div className="h-8 w-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 font-bold">
+                    {user.name[0].toUpperCase()}
+                  </div>
+                )}
+              </div>
+              
+              {user.role === 'ADMIN' && (
+                <a href="/admin/permissions" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+                  Phân Quyền
+                </a>
+              )}
+              {hasPermission('GRADE10', 'edit_data', 'view') && (
+                <a href="/admin/grade10-hcm" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+                  Admin Lớp 10
+                </a>
+              )}
+              
+              <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
+                Đăng xuất
+              </button>
             </div>
           </div>
         </header>
@@ -358,7 +452,19 @@ function App() {
     );
   }
 
+  // 5. University Admin routing
   if (isAdminView) {
+    if (!hasPermission('UNIVERSITY', 'edit_data', 'view')) {
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
+            <p className="text-xs text-slate-400 mt-2">Yêu cầu quyền chỉnh sửa dữ liệu Đại Học.</p>
+            <a href="/" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Quay lại</a>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
         {/* Header */}
@@ -374,19 +480,44 @@ function App() {
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="text-right">
+                  <div className="text-xs font-bold text-white">{user.name}</div>
+                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{user.role}</div>
+                </div>
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full border border-slate-850 object-cover" />
+                ) : (
+                  <div className="h-8 w-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 font-bold">
+                    {user.name[0].toUpperCase()}
+                  </div>
+                )}
+              </div>
+              
+              {user.role === 'ADMIN' && (
+                <a href="/admin/permissions" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+                  Phân Quyền
+                </a>
+              )}
+              
               <button 
                 onClick={() => setAdminTab('imports')}
-                className="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-lg transition"
+                className="px-3 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-lg transition cursor-pointer"
               >
-                📥 Đồng bộ & Nhập dữ liệu ({importPresets.length})
+                📥 Đồng bộ & Nhập ({importPresets.length})
               </button>
+              
               <a 
                 href="/"
-                className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border border-slate-700 text-slate-300 rounded-lg transition"
+                className="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border border-slate-700 text-slate-300 rounded-lg transition"
               >
                 Cổng Thí Sinh
               </a>
+              
+              <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
+                Đăng xuất
+              </button>
             </div>
           </div>
         </header>
@@ -717,10 +848,35 @@ function App() {
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full">
-              Phiên Bản 2026
-            </span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="text-right">
+                <div className="text-xs font-bold text-white">{user.name}</div>
+                <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{user.role}</div>
+              </div>
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full border border-slate-850 object-cover" />
+              ) : (
+                <div className="h-8 w-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 font-bold">
+                  {user.name[0].toUpperCase()}
+                </div>
+              )}
+            </div>
+            
+            {user.role === 'ADMIN' && (
+              <a href="/admin/permissions" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+                Phân Quyền
+              </a>
+            )}
+            {hasPermission('UNIVERSITY', 'edit_data', 'view') && (
+              <a href="/admin" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+                Admin Đại Học
+              </a>
+            )}
+            
+            <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
+              Đăng xuất
+            </button>
           </div>
         </div>
       </header>
@@ -728,70 +884,80 @@ function App() {
       {/* Navigation tabs */}
       <nav className="bg-slate-900 border-b border-slate-800 px-4">
         <div className="max-w-7xl mx-auto flex flex-wrap gap-2 py-2">
-          <button
-            onClick={() => setActiveTab('evaluate')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'evaluate'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <Calculator className="h-4 w-4" />
-            Đánh giá cơ hội
-          </button>
+          {hasPermission('UNIVERSITY', 'view_recommendation', 'view') && (
+            <button
+              onClick={() => setActiveTab('evaluate')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                activeTab === 'evaluate'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <Calculator className="h-4 w-4" />
+              Đánh giá cơ hội
+            </button>
+          )}
           
-          <button
-            onClick={() => setActiveTab('search')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'search'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <School className="h-4 w-4" />
-            Tra cứu trường ĐHQG
-          </button>
+          {hasPermission('UNIVERSITY', 'view_universities', 'view') && (
+            <button
+              onClick={() => setActiveTab('search')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                activeTab === 'search'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <School className="h-4 w-4" />
+              Tra cứu trường ĐHQG
+            </button>
+          )}
 
-          <button
-            onClick={() => setActiveTab('analytics')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'analytics'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <TrendingUp className="h-4 w-4" />
-            Phân tích điểm chuẩn lịch sử
-          </button>
+          {hasPermission('UNIVERSITY', 'view_universities', 'view') && (
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                activeTab === 'analytics'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <TrendingUp className="h-4 w-4" />
+              Phân tích điểm chuẩn lịch sử
+            </button>
+          )}
 
-          <button
-            onClick={() => setActiveTab('compare')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition relative ${
-              activeTab === 'compare'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <ArrowUpDown className="h-4 w-4" />
-            So sánh trường ({compareList.length})
-            {compareList.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                {compareList.length}
-              </span>
-            )}
-          </button>
+          {hasPermission('UNIVERSITY', 'view_universities', 'view') && (
+            <button
+              onClick={() => setActiveTab('compare')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition relative ${
+                activeTab === 'compare'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <ArrowUpDown className="h-4 w-4" />
+              So sánh trường ({compareList.length})
+              {compareList.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                  {compareList.length}
+                </span>
+              )}
+            </button>
+          )}
 
-          <button
-            onClick={() => setActiveTab('optimize')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition relative ${
-              activeTab === 'optimize'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <Layers className="h-4 w-4" />
-            Tối ưu Nguyện vọng ({preferenceList.length})
-          </button>
+          {hasPermission('UNIVERSITY', 'view_optimization', 'view') && (
+            <button
+              onClick={() => setActiveTab('optimize')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition relative ${
+                activeTab === 'optimize'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <Layers className="h-4 w-4" />
+              Tối ưu Nguyện vọng ({preferenceList.length})
+            </button>
+          )}
         </div>
       </nav>
 
@@ -1047,13 +1213,15 @@ function App() {
                 />
               </div>
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setIsAiModalOpen(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20"
-                >
-                  <Sparkles className="h-3.5 w-3.5 animate-pulse" />
-                  Tìm dữ liệu trường (AI)
-                </button>
+                {user?.role === 'ADMIN' && (
+                  <button
+                    onClick={() => setIsAiModalOpen(true)}
+                    className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20 cursor-pointer"
+                  >
+                    <Sparkles className="h-3.5 w-3.5 animate-pulse" />
+                    Tìm dữ liệu trường (AI)
+                  </button>
+                )}
                 <div className="text-xs text-slate-400 whitespace-nowrap">
                   Hiển thị: <span className="font-semibold text-slate-200">{universities.length}</span> trường ĐHQG
                 </div>
@@ -1474,4 +1642,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
+  );
+}

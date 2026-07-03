@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Program } from './program.entity';
 import { AdmissionMethod } from './admission-method.entity';
 import { AdmissionScore } from './admission-score.entity';
@@ -24,7 +33,11 @@ export class AdmissionRule {
    * DGNL = Điểm thi đánh giá năng lực
    * HOCBA = Xét học bạ (không cần tổ hợp)
    */
-  @Column({ name: 'subject_combination', nullable: true, comment: 'Mã tổ hợp môn: A00, A01, B00, D01...' })
+  @Column({
+    name: 'subject_combination',
+    nullable: true,
+    comment: 'Mã tổ hợp môn: A00, A01, B00, D01...',
+  })
   subjectCombination: string;
 
   /** Mô tả tổ hợp môn bằng tiếng Việt */
@@ -40,7 +53,13 @@ export class AdmissionRule {
   subjectWeights: string;
 
   /** Điểm sàn xét tuyển cho tổ hợp này */
-  @Column({ name: 'min_score_threshold', type: 'decimal', precision: 6, scale: 2, default: 0 })
+  @Column({
+    name: 'min_score_threshold',
+    type: 'decimal',
+    precision: 6,
+    scale: 2,
+    default: 0,
+  })
   minScoreThreshold: number;
 
   /** JSON quy tắc ưu tiên, ví dụ: {"KV1": 0.75, "UT1": 2.0} */
@@ -55,11 +74,15 @@ export class AdmissionRule {
   @Column({ name: 'apply_year', type: 'int', default: 2025 })
   applyYear: number;
 
-  @ManyToOne(() => Program, (program) => program.admissionRules, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Program, (program) => program.admissionRules, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'program_id' })
   program: Program;
 
-  @ManyToOne(() => AdmissionMethod, (method) => method.admissionRules, { onDelete: 'CASCADE' })
+  @ManyToOne(() => AdmissionMethod, (method) => method.admissionRules, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'admission_method_id' })
   admissionMethod: AdmissionMethod;
 

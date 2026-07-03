@@ -9,6 +9,7 @@ import { UniversityModule } from './modules/university/university.module';
 import { AiAssistantModule } from './modules/ai-assistant/ai-assistant.module';
 import { ImportModule } from './modules/import/import.module';
 import { Grade10HcmModule } from './modules/grade10-hcm/grade10-hcm.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -23,11 +24,23 @@ import { Grade10HcmModule } from './modules/grade10-hcm/grade10-hcm.module';
         return {
           type: 'postgres',
           url: url || undefined,
-          host: url ? undefined : config.get<string>('DB_HOST', 'aws-1-ap-southeast-1.pooler.supabase.com'),
+          host: url
+            ? undefined
+            : config.get<string>(
+                'DB_HOST',
+                'aws-1-ap-southeast-1.pooler.supabase.com',
+              ),
           port: url ? undefined : config.get<number>('DB_PORT', 5432),
-          username: url ? undefined : config.get<string>('DB_USERNAME', 'postgres.czngbleeeiljsrpbaksg'),
+          username: url
+            ? undefined
+            : config.get<string>(
+                'DB_USERNAME',
+                'postgres.czngbleeeiljsrpbaksg',
+              ),
           password: url ? undefined : config.get<string>('DB_PASSWORD', ''),
-          database: url ? undefined : config.get<string>('DB_DATABASE', 'postgres'),
+          database: url
+            ? undefined
+            : config.get<string>('DB_DATABASE', 'postgres'),
           autoLoadEntities: true,
           synchronize: true,
           ssl: {
@@ -43,6 +56,7 @@ import { Grade10HcmModule } from './modules/grade10-hcm/grade10-hcm.module';
     AiAssistantModule,
     ImportModule,
     Grade10HcmModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

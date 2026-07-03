@@ -67,13 +67,13 @@ export class Grade10ImportService {
     @InjectRepository(Grade10Cutoff)
     private readonly cutoffRepo: Repository<Grade10Cutoff>,
     @InjectRepository(Grade10ImportLog)
-    private readonly logRepo: Repository<Grade10ImportLog>
+    private readonly logRepo: Repository<Grade10ImportLog>,
   ) {}
 
   private resolveDataDir(): string {
     const fs = require('fs');
     const path = require('path');
-    
+
     let dir = path.join(process.cwd(), 'data', 'imports');
     if (fs.existsSync(dir)) return dir;
 
@@ -93,19 +93,23 @@ export class Grade10ImportService {
     if (!fs.existsSync(dataDir)) {
       return [];
     }
-    const files = fs.readdirSync(dataDir).filter((f: string) => f.startsWith('g10hcm_') && f.endsWith('.json'));
+    const files = fs
+      .readdirSync(dataDir)
+      .filter((f: string) => f.startsWith('g10hcm_') && f.endsWith('.json'));
     const presets = [];
     for (const file of files) {
       try {
         const filePath = path.join(dataDir, file);
-        const content = JSON.parse(fs.readFileSync(filePath, 'utf8')) as Grade10ImportPayload;
-        
+        const content = JSON.parse(
+          fs.readFileSync(filePath, 'utf8'),
+        ) as Grade10ImportPayload;
+
         let schoolCount = 0;
         let quotaCount = 0;
         let cutoffCount = 0;
-        content.districts?.forEach(d => {
+        content.districts?.forEach((d) => {
           schoolCount += d.schools?.length || 0;
-          d.schools?.forEach(s => {
+          d.schools?.forEach((s) => {
             quotaCount += s.quotas?.length || 0;
             cutoffCount += s.cutoffs?.length || 0;
           });
@@ -136,7 +140,9 @@ export class Grade10ImportService {
     if (!fs.existsSync(filePath)) {
       throw new Error(`File not found: ${filename}`);
     }
-    const payload = JSON.parse(fs.readFileSync(filePath, 'utf8')) as Grade10ImportPayload;
+    const payload = JSON.parse(
+      fs.readFileSync(filePath, 'utf8'),
+    ) as Grade10ImportPayload;
     return this.importData(payload);
   }
 
@@ -150,7 +156,9 @@ export class Grade10ImportService {
     for (const distDto of payload.districts) {
       try {
         // 1. Upsert District
-        let district = await this.districtRepo.findOne({ where: { code: distDto.code } });
+        let district = await this.districtRepo.findOne({
+          where: { code: distDto.code },
+        });
         if (!district) {
           district = this.districtRepo.create({
             code: distDto.code,
@@ -163,7 +171,9 @@ export class Grade10ImportService {
         if (distDto.schools?.length) {
           for (const schoolDto of distDto.schools) {
             try {
-              let school = await this.schoolRepo.findOne({ where: { code: schoolDto.code } });
+              let school = await this.schoolRepo.findOne({
+                where: { code: schoolDto.code },
+              });
               if (school) {
                 school.name = schoolDto.name || school.name;
                 school.address = schoolDto.address || school.address;
@@ -190,7 +200,11 @@ export class Grade10ImportService {
                 for (const qDto of schoolDto.quotas) {
                   const pt = qDto.programType || 'REGULAR';
                   let quota = await this.quotaRepo.findOne({
-                    where: { schoolId: school.id, year: qDto.year, programType: pt },
+                    where: {
+                      schoolId: school.id,
+                      year: qDto.year,
+                      programType: pt,
+                    },
                   });
                   if (!quota) {
                     quota = this.quotaRepo.create({
@@ -205,8 +219,10 @@ export class Grade10ImportService {
                     quotasAdded++;
                   } else {
                     quota.quota = qDto.quota;
-                    quota.registeredCount = qDto.registeredCount || quota.registeredCount;
-                    quota.competitionRatio = qDto.competitionRatio || quota.competitionRatio;
+                    quota.registeredCount =
+                      qDto.registeredCount || quota.registeredCount;
+                    quota.competitionRatio =
+                      qDto.competitionRatio || quota.competitionRatio;
                     await this.quotaRepo.save(quota);
                   }
                 }
@@ -217,7 +233,11 @@ export class Grade10ImportService {
                 for (const cDto of schoolDto.cutoffs) {
                   const pt = cDto.programType || 'REGULAR';
                   let cutoff = await this.cutoffRepo.findOne({
-                    where: { schoolId: school.id, year: cDto.year, programType: pt },
+                    where: {
+                      schoolId: school.id,
+                      year: cDto.year,
+                      programType: pt,
+                    },
                   });
                   if (!cutoff) {
                     cutoff = this.cutoffRepo.create({
@@ -240,7 +260,8 @@ export class Grade10ImportService {
                     cutoff.cutoffNV2 = cDto.cutoffNV2 || cutoff.cutoffNV2;
                     cutoff.cutoffNV3 = cDto.cutoffNV3 || cutoff.cutoffNV3;
                     cutoff.lowestScore = cDto.lowestScore || cutoff.lowestScore;
-                    cutoff.highestScore = cDto.highestScore || cutoff.highestScore;
+                    cutoff.highestScore =
+                      cDto.highestScore || cutoff.highestScore;
                     cutoff.notes = cDto.notes || cutoff.notes;
                     await this.cutoffRepo.save(cutoff);
                   }
@@ -257,7 +278,8 @@ export class Grade10ImportService {
     }
 
     // Save Log
-    const totalRows = schoolsAdded + schoolsUpdated + quotasAdded + cutoffsAdded;
+    const totalRows =
+      schoolsAdded + schoolsUpdated + quotasAdded + cutoffsAdded;
     const log = this.logRepo.create({
       sourceName: payload.sourceName,
       sourceUrl: payload.sourceUrl || undefined,

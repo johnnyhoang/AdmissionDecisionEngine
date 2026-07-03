@@ -1,24 +1,43 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Database, History, Sliders, TrendingUp, 
-  ChevronDown, ChevronUp, CheckCircle2, XCircle, Loader2, ClipboardPaste, ShieldAlert
+  ChevronDown, ChevronUp, CheckCircle2, XCircle, Loader2, ClipboardPaste, ShieldAlert,
+  Sparkles, Square, CheckSquare, Play, StopCircle
 } from 'lucide-react';
 import { 
   fetchG10AdminStats, fetchG10ImportPresets, runG10ImportPreset, 
-  fetchG10ImportHistory, triggerG10ImportPayload, fetchG10SchoolByCode
+  fetchG10ImportHistory, triggerG10ImportPayload, fetchG10SchoolByCode,
+  fetchGrade10SchoolNames, searchAiCutoffs, importAiCutoffs
 } from '../../../services/api';
 
-type Decision = 'KEEP' | 'OVERWRITE' | 'NEW';
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-interface ConflictRow {
+type CutoffDecision = 'KEEP' | 'OVERWRITE' | 'NEW';
+type QuotaDecision  = 'KEEP' | 'OVERWRITE' | 'NEW';
+
+interface CutoffConflictRow {
+  type: 'cutoff';
   schoolCode: string;
   schoolName: string;
   districtName: string;
   year: number;
   newCutoff: { nv1: number; nv2?: number; nv3?: number };
   existingCutoff?: { nv1: number; nv2?: number; nv3?: number };
-  decision: Decision;
+  decision: CutoffDecision;
 }
+
+interface QuotaConflictRow {
+  type: 'quota';
+  schoolCode: string;
+  schoolName: string;
+  districtName: string;
+  year: number;
+  newQuota: { quota: number; registeredCount?: number; competitionRatio?: number };
+  existingQuota?: { quota: number; registeredCount?: number; competitionRatio?: number };
+  decision: QuotaDecision;
+}
+
+type ConflictRow = CutoffConflictRow | QuotaConflictRow;
 
 interface ParsedImport {
   sourceName: string;
@@ -27,8 +46,25 @@ interface ParsedImport {
   districts: any[];
 }
 
+// ── Batch AI Search types ──────────────────────────────────────────────────────
+
+type BatchJobStatus = 'pending' | 'searching' | 'done' | 'error' | 'skipped';
+
+interface BatchJob {
+  id: string;
+  schoolCode: string;
+  schoolName: string;
+  districtName?: string;
+  districtCode?: string;
+  status: BatchJobStatus;
+  foundYears?: number;
+  error?: string;
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export default function Grade10AdminContainer() {
-  const [adminTab, setAdminTab] = useState<'dashboard' | 'presets' | 'paste' | 'history'>('dashboard');
+  const [adminTab, setAdminTab] = useState<'dashboard' | 'presets' | 'paste' | 'batch-ai' | 'history'>('dashboard');
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [presets, setPresets] = useState<any[]>([]);
@@ -45,6 +81,13 @@ export default function Grade10AdminContainer() {
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<any>(null);
 
+  // Batch AI state
+  const [batchSchools, setBatchSchools] = useState<{ id: string; name: string; code: string; districtName?: string; districtCode?: string }[]>([]);
+  const [batchSelected, setBatchSelected] = useState<Set<string>>(new Set());
+  const [batchJobs, setBatchJobs] = useState<BatchJob[]>([]);
+  const [batchRunning, setBatchRunning] = useState(false);
+  const batchCancelRef = useRef(false);
+
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
@@ -58,6 +101,15 @@ export default function Grade10AdminContainer() {
     finally { setLoading(false); }
   };
 
+  // Load schools for batch tab on first open
+  useEffect(() => {
+    if (adminTab === 'batch-ai' && batchSchools.length === 0) {
+      fetchGrade10SchoolNames().then(data => {
+        setBatchSchools(data as any[]);
+      }).catch(() => {});
+    }
+  }, [adminTab]);
+
   const handleSyncPreset = async (filename: string) => {
     setSyncingPreset(filename);
     try {
@@ -67,6 +119,8 @@ export default function Grade10AdminContainer() {
     } catch (e: any) { alert(`❌ Đồng bộ thất bại: ${e.message}`); }
     finally { setSyncingPreset(null); }
   };
+
+  // ── Paste Import ─────────────────────────────────────────────────────────────
 
   const handleAnalyze = async () => {
     setParseError(''); setConflicts([]); setParsedPayload(null); setImportResult(null);
@@ -87,22 +141,28 @@ export default function Grade10AdminContainer() {
 
     for (const district of parsed.districts) {
       for (const school of district.schools || []) {
-        if (!school.cutoffs || school.cutoffs.length === 0) continue;
+        const hasCutoffs = school.cutoffs && school.cutoffs.length > 0;
+        const hasQuotas = school.quotas && school.quotas.length > 0;
+        if (!hasCutoffs && !hasQuotas) continue;
 
         let existingCutoffsMap: Record<number, any> = {};
+        let existingQuotasMap: Record<number, any> = {};
         try {
           const detail = await fetchG10SchoolByCode(school.code);
           if (detail?.cutoffScores) {
-            for (const c of detail.cutoffScores) {
-              existingCutoffsMap[c.year] = c;
-            }
+            for (const c of detail.cutoffScores) existingCutoffsMap[c.year] = c;
+          }
+          if (detail?.quotas) {
+            for (const q of detail.quotas) existingQuotasMap[q.year] = q;
           }
         } catch (_) { /* school might not exist yet */ }
 
-        for (const cutoff of school.cutoffs) {
+        // Parse cutoff rows
+        for (const cutoff of school.cutoffs || []) {
           if (!cutoff.cutoffNV1 && cutoff.cutoffNV1 !== 0) continue;
           const existing = existingCutoffsMap[cutoff.year];
           rows.push({
+            type: 'cutoff',
             schoolCode: school.code,
             schoolName: school.name,
             districtName: district.name,
@@ -112,26 +172,53 @@ export default function Grade10AdminContainer() {
               ? { nv1: existing.cutoffNV1, nv2: existing.cutoffNV2, nv3: existing.cutoffNV3 }
               : undefined,
             decision: existing ? 'KEEP' : 'NEW',
-          });
+          } as CutoffConflictRow);
+        }
+
+        // Parse quota rows
+        for (const quota of school.quotas || []) {
+          if (!quota.quota && quota.quota !== 0) continue;
+          const existing = existingQuotasMap[quota.year];
+          rows.push({
+            type: 'quota',
+            schoolCode: school.code,
+            schoolName: school.name,
+            districtName: district.name,
+            year: quota.year,
+            newQuota: { quota: quota.quota, registeredCount: quota.registeredCount, competitionRatio: quota.competitionRatio },
+            existingQuota: existing
+              ? { quota: existing.quota, registeredCount: existing.registeredCount, competitionRatio: existing.competitionRatio }
+              : undefined,
+            decision: existing ? 'KEEP' : 'NEW',
+          } as QuotaConflictRow);
         }
       }
     }
 
     setConflicts(rows);
     setAnalyzing(false);
-    const conflictSchools = new Set(rows.filter(r => r.existingCutoff).map(r => r.schoolCode));
+    const conflictSchools = new Set(
+      rows.filter(r => (r.type === 'cutoff' ? r.existingCutoff : (r as QuotaConflictRow).existingQuota))
+        .map(r => r.schoolCode)
+    );
     setExpandedSchools(conflictSchools);
   };
 
-  const setDecision = (schoolCode: string, year: number, decision: Decision) => {
+  const setDecision = (schoolCode: string, year: number, rowType: 'cutoff' | 'quota', decision: CutoffDecision | QuotaDecision) => {
     setConflicts(prev => prev.map(r =>
-      r.schoolCode === schoolCode && r.year === year ? { ...r, decision } : r
+      r.schoolCode === schoolCode && r.year === year && r.type === rowType
+        ? { ...r, decision } as any
+        : r
     ));
   };
 
-  const setAllForSchool = (schoolCode: string, decision: Decision) => {
+  const setAllForSchool = (schoolCode: string, decision: CutoffDecision) => {
     setConflicts(prev => prev.map(r =>
-      r.schoolCode === schoolCode && r.existingCutoff ? { ...r, decision } : r
+      r.schoolCode === schoolCode && r.type === 'cutoff' && (r as CutoffConflictRow).existingCutoff
+        ? { ...r, decision }
+        : r.schoolCode === schoolCode && r.type === 'quota' && (r as QuotaConflictRow).existingQuota
+          ? { ...r, decision }
+          : r
     ));
   };
 
@@ -140,8 +227,12 @@ export default function Grade10AdminContainer() {
     setImporting(true);
     setImportResult(null);
 
-    const allowedKeys = new Set(
-      conflicts.filter(r => r.decision !== 'KEEP').map(r => `${r.schoolCode}__${r.year}`)
+    // Build allowed key sets per type
+    const allowedCutoffKeys = new Set(
+      conflicts.filter(r => r.type === 'cutoff' && r.decision !== 'KEEP').map(r => `${r.schoolCode}__${r.year}`)
+    );
+    const allowedQuotaKeys = new Set(
+      conflicts.filter(r => r.type === 'quota' && r.decision !== 'KEEP').map(r => `${r.schoolCode}__${r.year}`)
     );
 
     const filteredPayload: ParsedImport = {
@@ -151,9 +242,12 @@ export default function Grade10AdminContainer() {
         schools: district.schools.map((school: any) => ({
           ...school,
           cutoffs: (school.cutoffs || []).filter((c: any) =>
-            allowedKeys.has(`${school.code}__${c.year}`)
+            allowedCutoffKeys.has(`${school.code}__${c.year}`)
           ),
-        })).filter((s: any) => s.cutoffs.length > 0 || (s.quotas && s.quotas.length > 0))
+          quotas: (school.quotas || []).filter((q: any) =>
+            allowedQuotaKeys.has(`${school.code}__${q.year}`)
+          ),
+        })).filter((s: any) => s.cutoffs.length > 0 || s.quotas.length > 0)
       })).filter((d: any) => d.schools.length > 0)
     };
 
@@ -171,16 +265,124 @@ export default function Grade10AdminContainer() {
     }
   };
 
+  // Grouped by school code for display
   const schoolGroups = conflicts.reduce<Record<string, ConflictRow[]>>((acc, row) => {
     if (!acc[row.schoolCode]) acc[row.schoolCode] = [];
     acc[row.schoolCode].push(row);
     return acc;
   }, {});
 
-  const totalNew      = conflicts.filter(r => r.decision === 'NEW').length;
-  const totalConflict = conflicts.filter(r => r.existingCutoff).length;
+  const totalNew       = conflicts.filter(r => r.decision === 'NEW').length;
+  const totalConflict  = conflicts.filter(r => r.type === 'cutoff'
+    ? (r as CutoffConflictRow).existingCutoff
+    : (r as QuotaConflictRow).existingQuota
+  ).length;
   const totalOverwrite = conflicts.filter(r => r.decision === 'OVERWRITE').length;
-  const totalKeep     = conflicts.filter(r => r.decision === 'KEEP').length;
+  const totalKeep      = conflicts.filter(r => r.decision === 'KEEP').length;
+
+  // ── Batch AI Search ───────────────────────────────────────────────────────────
+
+  const toggleSelectSchool = (id: string) => {
+    setBatchSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (batchSelected.size === batchSchools.length) {
+      setBatchSelected(new Set());
+    } else {
+      setBatchSelected(new Set(batchSchools.map(s => s.id)));
+    }
+  };
+
+  const handleStartBatch = async () => {
+    if (batchSelected.size === 0) { alert('Vui lòng chọn ít nhất một trường.'); return; }
+
+    const selectedSchools = batchSchools.filter(s => batchSelected.has(s.id));
+    const jobs: BatchJob[] = selectedSchools.map(s => ({
+      id: s.id,
+      schoolCode: s.code,
+      schoolName: s.name,
+      districtName: (s as any).districtName,
+      districtCode: (s as any).districtCode,
+      status: 'pending',
+    }));
+
+    setBatchJobs(jobs);
+    setBatchRunning(true);
+    batchCancelRef.current = false;
+
+    for (let i = 0; i < jobs.length; i++) {
+      if (batchCancelRef.current) break;
+      
+      setBatchJobs(prev => prev.map((j, idx) => idx === i ? { ...j, status: 'searching' } : j));
+
+      try {
+        const res = await searchAiCutoffs({
+          type: 'GRADE10',
+          schoolQuery: jobs[i].schoolName,
+          schoolCode: jobs[i].schoolCode,
+          districtName: jobs[i].districtName,
+          districtCode: jobs[i].districtCode,
+        });
+
+        // Auto-import all NEW items found
+        const overrides = (res.results || [])
+          .filter((item: any) => !item.exists)
+          .map((item: any) => ({
+            year: item.year,
+            cutoffNV1: item.cutoffNV1,
+            cutoffNV2: item.cutoffNV2,
+            cutoffNV3: item.cutoffNV3,
+            quota: item.quota,
+            registeredCount: item.registeredCount,
+            competitionRatio: item.competitionRatio,
+          }));
+
+        if (overrides.length > 0) {
+          await importAiCutoffs({
+            type: 'GRADE10',
+            schoolCode: res.schoolCode,
+            districtName: jobs[i].districtName,
+            overrides,
+          });
+        }
+
+        setBatchJobs(prev => prev.map((j, idx) => idx === i
+          ? { ...j, status: 'done', foundYears: res.results?.length ?? 0 }
+          : j
+        ));
+      } catch (err: any) {
+        setBatchJobs(prev => prev.map((j, idx) => idx === i
+          ? { ...j, status: 'error', error: err.message || 'Lỗi không xác định' }
+          : j
+        ));
+      }
+
+      // Small delay between requests to be polite to the API
+      if (i < jobs.length - 1 && !batchCancelRef.current) {
+        await new Promise(r => setTimeout(r, 1500));
+      }
+    }
+
+    setBatchRunning(false);
+  };
+
+  const handleCancelBatch = () => {
+    batchCancelRef.current = true;
+    setBatchRunning(false);
+  };
+
+  const batchDone   = batchJobs.filter(j => j.status === 'done').length;
+  const batchError  = batchJobs.filter(j => j.status === 'error').length;
+  const batchTotal  = batchJobs.length;
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // RENDER
+  // ─────────────────────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
@@ -206,10 +408,11 @@ export default function Grade10AdminContainer() {
       <nav className="bg-slate-900 border-b border-slate-800 px-4">
         <div className="max-w-7xl mx-auto flex gap-2 py-2 overflow-x-auto">
           {([
-            ['dashboard', 'dashboard', <TrendingUp key="t" className="h-4 w-4" />, 'Thống kê'],
-            ['presets',   'presets',   <Database key="d" className="h-4 w-4" />,   `Presets (${presets.length})`],
-            ['paste',     'paste',     <ClipboardPaste key="c" className="h-4 w-4" />, 'Dán JSON & Import'],
-            ['history',   'history',   <History key="h" className="h-4 w-4" />,    `Lịch sử (${history.length})`],
+            ['dashboard',  'dashboard',  <TrendingUp key="t" className="h-4 w-4" />,      'Thống kê'],
+            ['presets',    'presets',    <Database key="d" className="h-4 w-4" />,        `Presets (${presets.length})`],
+            ['paste',      'paste',      <ClipboardPaste key="c" className="h-4 w-4" />,  'Dán JSON & Import'],
+            ['batch-ai',   'batch-ai',   <Sparkles key="s" className="h-4 w-4" />,        'Tìm AI Hàng Loạt'],
+            ['history',    'history',    <History key="h" className="h-4 w-4" />,         `Lịch sử (${history.length})`],
           ] as const).map(([tab, key, icon, label]) => (
             <button key={key} onClick={() => setAdminTab(tab as any)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition whitespace-nowrap ${
@@ -235,10 +438,10 @@ export default function Grade10AdminContainer() {
           <div className="flex flex-col gap-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                ['Trường THPT',      stats?.schools   ?? 0, 'Trường công lập TP.HCM'],
-                ['Quận / Huyện',    stats?.districts  ?? 0, 'Phân chia hành chính'],
-                ['Chỉ tiêu (Quotas)', stats?.quotas  ?? 0, 'Bản ghi qua các năm'],
-                ['Điểm Chuẩn',      stats?.cutoffs    ?? 0, 'Bản ghi điểm chuẩn'],
+                ['Trường THPT',       stats?.schools   ?? 0, 'Trường công lập TP.HCM'],
+                ['Quận / Huyện',      stats?.districts ?? 0, 'Phân chia hành chính'],
+                ['Chỉ tiêu (Quotas)', stats?.quotas    ?? 0, 'Bản ghi qua các năm'],
+                ['Điểm Chuẩn',        stats?.cutoffs   ?? 0, 'Bản ghi điểm chuẩn'],
               ].map(([label, val, sub]) => (
                 <div key={label as string} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
                   <span className="text-xs text-slate-400 font-semibold uppercase">{label}</span>
@@ -250,7 +453,8 @@ export default function Grade10AdminContainer() {
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-3">
               <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">Hướng dẫn nạp dữ liệu</h3>
               <div className="text-xs text-slate-300 leading-relaxed flex flex-col gap-2">
-                <p>🔹 Dùng tab <strong>Dán JSON & Import</strong> để paste dữ liệu từ AI tool, hệ thống sẽ tự phân tích xung đột và cho bạn chọn keep/overwrite từng dòng.</p>
+                <p>🔹 Dùng tab <strong>Dán JSON & Import</strong> để paste dữ liệu từ AI tool, hệ thống sẽ tự phân tích xung đột và cho bạn chọn keep/overwrite từng dòng (cả cutoffs lẫn quotas).</p>
+                <p>🔹 Dùng tab <strong>Tìm AI Hàng Loạt</strong> để tự động tìm kiếm nhiều trường cùng lúc qua Gemini AI và lưu ngay các dữ liệu mới.</p>
                 <p>🔹 Dùng tab <strong>Presets</strong> để đồng bộ các file JSON preset có sẵn trên server.</p>
                 <p>🔹 Hiện có <strong>{stats?.cutoffs ?? 0}</strong> bản ghi điểm chuẩn — mục tiêu tối thiểu là 500 bản ghi (5–10 năm × 75 trường).</p>
               </div>
@@ -303,7 +507,7 @@ export default function Grade10AdminContainer() {
                     Bước 1 — Dán JSON từ AI tool
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Paste JSON có cấu trúc <code className="bg-slate-800 px-1 rounded text-indigo-300">districts[].schools[].cutoffs[]</code> rồi nhấn Phân tích.
+                    Paste JSON có cấu trúc <code className="bg-slate-800 px-1 rounded text-indigo-300">districts[].schools[].cutoffs[] & .quotas[]</code> rồi nhấn Phân tích.
                   </p>
                 </div>
                 {parsedPayload && (
@@ -359,7 +563,11 @@ export default function Grade10AdminContainer() {
 
                 <div className="flex flex-col gap-3">
                   {Object.entries(schoolGroups).map(([schoolCode, rows]) => {
-                    const hasConflict = rows.some(r => r.existingCutoff);
+                    const cutoffRows = rows.filter(r => r.type === 'cutoff') as CutoffConflictRow[];
+                    const quotaRows  = rows.filter(r => r.type === 'quota')  as QuotaConflictRow[];
+                    const hasConflict = rows.some(r =>
+                      r.type === 'cutoff' ? r.existingCutoff : (r as QuotaConflictRow).existingQuota
+                    );
                     const isExpanded = expandedSchools.has(schoolCode);
                     const { schoolName, districtName } = rows[0];
 
@@ -382,11 +590,17 @@ export default function Grade10AdminContainer() {
                                 ? 'bg-amber-500/15 border-amber-500/30 text-amber-400'
                                 : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
                             }`}>
-                              {hasConflict ? `⚡ ${rows.filter(r => r.existingCutoff).length} xung đột` : `✨ ${rows.length} mới`}
+                              {hasConflict ? `⚡ xung đột` : `✨ ${rows.length} mới`}
                             </span>
                             <span className="text-sm font-bold text-white">{schoolName}</span>
                             <span className="text-xs text-slate-400">{districtName}</span>
                             <span className="text-[10px] text-slate-500 font-mono">[{schoolCode}]</span>
+                            {cutoffRows.length > 0 && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400">📈 {cutoffRows.length} điểm chuẩn</span>
+                            )}
+                            {quotaRows.length > 0 && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400">🎯 {quotaRows.length} chỉ tiêu</span>
+                            )}
                           </div>
                           <div className="flex items-center gap-2 shrink-0 ml-3">
                             {hasConflict && (
@@ -408,87 +622,173 @@ export default function Grade10AdminContainer() {
                           </div>
                         </button>
 
-                        {/* Rows table */}
+                        {/* Expanded rows */}
                         {isExpanded && (
                           <div className="border-t border-slate-800 overflow-x-auto">
-                            <table className="w-full text-xs">
-                              <thead>
-                                <tr className="bg-slate-950/80 text-slate-500 text-[10px] uppercase">
-                                  <th className="px-4 py-2 text-left w-16">Năm</th>
-                                  <th className="px-4 py-2 text-center" colSpan={3}>── Hiện trong DB ──</th>
-                                  <th className="px-4 py-2 text-center" colSpan={3}>── Dữ liệu mới ──</th>
-                                  <th className="px-4 py-2 text-center w-40">Quyết định</th>
-                                </tr>
-                                <tr className="bg-slate-950/50 text-slate-500 text-[10px]">
-                                  <th className="px-4 py-1"></th>
-                                  <th className="px-4 py-1 text-center text-slate-600">NV1</th>
-                                  <th className="px-4 py-1 text-center text-slate-600">NV2</th>
-                                  <th className="px-4 py-1 text-center text-slate-600">NV3</th>
-                                  <th className="px-4 py-1 text-center text-indigo-500">NV1</th>
-                                  <th className="px-4 py-1 text-center text-indigo-500">NV2</th>
-                                  <th className="px-4 py-1 text-center text-indigo-500">NV3</th>
-                                  <th></th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-slate-800/60">
-                                {rows.map(row => (
-                                  <tr key={row.year} className={`transition ${
-                                    row.decision === 'OVERWRITE' ? 'bg-indigo-500/5' : ''
-                                  } hover:bg-slate-800/20`}>
-                                    <td className="px-4 py-2.5 font-bold text-white">{row.year}</td>
-                                    {/* DB values */}
-                                    <td className={`px-4 py-2.5 text-center font-semibold ${
-                                      row.existingCutoff && row.existingCutoff.nv1 !== row.newCutoff.nv1
-                                        ? 'text-amber-400' : 'text-slate-500'
-                                    }`}>
-                                      {row.existingCutoff?.nv1 ?? <span className="text-slate-700">—</span>}
-                                    </td>
-                                    <td className="px-4 py-2.5 text-center text-slate-600">{row.existingCutoff?.nv2 ?? '—'}</td>
-                                    <td className="px-4 py-2.5 text-center text-slate-600">{row.existingCutoff?.nv3 ?? '—'}</td>
-                                    {/* New values */}
-                                    <td className={`px-4 py-2.5 text-center font-bold ${
-                                      !row.existingCutoff ? 'text-emerald-400' :
-                                      row.existingCutoff.nv1 !== row.newCutoff.nv1 ? 'text-indigo-400' : 'text-slate-300'
-                                    }`}>
-                                      {row.newCutoff.nv1}
-                                    </td>
-                                    <td className="px-4 py-2.5 text-center text-slate-400">{row.newCutoff.nv2 ?? '—'}</td>
-                                    <td className="px-4 py-2.5 text-center text-slate-400">{row.newCutoff.nv3 ?? '—'}</td>
-                                    {/* Decision */}
-                                    <td className="px-4 py-2.5 text-center">
-                                      {row.decision === 'NEW' ? (
-                                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold">
-                                          ✨ Thêm mới
-                                        </span>
-                                      ) : (
-                                        <div className="flex items-center justify-center gap-1.5">
-                                          <button
-                                            onClick={() => setDecision(row.schoolCode, row.year, 'KEEP')}
-                                            className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg border font-bold transition ${
-                                              row.decision === 'KEEP'
-                                                ? 'bg-slate-700 border-slate-500 text-white'
-                                                : 'bg-transparent border-slate-700 text-slate-400 hover:bg-slate-800'
-                                            }`}
-                                          >
-                                            <XCircle className="h-2.5 w-2.5" /> Giữ cũ
-                                          </button>
-                                          <button
-                                            onClick={() => setDecision(row.schoolCode, row.year, 'OVERWRITE')}
-                                            className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg border font-bold transition ${
-                                              row.decision === 'OVERWRITE'
-                                                ? 'bg-indigo-600 border-indigo-500 text-white'
-                                                : 'bg-transparent border-indigo-700/40 text-indigo-400 hover:bg-indigo-600/20'
-                                            }`}
-                                          >
-                                            <CheckCircle2 className="h-2.5 w-2.5" /> Ghi đè
-                                          </button>
-                                        </div>
-                                      )}
-                                    </td>
+                            {/* Cutoff rows */}
+                            {cutoffRows.length > 0 && (
+                              <table className="w-full text-xs">
+                                <thead>
+                                  <tr className="bg-slate-950/80 text-slate-500 text-[10px] uppercase">
+                                    <th className="px-4 py-2 text-left" colSpan={8}>
+                                      📈 Điểm chuẩn (NV1/NV2/NV3)
+                                    </th>
                                   </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                                  <tr className="bg-slate-950/50 text-slate-500 text-[10px]">
+                                    <th className="px-4 py-2 text-left w-16">Năm</th>
+                                    <th className="px-4 py-2 text-center" colSpan={3}>── Hiện trong DB ──</th>
+                                    <th className="px-4 py-2 text-center" colSpan={3}>── Dữ liệu mới ──</th>
+                                    <th className="px-4 py-2 text-center w-40">Quyết định</th>
+                                  </tr>
+                                  <tr className="bg-slate-950/40 text-slate-600 text-[10px]">
+                                    <th className="px-4 py-1"></th>
+                                    <th className="px-4 py-1 text-center">NV1</th>
+                                    <th className="px-4 py-1 text-center">NV2</th>
+                                    <th className="px-4 py-1 text-center">NV3</th>
+                                    <th className="px-4 py-1 text-center text-indigo-500">NV1</th>
+                                    <th className="px-4 py-1 text-center text-indigo-500">NV2</th>
+                                    <th className="px-4 py-1 text-center text-indigo-500">NV3</th>
+                                    <th></th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-800/60">
+                                  {cutoffRows.map(row => (
+                                    <tr key={`cutoff-${row.year}`} className={`transition ${
+                                      row.decision === 'OVERWRITE' ? 'bg-indigo-500/5' : ''
+                                    } hover:bg-slate-800/20`}>
+                                      <td className="px-4 py-2.5 font-bold text-white">{row.year}</td>
+                                      {/* DB values */}
+                                      <td className={`px-4 py-2.5 text-center font-semibold ${
+                                        row.existingCutoff && row.existingCutoff.nv1 !== row.newCutoff.nv1
+                                          ? 'text-amber-400' : 'text-slate-500'
+                                      }`}>{row.existingCutoff?.nv1 ?? <span className="text-slate-700">—</span>}</td>
+                                      <td className="px-4 py-2.5 text-center text-slate-600">{row.existingCutoff?.nv2 ?? '—'}</td>
+                                      <td className="px-4 py-2.5 text-center text-slate-600">{row.existingCutoff?.nv3 ?? '—'}</td>
+                                      {/* New values */}
+                                      <td className={`px-4 py-2.5 text-center font-bold ${
+                                        !row.existingCutoff ? 'text-emerald-400' :
+                                        row.existingCutoff.nv1 !== row.newCutoff.nv1 ? 'text-indigo-400' : 'text-slate-300'
+                                      }`}>{row.newCutoff.nv1}</td>
+                                      <td className="px-4 py-2.5 text-center text-slate-400">{row.newCutoff.nv2 ?? '—'}</td>
+                                      <td className="px-4 py-2.5 text-center text-slate-400">{row.newCutoff.nv3 ?? '—'}</td>
+                                      {/* Decision */}
+                                      <td className="px-4 py-2.5 text-center">
+                                        {row.decision === 'NEW' ? (
+                                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold">
+                                            ✨ Thêm mới
+                                          </span>
+                                        ) : (
+                                          <div className="flex items-center justify-center gap-1.5">
+                                            <button
+                                              onClick={() => setDecision(row.schoolCode, row.year, 'cutoff', 'KEEP')}
+                                              className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg border font-bold transition ${
+                                                row.decision === 'KEEP'
+                                                  ? 'bg-slate-700 border-slate-500 text-white'
+                                                  : 'bg-transparent border-slate-700 text-slate-400 hover:bg-slate-800'
+                                              }`}
+                                            >
+                                              <XCircle className="h-2.5 w-2.5" /> Giữ cũ
+                                            </button>
+                                            <button
+                                              onClick={() => setDecision(row.schoolCode, row.year, 'cutoff', 'OVERWRITE')}
+                                              className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg border font-bold transition ${
+                                                row.decision === 'OVERWRITE'
+                                                  ? 'bg-indigo-600 border-indigo-500 text-white'
+                                                  : 'bg-transparent border-indigo-700/40 text-indigo-400 hover:bg-indigo-600/20'
+                                              }`}
+                                            >
+                                              <CheckCircle2 className="h-2.5 w-2.5" /> Ghi đè
+                                            </button>
+                                          </div>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            )}
+
+                            {/* Quota rows */}
+                            {quotaRows.length > 0 && (
+                              <table className="w-full text-xs border-t border-slate-800/60">
+                                <thead>
+                                  <tr className="bg-slate-950/80 text-slate-500 text-[10px] uppercase">
+                                    <th className="px-4 py-2 text-left" colSpan={8}>
+                                      🎯 Chỉ tiêu tuyển sinh
+                                    </th>
+                                  </tr>
+                                  <tr className="bg-slate-950/40 text-slate-600 text-[10px]">
+                                    <th className="px-4 py-1 text-left w-16">Năm</th>
+                                    <th className="px-4 py-1 text-center">Chỉ tiêu (DB)</th>
+                                    <th className="px-4 py-1 text-center">ĐK (DB)</th>
+                                    <th className="px-4 py-1 text-center">Tỷ lệ (DB)</th>
+                                    <th className="px-4 py-1 text-center text-blue-500">Chỉ tiêu (Mới)</th>
+                                    <th className="px-4 py-1 text-center text-blue-500">ĐK (Mới)</th>
+                                    <th className="px-4 py-1 text-center text-blue-500">Tỷ lệ (Mới)</th>
+                                    <th className="px-4 py-1 text-center w-40">Quyết định</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-800/60">
+                                  {quotaRows.map(row => {
+                                    const hasChange = row.existingQuota && (
+                                      row.existingQuota.quota !== row.newQuota.quota ||
+                                      row.existingQuota.registeredCount !== row.newQuota.registeredCount
+                                    );
+                                    return (
+                                      <tr key={`quota-${row.year}`} className={`transition ${
+                                        row.decision === 'OVERWRITE' ? 'bg-blue-500/5' : ''
+                                      } hover:bg-slate-800/20`}>
+                                        <td className="px-4 py-2.5 font-bold text-white">{row.year}</td>
+                                        {/* DB values */}
+                                        <td className={`px-4 py-2.5 text-center font-semibold ${hasChange ? 'text-amber-400' : 'text-slate-500'}`}>
+                                          {row.existingQuota?.quota ?? <span className="text-slate-700">—</span>}
+                                        </td>
+                                        <td className="px-4 py-2.5 text-center text-slate-600">{row.existingQuota?.registeredCount ?? '—'}</td>
+                                        <td className="px-4 py-2.5 text-center text-slate-600">{row.existingQuota?.competitionRatio ?? '—'}</td>
+                                        {/* New values */}
+                                        <td className={`px-4 py-2.5 text-center font-bold ${
+                                          !row.existingQuota ? 'text-emerald-400' :
+                                          hasChange ? 'text-blue-400' : 'text-slate-300'
+                                        }`}>{row.newQuota.quota}</td>
+                                        <td className="px-4 py-2.5 text-center text-slate-400">{row.newQuota.registeredCount ?? '—'}</td>
+                                        <td className="px-4 py-2.5 text-center text-slate-400">{row.newQuota.competitionRatio ?? '—'}</td>
+                                        {/* Decision */}
+                                        <td className="px-4 py-2.5 text-center">
+                                          {row.decision === 'NEW' ? (
+                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold">
+                                              ✨ Thêm mới
+                                            </span>
+                                          ) : (
+                                            <div className="flex items-center justify-center gap-1.5">
+                                              <button
+                                                onClick={() => setDecision(row.schoolCode, row.year, 'quota', 'KEEP')}
+                                                className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg border font-bold transition ${
+                                                  row.decision === 'KEEP'
+                                                    ? 'bg-slate-700 border-slate-500 text-white'
+                                                    : 'bg-transparent border-slate-700 text-slate-400 hover:bg-slate-800'
+                                                }`}
+                                              >
+                                                <XCircle className="h-2.5 w-2.5" /> Giữ cũ
+                                              </button>
+                                              <button
+                                                onClick={() => setDecision(row.schoolCode, row.year, 'quota', 'OVERWRITE')}
+                                                className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg border font-bold transition ${
+                                                  row.decision === 'OVERWRITE'
+                                                    ? 'bg-blue-600 border-blue-500 text-white'
+                                                    : 'bg-transparent border-blue-700/40 text-blue-400 hover:bg-blue-600/20'
+                                                }`}
+                                              >
+                                                <CheckCircle2 className="h-2.5 w-2.5" /> Ghi đè
+                                              </button>
+                                            </div>
+                                          )}
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            )}
                           </div>
                         )}
                       </div>
@@ -522,7 +822,7 @@ export default function Grade10AdminContainer() {
                   }`}>
                     {importResult.error
                       ? `❌ Import thất bại: ${importResult.error}`
-                      : `✅ Thành công! Cập nhật ${importResult.schoolsAdded + importResult.schoolsUpdated} trường, thêm ${importResult.cutoffsAdded} điểm chuẩn.`
+                      : `✅ Thành công! Cập nhật ${importResult.schoolsAdded + importResult.schoolsUpdated} trường, thêm ${importResult.cutoffsAdded} điểm chuẩn, ${importResult.quotasAdded ?? 0} chỉ tiêu.`
                     }
                   </div>
                 )}
@@ -531,7 +831,160 @@ export default function Grade10AdminContainer() {
 
             {parsedPayload && conflicts.length === 0 && !analyzing && (
               <div className="text-center py-8 text-slate-400 text-sm bg-slate-900 border border-slate-800 rounded-2xl">
-                ⚠️ JSON hợp lệ nhưng không tìm thấy điểm chuẩn nào có thể import.
+                ⚠️ JSON hợp lệ nhưng không tìm thấy điểm chuẩn hoặc chỉ tiêu nào có thể import.
+              </div>
+            )}
+          </div>
+
+        ) : adminTab === 'batch-ai' ? (
+          /* ── BATCH AI SEARCH ──────────────────────────────────────────────── */
+          <div className="flex flex-col gap-6">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-indigo-400 animate-pulse" />
+                  Tìm Dữ Liệu AI Hàng Loạt
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Chọn các trường cần tìm kiếm. Hệ thống sẽ lần lượt gọi AI để tìm điểm chuẩn & chỉ tiêu, và tự động lưu dữ liệu mới (không ghi đè dữ liệu cũ).
+                </p>
+              </div>
+
+              <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 p-3 rounded-xl flex items-start gap-2.5 text-xs">
+                <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5" />
+                <div>
+                  Mỗi lần gọi AI sẽ mất phí API. Chỉ dữ liệu <strong>mới (chưa có trong DB)</strong> được tự động import. Dữ liệu đã có sẽ được bỏ qua.
+                </div>
+              </div>
+
+              {/* School selector */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-300">
+                    Chọn trường ({batchSelected.size}/{batchSchools.length})
+                  </span>
+                  <button
+                    onClick={toggleSelectAll}
+                    disabled={batchRunning}
+                    className="flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition disabled:opacity-50"
+                  >
+                    {batchSelected.size === batchSchools.length
+                      ? <><Square className="h-3 w-3" /> Bỏ chọn tất cả</>
+                      : <><CheckSquare className="h-3 w-3" /> Chọn tất cả</>
+                    }
+                  </button>
+                </div>
+
+                <div className="max-h-60 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950/50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y divide-slate-800 md:divide-y-0">
+                  {batchSchools.map(school => {
+                    const isSelected = batchSelected.has(school.id);
+                    const job = batchJobs.find(j => j.id === school.id);
+                    return (
+                      <button
+                        key={school.id}
+                        onClick={() => !batchRunning && toggleSelectSchool(school.id)}
+                        disabled={batchRunning}
+                        className={`flex items-center gap-2.5 px-3 py-2.5 text-left transition ${
+                          isSelected ? 'bg-indigo-600/10 border-l-2 border-l-indigo-500' : 'hover:bg-slate-800/40'
+                        } disabled:cursor-not-allowed`}
+                      >
+                        <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 ${
+                          isSelected ? 'bg-indigo-600 border-indigo-500' : 'border-slate-600'
+                        }`}>
+                          {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[11px] font-semibold text-slate-200 truncate">{school.name}</div>
+                          <div className="text-[9px] text-slate-500">{(school as any).districtName || school.code}</div>
+                        </div>
+                        {/* Job status indicator */}
+                        {job && (
+                          <div className="shrink-0">
+                            {job.status === 'searching' && <Loader2 className="h-3 w-3 text-indigo-400 animate-spin" />}
+                            {job.status === 'done'      && <CheckCircle2 className="h-3 w-3 text-emerald-400" />}
+                            {job.status === 'error'     && <XCircle className="h-3 w-3 text-rose-400" />}
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Run / Cancel */}
+              <div className="flex items-center gap-3">
+                {!batchRunning ? (
+                  <button
+                    onClick={handleStartBatch}
+                    disabled={batchSelected.size === 0}
+                    className="flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg transition cursor-pointer"
+                  >
+                    <Play className="h-3.5 w-3.5" />
+                    Chạy AI cho {batchSelected.size} trường
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleCancelBatch}
+                    className="flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition"
+                  >
+                    <StopCircle className="h-3.5 w-3.5" />
+                    Dừng lại
+                  </button>
+                )}
+                {batchJobs.length > 0 && (
+                  <span className="text-xs text-slate-400">
+                    Tiến trình: <strong className="text-white">{batchDone + batchError}</strong>/{batchTotal} &nbsp;·&nbsp;
+                    <span className="text-emerald-400">{batchDone} thành công</span>
+                    {batchError > 0 && <span className="text-rose-400"> · {batchError} lỗi</span>}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Job Results */}
+            {batchJobs.length > 0 && (
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                <div className="p-4 border-b border-slate-800">
+                  <h4 className="text-xs font-bold text-white">Kết quả tìm kiếm</h4>
+                </div>
+                {/* Progress bar */}
+                <div className="h-1 bg-slate-800">
+                  <div
+                    className="h-full bg-indigo-500 transition-all duration-300"
+                    style={{ width: `${batchTotal > 0 ? ((batchDone + batchError) / batchTotal) * 100 : 0}%` }}
+                  />
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold text-[10px] uppercase">
+                        <th className="px-4 py-2 text-left">Trường</th>
+                        <th className="px-4 py-2 text-left">Quận/Huyện</th>
+                        <th className="px-4 py-2 text-center">Trạng thái</th>
+                        <th className="px-4 py-2 text-center">Dữ liệu tìm thấy</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800 text-slate-300">
+                      {batchJobs.map(job => (
+                        <tr key={job.id} className="hover:bg-slate-800/20">
+                          <td className="px-4 py-2.5 font-semibold text-white">{job.schoolName}</td>
+                          <td className="px-4 py-2.5 text-slate-400">{job.districtName || '—'}</td>
+                          <td className="px-4 py-2.5 text-center">
+                            {job.status === 'pending'   && <span className="text-slate-500 text-[10px]">⏳ Chờ</span>}
+                            {job.status === 'searching' && <span className="flex items-center justify-center gap-1 text-indigo-400 text-[10px]"><Loader2 className="h-3 w-3 animate-spin" />Đang tìm...</span>}
+                            {job.status === 'done'      && <span className="text-emerald-400 text-[10px] font-bold">✅ Xong</span>}
+                            {job.status === 'error'     && <span className="text-rose-400 text-[10px] font-bold">❌ Lỗi</span>}
+                          </td>
+                          <td className="px-4 py-2.5 text-center">
+                            {job.status === 'done'  && <span className="font-bold text-indigo-400">{job.foundYears ?? 0} năm</span>}
+                            {job.status === 'error' && <span className="text-rose-400 text-[10px] italic truncate max-w-[200px] block">{job.error}</span>}
+                            {(job.status === 'pending' || job.status === 'searching') && <span className="text-slate-600">—</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>

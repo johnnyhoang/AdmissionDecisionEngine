@@ -27,7 +27,6 @@ interface AiSearchModalProps {
 }
 
 export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, prefillSchool }: AiSearchModalProps) {
-  const [password, setPassword] = useState('');
   const [schoolQuery, setSchoolQuery] = useState('');
   const [majorQuery, setMajorQuery] = useState('');
   const [step, setStep] = useState<'input' | 'searching' | 'preview' | 'success'>('input');
@@ -117,10 +116,6 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password.trim()) {
-      setError('Vui lòng nhập mật khẩu xác nhận.');
-      return;
-    }
     if (!schoolQuery.trim()) {
       setError('Vui lòng nhập tên trường.');
       return;
@@ -136,7 +131,6 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
 
     try {
       const res = await searchAiCutoffs({
-        password,
         type,
         schoolQuery,
         schoolCode: selectedSchool?.code,
@@ -187,7 +181,6 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
 
     try {
       await importAiCutoffs({
-        password,
         type,
         schoolCode: aiData.schoolCode,
         districtName: selectedSchool?.districtName,
@@ -204,7 +197,6 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
   };
 
   const resetModal = () => {
-    setPassword('');
     setSchoolQuery('');
     setMajorQuery('');
     setSelectedSchool(null);
@@ -264,20 +256,8 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
               <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-[11px] mb-0.5">Lưu ý tính năng:</strong>
-                Tính năng này sử dụng AI với Google Search Grounding để tra cứu thông tin trực tiếp từ internet và có tính phí API. Vui lòng nhập đúng mật khẩu ủy quyền để tiếp tục.
+                Tính năng này sử dụng AI với Google Search Grounding để tra cứu thông tin trực tiếp từ internet và có tính phí API.
               </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-slate-400 font-semibold mb-1">Mật khẩu xác nhận</label>
-              <input 
-                type="password"
-                placeholder="Nhập mật khẩu..."
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-indigo-500"
-              />
             </div>
 
             {/* School query with autocomplete */}
@@ -385,7 +365,11 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         )}
 
         {/* STEP 3: Preview conflicts resolution */}
-        {step === 'preview' && aiData && (
+        {step === 'preview' && aiData && (() => {
+          const overwriteCount = Object.values(decisions).filter(d => d === 'OVERWRITE').length;
+          const skipCount = Object.values(decisions).filter(d => d === 'SKIP').length;
+          const totalItems = aiData.results.length;
+          return (
           <div className="flex flex-col gap-4 text-xs">
             <div className="bg-indigo-950/25 border border-indigo-500/10 p-3.5 rounded-xl flex justify-between items-center flex-wrap gap-2">
               <div>
@@ -394,6 +378,43 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
               </div>
               <div className="text-[10px] text-slate-400">
                 Mặc định giữ lại dữ liệu cũ nếu đã tồn tại để tránh ghi đè ngoài ý muốn.
+              </div>
+            </div>
+
+            {/* Bulk action bar */}
+            <div className="flex items-center justify-between bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 gap-3 flex-wrap">
+              <div className="flex items-center gap-2 text-[11px]">
+                <span className="text-slate-400">Tổng <strong className="text-white">{totalItems}</strong> năm:</span>
+                <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-bold">
+                  {overwriteCount} sẽ cập nhật
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-slate-700 border border-slate-600 text-slate-300 font-bold">
+                  {skipCount} giữ cũ
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const all: { [year: number]: 'OVERWRITE' | 'SKIP' } = {};
+                    aiData.results.forEach((item: any) => { all[item.year] = 'OVERWRITE'; });
+                    setDecisions(all);
+                  }}
+                  className="px-3 py-1 rounded-lg text-[10px] font-bold border border-indigo-500/30 bg-indigo-600/15 text-indigo-400 hover:bg-indigo-600/30 transition"
+                >
+                  ✅ Chọn tất cả
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const all: { [year: number]: 'OVERWRITE' | 'SKIP' } = {};
+                    aiData.results.forEach((item: any) => { all[item.year] = 'SKIP'; });
+                    setDecisions(all);
+                  }}
+                  className="px-3 py-1 rounded-lg text-[10px] font-bold border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 transition"
+                >
+                  🔒 Bỏ chọn tất cả
+                </button>
               </div>
             </div>
 
@@ -536,15 +557,16 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
               <button 
                 type="button"
                 onClick={handleImport}
-                disabled={importing}
-                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20"
+                disabled={importing || overwriteCount === 0}
+                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20"
               >
                 <Save className="h-3.5 w-3.5" />
-                {importing ? 'Đang lưu...' : 'Xác nhận cập nhật'}
+                {importing ? 'Đang lưu...' : `Xác nhận cập nhật (${overwriteCount})`}
               </button>
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* STEP 4: Success */}
         {step === 'success' && (

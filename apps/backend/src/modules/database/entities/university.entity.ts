@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Campus } from './campus.entity';
 import { Program } from './program.entity';
 
@@ -31,7 +38,13 @@ export class University {
   @Column({ name: 'local_ranking', nullable: true })
   localRanking: number;
 
-  @Column({ name: 'average_tuition', type: 'decimal', precision: 12, scale: 2, default: 0 })
+  @Column({
+    name: 'average_tuition',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
   averageTuition: number;
 
   @Column({ name: 'is_public', default: true })

@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Grade10District } from './district.entity';
 import { Grade10Quota } from './quota.entity';
 import { Grade10Cutoff } from './cutoff.entity';
@@ -17,7 +26,9 @@ export class Grade10School {
   @Column({ name: 'district_id', nullable: true })
   districtId: string;
 
-  @ManyToOne(() => Grade10District, (district) => district.schools, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Grade10District, (district) => district.schools, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'district_id' })
   district: Grade10District;
 

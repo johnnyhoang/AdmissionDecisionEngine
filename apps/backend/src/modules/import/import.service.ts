@@ -13,13 +13,13 @@ import { DataImport } from '../database/entities/data-import.entity';
 // ===== IMPORT PAYLOAD TYPES =====
 
 export interface UniversityImportDto {
-  code: string;           // Mã trường (VD: QSB, QST, MHO)
-  nameVi: string;         // Tên tiếng Việt
-  nameEn?: string;        // Tên tiếng Anh
-  website?: string;       // Website chính thức
-  description?: string;   // Mô tả
-  isPublic?: boolean;     // Công lập hay tư thục
-  localRanking?: number;  // Xếp hạng nội địa
+  code: string; // Mã trường (VD: QSB, QST, MHO)
+  nameVi: string; // Tên tiếng Việt
+  nameEn?: string; // Tên tiếng Anh
+  website?: string; // Website chính thức
+  description?: string; // Mô tả
+  isPublic?: boolean; // Công lập hay tư thục
+  localRanking?: number; // Xếp hạng nội địa
   logoUrl?: string;
   campuses?: CampusImportDto[];
   programs?: ProgramImportDto[];
@@ -32,41 +32,41 @@ export interface CampusImportDto {
 }
 
 export interface ProgramImportDto {
-  majorCode: string;          // Mã ngành 7 số của Bộ GD&ĐT (VD: 7480101)
-  name: string;               // Tên ngành/chương trình
-  trainingType?: string;      // DAI_TRA | CHAT_LUONG_CAO | TIEN_TIEN | ...
-  language?: string;          // Tiếng Việt | Tiếng Anh
-  tuitionFee?: number;        // Học phí (VNĐ/năm)
-  tuitionFeeMax?: number;     // Học phí tối đa
-  durationYears?: number;     // Số năm đào tạo
-  totalQuota?: number;        // Tổng chỉ tiêu
-  dataYear?: number;          // Năm dữ liệu
-  dataSource?: string;        // Nguồn dữ liệu
+  majorCode: string; // Mã ngành 7 số của Bộ GD&ĐT (VD: 7480101)
+  name: string; // Tên ngành/chương trình
+  trainingType?: string; // DAI_TRA | CHAT_LUONG_CAO | TIEN_TIEN | ...
+  language?: string; // Tiếng Việt | Tiếng Anh
+  tuitionFee?: number; // Học phí (VNĐ/năm)
+  tuitionFeeMax?: number; // Học phí tối đa
+  durationYears?: number; // Số năm đào tạo
+  totalQuota?: number; // Tổng chỉ tiêu
+  dataYear?: number; // Năm dữ liệu
+  dataSource?: string; // Nguồn dữ liệu
   admissionRules?: AdmissionRuleImportDto[];
 }
 
 export interface AdmissionRuleImportDto {
-  methodCode: string;              // THPT | HOCBA | DGNL_HCM | COMBINED
-  subjectCombination?: string;     // A00 | A01 | B00 | D01 | ...
+  methodCode: string; // THPT | HOCBA | DGNL_HCM | COMBINED
+  subjectCombination?: string; // A00 | A01 | B00 | D01 | ...
   combinationDescription?: string; // Toán, Vật Lý, Hóa Học
-  formulaExpression?: string;      // Math*2 + Physics + Chemistry
+  formulaExpression?: string; // Math*2 + Physics + Chemistry
   subjectWeights?: Record<string, number>; // {Math: 2, Physics: 1}
-  minScoreThreshold?: number;      // Điểm sàn
-  quota?: number;                  // Chỉ tiêu
-  applyYear?: number;              // Năm áp dụng
+  minScoreThreshold?: number; // Điểm sàn
+  quota?: number; // Chỉ tiêu
+  applyYear?: number; // Năm áp dụng
   benchmarkScores?: BenchmarkScoreImportDto[];
 }
 
 export interface BenchmarkScoreImportDto {
-  year: number;           // Năm thi (2024, 2025)
+  year: number; // Năm thi (2024, 2025)
   benchmarkScore: number; // Điểm chuẩn
   totalAdmitted?: number; // Số trúng tuyển
 }
 
 export interface ImportPayload {
-  sourceName: string;     // Tên nguồn
-  sourceUrl?: string;     // URL nguồn
-  dataYear: number;       // Năm dữ liệu
+  sourceName: string; // Tên nguồn
+  sourceUrl?: string; // URL nguồn
+  dataYear: number; // Năm dữ liệu
   universities: UniversityImportDto[];
 }
 
@@ -193,15 +193,29 @@ export class ImportService {
         if (uniDto.programs?.length) {
           for (const progDto of uniDto.programs) {
             try {
-              const program = await this.upsertProgram(progDto, uni.id, defaultCampusId ?? undefined, payload.dataYear, payload.sourceUrl ?? '', result);
+              const program = await this.upsertProgram(
+                progDto,
+                uni.id,
+                defaultCampusId ?? undefined,
+                payload.dataYear,
+                payload.sourceUrl ?? '',
+                result,
+              );
 
               // Upsert admission rules and benchmark scores
               if (progDto.admissionRules?.length) {
                 for (const ruleDto of progDto.admissionRules) {
                   try {
-                    await this.upsertAdmissionRule(ruleDto, program.id, payload.dataYear, result);
+                    await this.upsertAdmissionRule(
+                      ruleDto,
+                      program.id,
+                      payload.dataYear,
+                      result,
+                    );
                   } catch (e) {
-                    result.errors.push(`Rule error for ${progDto.name}: ${e.message}`);
+                    result.errors.push(
+                      `Rule error for ${progDto.name}: ${e.message}`,
+                    );
                   }
                 }
               }
@@ -221,14 +235,23 @@ export class ImportService {
         sourceName: payload.sourceName,
         sourceUrl: payload.sourceUrl ?? undefined,
         dataYear: payload.dataYear,
-        universitiesCount: result.universitiesAdded + result.universitiesUpdated,
+        universitiesCount:
+          result.universitiesAdded + result.universitiesUpdated,
         programsCount: result.programsAdded + result.programsUpdated,
         scoresCount: result.scoresAdded,
         duplicatesSkipped: result.duplicatesSkipped,
-        status: result.errors.length === 0 ? 'SUCCESS' : (result.programsAdded > 0 ? 'PARTIAL' : 'FAILED'),
-        notes: result.errors.length > 0 ? result.errors.slice(0, 5).join('\n') : undefined,
+        status:
+          result.errors.length === 0
+            ? 'SUCCESS'
+            : result.programsAdded > 0
+              ? 'PARTIAL'
+              : 'FAILED',
+        notes:
+          result.errors.length > 0
+            ? result.errors.slice(0, 5).join('\n')
+            : undefined,
       });
-      const saved = await this.importRepo.save(importLog) as any;
+      const saved = (await this.importRepo.save(importLog)) as any;
       result.importId = saved.id;
     } catch (e) {
       this.logger.error('Failed to save import log', e);
@@ -237,7 +260,10 @@ export class ImportService {
     return result;
   }
 
-  private async upsertUniversity(dto: UniversityImportDto, result: ImportResult): Promise<University> {
+  private async upsertUniversity(
+    dto: UniversityImportDto,
+    result: ImportResult,
+  ): Promise<University> {
     let uni = await this.universityRepo.findOne({ where: { code: dto.code } });
     if (uni) {
       // Update existing
@@ -268,8 +294,13 @@ export class ImportService {
     return uni;
   }
 
-  private async upsertCampus(dto: CampusImportDto, universityId: string): Promise<Campus> {
-    let campus = await this.campusRepo.findOne({ where: { universityId, city: dto.city } });
+  private async upsertCampus(
+    dto: CampusImportDto,
+    universityId: string,
+  ): Promise<Campus> {
+    let campus = await this.campusRepo.findOne({
+      where: { universityId, city: dto.city },
+    });
     if (!campus) {
       campus = this.campusRepo.create({
         universityId,
@@ -292,7 +323,7 @@ export class ImportService {
     defaultCampusId: string | undefined,
     dataYear: number,
     dataSource: string,
-    result: ImportResult
+    result: ImportResult,
   ): Promise<Program> {
     const trainingType = dto.trainingType || 'DAI_TRA';
     const year = dto.dataYear || dataYear;
@@ -302,7 +333,12 @@ export class ImportService {
 
     // Dedup key: universityId + majorCode + trainingType + dataYear
     let program = await this.programRepo.findOne({
-      where: { universityId, majorCode: dto.majorCode, trainingType, dataYear: year }
+      where: {
+        universityId,
+        majorCode: dto.majorCode,
+        trainingType,
+        dataYear: year,
+      },
     });
 
     if (program) {
@@ -351,18 +387,23 @@ export class ImportService {
     dto: AdmissionRuleImportDto,
     programId: string,
     dataYear: number,
-    result: ImportResult
+    result: ImportResult,
   ): Promise<void> {
-    const method = await this.methodRepo.findOne({ where: { code: dto.methodCode } });
+    const method = await this.methodRepo.findOne({
+      where: { code: dto.methodCode },
+    });
     if (!method) {
       result.warnings.push(`Unknown admission method: ${dto.methodCode}`);
       return;
     }
 
     const applyYear = dto.applyYear || dataYear;
-    const combDesc = dto.combinationDescription || 
-                     (dto.subjectCombination ? SUBJECT_COMBINATION_MAP[dto.subjectCombination] : null) || 
-                     null;
+    const combDesc =
+      dto.combinationDescription ||
+      (dto.subjectCombination
+        ? SUBJECT_COMBINATION_MAP[dto.subjectCombination]
+        : null) ||
+      null;
 
     // Dedup key: programId + admissionMethodId + subjectCombination + applyYear
     let rule = await this.ruleRepo.findOne({
@@ -371,7 +412,7 @@ export class ImportService {
         admissionMethodId: method.id,
         subjectCombination: dto.subjectCombination ?? undefined,
         applyYear,
-      }
+      },
     });
 
     if (!rule) {
@@ -380,8 +421,12 @@ export class ImportService {
         admissionMethodId: method.id,
         subjectCombination: dto.subjectCombination ?? undefined,
         combinationDescription: combDesc ?? undefined,
-        formulaExpression: dto.formulaExpression || this.getDefaultFormula(dto.methodCode, dto.subjectCombination ?? ''),
-        subjectWeights: dto.subjectWeights ? JSON.stringify(dto.subjectWeights) : undefined,
+        formulaExpression:
+          dto.formulaExpression ||
+          this.getDefaultFormula(dto.methodCode, dto.subjectCombination ?? ''),
+        subjectWeights: dto.subjectWeights
+          ? JSON.stringify(dto.subjectWeights)
+          : undefined,
         minScoreThreshold: dto.minScoreThreshold || 0,
         quota: dto.quota || 0,
         applyYear,
@@ -398,7 +443,7 @@ export class ImportService {
     if (dto.benchmarkScores?.length) {
       for (const scoreDto of dto.benchmarkScores) {
         let score = await this.scoreRepo.findOne({
-          where: { admissionRuleId: rule.id, year: scoreDto.year }
+          where: { admissionRuleId: rule.id, year: scoreDto.year },
         });
         if (!score) {
           score = this.scoreRepo.create({
@@ -419,7 +464,10 @@ export class ImportService {
     }
   }
 
-  private async ensureMajor(majorCode: string, programName: string): Promise<Major | null> {
+  private async ensureMajor(
+    majorCode: string,
+    programName: string,
+  ): Promise<Major | null> {
     if (!majorCode) return null;
     let major = await this.majorRepo.findOne({ where: { code: majorCode } });
     if (!major) {
@@ -435,13 +483,42 @@ export class ImportService {
 
   private async ensureAdmissionMethods(): Promise<void> {
     const methods = [
-      { code: 'THPT', name: 'Xét điểm thi tốt nghiệp THPT', description: 'Xét tuyển dựa trên kết quả kỳ thi tốt nghiệp THPT quốc gia' },
-      { code: 'HOCBA', name: 'Xét học bạ THPT', description: 'Xét tuyển dựa trên kết quả học tập ở bậc THPT' },
-      { code: 'DGNL_HCM', name: 'Xét điểm ĐGNL ĐHQG-HCM', description: 'Xét tuyển dựa trên kỳ thi Đánh giá năng lực ĐHQG TP.HCM' },
-      { code: 'DGNL_HN', name: 'Xét điểm ĐGNL ĐHQG Hà Nội', description: 'Xét tuyển dựa trên kỳ thi Đánh giá năng lực ĐHQG Hà Nội' },
-      { code: 'COMBINED', name: 'Xét tuyển kết hợp (IELTS/SAT)', description: 'Xét tuyển kết hợp chứng chỉ quốc tế' },
-      { code: 'XDTN', name: 'Xét điểm thi năng khiếu', description: 'Xét tuyển dựa trên điểm thi năng khiếu/nghệ thuật' },
-      { code: 'TUYEN_THANG', name: 'Tuyển thẳng', description: 'Tuyển thẳng thí sinh đạt giải/xuất sắc' },
+      {
+        code: 'THPT',
+        name: 'Xét điểm thi tốt nghiệp THPT',
+        description:
+          'Xét tuyển dựa trên kết quả kỳ thi tốt nghiệp THPT quốc gia',
+      },
+      {
+        code: 'HOCBA',
+        name: 'Xét học bạ THPT',
+        description: 'Xét tuyển dựa trên kết quả học tập ở bậc THPT',
+      },
+      {
+        code: 'DGNL_HCM',
+        name: 'Xét điểm ĐGNL ĐHQG-HCM',
+        description: 'Xét tuyển dựa trên kỳ thi Đánh giá năng lực ĐHQG TP.HCM',
+      },
+      {
+        code: 'DGNL_HN',
+        name: 'Xét điểm ĐGNL ĐHQG Hà Nội',
+        description: 'Xét tuyển dựa trên kỳ thi Đánh giá năng lực ĐHQG Hà Nội',
+      },
+      {
+        code: 'COMBINED',
+        name: 'Xét tuyển kết hợp (IELTS/SAT)',
+        description: 'Xét tuyển kết hợp chứng chỉ quốc tế',
+      },
+      {
+        code: 'XDTN',
+        name: 'Xét điểm thi năng khiếu',
+        description: 'Xét tuyển dựa trên điểm thi năng khiếu/nghệ thuật',
+      },
+      {
+        code: 'TUYEN_THANG',
+        name: 'Tuyển thẳng',
+        description: 'Tuyển thẳng thí sinh đạt giải/xuất sắc',
+      },
     ];
 
     for (const m of methods) {
@@ -452,8 +529,12 @@ export class ImportService {
     }
   }
 
-  private getDefaultFormula(methodCode: string, subjectCombination: string): string {
-    if (methodCode === 'DGNL_HCM' || methodCode === 'DGNL_HN') return 'DGNL + PriorityBonus';
+  private getDefaultFormula(
+    methodCode: string,
+    subjectCombination: string,
+  ): string {
+    if (methodCode === 'DGNL_HCM' || methodCode === 'DGNL_HN')
+      return 'DGNL + PriorityBonus';
     if (methodCode === 'HOCBA') return 'Grade10 + Grade11 + Grade12';
     if (methodCode === 'COMBINED') return 'Certificate + PriorityBonus';
 
@@ -465,7 +546,10 @@ export class ImportService {
       D01: 'Literature + Math + English + PriorityBonus',
       D07: 'Math + Chemistry + English + PriorityBonus',
     };
-    return comboMap[subjectCombination] || 'Math + Physics + Chemistry + PriorityBonus';
+    return (
+      comboMap[subjectCombination] ||
+      'Math + Physics + Chemistry + PriorityBonus'
+    );
   }
 
   private inferMajorName(code: string, programName: string): string {
@@ -495,10 +579,17 @@ export class ImportService {
     return sectorMap[code] || 'Khác';
   }
 
-  private async updateUniversityAvgTuition(universityId: string): Promise<void> {
-    const programs = await this.programRepo.find({ where: { universityId, isActive: true } });
+  private async updateUniversityAvgTuition(
+    universityId: string,
+  ): Promise<void> {
+    const programs = await this.programRepo.find({
+      where: { universityId, isActive: true },
+    });
     if (programs.length === 0) return;
-    const totalFee = programs.reduce((sum, p) => sum + (Number(p.tuitionFee) || 0), 0);
+    const totalFee = programs.reduce(
+      (sum, p) => sum + (Number(p.tuitionFee) || 0),
+      0,
+    );
     const avgFee = totalFee / programs.length;
     await this.universityRepo.update(universityId, { averageTuition: avgFee });
   }
@@ -510,7 +601,7 @@ export class ImportService {
   private resolveDataDir(): string {
     const fs = require('fs');
     const path = require('path');
-    
+
     // Attempt 1: Process.cwd() is project root
     let dir = path.join(process.cwd(), 'data', 'imports');
     if (fs.existsSync(dir)) return dir;
@@ -533,13 +624,15 @@ export class ImportService {
     if (!fs.existsSync(dataDir)) {
       return [];
     }
-    const files = fs.readdirSync(dataDir).filter((f: string) => f.endsWith('.json'));
+    const files = fs
+      .readdirSync(dataDir)
+      .filter((f: string) => f.endsWith('.json'));
     const presets = [];
     for (const file of files) {
       try {
         const filePath = path.join(dataDir, file);
         const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        
+
         // Count universities, programs, scores
         const uniCount = content.universities?.length || 0;
         let progCount = 0;

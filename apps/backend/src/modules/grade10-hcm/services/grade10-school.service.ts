@@ -19,24 +19,35 @@ export class Grade10SchoolService {
     @InjectRepository(Grade10Quota)
     private readonly quotaRepo: Repository<Grade10Quota>,
     @InjectRepository(Grade10Cutoff)
-    private readonly cutoffRepo: Repository<Grade10Cutoff>
+    private readonly cutoffRepo: Repository<Grade10Cutoff>,
   ) {}
 
-  async findAll(filters: { search?: string; districtId?: string; page?: number; limit?: number }) {
+  async findAll(filters: {
+    search?: string;
+    districtId?: string;
+    page?: number;
+    limit?: number;
+  }) {
     const page = filters.page || 1;
     const limit = filters.limit || 50;
     const skip = (page - 1) * limit;
 
-    const query = this.schoolRepo.createQueryBuilder('school')
+    const query = this.schoolRepo
+      .createQueryBuilder('school')
       .leftJoinAndSelect('school.district', 'district')
       .where('school.isActive = :isActive', { isActive: true });
 
     if (filters.search) {
-      query.andWhere('(school.name ILIKE :search OR school.code ILIKE :search)', { search: `%${filters.search}%` });
+      query.andWhere(
+        '(school.name ILIKE :search OR school.code ILIKE :search)',
+        { search: `%${filters.search}%` },
+      );
     }
 
     if (filters.districtId) {
-      query.andWhere('school.districtId = :districtId', { districtId: filters.districtId });
+      query.andWhere('school.districtId = :districtId', {
+        districtId: filters.districtId,
+      });
     }
 
     const [items, total] = await query
@@ -46,18 +57,21 @@ export class Grade10SchoolService {
       .getManyAndCount();
 
     // Map default average score for NV1 based on latest NV1 cutoff
-    const schoolIds = items.map(i => i.id);
+    const schoolIds = items.map((i) => i.id);
     let latestCutoffs: Grade10Cutoff[] = [];
     if (schoolIds.length > 0) {
-      latestCutoffs = await this.cutoffRepo.createQueryBuilder('cutoff')
+      latestCutoffs = await this.cutoffRepo
+        .createQueryBuilder('cutoff')
         .where('cutoff.schoolId IN (:...schoolIds)', { schoolIds })
         .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
         .orderBy('cutoff.year', 'DESC')
         .getMany();
     }
 
-    const itemsWithScores = items.map(school => {
-      const schoolCutoffs = latestCutoffs.filter(c => c.schoolId === school.id);
+    const itemsWithScores = items.map((school) => {
+      const schoolCutoffs = latestCutoffs.filter(
+        (c) => c.schoolId === school.id,
+      );
       const latestCutoff = schoolCutoffs[0] || null;
       return {
         ...school,
@@ -113,17 +127,22 @@ export class Grade10SchoolService {
       where: { schoolId: school.id },
       order: { year: 'DESC' },
     });
+    const quotas = await this.quotaRepo.find({
+      where: { schoolId: school.id },
+      order: { year: 'DESC' },
+    });
     return {
       ...school,
-      cutoffScores: cutoffs.map(c => ({
+      cutoffScores: cutoffs.map((c) => ({
         ...c,
         cutoffNV1: Number(c.cutoffNV1),
         cutoffNV2: c.cutoffNV2 != null ? Number(c.cutoffNV2) : null,
         cutoffNV3: c.cutoffNV3 != null ? Number(c.cutoffNV3) : null,
       })),
+      quotaHistory: quotas,
+      quotas: quotas,
     };
   }
-
 
   async createSchool(dto: CreateSchoolDto) {
     const school = this.schoolRepo.create(dto);
@@ -156,13 +175,15 @@ export class Grade10SchoolService {
 
   async getAnalytics() {
     // 1. Top 10 schools by latest NV1 Cutoff
-    const latestYearObj = await this.cutoffRepo.createQueryBuilder('cutoff')
+    const latestYearObj = await this.cutoffRepo
+      .createQueryBuilder('cutoff')
       .select('MAX(cutoff.year)', 'maxYear')
       .getRawOne();
-    
+
     const latestYear = latestYearObj?.maxYear || 2025;
 
-    const topSchoolsRaw = await this.cutoffRepo.createQueryBuilder('cutoff')
+    const topSchoolsRaw = await this.cutoffRepo
+      .createQueryBuilder('cutoff')
       .leftJoinAndSelect('cutoff.school', 'school')
       .leftJoinAndSelect('school.district', 'district')
       .where('cutoff.year = :year', { year: latestYear })
@@ -171,7 +192,7 @@ export class Grade10SchoolService {
       .limit(10)
       .getMany();
 
-    const topSchools = topSchoolsRaw.map(c => ({
+    const topSchools = topSchoolsRaw.map((c) => ({
       schoolId: c.school.id,
       schoolName: c.school.name,
       schoolCode: c.school.code,
@@ -181,7 +202,8 @@ export class Grade10SchoolService {
     }));
 
     // 2. Average NV1 Cutoff score by district
-    const districtStats = await this.cutoffRepo.createQueryBuilder('cutoff')
+    const districtStats = await this.cutoffRepo
+      .createQueryBuilder('cutoff')
       .leftJoin('cutoff.school', 'school')
       .leftJoin('school.district', 'district')
       .select('district.name', 'districtName')
@@ -193,14 +215,15 @@ export class Grade10SchoolService {
       .orderBy('avgCutoff', 'DESC')
       .getRawMany();
 
-    const districtAverages = districtStats.map(d => ({
+    const districtAverages = districtStats.map((d) => ({
       districtName: d.districtName || 'N/A',
       avgCutoff: Number(Number(d.avgCutoff).toFixed(2)),
       schoolCount: parseInt(d.schoolCount),
     }));
 
     // 3. Quota and Registration trend over years
-    const overallTrends = await this.quotaRepo.createQueryBuilder('quota')
+    const overallTrends = await this.quotaRepo
+      .createQueryBuilder('quota')
       .select('quota.year', 'year')
       .addSelect('SUM(quota.quota)', 'totalQuota')
       .addSelect('SUM(quota.registeredCount)', 'totalRegistered')
@@ -209,11 +232,14 @@ export class Grade10SchoolService {
       .orderBy('quota.year', 'ASC')
       .getRawMany();
 
-    const trends = overallTrends.map(t => ({
+    const trends = overallTrends.map((t) => ({
       year: parseInt(t.year),
       totalQuota: parseInt(t.totalQuota || 0),
       totalRegistered: parseInt(t.totalRegistered || 0),
-      avgCompetitionRatio: t.totalQuota > 0 ? Number((t.totalRegistered / t.totalQuota).toFixed(2)) : 0,
+      avgCompetitionRatio:
+        t.totalQuota > 0
+          ? Number((t.totalRegistered / t.totalQuota).toFixed(2))
+          : 0,
     }));
 
     return {
@@ -228,8 +254,13 @@ export class Grade10SchoolService {
    * Returns all school names for autocomplete suggestions
    * Optionally filtered by a query string
    */
-  async getSchoolNames(query?: string): Promise<{ id: string; name: string; code: string; districtName?: string }[]> {
-    const qb = this.schoolRepo.createQueryBuilder('school')
+  async getSchoolNames(
+    query?: string,
+  ): Promise<
+    { id: string; name: string; code: string; districtName?: string }[]
+  > {
+    const qb = this.schoolRepo
+      .createQueryBuilder('school')
       .leftJoinAndSelect('school.district', 'district')
       .where('school.isActive = :isActive', { isActive: true })
       .orderBy('school.name', 'ASC')
@@ -240,22 +271,28 @@ export class Grade10SchoolService {
     }
 
     const schools = await qb.getMany();
-    return schools.map(s => ({
+    return schools.map((s) => ({
       id: s.id,
       name: s.name,
       code: s.code,
       districtName: s.district?.name,
-      districtCode: s.district?.code
+      districtCode: s.district?.code,
     }));
   }
-
 
   /**
    * Bulk seeds all THPT schools from g10hcm_all_schools.json
    * Only creates districts and schools that don't exist yet (safe upsert)
    */
   async seedAllSchools(): Promise<{ created: number; skipped: number }> {
-    const dataPath = path.join(process.cwd(), '..', '..', 'data', 'imports', 'g10hcm_all_schools.json');
+    const dataPath = path.join(
+      process.cwd(),
+      '..',
+      '..',
+      'data',
+      'imports',
+      'g10hcm_all_schools.json',
+    );
     let rawData: any;
     try {
       rawData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
@@ -268,15 +305,22 @@ export class Grade10SchoolService {
 
     for (const districtData of rawData.districts) {
       // Upsert district
-      let district = await this.districtRepo.findOne({ where: { code: districtData.code } });
+      let district = await this.districtRepo.findOne({
+        where: { code: districtData.code },
+      });
       if (!district) {
-        district = this.districtRepo.create({ name: districtData.name, code: districtData.code });
+        district = this.districtRepo.create({
+          name: districtData.name,
+          code: districtData.code,
+        });
         district = await this.districtRepo.save(district);
       }
 
       // Upsert each school
       for (const schoolData of districtData.schools) {
-        const existing = await this.schoolRepo.findOne({ where: { code: schoolData.code } });
+        const existing = await this.schoolRepo.findOne({
+          where: { code: schoolData.code },
+        });
         if (existing) {
           // Update district link if missing
           if (!existing.districtId) {
@@ -290,7 +334,7 @@ export class Grade10SchoolService {
             code: schoolData.code,
             districtId: district.id,
             schoolType: schoolData.type || 'REGULAR',
-            isActive: true
+            isActive: true,
           });
           await this.schoolRepo.save(school);
           created++;

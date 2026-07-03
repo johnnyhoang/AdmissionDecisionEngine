@@ -1,6 +1,21 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { IsString, IsOptional, IsEnum, IsNotEmpty, IsArray } from 'class-validator';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsNotEmpty,
+  IsArray,
+} from 'class-validator';
 import { AiAssistantService } from './ai-assistant.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AdminRoleGuard } from '../auth/admin-role.guard';
 
 export class ChatMessageDto {
   @IsString()
@@ -9,10 +24,6 @@ export class ChatMessageDto {
 }
 
 export class SearchCutoffsDto {
-  @IsString()
-  @IsOptional()
-  password?: string;
-
   @IsEnum(['GRADE10', 'UNIVERSITY'])
   @IsNotEmpty()
   type: 'GRADE10' | 'UNIVERSITY';
@@ -38,12 +49,7 @@ export class SearchCutoffsDto {
   districtCode?: string;
 }
 
-
 export class ImportCutoffsDto {
-  @IsString()
-  @IsOptional()
-  password?: string;
-
   @IsEnum(['GRADE10', 'UNIVERSITY'])
   @IsNotEmpty()
   type: 'GRADE10' | 'UNIVERSITY';
@@ -71,18 +77,21 @@ export class AiAssistantController {
 
   @Post('chat')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   async chat(@Body() dto: ChatMessageDto) {
     return this.aiAssistantService.chat(dto.message);
   }
 
   @Post('search-cutoffs')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, AdminRoleGuard)
   async searchCutoffs(@Body() dto: SearchCutoffsDto) {
     return this.aiAssistantService.searchCutoffs(dto);
   }
 
   @Post('import-cutoffs')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, AdminRoleGuard)
   async importCutoffs(@Body() dto: ImportCutoffsDto) {
     return this.aiAssistantService.importCutoffs(dto);
   }

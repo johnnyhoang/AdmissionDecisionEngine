@@ -13,8 +13,10 @@ import {
 } from '../../services/api';
 import type { G10SchoolItem, G10RecommendationItem } from '../../services/api';
 import AiSearchModal from '../../components/AiSearchModal';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Grade10Container() {
+  const { user, hasPermission } = useAuth();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'calculator' | 'search' | 'analytics' | 'compare'>('dashboard');
   
   // States
@@ -119,7 +121,12 @@ export default function Grade10Container() {
     setSelectedSchoolId(id);
     try {
       const data = await fetchG10SchoolDetail(id);
-      setSchoolDetail(data);
+      // Backend returns cutoffScores / quotaHistory — normalize to cutoffs / quotas
+      setSchoolDetail({
+        ...data,
+        cutoffs: data.cutoffScores ?? data.cutoffs ?? [],
+        quotas:  data.quotaHistory  ?? data.quotas  ?? [],
+      });
     } catch (e: any) {
       console.error(e);
     }
@@ -154,17 +161,19 @@ export default function Grade10Container() {
             Tổng quan tuyển sinh
           </button>
           
-          <button
-            onClick={() => setActiveTab('calculator')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'calculator'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <CalcIcon className="h-4 w-4" />
-            Đánh giá NV lớp 10
-          </button>
+          {hasPermission('GRADE10', 'view_recommendation', 'view') && (
+            <button
+              onClick={() => setActiveTab('calculator')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                activeTab === 'calculator'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <CalcIcon className="h-4 w-4" />
+              Đánh giá NV lớp 10
+            </button>
+          )}
           
           <button
             onClick={() => setActiveTab('search')}
@@ -512,16 +521,18 @@ export default function Grade10Container() {
               </div>
 
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    setAiPrefillSchool(undefined);
-                    setIsAiModalOpen(true);
-                  }}
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Tìm dữ liệu trường (AI)
-                </button>
+                {user?.role === 'ADMIN' && (
+                  <button
+                    onClick={() => {
+                      setAiPrefillSchool(undefined);
+                      setIsAiModalOpen(true);
+                    }}
+                    className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20 cursor-pointer"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Tìm dữ liệu trường (AI)
+                  </button>
+                )}
 
 
                 <select
@@ -583,22 +594,24 @@ export default function Grade10Container() {
                         <span className="text-slate-400">Quận/Huyện:</span>
                         <span className="font-semibold text-slate-200">{school.district?.name || 'N/A'}</span>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setAiPrefillSchool({
-                            name: school.name,
-                            code: school.code,
-                            districtName: school.district?.name,
-                            districtCode: school.district?.code
-                          });
-                          setIsAiModalOpen(true);
-                        }}
-                        className="mt-1.5 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/25 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 text-[10px] font-bold transition"
-                      >
-                        <Sparkles className="h-3 w-3" />
-                        Tìm dữ liệu với AI
-                      </button>
+                      {user?.role === 'ADMIN' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAiPrefillSchool({
+                              name: school.name,
+                              code: school.code,
+                              districtName: school.district?.name,
+                              districtCode: school.district?.code
+                            });
+                            setIsAiModalOpen(true);
+                          }}
+                          className="mt-1.5 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/25 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 text-[10px] font-bold transition cursor-pointer"
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          Tìm dữ liệu với AI
+                        </button>
+                      )}
 
                     </div>
                   </div>

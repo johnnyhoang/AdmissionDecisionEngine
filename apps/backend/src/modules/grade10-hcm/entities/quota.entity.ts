@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  Unique,
+} from 'typeorm';
 import { Grade10School } from './school.entity';
 
 @Entity('G10HCM_QUOTA')
@@ -10,7 +18,9 @@ export class Grade10Quota {
   @Column({ name: 'school_id' })
   schoolId: string;
 
-  @ManyToOne(() => Grade10School, (school) => school.quotas, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Grade10School, (school) => school.quotas, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'school_id' })
   school: Grade10School;
 
@@ -23,7 +33,14 @@ export class Grade10Quota {
   @Column({ name: 'registered_count', default: 0, nullable: true })
   registeredCount: number;
 
-  @Column({ name: 'competition_ratio', type: 'decimal', precision: 8, scale: 2, default: 0.0, nullable: true })
+  @Column({
+    name: 'competition_ratio',
+    type: 'decimal',
+    precision: 8,
+    scale: 2,
+    default: 0.0,
+    nullable: true,
+  })
   competitionRatio: number;
 
   @Column({ name: 'program_type', default: 'REGULAR' })

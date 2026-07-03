@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Program } from './program.entity';
 
 @Entity('ade_majors')
@@ -27,10 +34,22 @@ export class Major {
   @Column({ name: 'required_skills', type: 'text', nullable: true })
   requiredSkills: string;
 
-  @Column({ name: 'average_salary', type: 'decimal', precision: 12, scale: 2, nullable: true })
+  @Column({
+    name: 'average_salary',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    nullable: true,
+  })
   averageSalary: number;
 
-  @Column({ name: 'employment_rate', type: 'decimal', precision: 5, scale: 2, nullable: true })
+  @Column({
+    name: 'employment_rate',
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+  })
   employmentRate: number;
 
   @Column({ name: 'demand_trend', nullable: true })

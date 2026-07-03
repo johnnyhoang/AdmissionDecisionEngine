@@ -10,8 +10,13 @@ import { EvaluationHistory } from '../database/entities/evaluation-history.entit
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Program, AdmissionRule, University, EvaluationHistory]),
-    RuleEngineModule
+    TypeOrmModule.forFeature([
+      Program,
+      AdmissionRule,
+      University,
+      EvaluationHistory,
+    ]),
+    RuleEngineModule,
   ],
   controllers: [RecommendationController],
   providers: [RecommendationService],

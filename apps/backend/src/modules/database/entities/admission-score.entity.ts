@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { AdmissionRule } from './admission-rule.entity';
 
 @Entity('ade_admission_scores')
@@ -18,7 +26,9 @@ export class AdmissionScore {
   @Column({ name: 'total_admitted', type: 'int', default: 0 })
   totalAdmitted: number;
 
-  @ManyToOne(() => AdmissionRule, (rule) => rule.admissionScores, { onDelete: 'CASCADE' })
+  @ManyToOne(() => AdmissionRule, (rule) => rule.admissionScores, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'admission_rule_id' })
   admissionRule: AdmissionRule;
 

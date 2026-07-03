@@ -23,13 +23,17 @@ export class FormulaParserService {
 
     // 3. Ensure no malicious characters remain. Only allow numbers, math operators, and decimals.
     if (/[^0-9.+\-*\/()]/g.test(sanitized)) {
-      throw new BadRequestException(`Invalid formula expression or missing variables. Sanitized expression: ${sanitized}`);
+      throw new BadRequestException(
+        `Invalid formula expression or missing variables. Sanitized expression: ${sanitized}`,
+      );
     }
 
     try {
       return this.evaluateMathOnlyExpression(sanitized);
     } catch (err: any) {
-      throw new BadRequestException(`Failed to parse math expression: ${sanitized}. Error: ${err.message}`);
+      throw new BadRequestException(
+        `Failed to parse math expression: ${sanitized}. Error: ${err.message}`,
+      );
     }
   }
 
@@ -82,7 +86,8 @@ export class FormulaParserService {
         while (
           operatorStack.length > 0 &&
           operatorStack[operatorStack.length - 1] in precedence &&
-          precedence[operatorStack[operatorStack.length - 1]] >= precedence[token]
+          precedence[operatorStack[operatorStack.length - 1]] >=
+            precedence[token]
         ) {
           outputQueue.push(operatorStack.pop()!);
         }
@@ -90,7 +95,10 @@ export class FormulaParserService {
       } else if (token === '(') {
         operatorStack.push(token);
       } else if (token === ')') {
-        while (operatorStack.length > 0 && operatorStack[operatorStack.length - 1] !== '(') {
+        while (
+          operatorStack.length > 0 &&
+          operatorStack[operatorStack.length - 1] !== '('
+        ) {
           outputQueue.push(operatorStack.pop()!);
         }
         if (operatorStack.length === 0) {

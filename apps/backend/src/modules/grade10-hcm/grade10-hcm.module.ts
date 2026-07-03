@@ -31,11 +31,7 @@ import { Grade10AdminController } from './controllers/grade10-admin.controller';
     Grade10CalcController,
     Grade10AdminController,
   ],
-  providers: [
-    Grade10SchoolService,
-    Grade10CalcService,
-    Grade10ImportService,
-  ],
+  providers: [Grade10SchoolService, Grade10CalcService, Grade10ImportService],
   exports: [
     Grade10SchoolService,
     Grade10CalcService,
@@ -44,4 +40,3 @@ import { Grade10AdminController } from './controllers/grade10-admin.controller';
   ],
 })
 export class Grade10HcmModule {}
-

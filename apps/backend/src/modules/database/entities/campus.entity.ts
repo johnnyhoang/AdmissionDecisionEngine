@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { University } from './university.entity';
 import { Program } from './program.entity';
 
@@ -19,7 +28,9 @@ export class Campus {
   @Column()
   city: string;
 
-  @ManyToOne(() => University, (university) => university.campuses, { onDelete: 'CASCADE' })
+  @ManyToOne(() => University, (university) => university.campuses, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'university_id' })
   university: University;
 

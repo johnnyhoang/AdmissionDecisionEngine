@@ -21,18 +21,36 @@ export class RuleEngineService {
   evaluate(profile: CandidateProfile, rule: AdmissionRule): EvaluationResult {
     // 1. Parse Candidate Profile JSON data
     const examScores = profile.examScores ? JSON.parse(profile.examScores) : {};
-    const highSchoolGrades = profile.highSchoolGrades ? JSON.parse(profile.highSchoolGrades) : {};
-    const certificates = profile.certificates ? JSON.parse(profile.certificates) : {};
+    const highSchoolGrades = profile.highSchoolGrades
+      ? JSON.parse(profile.highSchoolGrades)
+      : {};
+    const certificates = profile.certificates
+      ? JSON.parse(profile.certificates)
+      : {};
 
     // 2. Parse Rule Configs JSON data
-    const subjectWeights = rule.subjectWeights ? JSON.parse(rule.subjectWeights) : {};
-    const priorityRules = rule.priorityRules ? JSON.parse(rule.priorityRules) : {};
+    const subjectWeights = rule.subjectWeights
+      ? JSON.parse(rule.subjectWeights)
+      : {};
+    const priorityRules = rule.priorityRules
+      ? JSON.parse(rule.priorityRules)
+      : {};
 
     // 3. Build context for formula parser
     const context: Record<string, number> = {};
 
     // Initialize core subjects to 0 (default fallback)
-    const allSubjects = ['Math', 'Physics', 'Chemistry', 'Biology', 'Literature', 'History', 'Geography', 'English', 'Civics'];
+    const allSubjects = [
+      'Math',
+      'Physics',
+      'Chemistry',
+      'Biology',
+      'Literature',
+      'History',
+      'Geography',
+      'English',
+      'Civics',
+    ];
     for (const sub of allSubjects) {
       context[sub] = 0;
     }
@@ -53,7 +71,11 @@ export class RuleEngineService {
       }
     } else if (methodCode.startsWith('DGNL')) {
       // HCM uses 1200 scale, HN uses 150 scale
-      context['DGNL'] = Number(examScores[methodCode]) || Number(examScores.DGNL_HCM) || Number(examScores.DGNL_HN) || 0;
+      context['DGNL'] =
+        Number(examScores[methodCode]) ||
+        Number(examScores.DGNL_HCM) ||
+        Number(examScores.DGNL_HN) ||
+        0;
     } else if (methodCode === 'VSAT') {
       context['VSAT'] = Number(examScores.VSAT) || 0;
     }
@@ -70,10 +92,10 @@ export class RuleEngineService {
     if (profile.region) {
       // Standard regional bonus in Vietnam (e.g., KV1: 0.75, KV2-NT: 0.5, KV2: 0.25, KV3: 0.0)
       const regionPoints: Record<string, number> = {
-        'KV1': 0.75,
+        KV1: 0.75,
         'KV2-NT': 0.5,
-        'KV2': 0.25,
-        'KV3': 0.0
+        KV2: 0.25,
+        KV3: 0.0,
       };
       regionBonus = regionPoints[profile.region] ?? 0;
     }
@@ -82,8 +104,8 @@ export class RuleEngineService {
     if (profile.priorityGroup) {
       // Standard policy groups (UT1: 2.0, UT2: 1.0)
       const policyPoints: Record<string, number> = {
-        'UT1': 2.0,
-        'UT2': 1.0
+        UT1: 2.0,
+        UT2: 1.0,
       };
       policyBonus = policyPoints[profile.priorityGroup] ?? 0;
     }
@@ -94,10 +116,14 @@ export class RuleEngineService {
       const ieltsVal = Number(certificates.IELTS);
       // Map IELTS levels to bonus points based on university rule settings
       // Example rule: {"IELTS_6.0": 0.5, "IELTS_6.5": 1.0, "IELTS_7.0": 1.5, "IELTS_7.5_UP": 2.0}
-      if (ieltsVal >= 7.5 && priorityRules['IELTS_7.5_UP']) certificateBonus = Number(priorityRules['IELTS_7.5_UP']);
-      else if (ieltsVal >= 7.0 && priorityRules['IELTS_7.0']) certificateBonus = Number(priorityRules['IELTS_7.0']);
-      else if (ieltsVal >= 6.5 && priorityRules['IELTS_6.5']) certificateBonus = Number(priorityRules['IELTS_6.5']);
-      else if (ieltsVal >= 6.0 && priorityRules['IELTS_6.0']) certificateBonus = Number(priorityRules['IELTS_6.0']);
+      if (ieltsVal >= 7.5 && priorityRules['IELTS_7.5_UP'])
+        certificateBonus = Number(priorityRules['IELTS_7.5_UP']);
+      else if (ieltsVal >= 7.0 && priorityRules['IELTS_7.0'])
+        certificateBonus = Number(priorityRules['IELTS_7.0']);
+      else if (ieltsVal >= 6.5 && priorityRules['IELTS_6.5'])
+        certificateBonus = Number(priorityRules['IELTS_6.5']);
+      else if (ieltsVal >= 6.0 && priorityRules['IELTS_6.0'])
+        certificateBonus = Number(priorityRules['IELTS_6.0']);
     }
 
     // Combined Priority Bonus
@@ -121,8 +147,8 @@ export class RuleEngineService {
         priorityBonus: totalPriorityBonus,
         regionBonus,
         policyBonus,
-        certificateBonus
-      }
+        certificateBonus,
+      },
     };
   }
 }

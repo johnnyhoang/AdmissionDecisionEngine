@@ -39,14 +39,18 @@ export class RecommendationService {
   /**
    * Generates a list of recommended university programs and admission methods based on student profile.
    */
-  async getRecommendations(profile: CandidateProfile, filters?: {
-    tuitionMax?: number;
-    isPublic?: boolean;
-    city?: string;
-    majorSector?: string;
-  }): Promise<RecommendationItem[]> {
+  async getRecommendations(
+    profile: CandidateProfile,
+    filters?: {
+      tuitionMax?: number;
+      isPublic?: boolean;
+      city?: string;
+      majorSector?: string;
+    },
+  ): Promise<RecommendationItem[]> {
     // 1. Fetch programs with rules, university, campus, major details
-    const query = this.programRepository.createQueryBuilder('program')
+    const query = this.programRepository
+      .createQueryBuilder('program')
       .leftJoinAndSelect('program.university', 'university')
       .leftJoinAndSelect('program.campus', 'campus')
       .leftJoinAndSelect('program.major', 'major')
@@ -55,10 +59,14 @@ export class RecommendationService {
       .leftJoinAndSelect('rule.admissionScores', 'score');
 
     if (filters?.tuitionMax) {
-      query.andWhere('program.tuitionFee <= :tuitionMax', { tuitionMax: filters.tuitionMax });
+      query.andWhere('program.tuitionFee <= :tuitionMax', {
+        tuitionMax: filters.tuitionMax,
+      });
     }
     if (filters?.isPublic !== undefined) {
-      query.andWhere('university.isPublic = :isPublic', { isPublic: filters.isPublic });
+      query.andWhere('university.isPublic = :isPublic', {
+        isPublic: filters.isPublic,
+      });
     }
     if (filters?.city) {
       query.andWhere('campus.city = :city', { city: filters.city });
@@ -83,15 +91,18 @@ export class RecommendationService {
           const scores = rule.admissionScores || [];
           const sortedScores = [...scores].sort((a, b) => b.year - a.year);
           const lastYearScoreRecord = sortedScores[0];
-          const lastYearBenchmark = lastYearScoreRecord ? Number(lastYearScoreRecord.benchmarkScore) : 0;
+          const lastYearBenchmark = lastYearScoreRecord
+            ? Number(lastYearScoreRecord.benchmarkScore)
+            : 0;
 
           // Estimate probability based on score comparison
-          const { probability, category, explanation } = this.calculateProbability(
-            evalResult.candidateScore,
-            lastYearBenchmark,
-            rule.minScoreThreshold,
-            rule.admissionMethod?.code || ''
-          );
+          const { probability, category, explanation } =
+            this.calculateProbability(
+              evalResult.candidateScore,
+              lastYearBenchmark,
+              rule.minScoreThreshold,
+              rule.admissionMethod?.code || '',
+            );
 
           recommendations.push({
             programId: program.id,
@@ -109,7 +120,7 @@ export class RecommendationService {
             admissionProbability: probability,
             probabilityCategory: category,
             explanation,
-            breakdown: evalResult.breakdown
+            breakdown: evalResult.breakdown,
           });
         } catch (err) {
           // Keep processing other rules if one has parsing error (due to mismatched profile context)
@@ -121,7 +132,9 @@ export class RecommendationService {
     // Sort by: Probability (SAFE -> MATCH -> REACH), then Candidate Score descending
     const categoryOrder = { SAFE: 1, MATCH: 2, REACH: 3, LOW: 4 };
     return recommendations.sort((a, b) => {
-      const orderDiff = categoryOrder[a.probabilityCategory] - categoryOrder[b.probabilityCategory];
+      const orderDiff =
+        categoryOrder[a.probabilityCategory] -
+        categoryOrder[b.probabilityCategory];
       if (orderDiff !== 0) return orderDiff;
       return b.candidateScore - a.candidateScore;
     });
@@ -134,15 +147,18 @@ export class RecommendationService {
     candidateScore: number,
     lastYearBenchmark: number,
     minThreshold: number,
-    methodCode: string
-  ): { probability: number; category: 'SAFE' | 'MATCH' | 'REACH' | 'LOW'; explanation: string } {
-    
+    methodCode: string,
+  ): {
+    probability: number;
+    category: 'SAFE' | 'MATCH' | 'REACH' | 'LOW';
+    explanation: string;
+  } {
     // Default fallback if no benchmark score exists yet
     if (lastYearBenchmark === 0) {
       return {
         probability: 60,
         category: 'MATCH',
-        explanation: `Điểm của bạn (${candidateScore}) đạt điểm sàn tối thiểu (${minThreshold}). Chưa có dữ liệu điểm chuẩn năm trước.`
+        explanation: `Điểm của bạn (${candidateScore}) đạt điểm sàn tối thiểu (${minThreshold}). Chưa có dữ liệu điểm chuẩn năm trước.`,
       };
     }
 
@@ -151,7 +167,7 @@ export class RecommendationService {
     // Scale difference factors depending on the exam score scale (e.g. THPT is max 30, DGNL HCM is max 1200)
     let marginSafe = 1.5;
     let marginReach = -1.0;
-    
+
     if (methodCode.includes('DGNL') && lastYearBenchmark > 150) {
       // DGNL HCM (1200 scale)
       marginSafe = 50;
@@ -167,7 +183,7 @@ export class RecommendationService {
       return {
         probability: parseFloat(percent.toFixed(0)),
         category: 'SAFE',
-        explanation: `Khả năng trúng tuyển RẤT CAO. Điểm của bạn (${candidateScore}) vượt điểm chuẩn năm ngoái (${lastYearBenchmark}) là ${diff.toFixed(2)} điểm.`
+        explanation: `Khả năng trúng tuyển RẤT CAO. Điểm của bạn (${candidateScore}) vượt điểm chuẩn năm ngoái (${lastYearBenchmark}) là ${diff.toFixed(2)} điểm.`,
       };
     } else if (diff >= 0) {
       // Candidate score is equal or slightly higher than last year
@@ -176,7 +192,7 @@ export class RecommendationService {
       return {
         probability: parseFloat(percent.toFixed(0)),
         category: 'MATCH',
-        explanation: `Cơ hội trúng tuyển TỐT. Điểm của bạn (${candidateScore}) bằng hoặc cao hơn một chút so với điểm chuẩn năm ngoái (${lastYearBenchmark}).`
+        explanation: `Cơ hội trúng tuyển TỐT. Điểm của bạn (${candidateScore}) bằng hoặc cao hơn một chút so với điểm chuẩn năm ngoái (${lastYearBenchmark}).`,
       };
     } else if (diff >= marginReach) {
       // Candidate score is slightly lower than last year
@@ -185,7 +201,7 @@ export class RecommendationService {
       return {
         probability: parseFloat(percent.toFixed(0)),
         category: 'REACH',
-        explanation: `Có cơ hội nhưng CẦN CÂN NHẮC. Điểm của bạn (${candidateScore}) thấp hơn điểm chuẩn năm ngoái (${lastYearBenchmark}) một chút (${Math.abs(diff).toFixed(2)} điểm).`
+        explanation: `Có cơ hội nhưng CẦN CÂN NHẮC. Điểm của bạn (${candidateScore}) thấp hơn điểm chuẩn năm ngoái (${lastYearBenchmark}) một chút (${Math.abs(diff).toFixed(2)} điểm).`,
       };
     } else {
       // Lower than marginReach
@@ -193,14 +209,18 @@ export class RecommendationService {
       return {
         probability: parseFloat(percent.toFixed(0)),
         category: 'LOW',
-        explanation: `Khả năng trúng tuyển THẤP. Điểm của bạn (${candidateScore}) thấp hơn nhiều so với điểm chuẩn năm ngoái (${lastYearBenchmark}).`
+        explanation: `Khả năng trúng tuyển THẤP. Điểm của bạn (${candidateScore}) thấp hơn nhiều so với điểm chuẩn năm ngoái (${lastYearBenchmark}).`,
       };
     }
   }
 
   async optimizePreferences(
     profile: CandidateProfile,
-    preferences: Array<{ programId: string; methodCode: string; order: number }>
+    preferences: Array<{
+      programId: string;
+      methodCode: string;
+      order: number;
+    }>,
   ): Promise<{ optimizedList: any[]; warnings: string[] }> {
     const list: any[] = [];
     const warnings: string[] = [];
@@ -215,29 +235,36 @@ export class RecommendationService {
           major: true,
           admissionRules: {
             admissionMethod: true,
-            admissionScores: true
-          }
-        }
+            admissionScores: true,
+          },
+        },
       });
 
       if (!program) continue;
 
       // Find the rule corresponding to the selected methodCode
-      const rule = program.admissionRules.find(r => r.admissionMethod.code === pref.methodCode);
+      const rule = program.admissionRules.find(
+        (r) => r.admissionMethod.code === pref.methodCode,
+      );
       if (!rule) continue;
 
       try {
         const evalResult = this.ruleEngineService.evaluate(profile, rule);
-        const sortedScores = [...(rule.admissionScores || [])].sort((a, b) => b.year - a.year);
-        const lastYearScoreRecord = sortedScores[0];
-        const lastYearBenchmark = lastYearScoreRecord ? Number(lastYearScoreRecord.benchmarkScore) : 0;
-
-        const { probability, category, explanation } = this.calculateProbability(
-          evalResult.candidateScore,
-          lastYearBenchmark,
-          rule.minScoreThreshold,
-          rule.admissionMethod?.code || ''
+        const sortedScores = [...(rule.admissionScores || [])].sort(
+          (a, b) => b.year - a.year,
         );
+        const lastYearScoreRecord = sortedScores[0];
+        const lastYearBenchmark = lastYearScoreRecord
+          ? Number(lastYearScoreRecord.benchmarkScore)
+          : 0;
+
+        const { probability, category, explanation } =
+          this.calculateProbability(
+            evalResult.candidateScore,
+            lastYearBenchmark,
+            rule.minScoreThreshold,
+            rule.admissionMethod?.code || '',
+          );
 
         list.push({
           programId: program.id,
@@ -252,7 +279,7 @@ export class RecommendationService {
           probability,
           probabilityCategory: category,
           explanation,
-          currentOrder: pref.order
+          currentOrder: pref.order,
         });
       } catch (err) {
         list.push({
@@ -268,46 +295,58 @@ export class RecommendationService {
           probability: 0,
           probabilityCategory: 'LOW',
           explanation: 'Không thể tính toán điểm cho tổ hợp này.',
-          currentOrder: pref.order
+          currentOrder: pref.order,
         });
       }
     }
 
-    const sortedByCurrentOrder = [...list].sort((a, b) => a.currentOrder - b.currentOrder);
+    const sortedByCurrentOrder = [...list].sort(
+      (a, b) => a.currentOrder - b.currentOrder,
+    );
 
     // Rule analysis for warnings
     for (let i = 0; i < sortedByCurrentOrder.length - 1; i++) {
       const current = sortedByCurrentOrder[i];
       const next = sortedByCurrentOrder[i + 1];
 
-      if (current.probabilityCategory === 'SAFE' && (next.probabilityCategory === 'MATCH' || next.probabilityCategory === 'REACH')) {
+      if (
+        current.probabilityCategory === 'SAFE' &&
+        (next.probabilityCategory === 'MATCH' ||
+          next.probabilityCategory === 'REACH')
+      ) {
         warnings.push(
-          `Nguyện vọng số ${current.currentOrder} (${current.programCode}) có tỷ lệ đậu Rất Cao (SAFE) nằm trên nguyện vọng số ${next.currentOrder} (${next.programCode}) có tỷ lệ đậu thấp hơn (${next.probabilityCategory === 'MATCH' ? 'Thích hợp' : 'Thử thách'}). Nếu đỗ NV ${current.currentOrder}, NV ${next.currentOrder} sẽ bị hủy.`
+          `Nguyện vọng số ${current.currentOrder} (${current.programCode}) có tỷ lệ đậu Rất Cao (SAFE) nằm trên nguyện vọng số ${next.currentOrder} (${next.programCode}) có tỷ lệ đậu thấp hơn (${next.probabilityCategory === 'MATCH' ? 'Thích hợp' : 'Thử thách'}). Nếu đỗ NV ${current.currentOrder}, NV ${next.currentOrder} sẽ bị hủy.`,
         );
       }
     }
 
-    const hasSafeOrMatch = list.some(item => item.probabilityCategory === 'SAFE' || item.probabilityCategory === 'MATCH');
+    const hasSafeOrMatch = list.some(
+      (item) =>
+        item.probabilityCategory === 'SAFE' ||
+        item.probabilityCategory === 'MATCH',
+    );
     if (list.length > 0 && !hasSafeOrMatch) {
       warnings.push(
-        'Cảnh báo: Danh sách chưa có nguyện vọng AN TOÀN (SAFE) hoặc THÍCH HỢP (MATCH). Hãy thêm ít nhất một phương án dự phòng.'
+        'Cảnh báo: Danh sách chưa có nguyện vọng AN TOÀN (SAFE) hoặc THÍCH HỢP (MATCH). Hãy thêm ít nhất một phương án dự phòng.',
       );
     }
 
     // Suggested optimized list
-    const optimizedList = [...list].sort((a, b) => {
-      const weights: any = { REACH: 1, MATCH: 2, SAFE: 3, LOW: 4 };
-      const aWeight = weights[a.probabilityCategory] || 5;
-      const bWeight = weights[b.probabilityCategory] || 5;
-      return aWeight - bWeight;
-    }).map((item, idx) => ({
-      ...item,
-      suggestedOrder: idx + 1
-    }));
+    const optimizedList = [...list]
+      .sort((a, b) => {
+        const weights: any = { REACH: 1, MATCH: 2, SAFE: 3, LOW: 4 };
+        const aWeight = weights[a.probabilityCategory] || 5;
+        const bWeight = weights[b.probabilityCategory] || 5;
+        return aWeight - bWeight;
+      })
+      .map((item, idx) => ({
+        ...item,
+        suggestedOrder: idx + 1,
+      }));
 
     return {
       optimizedList,
-      warnings
+      warnings,
     };
   }
 }

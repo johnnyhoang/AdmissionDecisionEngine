@@ -1,4 +1,22 @@
+import { supabase } from './supabase';
+
 const API_BASE_URL = 'http://localhost:3000/api/v1';
+
+async function apiFetch(url: string | URL, options: RequestInit = {}) {
+  const session = (await supabase.auth.getSession()).data.session;
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...options.headers as any,
+  };
+  if (session?.access_token) {
+    headers['Authorization'] = `Bearer ${session.access_token}`;
+  }
+  
+  return window.fetch(url.toString(), {
+    ...options,
+    headers,
+  });
+}
 
 export interface UniversityItem {
   id: string;
@@ -59,25 +77,25 @@ export const fetchUniversities = async (search = '', city = ''): Promise<{ items
   if (search) url.searchParams.append('search', search);
   if (city) url.searchParams.append('city', city);
   
-  const res = await fetch(url.toString());
+  const res = await apiFetch(url.toString());
   if (!res.ok) throw new Error('Không thể tải danh sách trường đại học');
   return res.json();
 };
 
 export const fetchMajors = async (): Promise<MajorItem[]> => {
-  const res = await fetch(`${API_BASE_URL}/majors`);
+  const res = await apiFetch(`${API_BASE_URL}/majors`);
   if (!res.ok) throw new Error('Không thể tải danh sách ngành học');
   return res.json();
 };
 
 export const fetchMajorAnalytics = async (code: string): Promise<Array<{ year: number; avgBenchmark: number }>> => {
-  const res = await fetch(`${API_BASE_URL}/majors/${code}/analytics`);
+  const res = await apiFetch(`${API_BASE_URL}/majors/${code}/analytics`);
   if (!res.ok) throw new Error('Không thể tải dữ liệu điểm chuẩn lịch sử');
   return res.json();
 };
 
 export const evaluateProfile = async (profileData: any): Promise<RecommendationResult[]> => {
-  const res = await fetch(`${API_BASE_URL}/recommendations/evaluate`, {
+  const res = await apiFetch(`${API_BASE_URL}/recommendations/evaluate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(profileData),
@@ -94,7 +112,7 @@ export const triggerSeedData = async (): Promise<void> => {
 };
 
 export const optimizePreferences = async (profile: any, preferences: any[]): Promise<{ optimizedList: any[]; warnings: string[] }> => {
-  const res = await fetch(`${API_BASE_URL}/recommendations/optimize-preferences`, {
+  const res = await apiFetch(`${API_BASE_URL}/recommendations/optimize-preferences`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ profile, preferences }),
@@ -104,7 +122,7 @@ export const optimizePreferences = async (profile: any, preferences: any[]): Pro
 };
 
 export const chatWithAi = async (message: string): Promise<{ reply: string; data?: any }> => {
-  const res = await fetch(`${API_BASE_URL}/ai/chat`, {
+  const res = await apiFetch(`${API_BASE_URL}/ai/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ message }),
@@ -123,13 +141,13 @@ export const fetchAdminStats = async (): Promise<{
   scores: number;
   histories: number;
 }> => {
-  const res = await fetch(`${API_BASE_URL}/admin/stats`);
+  const res = await apiFetch(`${API_BASE_URL}/admin/stats`);
   if (!res.ok) throw new Error('Không thể tải thống kê admin');
   return res.json();
 };
 
 export const fetchAdminHistories = async (): Promise<any[]> => {
-  const res = await fetch(`${API_BASE_URL}/admin/histories`);
+  const res = await apiFetch(`${API_BASE_URL}/admin/histories`);
   if (!res.ok) throw new Error('Không thể tải nhật ký lịch sử');
   return res.json();
 };
@@ -160,13 +178,13 @@ export interface ImportHistoryItem {
 }
 
 export const fetchImportPresets = async (): Promise<ImportPresetItem[]> => {
-  const res = await fetch(`http://localhost:3000/import/presets`);
+  const res = await apiFetch(`http://localhost:3000/import/presets`);
   if (!res.ok) throw new Error('Không thể tải danh sách presets');
   return res.json();
 };
 
 export const runImportPreset = async (filename: string): Promise<any> => {
-  const res = await fetch(`http://localhost:3000/import/presets/${filename}/run`, {
+  const res = await apiFetch(`http://localhost:3000/import/presets/${filename}/run`, {
     method: 'POST',
   });
   if (!res.ok) throw new Error(`Lỗi khi đồng bộ tệp preset: ${filename}`);
@@ -174,13 +192,13 @@ export const runImportPreset = async (filename: string): Promise<any> => {
 };
 
 export const fetchImportHistory = async (): Promise<ImportHistoryItem[]> => {
-  const res = await fetch(`http://localhost:3000/import/history`);
+  const res = await apiFetch(`http://localhost:3000/import/history`);
   if (!res.ok) throw new Error('Không thể tải nhật ký import');
   return res.json();
 };
 
 export const triggerImportPayload = async (payload: any): Promise<any> => {
-  const res = await fetch(`http://localhost:3000/import`, {
+  const res = await apiFetch(`http://localhost:3000/import`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -246,43 +264,43 @@ export const fetchG10Schools = async (search = '', districtId = ''): Promise<{ i
   const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`);
   if (search) url.searchParams.append('search', search);
   if (districtId) url.searchParams.append('districtId', districtId);
-  const res = await fetch(url.toString());
+  const res = await apiFetch(url.toString());
   if (!res.ok) throw new Error('Không thể tải danh sách trường THPT');
   return res.json();
 };
 
 export const fetchG10SchoolDetail = async (id: string): Promise<any> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/${id}`);
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/${id}`);
   if (!res.ok) throw new Error('Không thể tải chi tiết trường THPT');
   return res.json();
 };
 
 export const fetchG10SchoolByCode = async (code: string): Promise<any> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/code/${encodeURIComponent(code)}`);
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/code/${encodeURIComponent(code)}`);
   if (!res.ok) throw new Error(`Không tìm thấy trường: ${code}`);
   return res.json();
 };
 
 export const fetchG10Districts = async (): Promise<any[]> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/districts`);
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/districts`);
   if (!res.ok) throw new Error('Không thể tải danh sách quận/huyện');
   return res.json();
 };
 
 export const fetchG10Analytics = async (): Promise<any> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/analytics`);
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/analytics`);
   if (!res.ok) throw new Error('Không thể tải phân tích tuyển sinh lớp 10');
   return res.json();
 };
 
 export const fetchG10AdminStats = async (): Promise<any> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/admin-stats`);
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/admin-stats`);
   if (!res.ok) throw new Error('Không thể tải số liệu admin lớp 10');
   return res.json();
 };
 
 export const calculateG10Score = async (scores: { math: number; literature: number; english: number; priority?: number; bonus?: number }): Promise<{ finalScore: number }> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/calculate`, {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/calculate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(scores),
@@ -292,7 +310,7 @@ export const calculateG10Score = async (scores: { math: number; literature: numb
 };
 
 export const evaluateG10Profile = async (payload: { math: number; literature: number; english: number; priority?: number; bonus?: number; preferredDistrict?: string; targetNV?: string }): Promise<G10RecommendationResult> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/recommendation`, {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/recommendation`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -302,13 +320,13 @@ export const evaluateG10Profile = async (payload: { math: number; literature: nu
 };
 
 export const fetchG10ImportPresets = async (): Promise<any[]> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/presets`);
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/admin/presets`);
   if (!res.ok) throw new Error('Không thể tải presets lớp 10');
   return res.json();
 };
 
 export const runG10ImportPreset = async (filename: string): Promise<any> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/presets/${filename}/run`, {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/admin/presets/${filename}/run`, {
     method: 'POST',
   });
   if (!res.ok) throw new Error(`Đồng bộ dữ liệu lớp 10 thất bại cho tệp: ${filename}`);
@@ -316,13 +334,13 @@ export const runG10ImportPreset = async (filename: string): Promise<any> => {
 };
 
 export const fetchG10ImportHistory = async (): Promise<any[]> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/imports/history`);
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/admin/imports/history`);
   if (!res.ok) throw new Error('Không thể tải lịch sử import lớp 10');
   return res.json();
 };
 
 export const triggerG10ImportPayload = async (payload: any): Promise<any> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/import`, {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/admin/import`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -332,7 +350,6 @@ export const triggerG10ImportPayload = async (payload: any): Promise<any> => {
 };
 
 export const searchAiCutoffs = async (payload: { 
-  password?: string; 
   type: 'GRADE10' | 'UNIVERSITY'; 
   schoolQuery: string; 
   majorQuery?: string;
@@ -340,7 +357,7 @@ export const searchAiCutoffs = async (payload: {
   districtName?: string;
   districtCode?: string;
 }): Promise<any> => {
-  const res = await fetch(`${API_BASE_URL}/ai/search-cutoffs`, {
+  const res = await apiFetch(`${API_BASE_URL}/ai/search-cutoffs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -354,7 +371,6 @@ export const searchAiCutoffs = async (payload: {
 
 
 export const importAiCutoffs = async (payload: { 
-  password?: string; 
   type: 'GRADE10' | 'UNIVERSITY'; 
   schoolCode: string; 
   majorCode?: string; 
@@ -362,7 +378,7 @@ export const importAiCutoffs = async (payload: {
   overrides: any[]; 
 }): Promise<any> => {
 
-  const res = await fetch(`${API_BASE_URL}/ai/import-cutoffs`, {
+  const res = await apiFetch(`${API_BASE_URL}/ai/import-cutoffs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -374,15 +390,45 @@ export const importAiCutoffs = async (payload: {
   return res.json();
 };
 
-export const fetchGrade10SchoolNames = async (q?: string): Promise<{ id: string; name: string; code: string; districtName?: string }[]> => {
+export const fetchGrade10SchoolNames = async (q?: string): Promise<{ id: string; name: string; code: string; districtName?: string; districtCode?: string }[]> => {
   const url = q ? `${API_BASE_URL}/grade10-hcm/schools/names?q=${encodeURIComponent(q)}` : `${API_BASE_URL}/grade10-hcm/schools/names`;
-  const res = await fetch(url);
+  const res = await apiFetch(url);
   if (!res.ok) return [];
   return res.json();
 };
 
 export const seedAllGrade10Schools = async (): Promise<{ created: number; skipped: number }> => {
-  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/seed-all`, { method: 'POST' });
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/seed-all`, { method: 'POST' });
   if (!res.ok) throw new Error('Seed all schools thất bại');
+  return res.json();
+};
+
+export const fetchUserProfile = async (): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/auth/profile`);
+  if (!res.ok) throw new Error('Không thể lấy thông tin profile');
+  return res.json();
+};
+
+export const fetchAdminUsers = async (): Promise<any[]> => {
+  const res = await apiFetch(`${API_BASE_URL}/admin/users`);
+  if (!res.ok) throw new Error('Không thể tải danh sách người dùng');
+  return res.json();
+};
+
+export const updateUserRole = async (userId: string, role: string): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/admin/users/${userId}/role`, {
+    method: 'PUT',
+    body: JSON.stringify({ role }),
+  });
+  if (!res.ok) throw new Error('Không thể cập nhật chức vụ người dùng');
+  return res.json();
+};
+
+export const updateUserPermissions = async (userId: string, permissions: any[]): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/admin/users/${userId}/permissions`, {
+    method: 'PUT',
+    body: JSON.stringify({ permissions }),
+  });
+  if (!res.ok) throw new Error('Không thể cập nhật phân quyền người dùng');
   return res.json();
 };
