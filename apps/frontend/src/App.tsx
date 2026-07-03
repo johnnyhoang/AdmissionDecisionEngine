@@ -20,6 +20,7 @@ import AiSearchModal from './components/AiSearchModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import AdminPermissions from './pages/AdminPermissions';
+import AdminHub from './pages/AdminHub';
 
 interface PreferenceItem {
   programId: string;
@@ -71,7 +72,7 @@ function MainApp() {
   const [optimizing, setOptimizing] = useState(false);
 
   // Admin View State
-  const [isAdminView] = useState(window.location.pathname === '/admin');
+  const [isAdminView] = useState(window.location.pathname === '/admin/university');
   const [adminTab, setAdminTab] = useState<'dashboard' | 'history' | 'imports'>('dashboard');
   const [adminStats, setAdminStats] = useState<any>(null);
   const [adminHistories, setAdminHistories] = useState<any[]>([]);
@@ -347,7 +348,23 @@ function MainApp() {
     }
   }
 
-  // 3. Admin permissions management page
+  // 3. Admin Hub page (/admin)
+  if (window.location.pathname === '/admin') {
+    if (user.role !== 'ADMIN') {
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
+            <p className="text-xs text-slate-400 mt-2">Yêu cầu quyền Admin để truy cập trang quản trị này.</p>
+            <a href="/" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Về trang chủ</a>
+          </div>
+        </div>
+      );
+    }
+    return <AdminHub />;
+  }
+
+  // Admin permissions management page
   const isPermissionsPath = window.location.pathname === '/admin/permissions';
   if (isPermissionsPath) {
     if (user.role !== 'ADMIN') {
@@ -356,7 +373,7 @@ function MainApp() {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
             <p className="text-xs text-slate-400 mt-2">Bạn không có quyền truy cập trang quản trị này.</p>
-            <a href="/" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Về trang chủ</a>
+            <a href="/admin" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Về Admin Hub</a>
           </div>
         </div>
       );
@@ -434,7 +451,12 @@ function MainApp() {
                   Admin Lớp 10
                 </a>
               )}
-              
+              {hasPermission('UNIVERSITY', 'view_universities', 'view') && (
+                <a href="/" className="text-xs font-semibold px-3 py-1.5 bg-indigo-800/60 hover:bg-indigo-700/60 border border-indigo-700/50 text-indigo-300 rounded-lg transition">
+                  🎓 Cổng Đại Học
+                </a>
+              )}
+
               <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
                 Đăng xuất
               </button>
@@ -868,9 +890,19 @@ function MainApp() {
                 Phân Quyền
               </a>
             )}
-            {hasPermission('UNIVERSITY', 'edit_data', 'view') && (
+            {user.role === 'ADMIN' && (
               <a href="/admin" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+                🛡️ Admin Hub
+              </a>
+            )}
+            {hasPermission('UNIVERSITY', 'edit_data', 'view') && (
+              <a href="/admin/university" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
                 Admin Đại Học
+              </a>
+            )}
+            {hasPermission('GRADE10', 'view_dashboard', 'view') && (
+              <a href="/grade10-hcm" className="text-xs font-semibold px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-300 rounded-lg transition">
+                🏫 Cổng Lớp 10
               </a>
             )}
             
