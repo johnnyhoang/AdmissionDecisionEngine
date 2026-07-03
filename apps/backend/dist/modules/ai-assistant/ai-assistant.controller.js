@@ -72,6 +72,10 @@ class ImportCutoffsDto {
     majorCode;
     districtName;
     overrides;
+    address;
+    website;
+    description;
+    mapUrl;
 }
 exports.ImportCutoffsDto = ImportCutoffsDto;
 __decorate([
@@ -99,6 +103,26 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Array)
 ], ImportCutoffsDto.prototype, "overrides", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], ImportCutoffsDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], ImportCutoffsDto.prototype, "website", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], ImportCutoffsDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], ImportCutoffsDto.prototype, "mapUrl", void 0);
 let AiAssistantController = class AiAssistantController {
     aiAssistantService;
     constructor(aiAssistantService) {

@@ -376,6 +376,10 @@ export const importAiCutoffs = async (payload: {
   majorCode?: string; 
   districtName?: string;
   overrides: any[]; 
+  address?: string;
+  website?: string;
+  description?: string;
+  mapUrl?: string;
 }): Promise<any> => {
 
   const res = await apiFetch(`${API_BASE_URL}/ai/import-cutoffs`, {

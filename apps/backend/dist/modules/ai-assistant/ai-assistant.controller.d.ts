@@ -16,6 +16,10 @@ export declare class ImportCutoffsDto {
     majorCode?: string;
     districtName?: string;
     overrides: any[];
+    address?: string;
+    website?: string;
+    description?: string;
+    mapUrl?: string;
 }
 export declare class AiAssistantController {
     private readonly aiAssistantService;
@@ -27,6 +31,10 @@ export declare class AiAssistantController {
     searchCutoffs(dto: SearchCutoffsDto): Promise<{
         schoolName: string;
         schoolCode: string;
+        address: any;
+        website: any;
+        description: any;
+        mapUrl: any;
         type: string;
         results: any;
         majorName?: undefined;
@@ -38,6 +46,10 @@ export declare class AiAssistantController {
         majorCode: any;
         type: string;
         results: any;
+        address?: undefined;
+        website?: undefined;
+        description?: undefined;
+        mapUrl?: undefined;
     }>;
     importCutoffs(dto: ImportCutoffsDto): Promise<{
         success: boolean;

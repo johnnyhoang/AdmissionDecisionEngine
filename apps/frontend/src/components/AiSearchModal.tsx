@@ -185,7 +185,11 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         schoolCode: aiData.schoolCode,
         districtName: selectedSchool?.districtName,
         majorCode: type === 'UNIVERSITY' ? aiData.majorCode : undefined,
-        overrides
+        overrides,
+        address: aiData.address || undefined,
+        website: aiData.website || undefined,
+        description: aiData.description || undefined,
+        mapUrl: aiData.mapUrl || undefined,
       });
       setStep('success');
       if (onImportSuccess) onImportSuccess();
@@ -380,6 +384,35 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
                 Mặc định giữ lại dữ liệu cũ nếu đã tồn tại để tránh ghi đè ngoài ý muốn.
               </div>
             </div>
+
+            {type === 'GRADE10' && (aiData.address || aiData.website || aiData.description) && (
+              <div className="bg-slate-950/40 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2">
+                <h4 className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">Thông tin trường bổ sung tìm thấy</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-300">
+                  {aiData.address && (
+                    <div>
+                      📍 <strong>Địa chỉ:</strong> {aiData.address}
+                    </div>
+                  )}
+                  {aiData.website && (
+                    <div>
+                      🌐 <strong>Website:</strong> <a href={aiData.website.startsWith('http') ? aiData.website : `https://${aiData.website}`} target="_blank" rel="noopener noreferrer" className="text-indigo-400 underline hover:text-indigo-300">{aiData.website}</a>
+                    </div>
+                  )}
+                  {aiData.mapUrl && (
+                    <div className="md:col-span-2">
+                      🗺️ <strong>Bản đồ:</strong> <a href={aiData.mapUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 underline hover:text-indigo-300">{aiData.mapUrl}</a>
+                    </div>
+                  )}
+                  {aiData.description && (
+                    <div className="md:col-span-2 border-t border-slate-800/60 pt-2">
+                      📝 <strong>Giới thiệu chung:</strong>
+                      <p className="text-slate-400 mt-1 line-clamp-3 leading-relaxed whitespace-pre-line">{aiData.description}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Bulk action bar */}
             <div className="flex items-center justify-between bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 gap-3 flex-wrap">

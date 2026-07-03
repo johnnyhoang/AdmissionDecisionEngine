@@ -31,6 +31,10 @@ export declare class AiAssistantService {
     searchCutoffs(dto: SearchCutoffsDto): Promise<{
         schoolName: string;
         schoolCode: string;
+        address: any;
+        website: any;
+        description: any;
+        mapUrl: any;
         type: string;
         results: any;
         majorName?: undefined;
@@ -42,6 +46,10 @@ export declare class AiAssistantService {
         majorCode: any;
         type: string;
         results: any;
+        address?: undefined;
+        website?: undefined;
+        description?: undefined;
+        mapUrl?: undefined;
     }>;
     private fetchWebSearch;
     private callGeminiSearch;

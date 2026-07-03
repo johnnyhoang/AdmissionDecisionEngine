@@ -232,7 +232,11 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
 - cutoffNV3: điểm chuẩn nguyện vọng 3, nếu có
 - quota: chỉ tiêu tuyển sinh của năm đó
 - registeredCount: số học sinh đăng ký nguyện vọng 1 của năm đó
-- competitionRatio = registeredCount / quota (nếu có hoặc tự tính)`;
+- competitionRatio = registeredCount / quota (nếu có hoặc tự tính)
+- address: Địa chỉ cụ thể, số nhà, tên đường, phường/xã, quận/huyện của trường
+- website: Địa chỉ website chính thức của trường THPT
+- description: Đoạn văn giới thiệu chi tiết về lịch sử thành lập, cơ sở vật chất, hoạt động phong trào và thành tích nổi bật của trường
+- mapUrl: Đường dẫn vị trí trên Google Maps (hoặc toạ độ nếu không có link)`;
         } else {
           prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh đại học theo phương thức thi tốt nghiệp THPT của trường "${dto.schoolQuery}" cho ngành "${dto.majorQuery}" trong 10 năm qua (từ 2016 đến 2025).`;
         }
@@ -541,6 +545,10 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
           properties: {
             schoolName: { type: 'STRING' },
             schoolCode: { type: 'STRING' },
+            address: { type: 'STRING', description: 'Địa chỉ đầy đủ của trường THPT' },
+            website: { type: 'STRING', description: 'Địa chỉ trang web chính thức của trường THPT (nếu có)' },
+            description: { type: 'STRING', description: 'Bài viết giới thiệu chi tiết về lịch sử, thành tích, cơ sở vật chất của trường (dài khoảng 2-3 đoạn văn)' },
+            mapUrl: { type: 'STRING', description: 'URL bản đồ Google Maps hoặc toạ độ vị trí của trường' },
             cutoffs: {
               type: 'ARRAY',
               items: {
@@ -721,6 +729,10 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
       return {
         schoolName: school.name,
         schoolCode: school.code,
+        address: aiData.address || school.address || null,
+        website: aiData.website || school.website || null,
+        description: aiData.description || school.description || null,
+        mapUrl: aiData.mapUrl || school.mapUrl || null,
         type: 'GRADE10',
         results,
       };
@@ -839,11 +851,37 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
           code: dto.schoolCode,
           name: dto.schoolCode.replace(/_/g, ' '),
           districtId,
+          address: dto.address,
+          website: dto.website,
+          description: dto.description,
+          mapUrl: dto.mapUrl,
         });
         school = await this.grade10SchoolRepo.save(school);
-      } else if (districtId && !school.districtId) {
-        school.districtId = districtId;
-        await this.grade10SchoolRepo.save(school);
+      } else {
+        let changed = false;
+        if (districtId && !school.districtId) {
+          school.districtId = districtId;
+          changed = true;
+        }
+        if (dto.address && school.address !== dto.address) {
+          school.address = dto.address;
+          changed = true;
+        }
+        if (dto.website && school.website !== dto.website) {
+          school.website = dto.website;
+          changed = true;
+        }
+        if (dto.description && school.description !== dto.description) {
+          school.description = dto.description;
+          changed = true;
+        }
+        if (dto.mapUrl && school.mapUrl !== dto.mapUrl) {
+          school.mapUrl = dto.mapUrl;
+          changed = true;
+        }
+        if (changed) {
+          await this.grade10SchoolRepo.save(school);
+        }
       }
 
       for (const item of dto.overrides) {

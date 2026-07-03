@@ -69,6 +69,22 @@ export class ImportCutoffsDto {
   @IsArray()
   @IsNotEmpty()
   overrides: any[];
+
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @IsString()
+  @IsOptional()
+  website?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  mapUrl?: string;
 }
 
 @Controller('api/v1/ai')

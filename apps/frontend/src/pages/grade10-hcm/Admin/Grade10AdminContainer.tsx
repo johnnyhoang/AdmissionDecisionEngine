@@ -348,6 +348,10 @@ export default function Grade10AdminContainer() {
             schoolCode: res.schoolCode,
             districtName: jobs[i].districtName,
             overrides,
+            address: res.address || undefined,
+            website: res.website || undefined,
+            description: res.description || undefined,
+            mapUrl: res.mapUrl || undefined,
           });
         }
 
