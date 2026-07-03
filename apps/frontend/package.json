@@ -33,6 +33,8 @@
   },
   "optionalDependencies": {
     "@rolldown/binding-linux-x64-gnu": "*",
-    "@rolldown/binding-linux-x64-musl": "*"
+    "@rolldown/binding-linux-x64-musl": "*",
+    "lightningcss-linux-x64-gnu": "*",
+    "lightningcss-linux-x64-musl": "*"
   }
 }
