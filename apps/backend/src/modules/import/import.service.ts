@@ -506,4 +506,78 @@ export class ImportService {
   async getImportHistory(): Promise<DataImport[]> {
     return this.importRepo.find({ order: { createdAt: 'DESC' }, take: 50 });
   }
+
+  private resolveDataDir(): string {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Attempt 1: Process.cwd() is project root
+    let dir = path.join(process.cwd(), 'data', 'imports');
+    if (fs.existsSync(dir)) return dir;
+
+    // Attempt 2: Process.cwd() is apps/backend
+    dir = path.join(process.cwd(), '..', '..', 'data', 'imports');
+    if (fs.existsSync(dir)) return dir;
+
+    // Attempt 3: Relative to __dirname
+    dir = path.join(__dirname, '..', '..', '..', '..', 'data', 'imports');
+    if (fs.existsSync(dir)) return dir;
+
+    return path.join(process.cwd(), 'data', 'imports'); // Fallback
+  }
+
+  async getPresets() {
+    const fs = require('fs');
+    const path = require('path');
+    const dataDir = this.resolveDataDir();
+    if (!fs.existsSync(dataDir)) {
+      return [];
+    }
+    const files = fs.readdirSync(dataDir).filter((f: string) => f.endsWith('.json'));
+    const presets = [];
+    for (const file of files) {
+      try {
+        const filePath = path.join(dataDir, file);
+        const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        
+        // Count universities, programs, scores
+        const uniCount = content.universities?.length || 0;
+        let progCount = 0;
+        let scoreCount = 0;
+        content.universities?.forEach((u: any) => {
+          progCount += u.programs?.length || 0;
+          u.programs?.forEach((p: any) => {
+            p.admissionRules?.forEach((r: any) => {
+              scoreCount += r.benchmarkScores?.length || 0;
+            });
+          });
+        });
+
+        presets.push({
+          filename: file,
+          sourceName: content.sourceName,
+          sourceUrl: content.sourceUrl,
+          dataYear: content.dataYear,
+          universitiesCount: uniCount,
+          programsCount: progCount,
+          scoresCount: scoreCount,
+        });
+      } catch (e) {
+        // Skip invalid JSON
+      }
+    }
+    return presets;
+  }
+
+  async runPreset(filename: string): Promise<ImportResult> {
+    const fs = require('fs');
+    const path = require('path');
+    const dataDir = this.resolveDataDir();
+    const filePath = path.join(dataDir, filename);
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`File not found: ${filename}`);
+    }
+    const payload = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return this.importData(payload);
+  }
 }

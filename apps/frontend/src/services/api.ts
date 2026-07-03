@@ -86,9 +86,11 @@ export const evaluateProfile = async (profileData: any): Promise<RecommendationR
   return res.json();
 };
 
+/** @deprecated - REMOVED: Old seed function wiped all data. Use import pipeline instead. */
 export const triggerSeedData = async (): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/admin/seed`, { method: 'POST' });
-  if (!res.ok) throw new Error('Seeding database failed');
+  // This function is intentionally disabled to prevent data loss.
+  // To add data, use the import pipeline at /import endpoint.
+  console.warn('triggerSeedData is disabled - use import pipeline instead');
 };
 
 export const optimizePreferences = async (profile: any, preferences: any[]): Promise<{ optimizedList: any[]; warnings: string[] }> => {
@@ -129,5 +131,60 @@ export const fetchAdminStats = async (): Promise<{
 export const fetchAdminHistories = async (): Promise<any[]> => {
   const res = await fetch(`${API_BASE_URL}/admin/histories`);
   if (!res.ok) throw new Error('Không thể tải nhật ký lịch sử');
+  return res.json();
+};
+
+export interface ImportPresetItem {
+  filename: string;
+  sourceName: string;
+  sourceUrl?: string;
+  dataYear: number;
+  universitiesCount: number;
+  programsCount: number;
+  scoresCount: number;
+}
+
+export interface ImportHistoryItem {
+  id: string;
+  sourceName: string;
+  sourceUrl?: string;
+  dataYear: number;
+  universitiesCount: number;
+  programsCount: number;
+  scoresCount: number;
+  duplicatesSkipped: number;
+  status: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const fetchImportPresets = async (): Promise<ImportPresetItem[]> => {
+  const res = await fetch(`http://localhost:3000/import/presets`);
+  if (!res.ok) throw new Error('Không thể tải danh sách presets');
+  return res.json();
+};
+
+export const runImportPreset = async (filename: string): Promise<any> => {
+  const res = await fetch(`http://localhost:3000/import/presets/${filename}/run`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error(`Lỗi khi đồng bộ tệp preset: ${filename}`);
+  return res.json();
+};
+
+export const fetchImportHistory = async (): Promise<ImportHistoryItem[]> => {
+  const res = await fetch(`http://localhost:3000/import/history`);
+  if (!res.ok) throw new Error('Không thể tải nhật ký import');
+  return res.json();
+};
+
+export const triggerImportPayload = async (payload: any): Promise<any> => {
+  const res = await fetch(`http://localhost:3000/import`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Import dữ liệu thất bại');
   return res.json();
 };

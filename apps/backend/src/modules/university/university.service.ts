@@ -35,12 +35,33 @@ export class UniversityService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    // Automatically seed mock data on startup if database is empty
-    const universityCount = await this.universityRepository.count();
-    if (universityCount === 0) {
-      console.log('Seeding initial Vietnamese VNU-HCM university admission data...');
-      await this.seedInitialData();
-      console.log('Seeding completed successfully!');
+    // Only seed admission methods if none exist - SAFE, never deletes data
+    const methodCount = await this.methodRepository.count();
+    if (methodCount === 0) {
+      console.log('No admission methods found. Seeding base admission methods...');
+      await this.seedAdmissionMethodsIfMissing();
+      console.log('Base admission methods seeded successfully!');
+    } else {
+      console.log(`Database ready. Found ${methodCount} admission methods, ${await this.universityRepository.count()} universities.`);
+    }
+  }
+
+  /** Safe upsert-only seed for admission methods. Never deletes any data. */
+  async seedAdmissionMethodsIfMissing() {
+    const methods = [
+      { code: 'THPT', name: 'Xét điểm thi tốt nghiệp THPT', description: 'Xét tuyển dựa trên kết quả kỳ thi tốt nghiệp trung học phổ thông quốc gia.' },
+      { code: 'HOCBA', name: 'Xét học bạ THPT', description: 'Xét tuyển dựa trên kết quả học tập ở bậc THPT (Học bạ).' },
+      { code: 'DGNL_HCM', name: 'Xét điểm ĐGNL ĐHQG-HCM', description: 'Xét tuyển dựa trên kết quả kỳ thi Đánh giá năng lực của Đại học Quốc gia TP.HCM.' },
+      { code: 'DGNL_HN', name: 'Xét điểm ĐGNL ĐHQG-HN', description: 'Xét tuyển dựa trên kết quả kỳ thi Đánh giá năng lực của Đại học Quốc gia Hà Nội (HSA).' },
+      { code: 'COMBINED', name: 'Xét tuyển kết hợp (IELTS/SAT)', description: 'Xét tuyển kết hợp chứng chỉ quốc tế và học bạ/điểm THPT.' },
+      { code: 'DGTD', name: 'Xét điểm đánh giá tư duy (TSA)', description: 'Xét tuyển dựa trên bài thi Đánh giá tư duy của ĐHBKHN.' },
+      { code: 'STRAIGHT', name: 'Tuyển thẳng', description: 'Xét tuyển thẳng theo quy định của Bộ GD&ĐT.' },
+    ];
+    for (const m of methods) {
+      const exists = await this.methodRepository.findOne({ where: { code: m.code } });
+      if (!exists) {
+        await this.methodRepository.save(this.methodRepository.create(m));
+      }
     }
   }
 

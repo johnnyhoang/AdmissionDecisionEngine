@@ -41,11 +41,12 @@ export class UniversityController {
     return this.universityService.getMajorAnalytics(code);
   }
 
-  @Post('admin/seed')
+  @Post('admin/seed-methods')
   @HttpCode(HttpStatus.OK)
-  async runSeed() {
-    await this.universityService.seedInitialData();
-    return { message: 'Database seeded successfully!' };
+  async seedMethods() {
+    // Only seeds admission methods if they are missing - SAFE, never deletes data
+    await this.universityService.seedAdmissionMethodsIfMissing();
+    return { message: 'Admission methods seeded (safe - no data deleted).' };
   }
 
   @Get('admin/stats')

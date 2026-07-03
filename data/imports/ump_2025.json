@@ -1,0 +1,389 @@
+{
+  "sourceName": "Đề án tuyển sinh Đại học Y Dược TP.HCM 2025 (UMP)",
+  "sourceUrl": "https://admin.ump.edu.vn/uploads/ckeditor/files/Truong/DaoTaoDaiHoc/TuyenSinh/2025/2462_10062025_Thongtintuyensinh2025.pdf",
+  "dataYear": 2025,
+  "universities": [
+    {
+      "code": "YDS",
+      "nameVi": "Đại học Y Dược Thành phố Hồ Chí Minh",
+      "nameEn": "Ho Chi Minh City University of Medicine and Pharmacy",
+      "website": "https://ump.edu.vn",
+      "description": "Đại học Y Dược TP.HCM là một trong những trường đại học đào tạo khối ngành sức khỏe hàng đầu tại Việt Nam, có sứ mạng đào tạo nhân lực y tế chất lượng cao, nghiên cứu khoa học, chuyển giao công nghệ.",
+      "isPublic": true,
+      "localRanking": 12,
+      "campuses": [
+        {
+          "name": "Trụ sở chính (Khoa Y / Khoa Khoa học cơ bản)",
+          "address": "217 Hồng Bàng, Phường 11, Quận 5",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Khoa Răng Hàm Mặt",
+          "address": "652 Nguyễn Trãi, Phường 11, Quận 5",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Khoa Y học cổ truyền",
+          "address": "221B Hoàng Văn Thụ, Phường 8, Quận Phú Nhuận",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Khoa Dược",
+          "address": "41 Đinh Tiên Hoàng, Phường Bến Nghé, Quận 1",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Khoa Điều dưỡng - Kỹ thuật Y học",
+          "address": "201 Nguyễn Chí Thanh, Phường 12, Quận 5",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Khoa Y tế công cộng",
+          "address": "159 Hưng Phú, Phường 8, Quận 8",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": [
+        {
+          "majorCode": "7720101",
+          "name": "Y khoa",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 82200000,
+          "durationYears": 6.0,
+          "totalQuota": 420,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán, Hóa Học, Sinh Học",
+              "minScoreThreshold": 22,
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán, Hóa Học, Sinh Học kết hợp chứng chỉ IELTS >= 6.0",
+              "minScoreThreshold": 22,
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720110",
+          "name": "Y học dự phòng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 50000000,
+          "durationYears": 6.0,
+          "totalQuota": 120,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán, Hóa Học, Sinh Học",
+              "minScoreThreshold": 19,
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán, Vật Lý, Hóa Học",
+              "minScoreThreshold": 19,
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720115",
+          "name": "Y học cổ truyền",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 50000000,
+          "durationYears": 6.0,
+          "totalQuota": 210,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán, Hóa Học, Sinh Học",
+              "minScoreThreshold": 20,
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720201",
+          "name": "Dược học",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 60500000,
+          "durationYears": 5.0,
+          "totalQuota": 560,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán, Hóa Học, Sinh Học",
+              "minScoreThreshold": 21,
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán, Vật Lý, Hóa Học",
+              "minScoreThreshold": 21,
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720203",
+          "name": "Hóa dược",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 50000000,
+          "durationYears": 4.0,
+          "totalQuota": 60,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720301",
+          "name": "Điều dưỡng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 210,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720301",
+          "name": "Điều dưỡng chuyên ngành Gây mê hồi sức",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 120,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720302",
+          "name": "Hộ sinh",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 120,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720401",
+          "name": "Dinh dưỡng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 80,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720501",
+          "name": "Răng - Hàm - Mặt",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 84700000,
+          "durationYears": 6.0,
+          "totalQuota": 126,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "minScoreThreshold": 22,
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán, Hóa Học, Sinh Học kết hợp chứng chỉ IELTS >= 6.0",
+              "minScoreThreshold": 22,
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720502",
+          "name": "Kỹ thuật phục hình răng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 40,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720601",
+          "name": "Kỹ thuật xét nghiệm y học",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 170,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720602",
+          "name": "Kỹ thuật hình ảnh y học",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 90,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720603",
+          "name": "Kỹ thuật phục hồi chức năng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 100,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7720701",
+          "name": "Y tế công cộng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 46000000,
+          "durationYears": 4.0,
+          "totalQuota": 90,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            }
+          ]
+        },
+        {
+          "majorCode": "7760101",
+          "name": "Công tác xã hội",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 30000000,
+          "durationYears": 4.0,
+          "totalQuota": 60,
+          "dataYear": 2025,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B03",
+              "applyYear": 2025
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B08",
+              "applyYear": 2025
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

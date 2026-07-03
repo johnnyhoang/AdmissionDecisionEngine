@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { 
   Search, TrendingUp, Calculator, Sliders, MapPin, 
-  School, HelpCircle, Info, Sparkles, Layers, ArrowUpDown, MessageSquare, X, Send, Trash2, ArrowUp, ArrowDown, AlertCircle
+  School, HelpCircle, Info, Sparkles, Layers, ArrowUpDown, MessageSquare, X, Send, Trash2, ArrowUp, ArrowDown, AlertCircle,
+  Database, UploadCloud, History
 } from 'lucide-react';
 import { 
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend 
 } from 'recharts';
 import { 
   fetchUniversities, fetchMajors, fetchMajorAnalytics, evaluateProfile, triggerSeedData,
-  optimizePreferences, chatWithAi, fetchAdminStats, fetchAdminHistories
+  optimizePreferences, chatWithAi, fetchAdminStats, fetchAdminHistories,
+  fetchImportPresets, runImportPreset, fetchImportHistory, triggerImportPayload
 } from './services/api';
 import type { UniversityItem, RecommendationResult, MajorItem } from './services/api';
 import './App.css';
@@ -63,10 +65,15 @@ function App() {
 
   // Admin View State
   const [isAdminView] = useState(window.location.pathname === '/admin');
-  const [adminTab, setAdminTab] = useState<'dashboard' | 'history'>('dashboard');
+  const [adminTab, setAdminTab] = useState<'dashboard' | 'history' | 'imports'>('dashboard');
   const [adminStats, setAdminStats] = useState<any>(null);
   const [adminHistories, setAdminHistories] = useState<any[]>([]);
   const [adminLoading, setAdminLoading] = useState(false);
+  const [importPresets, setImportPresets] = useState<any[]>([]);
+  const [importHistory, setImportHistory] = useState<any[]>([]);
+  const [syncingPreset, setSyncingPreset] = useState<string | null>(null);
+  const [customJsonPayload, setCustomJsonPayload] = useState('');
+  const [importingPayload, setImportingPayload] = useState(false);
 
   useEffect(() => {
     if (isAdminView) {
@@ -89,10 +96,43 @@ function App() {
       setAdminStats(stats);
       const historyLogs = await fetchAdminHistories();
       setAdminHistories(historyLogs);
+      const presets = await fetchImportPresets();
+      setImportPresets(presets);
+      const impHist = await fetchImportHistory();
+      setImportHistory(impHist);
     } catch (err) {
       console.error('Lỗi tải dữ liệu admin', err);
     } finally {
       setAdminLoading(false);
+    }
+  };
+
+  const handleSyncPreset = async (filename: string) => {
+    setSyncingPreset(filename);
+    try {
+      const res = await runImportPreset(filename);
+      alert(`Đồng bộ thành công! Đã thêm ${res.universitiesAdded} trường, ${res.programsAdded} chương trình và ${res.scoresAdded} điểm chuẩn.`);
+      await loadAdminData();
+    } catch (err) {
+      alert(`Lỗi khi đồng bộ preset: ${err.message}`);
+    } finally {
+      setSyncingPreset(null);
+    }
+  };
+
+  const handleImportCustomJson = async () => {
+    if (!customJsonPayload.trim()) return;
+    setImportingPayload(true);
+    try {
+      const parsed = JSON.parse(customJsonPayload);
+      const res = await triggerImportPayload(parsed);
+      alert(`Import thành công! Đã thêm ${res.universitiesAdded} trường, ${res.programsAdded} chương trình và ${res.scoresAdded} điểm chuẩn.`);
+      setCustomJsonPayload('');
+      await loadAdminData();
+    } catch (err) {
+      alert(`Lỗi khi import payload: ${err.message}`);
+    } finally {
+      setImportingPayload(false);
     }
   };
 
@@ -147,22 +187,7 @@ function App() {
     }
   };
 
-  const handleSeed = async () => {
-    setSeeding(true);
-    try {
-      await triggerSeedData();
-      alert('Đã đồng bộ và làm mới dữ liệu thành công!');
-      if (isAdminView) {
-        loadAdminData();
-      } else {
-        loadInitialData();
-      }
-    } catch (err) {
-      alert('Lỗi seeding dữ liệu');
-    } finally {
-      setSeeding(false);
-    }
-  };
+  // handleSeed has been disabled to prevent accidental data wipes.
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -309,11 +334,10 @@ function App() {
             
             <div className="flex items-center gap-3">
               <button 
-                onClick={handleSeed}
-                disabled={seeding}
+                onClick={() => setAdminTab('imports')}
                 className="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-lg transition"
               >
-                {seeding ? 'Đang đồng bộ...' : '🔄 Làm mới dữ liệu VNU-HCM'}
+                📥 Đồng bộ & Nhập dữ liệu ({importPresets.length})
               </button>
               <a 
                 href="/"
@@ -350,6 +374,18 @@ function App() {
             >
               <Layers className="h-4 w-4" />
               Nhật ký đánh giá tuyển sinh ({adminHistories.length})
+            </button>
+
+            <button
+              onClick={() => setAdminTab('imports')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                adminTab === 'imports'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <Database className="h-4 w-4" />
+              Quản lý Import ({importHistory.length})
             </button>
           </div>
         </nav>
@@ -403,14 +439,7 @@ function App() {
                   <span className="text-3xl font-black text-white">{adminStats?.scores || 0}</span>
                   <span className="text-[10px] text-indigo-400 font-medium">Dữ liệu Benchmark 2024-2025</span>
                 </div>
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
-                  <span className="text-xs text-slate-400 font-semibold uppercase">Lượt đánh giá</span>
-                  <span className="text-3xl font-black text-white">{adminStats?.histories || 0}</span>
-                  <span className="text-[10px] text-indigo-400 font-medium">Lịch sử tìm kiếm & đánh giá</span>
-                </div>
-              </div>
-
-              {/* Data quality summary */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col g              {/* Data quality summary */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
                 <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">Đánh giá chất lượng dữ liệu</h3>
                 <div className="text-xs text-slate-300 leading-relaxed flex flex-col gap-2">
@@ -421,12 +450,12 @@ function App() {
                     🔹 Các trường thành viên trọng điểm như <strong>Trường Đại học Công nghệ Thông tin (UIT)</strong>, <strong>Đại học Bách Khoa (QSB)</strong>, và <strong>Đại học Khoa học Tự nhiên (QST)</strong> đã được nạp dữ liệu ngành học, chương trình chất lượng cao/đại trà đầy đủ với các năm 2024 và 2025.
                   </p>
                   <p>
-                    🔹 Nếu bạn muốn cập nhật thêm dữ liệu tuyển sinh mới, bạn chỉ cần bấm nút <strong>"Làm mới dữ liệu VNU-HCM"</strong> ở góc trên bên phải để đồng bộ lại dữ liệu gốc.
+                    🔹 Nếu bạn muốn cập nhật hoặc bổ sung thêm đề án tuyển sinh mới, bạn hãy truy cập tab <strong>"Quản lý Import"</strong> để thực hiện đồng bộ mà không ảnh hưởng tới dữ liệu cũ.
                   </p>
                 </div>
               </div>
             </div>
-          ) : (
+          ) : adminTab === 'history' ? (
             <div className="flex flex-col gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
               <h2 className="text-base font-bold text-white border-b border-slate-800 pb-3 mb-2">Nhật Ký Đánh Giá Tuyển Sinh</h2>
               {adminHistories.length === 0 ? (
@@ -473,6 +502,147 @@ function App() {
                 </div>
               )}
             </div>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {/* Preset Datasets Card */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col gap-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <Database className="h-5 w-5 text-indigo-400" />
+                    📦 Tệp Dữ Liệu Sẵn Có (Presets)
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">Các tệp dữ liệu đề án tuyển sinh đã crawl hoặc trích xuất sẵn trong hệ thống.</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {importPresets.map((preset) => (
+                    <div key={preset.filename} className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between gap-3">
+                      <div>
+                        <div className="flex justify-between items-start">
+                          <span className="text-xs font-bold px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full">
+                            Năm {preset.dataYear}
+                          </span>
+                          <span className="text-xs text-slate-500 font-mono">{preset.filename}</span>
+                        </div>
+                        <h4 className="text-sm font-semibold text-white mt-2">{preset.sourceName}</h4>
+                        {preset.sourceUrl && (
+                          <a href={preset.sourceUrl} target="_blank" rel="noreferrer" className="text-xs text-indigo-400 hover:underline break-all block mt-1">
+                            {preset.sourceUrl}
+                          </a>
+                        )}
+                        <div className="flex gap-4 mt-3 text-xs text-slate-400">
+                          <span>🏫 Trường: <strong>{preset.universitiesCount}</strong></span>
+                          <span>📚 Chương trình: <strong>{preset.programsCount}</strong></span>
+                          <span>📈 Điểm chuẩn: <strong>{preset.scoresCount}</strong></span>
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => handleSyncPreset(preset.filename)}
+                        disabled={syncingPreset !== null}
+                        className="w-full mt-2 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white rounded-lg transition"
+                      >
+                        {syncingPreset === preset.filename ? '⏳ Đang đồng bộ...' : '📥 Đồng bộ & Import vào DB'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Ingestion & Raw Payload Area */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col gap-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <UploadCloud className="h-5 w-5 text-indigo-400" />
+                    ➕ Nhập Dữ Liệu Thủ Công (JSON Payload)
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">Dán payload JSON của đề án tuyển sinh khớp với schema để import trực tiếp.</p>
+                </div>
+                
+                <textarea
+                  value={customJsonPayload}
+                  onChange={(e) => setCustomJsonPayload(e.target.value)}
+                  placeholder={`{\n  "sourceName": "Đề án tuyển sinh Đại học X 2026",\n  "dataYear": 2026,\n  "universities": [...]\n}`}
+                  rows={6}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition"
+                />
+                
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleImportCustomJson}
+                    disabled={importingPayload || !customJsonPayload.trim()}
+                    className="px-6 py-2.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white rounded-lg transition"
+                  >
+                    {importingPayload ? '⏳ Đang xử lý...' : '⚡ Import Payload'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Import History Table */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+                <div className="p-6 border-b border-slate-800">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <History className="h-5 w-5 text-indigo-400" />
+                    📜 Lịch Sử Nhật Ký Import ({importHistory.length})
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1 font-normal">Nhật ký các lượt đồng bộ và import dữ liệu vào hệ thống.</p>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold">
+                        <th className="p-4">Thời gian</th>
+                        <th className="p-4">Nguồn dữ liệu</th>
+                        <th className="p-4">Năm</th>
+                        <th className="p-4 text-center">Trường</th>
+                        <th className="p-4 text-center">Chương trình</th>
+                        <th className="p-4 text-center">Điểm chuẩn</th>
+                        <th className="p-4 text-center">Bỏ qua (Trùng)</th>
+                        <th className="p-4">Trạng thái</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800 text-slate-300">
+                      {importHistory.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} className="p-8 text-center text-slate-500">Chưa có lượt import nào được ghi nhận.</td>
+                        </tr>
+                      ) : (
+                        importHistory.map((log) => (
+                          <tr key={log.id} className="hover:bg-slate-800/20">
+                            <td className="p-4 text-slate-400 whitespace-nowrap">{new Date(log.createdAt).toLocaleString('vi-VN')}</td>
+                            <td className="p-4">
+                              <div className="font-semibold text-white">{log.sourceName}</div>
+                              {log.sourceUrl && (
+                                <a href={log.sourceUrl} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline break-all block mt-0.5 max-w-xs truncate">
+                                  {log.sourceUrl}
+                                </a>
+                              )}
+                            </td>
+                            <td className="p-4 font-mono">{log.dataYear}</td>
+                            <td className="p-4 text-center font-semibold text-white">{log.universitiesCount}</td>
+                            <td className="p-4 text-center font-semibold text-emerald-400">+{log.programsCount}</td>
+                            <td className="p-4 text-center font-semibold text-indigo-400">+{log.scoresCount}</td>
+                            <td className="p-4 text-center text-slate-400">{log.duplicatesSkipped}</td>
+                            <td className="p-4">
+                              <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] uppercase border ${
+                                log.status === 'SUCCESS' 
+                                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                                  : log.status === 'PARTIAL'
+                                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                                  : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+                              }`}>
+                                {log.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           )}
         </main>
 
@@ -499,14 +669,6 @@ function App() {
           </div>
           
           <div className="flex items-center gap-3">
-            <button 
-              onClick={handleSeed}
-              disabled={seeding}
-              className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border border-slate-700 text-slate-300 rounded-lg transition"
-            >
-              {seeding ? 'Đang đồng bộ...' : '🔄 Làm mới dữ liệu VNU-HCM'}
-            </button>
-            <div className="h-4 w-px bg-slate-700"></div>
             <span className="text-xs font-medium px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full">
               Phiên Bản 2026
             </span>
