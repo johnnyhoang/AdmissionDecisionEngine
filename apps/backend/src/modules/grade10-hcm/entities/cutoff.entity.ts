@@ -21,10 +21,10 @@ export class Grade10Cutoff {
   cutoffNV1: number;
 
   @Column({ name: 'cutoff_nv2', type: 'decimal', precision: 5, scale: 2, nullable: true })
-  cutoffNV2: number;
+  cutoffNV2: number | null;
 
   @Column({ name: 'cutoff_nv3', type: 'decimal', precision: 5, scale: 2, nullable: true })
-  cutoffNV3: number;
+  cutoffNV3: number | null;
 
   @Column({ name: 'lowest_score', type: 'decimal', precision: 5, scale: 2, nullable: true })
   lowestScore: number;

@@ -27,6 +27,7 @@ export default function Grade10Container() {
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [schoolDetail, setSchoolDetail] = useState<any>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [activeDetailTab, setActiveDetailTab] = useState<'info' | 'cutoff' | 'quota'>('info');
 
   // Calculator form
   const [mathScore, setMathScore] = useState('8.5');
@@ -697,8 +698,8 @@ export default function Grade10Container() {
 
       {/* School Detail Modal */}
       {selectedSchoolId && schoolDetail && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative flex flex-col gap-4 max-h-[90vh]">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative flex flex-col gap-4 max-h-[90vh]">
             <button
               onClick={() => setSelectedSchoolId(null)}
               className="absolute right-4 top-4 text-slate-400 hover:text-white text-lg font-bold"
@@ -706,45 +707,248 @@ export default function Grade10Container() {
               ✕
             </button>
 
-            <div>
+            {/* Header */}
+            <div className="border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold px-2 py-0.5 bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 rounded-md">
+                <span className="text-xs font-bold px-2 py-0.5 bg-indigo-650/15 border border-indigo-500/30 text-indigo-400 rounded-md">
                   {schoolDetail.code}
                 </span>
-                <span className="text-xs text-slate-400">{schoolDetail.district?.name}</span>
+                <span className="text-xs text-slate-400">{schoolDetail.district?.name || 'Chưa rõ quận'}</span>
               </div>
-              <h2 className="text-lg font-bold text-white">{schoolDetail.name}</h2>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <School className="h-5 w-5 text-indigo-400 shrink-0" />
+                {schoolDetail.name}
+              </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300">
-              <div className="flex flex-col gap-2">
-                <div>🏫 Địa chỉ: <span className="font-medium text-slate-100">{schoolDetail.address || 'Chưa cập nhật'}</span></div>
-                <div>🌐 Website: <a href={schoolDetail.website} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline">{schoolDetail.website || 'N/A'}</a></div>
-                <div className="mt-2 text-slate-400 leading-relaxed">{schoolDetail.description || 'Chưa có thông tin giới thiệu chi tiết cho trường THPT này.'}</div>
-              </div>
-
-              {/* Map mockup */}
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col items-center justify-center text-center gap-2">
-                <MapPin className="h-8 w-8 text-indigo-400" />
-                <span className="text-slate-400">Bản đồ vị trí cơ sở</span>
-                <span className="text-[10px] text-slate-500">{schoolDetail.address || 'Quận 1, TP.HCM'}</span>
-              </div>
+            {/* Tabs Selector */}
+            <div className="flex border-b border-slate-800">
+              <button
+                onClick={() => setActiveDetailTab('info')}
+                className={`px-4 py-2 text-xs font-bold border-b-2 transition ${
+                  activeDetailTab === 'info'
+                    ? 'border-indigo-500 text-indigo-400'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Tổng quan & Bản đồ
+              </button>
+              <button
+                onClick={() => setActiveDetailTab('cutoff')}
+                className={`px-4 py-2 text-xs font-bold border-b-2 transition ${
+                  activeDetailTab === 'cutoff'
+                    ? 'border-indigo-500 text-indigo-400'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Lịch sử Điểm chuẩn (3 NV)
+              </button>
+              <button
+                onClick={() => setActiveDetailTab('quota')}
+                className={`px-4 py-2 text-xs font-bold border-b-2 transition ${
+                  activeDetailTab === 'quota'
+                    ? 'border-indigo-500 text-indigo-400'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Chỉ tiêu & Tỷ lệ chọi
+              </button>
             </div>
 
-            {/* School History chart */}
-            <div className="border-t border-slate-800 pt-4 flex flex-col gap-2">
-              <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Lịch Sử Biến Động Điểm Chuẩn NV1</h3>
-              <div className="h-44 w-full bg-slate-950/60 p-2 rounded-xl border border-slate-800">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={[...schoolDetail.cutoffs].reverse()}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                    <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                    <YAxis domain={[12, 45]} stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
-                    <Line type="monotone" dataKey="cutoffNV1" stroke="#6366f1" name="NV1 Cutoff" strokeWidth={2.5} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+            {/* Tab Contents */}
+            <div className="overflow-y-auto pr-1 flex-1 min-h-0 text-xs text-slate-350">
+              {activeDetailTab === 'info' && (
+                <div className="flex flex-col gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-3">
+                      <div className="space-y-1">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">🏫 Địa chỉ</span>
+                        <div className="font-semibold text-slate-200">{schoolDetail.address || 'Chưa cập nhật'}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">🌐 Website</span>
+                        <a href={schoolDetail.website} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline truncate block font-medium">
+                          {schoolDetail.website || 'N/A'}
+                        </a>
+                      </div>
+                      <div className="space-y-1 mt-1">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">📝 Giới thiệu chung</span>
+                        <p className="text-slate-400 leading-relaxed font-normal">
+                          {schoolDetail.description || 'Chưa có thông tin giới thiệu chi tiết cho trường THPT này.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Position Map Card */}
+                    <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-2">
+                      <div className="bg-indigo-500/10 p-3 rounded-full text-indigo-400">
+                        <MapPin className="h-7 w-7" />
+                      </div>
+                      <span className="font-bold text-slate-200 text-xs mt-1">Bản đồ vị trí cơ sở</span>
+                      <p className="text-[10px] text-slate-500 max-w-xs">{schoolDetail.address || 'Hồ Chí Minh, Việt Nam'}</p>
+                      <a 
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(schoolDetail.name + ' ' + (schoolDetail.address || ''))}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 px-4 py-1.5 bg-slate-800 hover:bg-slate-755 text-[10px] text-slate-350 font-bold rounded-lg border border-slate-700 transition"
+                      >
+                        Mở Google Maps
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Summary Indicators */}
+                  {schoolDetail.cutoffs.length > 0 && (
+                    <div className="grid grid-cols-3 gap-3 bg-slate-950/40 border border-slate-800/80 p-3 rounded-xl mt-2 text-center">
+                      <div>
+                        <span className="text-[10px] text-slate-500 block mb-0.5">Điểm NV1 gần nhất ({schoolDetail.cutoffs[0]?.year})</span>
+                        <strong className="text-base text-indigo-400">{schoolDetail.cutoffs[0]?.cutoffNV1}đ</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-500 block mb-0.5">Chỉ tiêu tuyển ({schoolDetail.quotas[0]?.year || 'N/A'})</span>
+                        <strong className="text-base text-blue-400">{schoolDetail.quotas[0]?.quota || 'N/A'}</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-500 block mb-0.5">Tỷ lệ chọi ({schoolDetail.quotas[0]?.year || 'N/A'})</span>
+                        <strong className="text-base text-rose-400">1 chọi {schoolDetail.quotas[0]?.competitionRatio || 'N/A'}</strong>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeDetailTab === 'cutoff' && (
+                <div className="flex flex-col gap-5">
+                  {/* Multi-line Cutoff Chart */}
+                  <div className="flex flex-col gap-1.5">
+                    <h4 className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
+                      <TrendingUp className="h-4 w-4 text-indigo-400" />
+                      Đồ thị biến động điểm chuẩn 10 năm gần đây (2016-2025)
+                    </h4>
+                    <div className="h-48 w-full bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                      {schoolDetail.cutoffs.length === 0 ? (
+                        <div className="h-full flex items-center justify-center text-slate-500 italic">Chưa có dữ liệu điểm chuẩn</div>
+                      ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={[...schoolDetail.cutoffs].reverse()}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                            <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+                            <YAxis domain={['auto', 'auto']} stroke="#94a3b8" tick={{ fontSize: 9 }} />
+                            <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
+                            <Legend wrapperStyle={{ fontSize: 9 }} />
+                            <Line type="monotone" dataKey="cutoffNV1" stroke="#6366f1" name="Nguyện vọng 1" strokeWidth={2.5} activeDot={{ r: 5 }} />
+                            <Line type="monotone" dataKey="cutoffNV2" stroke="#10b981" name="Nguyện vọng 2" strokeWidth={2} />
+                            <Line type="monotone" dataKey="cutoffNV3" stroke="#f59e0b" name="Nguyện vọng 3" strokeWidth={2} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Cutoff Table */}
+                  <div className="flex flex-col gap-1.5">
+                    <h4 className="text-[11px] font-bold text-slate-400">Bảng chi tiết điểm chuẩn qua các năm</h4>
+                    <div className="overflow-x-auto border border-slate-800 rounded-xl">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold text-[10px]">
+                            <th className="p-2.5">Năm học</th>
+                            <th className="p-2.5">Nguyện vọng 1</th>
+                            <th className="p-2.5">Nguyện vọng 2</th>
+                            <th className="p-2.5">Nguyện vọng 3</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800 text-slate-350 bg-slate-900/20">
+                          {schoolDetail.cutoffs.map((item: any, idx: number) => (
+                            <tr key={idx} className="hover:bg-slate-850/10">
+                              <td className="p-2.5 font-bold text-white">{item.year}</td>
+                              <td className="p-2.5 font-semibold text-indigo-400">{item.cutoffNV1 ? `${item.cutoffNV1}đ` : '—'}</td>
+                              <td className="p-2.5 text-emerald-400">{item.cutoffNV2 ? `${item.cutoffNV2}đ` : '—'}</td>
+                              <td className="p-2.5 text-amber-400">{item.cutoffNV3 ? `${item.cutoffNV3}đ` : '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeDetailTab === 'quota' && (
+                <div className="flex flex-col gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Quota vs Registered candidates */}
+                    <div className="flex flex-col gap-1.5">
+                      <h4 className="text-[11px] font-bold text-slate-400">Đồ thị Chỉ tiêu vs Số lượng đăng ký</h4>
+                      <div className="h-44 w-full bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                        {schoolDetail.quotas.length === 0 ? (
+                          <div className="h-full flex items-center justify-center text-slate-500 italic">Chưa có dữ liệu chỉ tiêu</div>
+                        ) : (
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={[...schoolDetail.quotas].reverse()}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                              <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+                              <YAxis stroke="#94a3b8" tick={{ fontSize: 9 }} />
+                              <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
+                              <Legend wrapperStyle={{ fontSize: 9 }} />
+                              <Bar dataKey="quota" fill="#3b82f6" name="Chỉ tiêu" radius={[3, 3, 0, 0]} />
+                              <Bar dataKey="registeredCount" fill="#ec4899" name="Đăng ký NV1" radius={[3, 3, 0, 0]} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Competition ratio line chart */}
+                    <div className="flex flex-col gap-1.5">
+                      <h4 className="text-[11px] font-bold text-slate-400">Biến động Tỷ lệ chọi</h4>
+                      <div className="h-44 w-full bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                        {schoolDetail.quotas.length === 0 ? (
+                          <div className="h-full flex items-center justify-center text-slate-500 italic">Chưa có dữ liệu tỷ lệ chọi</div>
+                        ) : (
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={[...schoolDetail.quotas].reverse()}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                              <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+                              <YAxis stroke="#94a3b8" tick={{ fontSize: 9 }} />
+                              <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
+                              <Legend wrapperStyle={{ fontSize: 9 }} />
+                              <Line type="monotone" dataKey="competitionRatio" stroke="#f43f5e" name="Tỷ lệ chọi" strokeWidth={2.5} />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quotas table */}
+                  <div className="flex flex-col gap-1.5">
+                    <h4 className="text-[11px] font-bold text-slate-400">Bảng thống kê số liệu tuyển sinh</h4>
+                    <div className="overflow-x-auto border border-slate-800 rounded-xl">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold text-[10px]">
+                            <th className="p-2.5">Năm học</th>
+                            <th className="p-2.5">Chỉ tiêu</th>
+                            <th className="p-2.5">Số lượng đăng ký NV1</th>
+                            <th className="p-2.5">Tỷ lệ chọi (1 chọi x)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800 text-slate-350 bg-slate-900/20">
+                          {schoolDetail.quotas.map((item: any, idx: number) => (
+                            <tr key={idx} className="hover:bg-slate-850/10">
+                              <td className="p-2.5 font-bold text-white">{item.year}</td>
+                              <td className="p-2.5 text-blue-400 font-semibold">{item.quota || '—'}</td>
+                              <td className="p-2.5 text-pink-400">{item.registeredCount ? item.registeredCount.toLocaleString() : '—'}</td>
+                              <td className="p-2.5 text-rose-400 font-bold">{item.competitionRatio ? `${item.competitionRatio}` : '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

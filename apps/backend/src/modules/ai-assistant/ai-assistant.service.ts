@@ -492,12 +492,16 @@ export class AiAssistantService {
       }) : [];
 
       const results = aiData.cutoffs.map((item: any) => {
+        const scoreNV1 = item.cutoffNV1 !== undefined && item.cutoffNV1 !== null ? item.cutoffNV1 : (item.cutoff_nv1 !== undefined && item.cutoff_nv1 !== null ? item.cutoff_nv1 : item.cutoffNv1);
+        const scoreNV2 = item.cutoffNV2 !== undefined && item.cutoffNV2 !== null ? item.cutoffNV2 : (item.cutoff_nv2 !== undefined && item.cutoff_nv2 !== null ? item.cutoff_nv2 : item.cutoffNv2);
+        const scoreNV3 = item.cutoffNV3 !== undefined && item.cutoffNV3 !== null ? item.cutoffNV3 : (item.cutoff_nv3 !== undefined && item.cutoff_nv3 !== null ? item.cutoff_nv3 : item.cutoffNv3);
+
         const dbRecord = existingCutoffs.find(c => c.year === item.year);
         return {
           year: item.year,
-          cutoffNV1: item.cutoffNV1,
-          cutoffNV2: item.cutoffNV2 || null,
-          cutoffNV3: item.cutoffNV3 || null,
+          cutoffNV1: scoreNV1 !== undefined && scoreNV1 !== null && !isNaN(Number(scoreNV1)) ? Number(scoreNV1) : null,
+          cutoffNV2: scoreNV2 !== undefined && scoreNV2 !== null && !isNaN(Number(scoreNV2)) ? Number(scoreNV2) : null,
+          cutoffNV3: scoreNV3 !== undefined && scoreNV3 !== null && !isNaN(Number(scoreNV3)) ? Number(scoreNV3) : null,
           exists: !!dbRecord,
           existingScore: dbRecord ? {
             cutoffNV1: Number(dbRecord.cutoffNV1),
@@ -553,10 +557,11 @@ export class AiAssistantService {
       }) : [];
 
       const results = aiData.cutoffs.map((item: any) => {
+        const scoreNV1 = item.cutoffNV1 !== undefined && item.cutoffNV1 !== null ? item.cutoffNV1 : (item.cutoff_nv1 !== undefined && item.cutoff_nv1 !== null ? item.cutoff_nv1 : (item.cutoffNv1 !== undefined && item.cutoffNv1 !== null ? item.cutoffNv1 : item.score));
         const dbRecord = existingScores.find(s => s.year === item.year);
         return {
           year: item.year,
-          cutoffNV1: item.cutoffNV1,
+          cutoffNV1: scoreNV1 !== undefined && scoreNV1 !== null && !isNaN(Number(scoreNV1)) ? Number(scoreNV1) : null,
           exists: !!dbRecord,
           existingScore: dbRecord ? {
             cutoffNV1: Number(dbRecord.benchmarkScore)
@@ -608,6 +613,14 @@ export class AiAssistantService {
       }
 
       for (const item of dto.overrides) {
+        const scoreNV1 = item.cutoffNV1 !== undefined && item.cutoffNV1 !== null ? item.cutoffNV1 : (item.cutoff_nv1 !== undefined && item.cutoff_nv1 !== null ? item.cutoff_nv1 : item.cutoffNv1);
+        if (scoreNV1 === null || scoreNV1 === undefined || isNaN(Number(scoreNV1))) {
+          continue; // skip invalid or missing score
+        }
+
+        const scoreNV2 = item.cutoffNV2 !== undefined && item.cutoffNV2 !== null ? item.cutoffNV2 : (item.cutoff_nv2 !== undefined && item.cutoff_nv2 !== null ? item.cutoff_nv2 : item.cutoffNv2);
+        const scoreNV3 = item.cutoffNV3 !== undefined && item.cutoffNV3 !== null ? item.cutoffNV3 : (item.cutoff_nv3 !== undefined && item.cutoff_nv3 !== null ? item.cutoff_nv3 : item.cutoffNv3);
+
         let cutoff = await this.grade10CutoffRepo.findOne({
           where: { schoolId: school.id, year: item.year, programType: 'REGULAR' }
         });
@@ -615,15 +628,15 @@ export class AiAssistantService {
           cutoff = this.grade10CutoffRepo.create({
             schoolId: school.id,
             year: item.year,
-            cutoffNV1: item.cutoffNV1,
-            cutoffNV2: item.cutoffNV2,
-            cutoffNV3: item.cutoffNV3,
+            cutoffNV1: Number(scoreNV1),
+            cutoffNV2: scoreNV2 ? Number(scoreNV2) : null,
+            cutoffNV3: scoreNV3 ? Number(scoreNV3) : null,
             programType: 'REGULAR'
           });
         } else {
-          cutoff.cutoffNV1 = item.cutoffNV1;
-          cutoff.cutoffNV2 = item.cutoffNV2;
-          cutoff.cutoffNV3 = item.cutoffNV3;
+          cutoff.cutoffNV1 = Number(scoreNV1);
+          cutoff.cutoffNV2 = scoreNV2 ? Number(scoreNV2) : null;
+          cutoff.cutoffNV3 = scoreNV3 ? Number(scoreNV3) : null;
         }
         await this.grade10CutoffRepo.save(cutoff);
         importedCount++;
@@ -671,6 +684,11 @@ export class AiAssistantService {
       }
 
       for (const item of dto.overrides) {
+        const scoreNV1 = item.cutoffNV1 !== undefined && item.cutoffNV1 !== null ? item.cutoffNV1 : (item.cutoff_nv1 !== undefined && item.cutoff_nv1 !== null ? item.cutoff_nv1 : (item.cutoffNv1 !== undefined && item.cutoffNv1 !== null ? item.cutoffNv1 : item.score));
+        if (scoreNV1 === null || scoreNV1 === undefined || isNaN(Number(scoreNV1))) {
+          continue; // skip invalid or missing score
+        }
+
         let score = await this.scoreRepository.findOne({
           where: { admissionRule: { id: rule.id }, year: item.year }
         });
@@ -678,10 +696,10 @@ export class AiAssistantService {
           score = this.scoreRepository.create({
             admissionRule: rule,
             year: item.year,
-            benchmarkScore: item.cutoffNV1
+            benchmarkScore: Number(scoreNV1)
           });
         } else {
-          score.benchmarkScore = item.cutoffNV1;
+          score.benchmarkScore = Number(scoreNV1);
         }
         await this.scoreRepository.save(score);
         importedCount++;
