@@ -1,0 +1,254 @@
+{
+  "sourceName": "Sở Giáo dục và Đào tạo TP.HCM - Điểm chuẩn tuyển sinh Lớp 10 (2016 - 2025)",
+  "sourceUrl": "https://hcm.edu.vn",
+  "dataYear": 2025,
+  "districts": [
+    {
+      "code": "Q1",
+      "name": "Quận 1",
+      "schools": [
+        {
+          "code": "BUI_THI_XUAN",
+          "name": "Trường THPT Bùi Thị Xuân",
+          "address": "73-75 Bùi Thị Xuân, Phường Phạm Ngũ Lão, Quận 1",
+          "website": "https://thptbuithixuan.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2025, "quota": 675, "registeredCount": 980, "competitionRatio": 1.45, "programType": "REGULAR" },
+            { "year": 2024, "quota": 700, "registeredCount": 1120, "competitionRatio": 1.60, "programType": "REGULAR" },
+            { "year": 2023, "quota": 700, "registeredCount": 1050, "competitionRatio": 1.50, "programType": "REGULAR" },
+            { "year": 2022, "quota": 720, "registeredCount": 1116, "competitionRatio": 1.55, "programType": "REGULAR" },
+            { "year": 2021, "quota": 675, "registeredCount": 990, "competitionRatio": 1.47, "programType": "REGULAR" },
+            { "year": 2020, "quota": 650, "registeredCount": 1250, "competitionRatio": 1.92, "programType": "REGULAR" },
+            { "year": 2019, "quota": 650, "registeredCount": 1200, "competitionRatio": 1.85, "programType": "REGULAR" },
+            { "year": 2018, "quota": 675, "registeredCount": 1180, "competitionRatio": 1.75, "programType": "REGULAR" },
+            { "year": 2017, "quota": 675, "registeredCount": 1150, "competitionRatio": 1.70, "programType": "REGULAR" },
+            { "year": 2016, "quota": 650, "registeredCount": 1080, "competitionRatio": 1.66, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2025, "cutoffNV1": 22.25, "cutoffNV2": 22.75, "cutoffNV3": 23.25, "lowestScore": 17.5, "highestScore": 28.5, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 22.50, "cutoffNV2": 23.00, "cutoffNV3": 23.50, "lowestScore": 18.0, "highestScore": 29.0, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 22.25, "cutoffNV2": 22.75, "cutoffNV3": 23.25, "lowestScore": 18.0, "highestScore": 28.75, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 22.25, "cutoffNV2": 22.75, "cutoffNV3": 23.00, "lowestScore": 17.0, "highestScore": 28.25, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 24.50, "cutoffNV2": 25.00, "cutoffNV3": 25.50, "lowestScore": 19.5, "highestScore": 29.5, "programType": "REGULAR" },
+            { "year": 2020, "cutoffNV1": 37.00, "cutoffNV2": 38.00, "cutoffNV3": 39.00, "lowestScore": 30.0, "highestScore": 47.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 36.25, "cutoffNV2": 37.25, "cutoffNV3": 38.25, "lowestScore": 29.5, "highestScore": 46.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 36.75, "cutoffNV2": 37.75, "cutoffNV3": 38.75, "lowestScore": 28.0, "highestScore": 46.25, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2017, "cutoffNV1": 36.50, "cutoffNV2": 37.50, "cutoffNV3": 38.50, "lowestScore": 27.5, "highestScore": 46.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2016, "cutoffNV1": 36.00, "cutoffNV2": 37.00, "cutoffNV3": 38.00, "lowestScore": 27.0, "highestScore": 45.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        },
+        {
+          "code": "TRUNG_VUONG",
+          "name": "Trường THPT Trưng Vương",
+          "address": "26A Nguyễn Bỉnh Khiêm, Bến Nghé, Quận 1",
+          "website": "https://thpttrungvuong.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2025, "quota": 675, "registeredCount": 1120, "competitionRatio": 1.66, "programType": "REGULAR" },
+            { "year": 2024, "quota": 675, "registeredCount": 1250, "competitionRatio": 1.85, "programType": "REGULAR" },
+            { "year": 2023, "quota": 675, "registeredCount": 1190, "competitionRatio": 1.76, "programType": "REGULAR" },
+            { "year": 2022, "quota": 700, "registeredCount": 1225, "competitionRatio": 1.75, "programType": "REGULAR" },
+            { "year": 2021, "quota": 675, "registeredCount": 1050, "competitionRatio": 1.55, "programType": "REGULAR" },
+            { "year": 2020, "quota": 650, "registeredCount": 1300, "competitionRatio": 2.00, "programType": "REGULAR" },
+            { "year": 2019, "quota": 650, "registeredCount": 1220, "competitionRatio": 1.87, "programType": "REGULAR" },
+            { "year": 2018, "quota": 675, "registeredCount": 1210, "competitionRatio": 1.79, "programType": "REGULAR" },
+            { "year": 2017, "quota": 675, "registeredCount": 1190, "competitionRatio": 1.76, "programType": "REGULAR" },
+            { "year": 2016, "quota": 650, "registeredCount": 1150, "competitionRatio": 1.76, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2025, "cutoffNV1": 19.75, "cutoffNV2": 20.25, "cutoffNV3": 20.75, "lowestScore": 14.5, "highestScore": 25.5, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 20.00, "cutoffNV2": 20.50, "cutoffNV3": 21.00, "lowestScore": 15.0, "highestScore": 26.0, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 19.75, "cutoffNV2": 20.25, "cutoffNV3": 20.75, "lowestScore": 14.0, "highestScore": 25.0, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 19.50, "cutoffNV2": 20.00, "cutoffNV3": 20.25, "lowestScore": 13.5, "highestScore": 24.5, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 21.75, "cutoffNV2": 22.25, "cutoffNV3": 22.75, "lowestScore": 15.5, "highestScore": 26.5, "programType": "REGULAR" },
+            { "year": 2020, "cutoffNV1": 33.50, "cutoffNV2": 34.50, "cutoffNV3": 35.50, "lowestScore": 25.0, "highestScore": 42.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 32.75, "cutoffNV2": 33.75, "cutoffNV3": 34.75, "lowestScore": 24.5, "highestScore": 41.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 33.00, "cutoffNV2": 34.00, "cutoffNV3": 35.00, "lowestScore": 24.0, "highestScore": 41.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2017, "cutoffNV1": 32.50, "cutoffNV2": 33.50, "cutoffNV3": 34.50, "lowestScore": 23.5, "highestScore": 40.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2016, "cutoffNV1": 31.75, "cutoffNV2": 32.75, "cutoffNV3": 33.75, "lowestScore": 23.0, "highestScore": 39.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "Q3",
+      "name": "Quận 3",
+      "schools": [
+        {
+          "code": "NGUYEN_THI_MINH_KHAI",
+          "name": "Trường THPT Nguyễn Thị Minh Khai",
+          "address": "26 Ngô Thời Nhiệm, Võ Thị Sáu, Quận 3",
+          "website": "https://thptnguyenthiminhkhai.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2025, "quota": 650, "registeredCount": 988, "competitionRatio": 1.52, "programType": "REGULAR" },
+            { "year": 2024, "quota": 650, "registeredCount": 1105, "competitionRatio": 1.70, "programType": "REGULAR" },
+            { "year": 2023, "quota": 650, "registeredCount": 1040, "competitionRatio": 1.60, "programType": "REGULAR" },
+            { "year": 2022, "quota": 680, "registeredCount": 1088, "competitionRatio": 1.60, "programType": "REGULAR" },
+            { "year": 2021, "quota": 650, "registeredCount": 990, "competitionRatio": 1.52, "programType": "REGULAR" },
+            { "year": 2020, "quota": 620, "registeredCount": 1240, "competitionRatio": 2.00, "programType": "REGULAR" },
+            { "year": 2019, "quota": 620, "registeredCount": 1180, "competitionRatio": 1.90, "programType": "REGULAR" },
+            { "year": 2018, "quota": 650, "registeredCount": 1170, "competitionRatio": 1.80, "programType": "REGULAR" },
+            { "year": 2017, "quota": 650, "registeredCount": 1160, "competitionRatio": 1.78, "programType": "REGULAR" },
+            { "year": 2016, "quota": 620, "registeredCount": 1054, "competitionRatio": 1.70, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2025, "cutoffNV1": 22.50, "cutoffNV2": 23.00, "cutoffNV3": 23.50, "lowestScore": 18.0, "highestScore": 28.75, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 22.75, "cutoffNV2": 23.25, "cutoffNV3": 23.75, "lowestScore": 18.5, "highestScore": 29.25, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 22.50, "cutoffNV2": 23.00, "cutoffNV3": 23.50, "lowestScore": 18.25, "highestScore": 29.0, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 22.50, "cutoffNV2": 23.00, "cutoffNV3": 23.25, "lowestScore": 17.5, "highestScore": 28.5, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 24.75, "cutoffNV2": 25.25, "cutoffNV3": 25.75, "lowestScore": 20.0, "highestScore": 29.75, "programType": "REGULAR" },
+            { "year": 2020, "cutoffNV1": 37.25, "cutoffNV2": 38.25, "cutoffNV3": 39.25, "lowestScore": 30.5, "highestScore": 47.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 36.50, "cutoffNV2": 37.50, "cutoffNV3": 38.50, "lowestScore": 29.75, "highestScore": 46.75, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 37.00, "cutoffNV2": 38.00, "cutoffNV3": 39.00, "lowestScore": 29.0, "highestScore": 46.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2017, "cutoffNV1": 36.75, "cutoffNV2": 37.75, "cutoffNV3": 38.75, "lowestScore": 28.5, "highestScore": 46.25, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2016, "cutoffNV1": 36.25, "cutoffNV2": 37.25, "cutoffNV3": 38.25, "lowestScore": 28.0, "highestScore": 45.75, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        },
+        {
+          "code": "MARIE_CURIE",
+          "name": "Trường THPT Marie Curie",
+          "address": "159 Nam Kỳ Khởi Nghĩa, Võ Thị Sáu, Quận 3",
+          "website": "https://thptmariecurie.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2025, "quota": 1000, "registeredCount": 1650, "competitionRatio": 1.65, "programType": "REGULAR" },
+            { "year": 2024, "quota": 1050, "registeredCount": 1890, "competitionRatio": 1.80, "programType": "REGULAR" },
+            { "year": 2023, "quota": 1050, "registeredCount": 1785, "competitionRatio": 1.70, "programType": "REGULAR" },
+            { "year": 2022, "quota": 1100, "registeredCount": 1925, "competitionRatio": 1.75, "programType": "REGULAR" },
+            { "year": 2021, "quota": 1000, "registeredCount": 1580, "competitionRatio": 1.58, "programType": "REGULAR" },
+            { "year": 2020, "quota": 950, "registeredCount": 2090, "competitionRatio": 2.20, "programType": "REGULAR" },
+            { "year": 2019, "quota": 950, "registeredCount": 1995, "competitionRatio": 2.10, "programType": "REGULAR" },
+            { "year": 2018, "quota": 1000, "registeredCount": 1950, "competitionRatio": 1.95, "programType": "REGULAR" },
+            { "year": 2017, "quota": 1000, "registeredCount": 1900, "competitionRatio": 1.90, "programType": "REGULAR" },
+            { "year": 2016, "quota": 950, "registeredCount": 1710, "competitionRatio": 1.80, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2025, "cutoffNV1": 18.50, "cutoffNV2": 19.00, "cutoffNV3": 19.50, "lowestScore": 13.0, "highestScore": 24.5, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 18.75, "cutoffNV2": 19.25, "cutoffNV3": 19.75, "lowestScore": 13.5, "highestScore": 25.0, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 18.50, "cutoffNV2": 19.00, "cutoffNV3": 19.50, "lowestScore": 13.0, "highestScore": 24.0, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 18.25, "cutoffNV2": 18.75, "cutoffNV3": 19.00, "lowestScore": 12.5, "highestScore": 23.5, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 20.50, "cutoffNV2": 21.00, "cutoffNV3": 21.50, "lowestScore": 14.5, "highestScore": 25.5, "programType": "REGULAR" },
+            { "year": 2020, "cutoffNV1": 31.00, "cutoffNV2": 32.00, "cutoffNV3": 33.00, "lowestScore": 22.0, "highestScore": 40.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 30.25, "cutoffNV2": 31.25, "cutoffNV3": 32.25, "lowestScore": 21.5, "highestScore": 39.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 30.50, "cutoffNV2": 31.50, "cutoffNV3": 32.50, "lowestScore": 21.0, "highestScore": 39.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2017, "cutoffNV1": 30.00, "cutoffNV2": 31.00, "cutoffNV3": 32.00, "lowestScore": 20.5, "highestScore": 38.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2016, "cutoffNV1": 29.25, "cutoffNV2": 30.25, "cutoffNV3": 31.25, "lowestScore": 20.0, "highestScore": 37.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "QBT",
+      "name": "Quận Bình Thạnh",
+      "schools": [
+        {
+          "code": "GIA_DINH",
+          "name": "Trường THPT Gia Định",
+          "address": "44 Vạn Kiếp, Phường 3, Bình Thạnh",
+          "website": "https://thptgiadinh.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2025, "quota": 675, "registeredCount": 1150, "competitionRatio": 1.70, "programType": "REGULAR" },
+            { "year": 2024, "quota": 700, "registeredCount": 1280, "competitionRatio": 1.82, "programType": "REGULAR" },
+            { "year": 2023, "quota": 700, "registeredCount": 1210, "competitionRatio": 1.72, "programType": "REGULAR" },
+            { "year": 2022, "quota": 720, "registeredCount": 1296, "competitionRatio": 1.80, "programType": "REGULAR" },
+            { "year": 2021, "quota": 675, "registeredCount": 1090, "competitionRatio": 1.61, "programType": "REGULAR" },
+            { "year": 2020, "quota": 650, "registeredCount": 1380, "competitionRatio": 2.12, "programType": "REGULAR" },
+            { "year": 2019, "quota": 650, "registeredCount": 1320, "competitionRatio": 2.03, "programType": "REGULAR" },
+            { "year": 2018, "quota": 675, "registeredCount": 1350, "competitionRatio": 2.00, "programType": "REGULAR" },
+            { "year": 2017, "quota": 675, "registeredCount": 1310, "competitionRatio": 1.94, "programType": "REGULAR" },
+            { "year": 2016, "quota": 650, "registeredCount": 1200, "competitionRatio": 1.84, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2025, "cutoffNV1": 22.00, "cutoffNV2": 22.50, "cutoffNV3": 23.00, "lowestScore": 17.5, "highestScore": 28.25, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 22.25, "cutoffNV2": 22.75, "cutoffNV3": 23.25, "lowestScore": 18.0, "highestScore": 28.75, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 22.00, "cutoffNV2": 22.50, "cutoffNV3": 23.00, "lowestScore": 17.5, "highestScore": 28.5, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 22.00, "cutoffNV2": 22.50, "cutoffNV3": 22.75, "lowestScore": 17.0, "highestScore": 28.0, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 24.25, "cutoffNV2": 24.75, "cutoffNV3": 25.25, "lowestScore": 19.0, "highestScore": 29.25, "programType": "REGULAR" },
+            { "year": 2020, "cutoffNV1": 36.50, "cutoffNV2": 37.50, "cutoffNV3": 38.50, "lowestScore": 29.5, "highestScore": 47.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 35.75, "cutoffNV2": 36.75, "cutoffNV3": 37.75, "lowestScore": 29.0, "highestScore": 46.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 36.00, "cutoffNV2": 37.00, "cutoffNV3": 38.00, "lowestScore": 28.0, "highestScore": 46.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2017, "cutoffNV1": 35.50, "cutoffNV2": 36.50, "cutoffNV3": 37.50, "lowestScore": 27.5, "highestScore": 45.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2016, "cutoffNV1": 35.00, "cutoffNV2": 36.00, "cutoffNV3": 37.00, "lowestScore": 27.0, "highestScore": 45.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "QPN",
+      "name": "Quận Phú Nhuận",
+      "schools": [
+        {
+          "code": "PHU_NHUAN",
+          "name": "Trường THPT Phú Nhuận",
+          "address": "5 Hoàng Minh Giám, Phường 9, Phú Nhuận",
+          "website": "https://thptphunhuan.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2025, "quota": 675, "registeredCount": 1050, "competitionRatio": 1.55, "programType": "REGULAR" },
+            { "year": 2024, "quota": 700, "registeredCount": 1190, "competitionRatio": 1.70, "programType": "REGULAR" },
+            { "year": 2023, "quota": 700, "registeredCount": 1120, "competitionRatio": 1.60, "programType": "REGULAR" },
+            { "year": 2022, "quota": 720, "registeredCount": 1210, "competitionRatio": 1.68, "programType": "REGULAR" },
+            { "year": 2021, "quota": 675, "registeredCount": 1012, "competitionRatio": 1.50, "programType": "REGULAR" },
+            { "year": 2020, "quota": 650, "registeredCount": 1280, "competitionRatio": 1.97, "programType": "REGULAR" },
+            { "year": 2019, "quota": 650, "registeredCount": 1230, "competitionRatio": 1.89, "programType": "REGULAR" },
+            { "year": 2018, "quota": 675, "registeredCount": 1215, "competitionRatio": 1.80, "programType": "REGULAR" },
+            { "year": 2017, "quota": 675, "registeredCount": 1180, "competitionRatio": 1.75, "programType": "REGULAR" },
+            { "year": 2016, "quota": 650, "registeredCount": 1090, "competitionRatio": 1.67, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2025, "cutoffNV1": 21.75, "cutoffNV2": 22.25, "cutoffNV3": 22.75, "lowestScore": 17.0, "highestScore": 27.75, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 22.00, "cutoffNV2": 22.50, "cutoffNV3": 23.00, "lowestScore": 17.5, "highestScore": 28.25, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 21.75, "cutoffNV2": 22.25, "cutoffNV3": 22.75, "lowestScore": 17.0, "highestScore": 28.0, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 21.75, "cutoffNV2": 22.25, "cutoffNV3": 22.50, "lowestScore": 16.5, "highestScore": 27.5, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 24.00, "cutoffNV2": 24.50, "cutoffNV3": 25.00, "lowestScore": 18.5, "highestScore": 28.75, "programType": "REGULAR" },
+            { "year": 2020, "cutoffNV1": 36.25, "cutoffNV2": 37.25, "cutoffNV3": 38.25, "lowestScore": 29.0, "highestScore": 46.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 35.50, "cutoffNV2": 36.50, "cutoffNV3": 37.50, "lowestScore": 28.5, "highestScore": 46.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 35.75, "cutoffNV2": 36.75, "cutoffNV3": 37.75, "lowestScore": 27.5, "highestScore": 45.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2017, "cutoffNV1": 35.25, "cutoffNV2": 36.25, "cutoffNV3": 37.25, "lowestScore": 27.0, "highestScore": 45.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2016, "cutoffNV1": 34.75, "cutoffNV2": 35.75, "cutoffNV3": 36.75, "lowestScore": 26.5, "highestScore": 44.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "QTB",
+      "name": "Quận Tân Bình",
+      "schools": [
+        {
+          "code": "NGUYEN_THUONG_HIEN",
+          "name": "Trường THPT Nguyễn Thượng Hiền",
+          "address": "544 Cách Mạng Tháng Tám, Phường 4, Tân Bình",
+          "website": "https://thptnguyenthuonghien.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2025, "quota": 630, "registeredCount": 1058, "competitionRatio": 1.68, "programType": "REGULAR" },
+            { "year": 2024, "quota": 630, "registeredCount": 1197, "competitionRatio": 1.90, "programType": "REGULAR" },
+            { "year": 2023, "quota": 630, "registeredCount": 1134, "competitionRatio": 1.80, "programType": "REGULAR" },
+            { "year": 2022, "quota": 650, "registeredCount": 1202, "competitionRatio": 1.85, "programType": "REGULAR" },
+            { "year": 2021, "quota": 630, "registeredCount": 1020, "competitionRatio": 1.62, "programType": "REGULAR" },
+            { "year": 2020, "quota": 600, "registeredCount": 1380, "competitionRatio": 2.30, "programType": "REGULAR" },
+            { "year": 2019, "quota": 600, "registeredCount": 1320, "competitionRatio": 2.20, "programType": "REGULAR" },
+            { "year": 2018, "quota": 630, "registeredCount": 1323, "competitionRatio": 2.10, "programType": "REGULAR" },
+            { "year": 2017, "quota": 630, "registeredCount": 1290, "competitionRatio": 2.05, "programType": "REGULAR" },
+            { "year": 2016, "quota": 600, "registeredCount": 1170, "competitionRatio": 1.95, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2025, "cutoffNV1": 24.00, "cutoffNV2": 24.50, "cutoffNV3": 25.00, "lowestScore": 20.0, "highestScore": 29.5, "programType": "REGULAR" },
+            { "year": 2024, "cutoffNV1": 24.25, "cutoffNV2": 24.75, "cutoffNV3": 25.25, "lowestScore": 20.5, "highestScore": 29.75, "programType": "REGULAR" },
+            { "year": 2023, "cutoffNV1": 24.25, "cutoffNV2": 24.75, "cutoffNV3": 25.25, "lowestScore": 20.25, "highestScore": 29.5, "programType": "REGULAR" },
+            { "year": 2022, "cutoffNV1": 24.25, "cutoffNV2": 24.75, "cutoffNV3": 25.00, "lowestScore": 19.5, "highestScore": 29.0, "programType": "REGULAR" },
+            { "year": 2021, "cutoffNV1": 26.30, "cutoffNV2": 26.80, "cutoffNV3": 27.30, "lowestScore": 22.0, "highestScore": 30.0, "programType": "REGULAR" },
+            { "year": 2020, "cutoffNV1": 41.00, "cutoffNV2": 41.50, "cutoffNV3": 42.00, "lowestScore": 33.0, "highestScore": 49.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2019, "cutoffNV1": 40.00, "cutoffNV2": 41.00, "cutoffNV3": 41.50, "lowestScore": 32.5, "highestScore": 48.5, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2018, "cutoffNV1": 41.25, "cutoffNV2": 42.25, "cutoffNV3": 42.75, "lowestScore": 32.0, "highestScore": 48.0, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2017, "cutoffNV1": 40.50, "cutoffNV2": 41.50, "cutoffNV3": 42.00, "lowestScore": 31.5, "highestScore": 47.75, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" },
+            { "year": 2016, "cutoffNV1": 39.75, "cutoffNV2": 40.75, "cutoffNV3": 41.25, "lowestScore": 31.0, "highestScore": 47.25, "programType": "REGULAR", "notes": "Hệ số môn Văn, Toán nhân 2" }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -8,12 +8,14 @@ import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend 
 } from 'recharts';
 import { 
-  fetchUniversities, fetchMajors, fetchMajorAnalytics, evaluateProfile, triggerSeedData,
+  fetchUniversities, fetchMajors, fetchMajorAnalytics, evaluateProfile, 
   optimizePreferences, chatWithAi, fetchAdminStats, fetchAdminHistories,
   fetchImportPresets, runImportPreset, fetchImportHistory, triggerImportPayload
 } from './services/api';
 import type { UniversityItem, RecommendationResult, MajorItem } from './services/api';
 import './App.css';
+import Grade10Container from './pages/grade10-hcm/Grade10Container';
+import Grade10AdminContainer from './pages/grade10-hcm/Admin/Grade10AdminContainer';
 
 interface PreferenceItem {
   programId: string;
@@ -34,7 +36,6 @@ function App() {
   const [recommendations, setRecommendations] = useState<RecommendationResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [seeding, setSeeding] = useState(false);
 
   // Form State for Profile Evaluation
   const [fullName, setFullName] = useState('Nguyễn Văn A');
@@ -113,7 +114,7 @@ function App() {
       const res = await runImportPreset(filename);
       alert(`Đồng bộ thành công! Đã thêm ${res.universitiesAdded} trường, ${res.programsAdded} chương trình và ${res.scoresAdded} điểm chuẩn.`);
       await loadAdminData();
-    } catch (err) {
+    } catch (err: any) {
       alert(`Lỗi khi đồng bộ preset: ${err.message}`);
     } finally {
       setSyncingPreset(null);
@@ -129,7 +130,7 @@ function App() {
       alert(`Import thành công! Đã thêm ${res.universitiesAdded} trường, ${res.programsAdded} chương trình và ${res.scoresAdded} điểm chuẩn.`);
       setCustomJsonPayload('');
       await loadAdminData();
-    } catch (err) {
+    } catch (err: any) {
       alert(`Lỗi khi import payload: ${err.message}`);
     } finally {
       setImportingPayload(false);
@@ -316,6 +317,45 @@ function App() {
     }
   };
 
+  const isGrade10User = window.location.pathname.startsWith('/grade10-hcm');
+  const isGrade10Admin = window.location.pathname.startsWith('/admin/grade10-hcm');
+
+  if (isGrade10Admin) {
+    return <Grade10AdminContainer />;
+  }
+
+  if (isGrade10User) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+        <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
+                <Sparkles className="h-6 w-6 animate-pulse" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-white m-0">HCMC Grade 10 Admission Platform</h1>
+                <p className="text-xs text-slate-400 m-0">Hệ thống Đánh giá & Gợi ý Nguyện vọng Lớp 10 Công lập TP.HCM</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full">
+                Hỗ trợ 2025 - 2026
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <Grade10Container />
+
+        <footer className="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500 mt-auto">
+          <p className="m-0">© 2026 HCMC Grade 10 Admission Recommendation Platform.</p>
+          <p className="m-0 mt-1">Dữ liệu tham khảo công thức tính điểm và điểm chuẩn chính thức từ Sở GD&ĐT TP.HCM.</p>
+        </footer>
+      </div>
+    );
+  }
+
   if (isAdminView) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
@@ -439,7 +479,14 @@ function App() {
                   <span className="text-3xl font-black text-white">{adminStats?.scores || 0}</span>
                   <span className="text-[10px] text-indigo-400 font-medium">Dữ liệu Benchmark 2024-2025</span>
                 </div>
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col g              {/* Data quality summary */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-1">
+                  <span className="text-xs text-slate-400 font-semibold uppercase">Lượt đánh giá</span>
+                  <span className="text-3xl font-black text-white">{adminStats?.histories || 0}</span>
+                  <span className="text-[10px] text-indigo-400 font-medium">Lịch sử tư vấn trúng tuyển</span>
+                </div>
+              </div>
+
+              {/* Data quality summary */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
                 <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">Đánh giá chất lượng dữ liệu</h3>
                 <div className="text-xs text-slate-300 leading-relaxed flex flex-col gap-2">

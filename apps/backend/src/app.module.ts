@@ -8,6 +8,7 @@ import { RecommendationModule } from './modules/recommendation/recommendation.mo
 import { UniversityModule } from './modules/university/university.module';
 import { AiAssistantModule } from './modules/ai-assistant/ai-assistant.module';
 import { ImportModule } from './modules/import/import.module';
+import { Grade10HcmModule } from './modules/grade10-hcm/grade10-hcm.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ImportModule } from './modules/import/import.module';
     RecommendationModule,
     AiAssistantModule,
     ImportModule,
+    Grade10HcmModule,
   ],
   controllers: [AppController],
   providers: [AppService],

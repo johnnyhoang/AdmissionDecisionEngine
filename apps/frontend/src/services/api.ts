@@ -188,3 +188,140 @@ export const triggerImportPayload = async (payload: any): Promise<any> => {
   if (!res.ok) throw new Error('Import dữ liệu thất bại');
   return res.json();
 };
+
+// ==========================================
+// GRADE 10 HCMC ADMISSION MODULE APIs
+// ==========================================
+
+export interface G10SchoolItem {
+  id: string;
+  name: string;
+  code: string;
+  address?: string;
+  website?: string;
+  description?: string;
+  mapUrl?: string;
+  schoolType: string;
+  isActive: boolean;
+  latestCutoffNV1?: number;
+  latestCutoffNV2?: number;
+  latestCutoffNV3?: number;
+  latestYear?: number;
+  district?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+}
+
+export interface G10RecommendationItem {
+  schoolId: string;
+  schoolName: string;
+  schoolCode: string;
+  districtName: string;
+  cutoffNV1: number;
+  cutoffNV2?: number;
+  cutoffNV3?: number;
+  diff: number;
+  safetyCategory: 'VERY_SAFE' | 'SAFE' | 'COMPETITIVE' | 'RISKY' | 'VERY_RISKY';
+  trend: 'UP' | 'DOWN' | 'STABLE';
+  probability: number;
+  historicalAvg: number;
+  last3YearsScores: Array<{ year: number; score: number }>;
+}
+
+export interface G10RecommendationResult {
+  candidateScore: number;
+  details: {
+    math: number;
+    literature: number;
+    english: number;
+    priority: number;
+    bonus: number;
+  };
+  recommendations: G10RecommendationItem[];
+}
+
+export const fetchG10Schools = async (search = '', districtId = ''): Promise<{ items: G10SchoolItem[]; total: number }> => {
+  const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`);
+  if (search) url.searchParams.append('search', search);
+  if (districtId) url.searchParams.append('districtId', districtId);
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error('Không thể tải danh sách trường THPT');
+  return res.json();
+};
+
+export const fetchG10SchoolDetail = async (id: string): Promise<any> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/${id}`);
+  if (!res.ok) throw new Error('Không thể tải chi tiết trường THPT');
+  return res.json();
+};
+
+export const fetchG10Districts = async (): Promise<any[]> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/districts`);
+  if (!res.ok) throw new Error('Không thể tải danh sách quận/huyện');
+  return res.json();
+};
+
+export const fetchG10Analytics = async (): Promise<any> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/analytics`);
+  if (!res.ok) throw new Error('Không thể tải phân tích tuyển sinh lớp 10');
+  return res.json();
+};
+
+export const fetchG10AdminStats = async (): Promise<any> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/admin-stats`);
+  if (!res.ok) throw new Error('Không thể tải số liệu admin lớp 10');
+  return res.json();
+};
+
+export const calculateG10Score = async (scores: { math: number; literature: number; english: number; priority?: number; bonus?: number }): Promise<{ finalScore: number }> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/calculate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(scores),
+  });
+  if (!res.ok) throw new Error('Tính điểm thi lớp 10 thất bại');
+  return res.json();
+};
+
+export const evaluateG10Profile = async (payload: { math: number; literature: number; english: number; priority?: number; bonus?: number; preferredDistrict?: string; targetNV?: string }): Promise<G10RecommendationResult> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/recommendation`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Gợi ý trường lớp 10 thất bại');
+  return res.json();
+};
+
+export const fetchG10ImportPresets = async (): Promise<any[]> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/presets`);
+  if (!res.ok) throw new Error('Không thể tải presets lớp 10');
+  return res.json();
+};
+
+export const runG10ImportPreset = async (filename: string): Promise<any> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/presets/${filename}/run`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error(`Đồng bộ dữ liệu lớp 10 thất bại cho tệp: ${filename}`);
+  return res.json();
+};
+
+export const fetchG10ImportHistory = async (): Promise<any[]> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/imports/history`);
+  if (!res.ok) throw new Error('Không thể tải lịch sử import lớp 10');
+  return res.json();
+};
+
+export const triggerG10ImportPayload = async (payload: any): Promise<any> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/admin/import`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Gửi import payload lớp 10 thất bại');
+  return res.json();
+};
+
