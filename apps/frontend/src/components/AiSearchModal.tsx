@@ -17,9 +17,10 @@ interface AiSearchModalProps {
   onClose: () => void;
   type: 'GRADE10' | 'UNIVERSITY';
   onImportSuccess?: () => void;
+  prefillSchoolName?: string;
 }
 
-export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }: AiSearchModalProps) {
+export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, prefillSchoolName }: AiSearchModalProps) {
   const [password, setPassword] = useState('');
   const [schoolQuery, setSchoolQuery] = useState('');
   const [majorQuery, setMajorQuery] = useState('');
@@ -38,6 +39,14 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
   const [aiData, setAiData] = useState<any>(null);
   const [decisions, setDecisions] = useState<{ [year: number]: 'OVERWRITE' | 'SKIP' }>({});
   const [importing, setImporting] = useState(false);
+
+  // Pre-fill school name when opened from a card button
+  useEffect(() => {
+    if (isOpen && prefillSchoolName) {
+      setSchoolQuery(prefillSchoolName);
+      setShowSuggestions(false);
+    }
+  }, [isOpen, prefillSchoolName]);
 
   // Load initial suggestions when modal opens (Grade10 only)
   useEffect(() => {

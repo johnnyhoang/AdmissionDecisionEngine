@@ -257,6 +257,12 @@ export const fetchG10SchoolDetail = async (id: string): Promise<any> => {
   return res.json();
 };
 
+export const fetchG10SchoolByCode = async (code: string): Promise<any> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/code/${encodeURIComponent(code)}`);
+  if (!res.ok) throw new Error(`Không tìm thấy trường: ${code}`);
+  return res.json();
+};
+
 export const fetchG10Districts = async (): Promise<any[]> => {
   const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/districts`);
   if (!res.ok) throw new Error('Không thể tải danh sách quận/huyện');

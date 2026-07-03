@@ -49,6 +49,12 @@ export class Grade10SchoolController {
     return this.schoolService.seedAllSchools();
   }
 
+  @Get('code/:code')
+  @ApiOperation({ summary: 'Get school detail by school code (e.g. BTX, LQD)' })
+  async getSchoolDetailByCode(@Param('code') code: string) {
+    return this.schoolService.findByCode(code);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get details, cutoff history, and quotas of a high school' })
   async getSchoolDetail(@Param('id') id: string) {

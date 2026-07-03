@@ -27,6 +27,7 @@ export default function Grade10Container() {
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [schoolDetail, setSchoolDetail] = useState<any>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiPrefillSchool, setAiPrefillSchool] = useState<string | undefined>(undefined);
   const [activeDetailTab, setActiveDetailTab] = useState<'info' | 'cutoff' | 'quota'>('info');
 
   // Calculator form
@@ -572,6 +573,17 @@ export default function Grade10Container() {
                         <span className="text-slate-400">Quận/Huyện:</span>
                         <span className="font-semibold text-slate-200">{school.district?.name || 'N/A'}</span>
                       </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAiPrefillSchool(school.name);
+                          setIsAiModalOpen(true);
+                        }}
+                        className="mt-1.5 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/25 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 text-[10px] font-bold transition"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        Tìm dữ liệu với AI
+                      </button>
                     </div>
                   </div>
                 );
@@ -956,8 +968,9 @@ export default function Grade10Container() {
       {/* AI Search Modal */}
       <AiSearchModal 
         isOpen={isAiModalOpen}
-        onClose={() => setIsAiModalOpen(false)}
+        onClose={() => { setIsAiModalOpen(false); setAiPrefillSchool(undefined); }}
         type="GRADE10"
+        prefillSchoolName={aiPrefillSchool}
         onImportSuccess={() => {
           loadSchools(searchQuery, selectedDistrict);
           loadAnalytics();

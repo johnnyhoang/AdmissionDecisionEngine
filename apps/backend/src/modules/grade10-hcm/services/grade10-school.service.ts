@@ -98,20 +98,32 @@ export class Grade10SchoolService {
 
     return {
       ...school,
-      cutoffs: cutoffs.map(c => ({
+      cutoffScores: cutoffs,
+      quotaHistory: quotas,
+    };
+  }
+
+  async findByCode(code: string) {
+    const school = await this.schoolRepo.findOne({
+      where: { code },
+      relations: { district: true },
+    });
+    if (!school) throw new NotFoundException('Không tìm thấy trường');
+    const cutoffs = await this.cutoffRepo.find({
+      where: { schoolId: school.id },
+      order: { year: 'DESC' },
+    });
+    return {
+      ...school,
+      cutoffScores: cutoffs.map(c => ({
         ...c,
         cutoffNV1: Number(c.cutoffNV1),
-        cutoffNV2: c.cutoffNV2 ? Number(c.cutoffNV2) : null,
-        cutoffNV3: c.cutoffNV3 ? Number(c.cutoffNV3) : null,
-        lowestScore: c.lowestScore ? Number(c.lowestScore) : null,
-        highestScore: c.highestScore ? Number(c.highestScore) : null,
-      })),
-      quotas: quotas.map(q => ({
-        ...q,
-        competitionRatio: q.competitionRatio ? Number(q.competitionRatio) : null,
+        cutoffNV2: c.cutoffNV2 != null ? Number(c.cutoffNV2) : null,
+        cutoffNV3: c.cutoffNV3 != null ? Number(c.cutoffNV3) : null,
       })),
     };
   }
+
 
   async createSchool(dto: CreateSchoolDto) {
     const school = this.schoolRepo.create(dto);
