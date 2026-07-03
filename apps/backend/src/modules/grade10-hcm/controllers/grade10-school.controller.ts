@@ -25,6 +25,12 @@ export class Grade10SchoolController {
     return this.schoolService.getDistricts();
   }
 
+  @Get('names')
+  @ApiOperation({ summary: 'Get school names for autocomplete suggestions (q= optional filter)' })
+  async getSchoolNames(@Query('q') q?: string) {
+    return this.schoolService.getSchoolNames(q);
+  }
+
   @Get('analytics')
   @ApiOperation({ summary: 'Get historical cutoff trend and top competitive schools charts' })
   async getAnalytics() {
@@ -35,6 +41,12 @@ export class Grade10SchoolController {
   @ApiOperation({ summary: 'Get administrative entity counts' })
   async getAdminStats() {
     return this.schoolService.getAdminStats();
+  }
+
+  @Post('seed-all')
+  @ApiOperation({ summary: 'Seed all public THPT schools in HCMC from master JSON list' })
+  async seedAllSchools() {
+    return this.schoolService.seedAllSchools();
   }
 
   @Get(':id')

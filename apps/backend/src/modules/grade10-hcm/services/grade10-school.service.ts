@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Grade10School } from '../entities/school.entity';
 import { Grade10District } from '../entities/district.entity';
 import { Grade10Quota } from '../entities/quota.entity';
@@ -208,5 +210,80 @@ export class Grade10SchoolService {
       districtAverages,
       trends,
     };
+  }
+
+  /**
+   * Returns all school names for autocomplete suggestions
+   * Optionally filtered by a query string
+   */
+  async getSchoolNames(query?: string): Promise<{ id: string; name: string; code: string; districtName?: string }[]> {
+    const qb = this.schoolRepo.createQueryBuilder('school')
+      .leftJoinAndSelect('school.district', 'district')
+      .where('school.isActive = :isActive', { isActive: true })
+      .orderBy('school.name', 'ASC')
+      .take(30);
+
+    if (query && query.trim()) {
+      qb.andWhere('school.name ILIKE :q', { q: `%${query.trim()}%` });
+    }
+
+    const schools = await qb.getMany();
+    return schools.map(s => ({
+      id: s.id,
+      name: s.name,
+      code: s.code,
+      districtName: s.district?.name
+    }));
+  }
+
+  /**
+   * Bulk seeds all THPT schools from g10hcm_all_schools.json
+   * Only creates districts and schools that don't exist yet (safe upsert)
+   */
+  async seedAllSchools(): Promise<{ created: number; skipped: number }> {
+    const dataPath = path.join(process.cwd(), '..', '..', 'data', 'imports', 'g10hcm_all_schools.json');
+    let rawData: any;
+    try {
+      rawData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+    } catch (e) {
+      throw new Error(`Cannot read g10hcm_all_schools.json: ${e.message}`);
+    }
+
+    let created = 0;
+    let skipped = 0;
+
+    for (const districtData of rawData.districts) {
+      // Upsert district
+      let district = await this.districtRepo.findOne({ where: { code: districtData.code } });
+      if (!district) {
+        district = this.districtRepo.create({ name: districtData.name, code: districtData.code });
+        district = await this.districtRepo.save(district);
+      }
+
+      // Upsert each school
+      for (const schoolData of districtData.schools) {
+        const existing = await this.schoolRepo.findOne({ where: { code: schoolData.code } });
+        if (existing) {
+          // Update district link if missing
+          if (!existing.districtId) {
+            existing.districtId = district.id;
+            await this.schoolRepo.save(existing);
+          }
+          skipped++;
+        } else {
+          const school = this.schoolRepo.create({
+            name: schoolData.name,
+            code: schoolData.code,
+            districtId: district.id,
+            schoolType: schoolData.type || 'REGULAR',
+            isActive: true
+          });
+          await this.schoolRepo.save(school);
+          created++;
+        }
+      }
+    }
+
+    return { created, skipped };
   }
 }

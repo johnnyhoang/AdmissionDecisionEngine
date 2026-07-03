@@ -351,4 +351,15 @@ export const importAiCutoffs = async (payload: { password?: string; type: 'GRADE
   return res.json();
 };
 
+export const fetchGrade10SchoolNames = async (q?: string): Promise<{ id: string; name: string; code: string; districtName?: string }[]> => {
+  const url = q ? `${API_BASE_URL}/grade10-hcm/schools/names?q=${encodeURIComponent(q)}` : `${API_BASE_URL}/grade10-hcm/schools/names`;
+  const res = await fetch(url);
+  if (!res.ok) return [];
+  return res.json();
+};
 
+export const seedAllGrade10Schools = async (): Promise<{ created: number; skipped: number }> => {
+  const res = await fetch(`${API_BASE_URL}/grade10-hcm/schools/seed-all`, { method: 'POST' });
+  if (!res.ok) throw new Error('Seed all schools thất bại');
+  return res.json();
+};

@@ -43,6 +43,10 @@ export class ImportCutoffsDto {
   @IsOptional()
   majorCode?: string;
 
+  @IsString()
+  @IsOptional()
+  districtName?: string;
+
   @IsArray()
   @IsNotEmpty()
   overrides: any[];

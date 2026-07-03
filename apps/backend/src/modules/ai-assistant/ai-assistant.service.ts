@@ -581,12 +581,30 @@ export class AiAssistantService {
 
     if (dto.type === 'GRADE10') {
       let school = await this.grade10SchoolRepo.findOne({ where: { code: dto.schoolCode } });
+      
+      let districtId: string | undefined;
+      if (dto.districtName) {
+        let dist = await this.grade10DistrictRepo.findOne({ where: { name: dto.districtName } });
+        if (!dist) {
+          dist = this.grade10DistrictRepo.create({
+            name: dto.districtName,
+            code: dto.districtName.toUpperCase().replace(/\s+/g, '_').substring(0, 5)
+          });
+          dist = await this.grade10DistrictRepo.save(dist);
+        }
+        districtId = dist.id;
+      }
+
       if (!school) {
         school = this.grade10SchoolRepo.create({
           code: dto.schoolCode,
           name: dto.schoolCode.replace(/_/g, ' '),
+          districtId
         });
         school = await this.grade10SchoolRepo.save(school);
+      } else if (districtId && !school.districtId) {
+        school.districtId = districtId;
+        await this.grade10SchoolRepo.save(school);
       }
 
       for (const item of dto.overrides) {

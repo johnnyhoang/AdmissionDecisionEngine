@@ -1,0 +1,211 @@
+{
+  "districts": [
+    {
+      "name": "Quận 1",
+      "code": "Q1",
+      "schools": [
+        { "name": "THPT Nguyễn Thị Minh Khai", "code": "NTMK", "type": "REGULAR" },
+        { "name": "THPT Marie Curie", "code": "MARIE_CURIE", "type": "REGULAR" },
+        { "name": "THPT chuyên Lê Hồng Phong", "code": "LHP_CHUYEN", "type": "SPECIALIZED" }
+      ]
+    },
+    {
+      "name": "Quận 3",
+      "code": "Q3",
+      "schools": [
+        { "name": "THPT Bùi Thị Xuân", "code": "BTX", "type": "REGULAR" },
+        { "name": "THPT Trần Quốc Tuấn", "code": "TQT_Q3", "type": "REGULAR" },
+        { "name": "THPT Nguyễn Thượng Hiền", "code": "NTH", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 4",
+      "code": "Q4",
+      "schools": [
+        { "name": "THPT Khánh Hội A", "code": "KHANH_HOI_A", "type": "REGULAR" },
+        { "name": "THPT Tôn Đức Thắng", "code": "TON_DUC_THANG", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 5",
+      "code": "Q5",
+      "schools": [
+        { "name": "THPT Trần Khai Nguyên", "code": "TKN", "type": "REGULAR" },
+        { "name": "THPT Chuyên Năng Khiếu ĐHQG", "code": "NK_DHQG", "type": "SPECIALIZED" },
+        { "name": "THPT Phan Bội Châu", "code": "PBC_Q5", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 6",
+      "code": "Q6",
+      "schools": [
+        { "name": "THPT Bình Phú", "code": "BINH_PHU", "type": "REGULAR" },
+        { "name": "THPT Lê Thánh Tôn", "code": "LTT_Q6", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 7",
+      "code": "Q7",
+      "schools": [
+        { "name": "THPT Phú Mỹ", "code": "PHU_MY", "type": "REGULAR" },
+        { "name": "THPT Tân Phong", "code": "TAN_PHONG", "type": "REGULAR" },
+        { "name": "THPT Nhân Việt", "code": "NHAN_VIET", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 8",
+      "code": "Q8",
+      "schools": [
+        { "name": "THPT Bình Đông", "code": "BINH_DONG", "type": "REGULAR" },
+        { "name": "THPT Nguyễn Hữu Thọ", "code": "NHT_Q8", "type": "REGULAR" },
+        { "name": "THPT Lê Văn Thiêm", "code": "LVT_Q8", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 9",
+      "code": "Q9",
+      "schools": [
+        { "name": "THPT Long Trường", "code": "LONG_TRUONG", "type": "REGULAR" },
+        { "name": "THPT Nguyễn Huệ", "code": "NGUYEN_HUE_Q9", "type": "REGULAR" },
+        { "name": "THPT Trường Thạnh", "code": "TRUONG_THANH", "type": "REGULAR" },
+        { "name": "THPT Hiệp Phú", "code": "HIEP_PHU", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 10",
+      "code": "Q10",
+      "schools": [
+        { "name": "THPT Lê Quý Đôn", "code": "LQD", "type": "REGULAR" },
+        { "name": "THPT Trưng Vương", "code": "TRUNG_VUONG", "type": "REGULAR" },
+        { "name": "THPT Nguyễn An Ninh", "code": "NAN_NINH", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 11",
+      "code": "Q11",
+      "schools": [
+        { "name": "THPT Bàn Cờ", "code": "BAN_CO", "type": "REGULAR" },
+        { "name": "THPT Hùng Vương", "code": "HUNG_VUONG", "type": "REGULAR" },
+        { "name": "THPT Phú Lâm", "code": "PHU_LAM", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận 12",
+      "code": "Q12",
+      "schools": [
+        { "name": "THPT Thạnh Lộc", "code": "THANH_LOC", "type": "REGULAR" },
+        { "name": "THPT An Đông", "code": "AN_DONG_Q12", "type": "REGULAR" },
+        { "name": "THPT Trần Hưng Đạo", "code": "THD_Q12", "type": "REGULAR" },
+        { "name": "THPT Lê Thị Hồng Gấm", "code": "LTHG", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Bình Thạnh",
+      "code": "QBT",
+      "schools": [
+        { "name": "THPT Gia Định", "code": "GIA_DINH", "type": "REGULAR" },
+        { "name": "THPT Nguyễn Gia Thiều", "code": "NGT", "type": "REGULAR" },
+        { "name": "THPT Phú Nhuận", "code": "PHU_NHUAN", "type": "REGULAR" },
+        { "name": "THPT Ngô Quyền", "code": "NGO_QUYEN_BT", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Phú Nhuận",
+      "code": "QPN",
+      "schools": [
+        { "name": "THPT Phan Đình Phùng", "code": "PDP", "type": "REGULAR" },
+        { "name": "THPT Nguyễn Thị Diệu", "code": "NTD", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Tân Bình",
+      "code": "QTB",
+      "schools": [
+        { "name": "THPT Nguyễn Thượng Hiền", "code": "NTH_TB", "type": "REGULAR" },
+        { "name": "THPT Hoàng Hoa Thám", "code": "HHT", "type": "REGULAR" },
+        { "name": "THPT Trần Văn Giàu", "code": "TVG", "type": "REGULAR" },
+        { "name": "THPT Nguyễn Trãi", "code": "NGUYEN_TRAI_TB", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Tân Phú",
+      "code": "QTP",
+      "schools": [
+        { "name": "THPT Trần Phú", "code": "TRAN_PHU", "type": "REGULAR" },
+        { "name": "THPT Tây Thạnh", "code": "TAY_THANH", "type": "REGULAR" },
+        { "name": "THPT Lê Trọng Tấn", "code": "LE_TRONG_TAN", "type": "REGULAR" },
+        { "name": "THPT Tân Bình", "code": "TAN_BINH_TP", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Gò Vấp",
+      "code": "QGV",
+      "schools": [
+        { "name": "THPT Nguyễn Công Trứ", "code": "NCT_GV", "type": "REGULAR" },
+        { "name": "THPT Thông Tây Hội", "code": "TTH", "type": "REGULAR" },
+        { "name": "THPT Ngô Gia Tự", "code": "NGT_GV", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Bình Chánh",
+      "code": "QBC",
+      "schools": [
+        { "name": "THPT Lê Minh Xuân", "code": "LMX", "type": "REGULAR" },
+        { "name": "THPT Tân Túc", "code": "TAN_TUC", "type": "REGULAR" },
+        { "name": "THPT Đa Phước", "code": "DA_PHUOC", "type": "REGULAR" },
+        { "name": "THPT Bình Chánh", "code": "BINH_CHANH", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Nhà Bè",
+      "code": "QNB",
+      "schools": [
+        { "name": "THPT Nhà Bè", "code": "NHA_BE", "type": "REGULAR" },
+        { "name": "THPT Long Thới", "code": "LONG_THOI", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Cần Giờ",
+      "code": "QCG",
+      "schools": [
+        { "name": "THPT Cần Thạnh", "code": "CAN_THANH", "type": "REGULAR" },
+        { "name": "THPT Cần Giờ", "code": "CAN_GIO", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Củ Chi",
+      "code": "QCC",
+      "schools": [
+        { "name": "THPT Củ Chi", "code": "CU_CHI", "type": "REGULAR" },
+        { "name": "THPT Trung Lập", "code": "TRUNG_LAP", "type": "REGULAR" },
+        { "name": "THPT Tân Thông Hội", "code": "TTH_CC", "type": "REGULAR" },
+        { "name": "THPT Phạm Văn Cội", "code": "PVC", "type": "REGULAR" },
+        { "name": "THPT Phú Hoà Đông", "code": "PHD_CC", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Quận Hóc Môn",
+      "code": "QHM",
+      "schools": [
+        { "name": "THPT Hóc Môn", "code": "HOC_MON", "type": "REGULAR" },
+        { "name": "THPT Đông Thạnh", "code": "DONG_THANH", "type": "REGULAR" },
+        { "name": "THPT Trung Chánh", "code": "TRUNG_CHANH", "type": "REGULAR" },
+        { "name": "THPT Tân Phú Trung", "code": "TAN_PHU_TRUNG", "type": "REGULAR" }
+      ]
+    },
+    {
+      "name": "Thành phố Thủ Đức",
+      "code": "TPTD",
+      "schools": [
+        { "name": "THPT Tam Phú", "code": "TAM_PHU", "type": "REGULAR" },
+        { "name": "THPT Hiệp Bình", "code": "HIEP_BINH", "type": "REGULAR" },
+        { "name": "THPT Thủ Đức", "code": "THU_DUC", "type": "REGULAR" },
+        { "name": "THPT Nguyễn Hữu Huân", "code": "NHH", "type": "REGULAR" },
+        { "name": "THPT Long Bình", "code": "LONG_BINH", "type": "REGULAR" },
+        { "name": "THPT Linh Trung", "code": "LINH_TRUNG", "type": "REGULAR" },
+        { "name": "THPT Bình Chiểu", "code": "BINH_CHIEU", "type": "REGULAR" },
+        { "name": "THPT Võ Văn Ngân", "code": "VVN", "type": "REGULAR" }
+      ]
+    }
+  ]
+}

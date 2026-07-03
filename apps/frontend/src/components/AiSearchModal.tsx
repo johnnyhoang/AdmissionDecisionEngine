@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sparkles, ShieldAlert, AlertTriangle, CheckCircle, 
-  ArrowRight, Save
+  ArrowRight, Save, Search, X
 } from 'lucide-react';
-import { searchAiCutoffs, importAiCutoffs } from '../services/api';
+import { searchAiCutoffs, importAiCutoffs, fetchGrade10SchoolNames } from '../services/api';
+
+interface SchoolSuggestion {
+  id: string;
+  name: string;
+  code: string;
+  districtName?: string;
+}
 
 interface AiSearchModalProps {
   isOpen: boolean;
@@ -18,11 +25,68 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
   const [majorQuery, setMajorQuery] = useState('');
   const [step, setStep] = useState<'input' | 'searching' | 'preview' | 'success'>('input');
   const [error, setError] = useState<string | null>(null);
+
+  // Autocomplete states
+  const [suggestions, setSuggestions] = useState<SchoolSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionBoxRef = useRef<HTMLDivElement>(null);
   
   // Results states
   const [aiData, setAiData] = useState<any>(null);
   const [decisions, setDecisions] = useState<{ [year: number]: 'OVERWRITE' | 'SKIP' }>({});
   const [importing, setImporting] = useState(false);
+
+  // Load initial suggestions when modal opens (Grade10 only)
+  useEffect(() => {
+    if (isOpen && type === 'GRADE10') {
+      fetchGrade10SchoolNames().then(setSuggestions).catch(() => {});
+    }
+  }, [isOpen, type]);
+
+  // Debounced autocomplete for Grade10
+  useEffect(() => {
+    if (type !== 'GRADE10') return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    
+    if (!schoolQuery.trim()) {
+      // Show full initial list when query is empty
+      setSuggestionsLoading(true);
+      fetchGrade10SchoolNames().then(data => {
+        setSuggestions(data);
+        setSuggestionsLoading(false);
+      }).catch(() => setSuggestionsLoading(false));
+      return;
+    }
+
+    setSuggestionsLoading(true);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const data = await fetchGrade10SchoolNames(schoolQuery);
+        setSuggestions(data);
+      } catch {
+        setSuggestions([]);
+      } finally {
+        setSuggestionsLoading(false);
+      }
+    }, 300);
+  }, [schoolQuery, type]);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        suggestionBoxRef.current && !suggestionBoxRef.current.contains(e.target as Node) &&
+        inputRef.current && !inputRef.current.contains(e.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -43,6 +107,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
 
     setError(null);
     setStep('searching');
+    setShowSuggestions(false);
 
     try {
       const res = await searchAiCutoffs({
@@ -53,10 +118,10 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
       });
       setAiData(res);
       
-      // Initialize decisions: default to OVERWRITE if exists in DB, or SKIP
+      // Initialize decisions: default to OVERWRITE for all
       const initialDecisions: { [year: number]: 'OVERWRITE' | 'SKIP' } = {};
       res.results.forEach((item: any) => {
-        initialDecisions[item.year] = item.exists ? 'OVERWRITE' : 'OVERWRITE';
+        initialDecisions[item.year] = 'OVERWRITE';
       });
       setDecisions(initialDecisions);
       setStep('preview');
@@ -67,17 +132,13 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
   };
 
   const handleToggleDecision = (year: number, action: 'OVERWRITE' | 'SKIP') => {
-    setDecisions({
-      ...decisions,
-      [year]: action
-    });
+    setDecisions({ ...decisions, [year]: action });
   };
 
   const handleImport = async () => {
     setImporting(true);
     setError(null);
 
-    // Filter only items marked as OVERWRITE
     const overrides = aiData.results
       .filter((item: any) => decisions[item.year] === 'OVERWRITE')
       .map((item: any) => ({
@@ -102,9 +163,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
         overrides
       });
       setStep('success');
-      if (onImportSuccess) {
-        onImportSuccess();
-      }
+      if (onImportSuccess) onImportSuccess();
     } catch (err: any) {
       setError(err.message || 'Lỗi lưu dữ liệu vào cơ sở dữ liệu.');
     } finally {
@@ -119,14 +178,28 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
     setStep('input');
     setError(null);
     setAiData(null);
+    setShowSuggestions(false);
   };
+
+  const selectSuggestion = (s: SchoolSuggestion) => {
+    setSchoolQuery(s.name);
+    setShowSuggestions(false);
+  };
+
+  // Group suggestions by district for display
+  const groupedSuggestions = suggestions.reduce<Record<string, SchoolSuggestion[]>>((acc, s) => {
+    const key = s.districtName || 'Khác';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(s);
+    return acc;
+  }, {});
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-[9999] overflow-y-auto">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative flex flex-col gap-4">
         
         {/* Header */}
-        <div className="flex justify-between items-start border-b border-slate-850 pb-3">
+        <div className="flex justify-between items-start border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-indigo-400 animate-pulse" />
             <h2 className="text-base font-bold text-white">
@@ -137,7 +210,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
             onClick={() => { resetModal(); onClose(); }}
             className="text-slate-400 hover:text-white font-bold"
           >
-            ✕
+            <X className="h-4 w-4" />
           </button>
         </div>
 
@@ -156,34 +229,81 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
               <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-[11px] mb-0.5">Lưu ý tính năng:</strong>
-                Tính năng này sử dụng AI (Gemini Pro) có kích hoạt Google Search Grounding để tra cứu thông tin trực tiếp từ internet và có tính phí API. Vui lòng nhập đúng mật khẩu ủy quyền để tiếp tục.
+                Tính năng này sử dụng AI với Google Search Grounding để tra cứu thông tin trực tiếp từ internet và có tính phí API. Vui lòng nhập đúng mật khẩu ủy quyền để tiếp tục.
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-slate-400 font-semibold mb-1">Mật khẩu xác nhận</label>
-                <input 
-                  type="password"
-                  placeholder="Nhập mật khẩu..."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-indigo-500"
-                />
-              </div>
+            {/* Password */}
+            <div>
+              <label className="block text-slate-400 font-semibold mb-1">Mật khẩu xác nhận</label>
+              <input 
+                type="password"
+                placeholder="Nhập mật khẩu..."
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-indigo-500"
+              />
+            </div>
 
-              <div>
-                <label className="block text-slate-400 font-semibold mb-1">Tên trường cần tìm kiếm</label>
-                <input 
+            {/* School query with autocomplete */}
+            <div className="relative">
+              <label className="block text-slate-400 font-semibold mb-1">
+                {type === 'GRADE10' ? 'Tên trường THPT' : 'Tên trường Đại Học'}
+              </label>
+              <div className="relative flex items-center">
+                <Search className="absolute left-3 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
+                <input
+                  ref={inputRef}
                   type="text"
-                  placeholder={type === 'GRADE10' ? 'e.g. THPT Bùi Thị Xuân...' : 'e.g. Đại học Bách Khoa...'}
+                  placeholder={type === 'GRADE10' ? 'e.g. Trần Phú, Gia Định, Bùi Thị Xuân...' : 'e.g. Đại học Bách Khoa...'}
                   value={schoolQuery}
-                  onChange={(e) => setSchoolQuery(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-indigo-500"
+                  onChange={(e) => { setSchoolQuery(e.target.value); setShowSuggestions(true); }}
+                  onFocus={() => setShowSuggestions(true)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-slate-200 outline-none focus:border-indigo-500"
                 />
+                {schoolQuery && (
+                  <button type="button" onClick={() => { setSchoolQuery(''); setShowSuggestions(true); }} className="absolute right-2 text-slate-500 hover:text-slate-300">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
+
+              {/* Suggestions dropdown — Grade10 only */}
+              {type === 'GRADE10' && showSuggestions && (
+                <div
+                  ref={suggestionBoxRef}
+                  className="absolute top-full left-0 right-0 mt-1 bg-slate-950 border border-slate-700 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto"
+                >
+                  {suggestionsLoading ? (
+                    <div className="p-3 text-slate-500 text-[11px] text-center">Đang tải danh sách trường...</div>
+                  ) : suggestions.length === 0 ? (
+                    <div className="p-3 text-slate-500 text-[11px] text-center">Không tìm thấy trường nào phù hợp</div>
+                  ) : (
+                    Object.entries(groupedSuggestions).map(([district, schools]) => (
+                      <div key={district}>
+                        <div className="px-3 py-1.5 text-[10px] font-bold text-indigo-400 bg-slate-900/60 sticky top-0">
+                          {district}
+                        </div>
+                        {schools.map((s) => (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}
+                            className={`w-full text-left px-3 py-2 text-[11px] transition hover:bg-indigo-600/20 ${
+                              schoolQuery === s.name ? 'bg-indigo-600/10 text-indigo-300' : 'text-slate-300'
+                            }`}
+                          >
+                            {s.name}
+                          </button>
+                        ))}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
 
+            {/* Major query — University only */}
             {type === 'UNIVERSITY' && (
               <div>
                 <label className="block text-slate-400 font-semibold mb-1">Tên ngành học cần tìm kiếm</label>
@@ -197,11 +317,11 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
               </div>
             )}
 
-            <div className="flex justify-end gap-2 border-t border-slate-850 pt-4 mt-2">
+            <div className="flex justify-end gap-2 border-t border-slate-800 pt-4 mt-2">
               <button 
                 type="button"
                 onClick={() => { resetModal(); onClose(); }}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-slate-350 rounded-lg font-bold"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-bold"
               >
                 Hủy bỏ
               </button>
@@ -224,7 +344,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
               AI đang tìm kiếm dữ liệu internet của trường "{schoolQuery}"...
             </span>
             <span className="text-[10px] text-slate-500 max-w-sm text-center">
-              Quá trình này có thể tốn từ 5-15 giây để Google Search và định dạng cấu trúc kết quả.
+              Quá trình này có thể tốn từ 5-20 giây để tìm kiếm và định dạng cấu trúc kết quả.
             </span>
           </div>
         )}
@@ -240,26 +360,25 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
             <div className="overflow-x-auto max-h-60 border border-slate-800 rounded-xl">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-950 text-slate-400 border-b border-slate-850 font-semibold text-[10px]">
+                  <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold text-[10px]">
                     <th className="p-3">Năm học</th>
                     <th className="p-3">Dữ liệu AI Tìm thấy</th>
                     <th className="p-3">Dữ liệu trong Database</th>
                     <th className="p-3 text-center">Quyết định hành động</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-850 text-slate-350">
+                <tbody className="divide-y divide-slate-800 text-slate-300">
                   {aiData.results.map((item: any, idx: number) => {
                     const hasConflict = item.exists;
                     const choice = decisions[item.year] || 'OVERWRITE';
-
                     return (
-                      <tr key={idx} className="hover:bg-slate-850/10">
+                      <tr key={idx} className="hover:bg-slate-800/20">
                         <td className="p-3 font-bold text-white">{item.year}</td>
                         <td className="p-3">
                           {type === 'GRADE10' ? (
                             <div className="flex flex-col">
                               <span>NV1: <strong className="text-indigo-400">{item.cutoffNV1}đ</strong></span>
-                              {item.cutoffNV2 && <span className="text-[10px] text-slate-450">NV2: {item.cutoffNV2}đ | NV3: {item.cutoffNV3}đ</span>}
+                              {item.cutoffNV2 && <span className="text-[10px] text-slate-400">NV2: {item.cutoffNV2}đ | NV3: {item.cutoffNV3}đ</span>}
                             </div>
                           ) : (
                             <span>Điểm chuẩn: <strong className="text-indigo-400">{item.cutoffNV1}đ</strong></span>
@@ -276,7 +395,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
                               <span className="text-slate-500">Điểm chuẩn: {item.existingScore.cutoffNV1}đ</span>
                             )
                           ) : (
-                            <span className="text-slate-600 italic">Trống (Không có sẵn)</span>
+                            <span className="text-slate-600 italic">Trống (Chưa có)</span>
                           )}
                         </td>
                         <td className="p-3 text-center">
@@ -287,7 +406,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
                               className={`px-2 py-1 rounded text-[10px] font-bold border transition ${
                                 choice === 'OVERWRITE'
                                   ? 'bg-indigo-600 border-indigo-500 text-white shadow'
-                                  : 'bg-slate-850 border-slate-800 text-slate-400 hover:text-slate-200'
+                                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
                               }`}
                             >
                               Lấy thông tin mới
@@ -298,7 +417,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
                               className={`px-2 py-1 rounded text-[10px] font-bold border transition ${
                                 choice === 'SKIP'
                                   ? 'bg-rose-950/40 border-rose-900/60 text-rose-400'
-                                  : 'bg-slate-850 border-slate-800 text-slate-400 hover:text-slate-200'
+                                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
                               }`}
                             >
                               Bỏ qua
@@ -312,11 +431,11 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
               </table>
             </div>
 
-            <div className="flex justify-end gap-2 border-t border-slate-850 pt-4 mt-2">
+            <div className="flex justify-end gap-2 border-t border-slate-800 pt-4 mt-2">
               <button 
                 type="button"
                 onClick={() => setStep('input')}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-slate-350 rounded-lg font-bold"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-bold"
               >
                 Quay lại
               </button>
@@ -324,7 +443,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess }
                 type="button"
                 onClick={handleImport}
                 disabled={importing}
-                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-650/20"
+                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20"
               >
                 <Save className="h-3.5 w-3.5" />
                 {importing ? 'Đang lưu...' : 'Xác nhận cập nhật'}
