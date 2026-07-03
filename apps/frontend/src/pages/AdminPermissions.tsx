@@ -157,7 +157,7 @@ export default function AdminPermissions() {
       )}
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <section className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-140px)]">
+        <section className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col overflow-hidden h-96 lg:h-[calc(100vh-140px)]">
           <div className="p-4 border-b border-slate-800 bg-slate-950/40">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider m-0">Người dùng ({users.length})</h3>
           </div>
@@ -196,7 +196,7 @@ export default function AdminPermissions() {
           </div>
         </section>
 
-        <section className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-6 overflow-y-auto h-[calc(100vh-140px)]">
+        <section className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-6 overflow-y-auto h-auto lg:h-[calc(100vh-140px)]">
           {selectedUser ? (
             <div className="flex flex-col gap-6">
               <div className="bg-slate-950/60 border border-slate-800 p-4 rounded-xl flex items-center justify-between flex-wrap gap-4">

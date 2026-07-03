@@ -147,8 +147,8 @@ export default function Grade10Container() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Navigation tabs */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4">
-        <div className="max-w-7xl mx-auto flex flex-wrap gap-2 py-2">
+      <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
+        <div className="max-w-7xl mx-auto flex flex-row flex-nowrap gap-2 py-2 whitespace-nowrap">
           <button
             onClick={() => setActiveTab('dashboard')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${

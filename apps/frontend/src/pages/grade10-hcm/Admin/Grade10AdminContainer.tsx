@@ -405,8 +405,8 @@ export default function Grade10AdminContainer() {
       </header>
 
       {/* Navigation */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4">
-        <div className="max-w-7xl mx-auto flex gap-2 py-2 overflow-x-auto">
+      <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
+        <div className="max-w-7xl mx-auto flex flex-row flex-nowrap gap-2 py-2 whitespace-nowrap">
           {([
             ['dashboard',  'dashboard',  <TrendingUp key="t" className="h-4 w-4" />,      'Thống kê'],
             ['presets',    'presets',    <Database key="d" className="h-4 w-4" />,        `Presets (${presets.length})`],

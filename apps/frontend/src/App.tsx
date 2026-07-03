@@ -523,8 +523,8 @@ function MainApp() {
         </header>
 
         {/* Admin Navigation */}
-        <nav className="bg-slate-900 border-b border-slate-800 px-4">
-          <div className="max-w-7xl mx-auto flex gap-2 py-2">
+        <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
+          <div className="max-w-7xl mx-auto flex flex-row flex-nowrap gap-2 py-2 whitespace-nowrap">
             <button
               onClick={() => setAdminTab('dashboard')}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
@@ -881,9 +881,8 @@ function MainApp() {
         </div>
       </header>
 
-      {/* Navigation tabs */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4">
-        <div className="max-w-7xl mx-auto flex flex-wrap gap-2 py-2">
+      <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
+        <div className="max-w-7xl mx-auto flex flex-row flex-nowrap gap-2 py-2 whitespace-nowrap">
           {hasPermission('UNIVERSITY', 'view_recommendation', 'view') && (
             <button
               onClick={() => setActiveTab('evaluate')}
