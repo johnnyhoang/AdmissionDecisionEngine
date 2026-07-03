@@ -6,6 +6,7 @@ import { AppModule } from '../src/app.module';
 import * as express from 'express';
 
 const server = express();
+let isInitialized = false;
 
 export const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
@@ -35,10 +36,13 @@ export const bootstrap = async () => {
   SwaggerModule.setup('swagger', app, document);
 
   await app.init();
+  isInitialized = true;
 };
 
-// Start bootstrapping NestJS
-bootstrap();
-
-// Export the express server instance for Vercel
-export default server;
+// Export the handler for Vercel
+export default async (req: any, res: any) => {
+  if (!isInitialized) {
+    await bootstrap();
+  }
+  return server(req, res);
+};
