@@ -16,6 +16,7 @@ import type { UniversityItem, RecommendationResult, MajorItem } from './services
 import './App.css';
 import Grade10Container from './pages/grade10-hcm/Grade10Container';
 import Grade10AdminContainer from './pages/grade10-hcm/Admin/Grade10AdminContainer';
+import AiSearchModal from './components/AiSearchModal';
 
 interface PreferenceItem {
   programId: string;
@@ -36,6 +37,7 @@ function App() {
   const [recommendations, setRecommendations] = useState<RecommendationResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   // Form State for Profile Evaluation
   const [fullName, setFullName] = useState('Nguyễn Văn A');
@@ -1044,8 +1046,17 @@ function App() {
                   className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 outline-none transition"
                 />
               </div>
-              <div className="text-xs text-slate-400">
-                Hiển thị: <span className="font-semibold text-slate-200">{universities.length}</span> trường ĐHQG
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsAiModalOpen(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20"
+                >
+                  <Sparkles className="h-3.5 w-3.5 animate-pulse" />
+                  Tìm dữ liệu trường (AI)
+                </button>
+                <div className="text-xs text-slate-400 whitespace-nowrap">
+                  Hiển thị: <span className="font-semibold text-slate-200">{universities.length}</span> trường ĐHQG
+                </div>
               </div>
             </div>
 
@@ -1450,6 +1461,15 @@ function App() {
         <p className="m-0">© 2026 Admission Recommendation Engine. Phát triển cho Kỳ thi Đại học Việt Nam.</p>
         <p className="m-0 mt-1">Cơ sở dữ liệu tích hợp chính thức từ VNU-HCM và MOET Việt Nam.</p>
       </footer>
+      {/* AI Search Modal */}
+      <AiSearchModal 
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        type="UNIVERSITY"
+        onImportSuccess={() => {
+          loadInitialData();
+        }}
+      />
     </div>
   );
 }

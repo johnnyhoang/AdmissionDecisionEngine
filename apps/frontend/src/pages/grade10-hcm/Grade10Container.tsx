@@ -12,6 +12,7 @@ import {
   fetchG10Analytics, evaluateG10Profile 
 } from '../../services/api';
 import type { G10SchoolItem, G10RecommendationItem } from '../../services/api';
+import AiSearchModal from '../../components/AiSearchModal';
 
 export default function Grade10Container() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'calculator' | 'search' | 'analytics' | 'compare'>('dashboard');
@@ -25,6 +26,7 @@ export default function Grade10Container() {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [schoolDetail, setSchoolDetail] = useState<any>(null);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   // Calculator form
   const [mathScore, setMathScore] = useState('8.5');
@@ -502,6 +504,14 @@ export default function Grade10Container() {
               </div>
 
               <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsAiModalOpen(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Tìm dữ liệu trường (AI)
+                </button>
+
                 <select
                   value={selectedDistrict}
                   onChange={(e) => handleDistrictChange(e.target.value)}
@@ -739,6 +749,16 @@ export default function Grade10Container() {
           </div>
         </div>
       )}
+      {/* AI Search Modal */}
+      <AiSearchModal 
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        type="GRADE10"
+        onImportSuccess={() => {
+          loadSchools(searchQuery, selectedDistrict);
+          loadAnalytics();
+        }}
+      />
     </div>
   );
 }
