@@ -1,0 +1,424 @@
+{
+  "sourceName": "IZONE Blog - Tổng hợp đề án tuyển sinh 2026",
+  "sourceUrl": "https://www.izone.edu.vn/blog/de-an-tuyen-sinh-dai-hoc/",
+  "dataYear": 2026,
+  "universities": [
+    {
+      "code": "NEU",
+      "nameVi": "Đại học Kinh Tế Quốc Dân",
+      "description": "Năm 2026 Đại học Kinh tế Quốc dân dự kiến tuyển sinh không quá 9.000 chỉ tiêu hệ đại học chính quy với 3 phương thức tuyển sinh bao gồm: Phương thức 1: Tuyển thẳng theo quy chế của Bộ Phương thức 2: Xét tuyển kết hợp chứng chỉ quốc tế SAT/ACT Kết hợp bài thi đánh giá năng lực/ tư duy + chứng chỉ tiế...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Kinh Tế Quốc Dân",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HUST",
+      "nameVi": "Đại học Bách Khoa",
+      "description": "2026 trường dự kiến tuyển sinh khoảng 9.880 chỉ tiêu hệ đại học chính quy, quy mô tuyển sinh cơ bản giữ ổn định. Phương thức 1: Xét tuyển tài năng (3 trường hợp) Xét tuyển thẳng theo quy định của Bộ Giáo dục & Đào tạo Xét tuyển dựa trên chứng chỉ quốc tế (SAT, ACT, A-Level…) Xét tuyển theo hồ sơ năn...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Bách Khoa",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "FTU",
+      "nameVi": "Đại học Ngoại Thương",
+      "description": "Theo đề án tuyển sinh Đại học Ngoại Thương, trường dự kiến tuyển 4550 chỉ tiêu cho hệ đại học chính quy trên toàn trường, bao gồm 2 cơ sở là Hà Nội, TP HCM và Quảng Ninh. Trường công bố 4 phương thức tuyển sinh cụ thể: Phương thức 1: Xét tuyển thẳng theo quy chế của Bộ Phương thức 2: Xét tuyển sử dụ...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Ngoại Thương",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UET",
+      "nameVi": "Trường Đại học Công nghệ - Đại học Quốc gia Hà Nội",
+      "description": "Dựa trên đề án tuyển sinh Đại học Quốc gia Hà Nội năm 2026, Trường Đại học Công nghệ dự kiến tuyển khoảng 4.000+ chỉ tiêu cho hơn 20 ngành đào tạo và sử dụng 4 phương thức xét tuyển chính: Phương thức 1: Xét tuyển thẳng và ưu tiên xét tuyển theo quy định Bộ Phương thức 2: Xét tuyển bằng điểm thi tốt...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Công nghệ - Đại học Quốc gia Hà Nội",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "ULIS",
+      "nameVi": "Trường Đại học Ngoại ngữ - Đại học Quốc gia Hà Nội",
+      "description": "Theo thông tin tuyển sinh dự kiến năm 2026, trường tuyển sinh 2.750 chỉ tiêu cho 16 chương trình đào tạo và áp dụng 3 phương thức xét tuyển. Phương thức 1: Xét tuyển theo quy chế tuyển sinh của Bộ Giáo dục & Đào tạo Phương thức 2: Xét tuyển bằng kết quả thi tốt nghiệp THPT 2026 Mã tổ hợp Môn Mã tổ h...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Ngoại ngữ - Đại học Quốc gia Hà Nội",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UEB",
+      "nameVi": "Trường Đại học Kinh tế - Đại học Quốc gia Hà Nội",
+      "description": "2026 Trường Đại học Kinh tế tuyển sinh 6 ngành đào tạo với 8 chương trình theo các phương thức tuyển sinh sau: 1, Tuyển sinh đại học chính quy trong nước Phương thức 1: Xét tuyển bằng kết quả thi tốt nghiệp THPT năm 2026 Chỉ xét tuyển bằng kết quả thi tốt nghiệp THPT 2026 Xét tuyển kết hợp chứng chỉ...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Kinh tế - Đại học Quốc gia Hà Nội",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "DAV",
+      "nameVi": "Học viện Ngoại giao",
+      "description": "Phương thức 1: Xét tuyển thẳng, ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển kết hợp dựa trên Kết quả học tập THPT và chứng chỉ ngoại ngữ quốc tế (IELTS, TOEFL…) đối với các thí sinh học chương trình THPT của Việt Nam. Phương thức 3: Xét tuyển kết hợp dựa trên Chứng chỉ đánh giá n...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Học viện Ngoại giao",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "BAV",
+      "nameVi": "Học viện Ngân hàng",
+      "description": "Theo thông bố đề án tuyển sinh Học viện Ngân hàng, trường sử dụng 4 phương thức tuyển sinh sau: Phương thức 1: Xét tuyển thẳng theo quy định của Bộ Phương thức 2: Xét tuyển kết hợp kết quả học tập THPT với các kết quả khác Xét tuyển kết quả học tập THPT (học bạ) với các chứng chỉ quốc tế (SAT, IELTS...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Học viện Ngân hàng",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HMU",
+      "nameVi": "Đại học Y Hà Nội",
+      "description": "Đề án tuyển sinh Đại học Y Hà Nội công bố dự kiến tuyển 2.150 chỉ tiêu trong năm 2026 với 2 phương thức tuyển sinh: Phương thức 1: Xét tuyển thẳng và ưu tiên xét tuyển theo quy định Bộ Giáo dục và Đào tạo Lưu ý: Có điểm thưởng với thí sinh diện ưu tiên xét tuyển Phương thức 2: Xét tuyển bằng kết quả...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Y Hà Nội",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "TMU",
+      "nameVi": "Đại học Thương Mại",
+      "description": "Năm 2026 Đại học Thương Mại tuyển sinh 6 chương trình đào tạo với 5 phương thức xét tuyển: Phương thức 1: Xét tuyển thẳng, ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển bằng kết quả tốt nghiệp THPT 2026 Tổ hợp Môn A00 Toán, Vật lí, Hóa học A01 Toán, Vật lí, Tiếng Anh D01 Toán, Ngữ ...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Thương Mại",
+          "city": "Hà Nội"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UEH",
+      "nameVi": "Đại học Kinh tế TP HCM",
+      "description": "Đề án tuyển sinh Đại học Kinh tế TP HCM 2026 công bố dự kiến tuyển 8240 chỉ tiêu tương ứng với 82 chương trình đào tạo và áp dụng 2 phương thức tuyển sinh bao gồm: Phương thức 1: Xét tuyển thẳng theo quy định của Bộ Phương thức 2: Xét tuyển kết hợp với các trường hợp cụ thể: Thí sinh tốt nghiệp chươ...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Kinh tế TP HCM",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HUB",
+      "nameVi": "Đại học Ngân hàng TP HCM",
+      "description": "Đề án tuyển sinh Đại học Ngân hàng TP HCM 2026 công bố tuyển 5022 chỉ tiêu với các phương thức tuyển sinh chính bao gồm: Phương thức 1: Xét tuyển thẳng & ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển kết hợp kết quả học tập THPT (học bạ), thành tích, năng khiếu đặc biệt bậc THPT và...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Ngân hàng TP HCM",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UFM",
+      "nameVi": "Đại học Tài chính - Marketing",
+      "description": "Đề án tuyển sinh Đại học Tài chính &#8211; Marketing thông báo dự kiến áp dụng các phương thức xét tuyển sau: Phương thức 1: Xét tuyển thẳng theo quy định của Bộ Phương thức 2: Xét tuyển bằng kết quả kỳ thi đánh giá năng lực (V-ACT) Phương thức 3: Xét tuyển bằng kết quả học tập ở bậc THPT (học bạ) P...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Tài chính - Marketing",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UEL",
+      "nameVi": "Đại học Kinh tế - Luật",
+      "description": "Đề án tuyển sinh Đại học Kinh tế &#8211; Luật công bố dự kiến tuyển 3200 chỉ tiêu với các phương thức xét tuyển sau: Phương thức 1: Xét tuyển thẳng và ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển tổng hợp: Xét tuyển bằng điểm bài thi Đánh giá năng lực (ĐGNL), Bài thi tốt nghiệp tr...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Kinh tế - Luật",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HCMUT",
+      "nameVi": "Đại học Bách khoa TP. HCM",
+      "description": "Đề án tuyển sinh Đại học Bách khoa TP. HCM 2026 dự kiến xét tuyển các phương thức tuyển sinh chính bao gồm: Phương thức 1: Xét tuyển thẳng và ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển tổng hợp (kết quả V-ACT, kết quả kỳ thi tốt nghiệp THPT, kết quả học tập THPT, năng lực và các...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Bách khoa TP. HCM",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HCMUE",
+      "nameVi": "Trường Đại Học Sư Phạm TPHCM",
+      "description": "Theo thông báo trường đại Đại Học Sư Phạm TPHCM sử dụng 4 phương thức xét tuyển chính: Phương thức 1: Tuyển thẳng và ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển thí sinh là học sinh lớp chuyên, trường chuyên Phương thức 3: Xét tuyển bằng kết quả tốt nghiệp THPT 2026 Phương thức 4...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại Học Sư Phạm TPHCM",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UIT",
+      "nameVi": "Đại học Công nghệ Thông tin",
+      "description": "Phương thức 1: Xét tuyển thẳng và ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển tổng hợp (kết quả thi tốt nghiệp THPT, kết quả đánh giá năng lực, điểm chứng chỉ quốc tế) Lưu ý: Thí sinh được cộng điểm khuyến khích cho thí sinh có giải kỳ thi Olympic, kỳ thi VOAI, có chứng chỉ ngoại...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Công nghệ Thông tin",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "IUH",
+      "nameVi": "Đại học Công nghiệp TP HCM",
+      "description": "Đề án tuyển sinh Đại học Công nghiệp TP HCM năm 2026 sử dụng các phương thức xét tuyển sau: Phương thức 1: Xét tuyển thẳng theo quy chế tuyển sinh của Bộ Phương thức 2: Xét tuyển kết hợp: kết quả tốt nghiệp THPT 2026, kết quả kỳ thi đánh giá năng lực (V-ACT) 2026, kết quả học tập THPT lớp 12 Thông t...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Công nghiệp TP HCM",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HCMUSSH",
+      "nameVi": "Đại học Khoa học Xã hội và Nhân văn - Đại học Quốc gia TP. HCM",
+      "description": "Theo thông báo trường Đại học Khoa học Xã hội và Nhân văn &#8211; Đại học Quốc gia TP. HCM xét tuyển 2 phương thức: Phương thức 1: Xét tuyển thẳng theo quy định của Bộ Phương thức 2: Xét tuyển kết hợp (Kết quả kỳ thi tốt nghiệp THPT 2026, kết quả kỳ thi V-ACT, học bạ, thành tích trong học tập, hoạt ...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Khoa học Xã hội và Nhân văn - Đại học Quốc gia TP. HCM",
+          "city": "TP. Hồ Chí Minh"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "DUT",
+      "nameVi": "Đại học Bách khoa - Đại học Đà Nẵng",
+      "description": "Theo đề án tuyển sinh Đại học Bách khoa &#8211; Đại học Đà Nẵng sử dụng 3 phương thức: Phương thức 1: Xét tuyển thẳng theo quy định của Quy chế tuyển sinh của Bộ Giáo dục và Đào tạo Phương thức 2: Xét tuyển bằng kết quả thi THPT 2026 Tổ hợp Môn A00 Toán, Vật lí, Hóa học A01 Toán, Vật lí, Tiếng Anh D...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Bách khoa - Đại học Đà Nẵng",
+          "city": "Đà Nẵng"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "DUE",
+      "nameVi": "Đại học Kinh tế - Đại học Đà Nẵng",
+      "description": "Theo đề án tuyển sinh Đại học Kinh tế &#8211; Đại học Đà Nẵng sử dụng 4 phương thức: Phương thức 1: Xét tuyển thẳng theo quy định của Bộ Phương thức 2: Xét tuyển kết hợp năng lực tiếng Anh và thành tích học tập Phương thức 3: Xét tuyển bằng kết quả tốt nghiệp THPT 2026 Tổ hợp Môn A00 Toán, Vật lí, H...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Kinh tế - Đại học Đà Nẵng",
+          "city": "Đà Nẵng"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UED",
+      "nameVi": "Đại học Sư phạm - Đại học Đà Nẵng",
+      "description": "Theo đề án tuyển sinh Đại học Sư phạm &#8211; Đại học Đà Nẵng, trường công bố theo hướng xét tuyển kết hợp các kết quả gồm: Điểm thi tốt nghiệp THPT 2026 Học bạ THPT Điểm thi Đánh giá năng lực chuyên biệt của Trường Đại học Sư phạm TP HCM Các môn năng khiếu tùy ngành. Thông tin chi tiết về phương án...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Sư phạm - Đại học Đà Nẵng",
+          "city": "Đà Nẵng"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UFLS",
+      "nameVi": "Đại học Ngoại ngữ - Đại học Đà Nẵng",
+      "description": "Đại học Ngoại ngữ &#8211; Đại học Đà Nẵng công bố 2 phương thức xét tuyển Phương thức 1: Xét tuyển thẳng theo quy chế tuyển sinh của Bộ Phương thức 2: Xét tuyển kết quả học tập THPT (học bạ) và kết quả thi THPT 2026 Thông tin chi tiết về phương án tuyển sinh của trường: https://tuyensinh.ufl.udn.vn/...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Ngoại ngữ - Đại học Đà Nẵng",
+          "city": "Đà Nẵng"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UTE",
+      "nameVi": "Đại học Sư phạm Kỹ thuật - Đại học Đà Nẵng",
+      "description": "Theo thông tin tuyển sinh 2026, trường dự kiến tuyển 1.800 chỉ tiêu cho 25 ngành/chuyên ngành đào tạo với 5 phương thức chính: Phương thức 1: Xét tuyển thẳng theo quy định của Bộ Giáo dục và Đào tạo Phương thức 2: Xét tuyển kết quả THPT (học bạ) Phương thức 3: Xét tuyển theo kết quả thi tốt nghiệp T...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Sư phạm Kỹ thuật - Đại học Đà Nẵng",
+          "city": "Đà Nẵng"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "VKU",
+      "nameVi": "Đại học Công nghệ Thông tin và Truyền thông Việt - Hàn - Đại học Đà Nẵng",
+      "description": "Đề án tuyển sinh Trường Đại học Công nghệ Thông tin và Truyền thông Việt &#8211; Hàn &#8211; Đại học Đà Nẵng năm 2026 công bố 3 phương thức xét tuyển: Phương thức 1: Xét tuyển thẳng theo quy chế tuyển sinh của Bộ Giáo dục và Đào tạo Phương thức 2: Phương thức xét tuyển kết hợp kết quả học tập THPT (...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Công nghệ Thông tin và Truyền thông Việt - Hàn - Đại học Đà Nẵng",
+          "city": "Đà Nẵng"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "DAU",
+      "nameVi": "Đại học Kiến trúc Đà Nẵng",
+      "description": "Đề án tuyển sinh Đại học Kiến trúc Đà Nẵng công bố 4 phương thức tuyển sinh cho năm 2026 bao gồm: Phương thức 1: Xét tuyển bằng kết quả tốt nghiệp THPT 2026 Dưới đây là bảng tổ hợp xét tuyển – môn từ ảnh bạn gửi: Tổ hợp Môn A00 Toán, Vật lí, Hóa học A01 Toán, Vật lí, Tiếng Anh B00 Toán, Hóa học, Sin...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Đại học Kiến trúc Đà Nẵng",
+          "city": "Đà Nẵng"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "DHKH",
+      "nameVi": "Trường Đại học Khoa học - Đại học Huế (ĐHKH)",
+      "description": "2026 Trường Đại học Khoa học &#8211; Đại học Huế áp dụng 5 phương thức tuyển sinh cho đại học chính quy: Phương thức 1: Xét tuyển thẳng, ưu tiên xét tuyển theo quy định của Bộ Phương thức 2: Xét tuyển sử dụng kết quả thi tốt nghiệp THPT 2026 Phương thức 3: Xét tuyển sử dụng kết quả học tập cấp THPT ...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Khoa học - Đại học Huế (ĐHKH)",
+          "city": "Thừa Thiên Huế"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "UEHU",
+      "nameVi": "Trường Đại học Kinh tế - Đại học Huế",
+      "description": "Đề án tuyển sinh Trường Đại học Kinh tế &#8211; Đại học Huế 2026 công bố 5 phương thức xét tuyển cho 3 nhóm chương trình đào tạo: Phương thức 1: Xét tuyển thẳng theo quy định của Quy chế tuyển sinh của Bộ Phương thức 2: Xét tuyển sử dụng kết quả thi tốt nghiệp THPT năm 2026. Tổ hợp Môn A00 Toán, Vật...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Kinh tế - Đại học Huế",
+          "city": "Thừa Thiên Huế"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HUL",
+      "nameVi": "Trường Đại học Luật - Đại học Huế",
+      "description": "2026 Trường Đại học Luật &#8211; Đại học Huế sử dụng 3 phương thức tuyển sinh bao gồm: Phương thức 1: Xét tuyển thẳng, ưu tiên xét tuyển theo Quy chế tuyển sinh hiện hành của Bộ Phương thức 2: Xét tuyển dựa vào kết quả học tập THPT (học bạ) Phương thức 3: Xét tuyển dựa vào kết quả của kỳ thi tốt ngh...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Luật - Đại học Huế",
+          "city": "Thừa Thiên Huế"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HUFLIS",
+      "nameVi": "Trường Đại học Ngoại ngữ - Đại học Huế",
+      "description": "2026 trường đại học Ngoại ngữ &#8211; Đại học Huế công bố 5 phương thức xét tuyển chính bao gồm: Phương thức 1: Xét tuyển theo kết quả thi tốt nghiệp THPT 2026 Tổ hợp Môn D01 Toán, Ngữ văn, Tiếng Anh D14 Ngữ văn, Lịch sử, Tiếng Anh D15 Ngữ văn, Địa lí, Tiếng Anh D03 Toán, Ngữ văn, Tiếng Pháp D44 Ngữ...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Ngoại ngữ - Đại học Huế",
+          "city": "Thừa Thiên Huế"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "YDH",
+      "nameVi": "Trường Đại học Y - Dược - Đại học Huế",
+      "description": "Theo đề án tuyển sinh Trường Đại học Y &#8211; Dược &#8211; Đại học Huế, trường áp dụng 3 phương thức xét tuyển chính: Phương thức 1: Xét tuyển theo kết quả thi tốt nghiệp THPT 2026 Tổ hợp Môn A00 Toán, Vật lí, Hóa học B00 Toán, Hóa học, Sinh học B08 Toán, Sinh học, Tiếng Anh D07 Toán, Hóa học, Tiến...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Đại học Y - Dược - Đại học Huế",
+          "city": "Thừa Thiên Huế"
+        }
+      ],
+      "programs": []
+    },
+    {
+      "code": "HAT",
+      "nameVi": "Trường Du lịch - Đại học Huế",
+      "website": "'#' +heading.id",
+      "description": "Phương thức 1: Xét tuyển thẳng theo quy định của Quy chế tuyển sinh của Bộ Giáo dục và Đào tạo Phương thức 2: Xét tuyển sử dụng kết quả thi tốt nghiệp THPT 2026 Tổ hợp Môn A01 Toán, Vật lí, Tiếng Anh B08 Toán, Sinh học, Tiếng Anh D01 Toán, Ngữ văn, Tiếng Anh D07 Toán, Hóa học, Tiếng Anh D08 Toán, Si...",
+      "isPublic": true,
+      "campuses": [
+        {
+          "name": "Trụ sở chính - Trường Du lịch - Đại học Huế",
+          "city": "Thừa Thiên Huế"
+        }
+      ],
+      "programs": []
+    }
+  ]
+}
