@@ -9,6 +9,7 @@ import { AdmissionMethod } from '../database/entities/admission-method.entity';
 import { AdmissionRule } from '../database/entities/admission-rule.entity';
 import { AdmissionScore } from '../database/entities/admission-score.entity';
 import { EvaluationHistory } from '../database/entities/evaluation-history.entity';
+import { DataImport } from '../database/entities/data-import.entity';
 
 @Injectable()
 export class UniversityService implements OnApplicationBootstrap {
@@ -29,6 +30,8 @@ export class UniversityService implements OnApplicationBootstrap {
     private readonly scoreRepository: Repository<AdmissionScore>,
     @InjectRepository(EvaluationHistory)
     private readonly historyRepository: Repository<EvaluationHistory>,
+    @InjectRepository(DataImport)
+    private readonly dataImportRepository: Repository<DataImport>,
   ) {}
 
   async onApplicationBootstrap() {
@@ -294,7 +297,7 @@ export class UniversityService implements OnApplicationBootstrap {
   }
 
   async getStats() {
-    const [universities, campuses, majors, programs, methods, rules, scores, histories] = await Promise.all([
+    const [universities, campuses, majors, programs, methods, rules, scores, histories, imports] = await Promise.all([
       this.universityRepository.count(),
       this.campusRepository.count(),
       this.majorRepository.count(),
@@ -302,7 +305,8 @@ export class UniversityService implements OnApplicationBootstrap {
       this.methodRepository.count(),
       this.ruleRepository.count(),
       this.scoreRepository.count(),
-      this.historyRepository.count()
+      this.historyRepository.count(),
+      this.dataImportRepository.count(),
     ]);
 
     return {
@@ -313,7 +317,8 @@ export class UniversityService implements OnApplicationBootstrap {
       methods,
       rules,
       scores,
-      histories
+      histories,
+      imports,
     };
   }
 

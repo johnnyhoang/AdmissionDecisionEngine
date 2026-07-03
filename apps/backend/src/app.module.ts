@@ -7,6 +7,7 @@ import { RuleEngineModule } from './modules/rule-engine/rule-engine.module';
 import { RecommendationModule } from './modules/recommendation/recommendation.module';
 import { UniversityModule } from './modules/university/university.module';
 import { AiAssistantModule } from './modules/ai-assistant/ai-assistant.module';
+import { ImportModule } from './modules/import/import.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AiAssistantModule } from './modules/ai-assistant/ai-assistant.module';
     UniversityModule,
     RecommendationModule,
     AiAssistantModule,
+    ImportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

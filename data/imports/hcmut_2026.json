@@ -1,0 +1,455 @@
+{
+  "sourceName": "Đề án tuyển sinh ĐH Bách Khoa TP.HCM 2026 (HCMUT)",
+  "sourceUrl": "https://hcmut.edu.vn/tuyen-sinh",
+  "dataYear": 2026,
+  "universities": [
+    {
+      "code": "QSB",
+      "nameVi": "Trường Đại học Bách khoa – Đại học Quốc gia TP.HCM",
+      "nameEn": "Ho Chi Minh City University of Technology (HCMUT)",
+      "website": "https://hcmut.edu.vn",
+      "description": "Trường Đại học Bách khoa là thành viên của ĐHQG-HCM, một trong những trường kỹ thuật hàng đầu Việt Nam. Đào tạo kỹ sư và cử nhân trong các lĩnh vực kỹ thuật, công nghệ, khoa học ứng dụng.",
+      "isPublic": true,
+      "localRanking": 2,
+      "campuses": [
+        {
+          "name": "Cơ sở Lý Thường Kiệt (Trụ sở chính)",
+          "address": "268 Lý Thường Kiệt, Phường Diên Hồng, Quận 10",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Cơ sở Dĩ An – Bình Dương",
+          "address": "Khu phố Tân Lập, Phường Đông Hòa, TP. Dĩ An",
+          "city": "Bình Dương"
+        }
+      ],
+      "programs": [
+        {
+          "majorCode": "7480101",
+          "name": "Khoa học Máy tính",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.0,
+          "totalQuota": 240,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "quota": 0,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 85.41 }]
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A01",
+              "combinationDescription": "Toán (x2), Vật Lý, Tiếng Anh",
+              "minScoreThreshold": 50,
+              "quota": 0,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 85.41 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7480106",
+          "name": "Kỹ thuật Máy tính",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.0,
+          "totalQuota": 250,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 82.91 }]
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A01",
+              "combinationDescription": "Toán (x2), Vật Lý, Tiếng Anh",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 82.91 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7520201",
+          "name": "Kỹ thuật Điện",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.0,
+          "totalQuota": 670,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 80.77 }]
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A01",
+              "combinationDescription": "Toán (x2), Vật Lý, Tiếng Anh",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 80.77 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7520103",
+          "name": "Kỹ thuật Cơ khí",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.5,
+          "totalQuota": 300,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 75.43 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7520114",
+          "name": "Kỹ thuật Cơ Điện tử",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.5,
+          "totalQuota": 105,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 81.82 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7520401",
+          "name": "Kỹ thuật Hóa học",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.5,
+          "totalQuota": 330,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 75.43 }]
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán (x2), Hóa Học, Sinh Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 75.43 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7580201",
+          "name": "Kỹ thuật Xây dựng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.5,
+          "totalQuota": 470,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 55.05 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7510605",
+          "name": "Logistics và Quản lý Chuỗi Cung ứng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.0,
+          "totalQuota": 70,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 80.52 }]
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "D01",
+              "combinationDescription": "Toán (x2), Ngữ Văn, Tiếng Anh",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 80.52 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340301",
+          "name": "Quản lý Công nghiệp",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 75.98 }]
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "D01",
+              "combinationDescription": "Toán (x2), Ngữ Văn, Tiếng Anh",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 75.98 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7520503",
+          "name": "Kỹ thuật Môi trường",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.5,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 60.93 }]
+            },
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "B00",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 60.93 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7520601",
+          "name": "Kỹ thuật Dầu khí",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.5,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 60.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7520101",
+          "name": "Kỹ thuật Vật liệu",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.5,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 71.10 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7580107",
+          "name": "Kiến trúc",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 5.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "combinationDescription": "Toán (x2), Vật Lý, Hóa Học + Năng khiếu",
+              "minScoreThreshold": 50,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 67.42 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7480107",
+          "name": "Trí tuệ Nhân tạo",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 31500000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 50,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7480101",
+          "name": "Khoa học Máy tính (Chương trình Tiên tiến)",
+          "trainingType": "TIEN_TIEN",
+          "language": "Tiếng Anh",
+          "tuitionFee": 88000000,
+          "durationYears": 4.0,
+          "totalQuota": 150,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A01",
+              "combinationDescription": "Toán (x2), Vật Lý, Tiếng Anh (yêu cầu IELTS ≥ 6.0)",
+              "minScoreThreshold": 50,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7480201",
+          "name": "Công nghệ Thông tin (Chương trình Dạy học bằng Tiếng Anh)",
+          "trainingType": "CHAT_LUONG_CAO",
+          "language": "Tiếng Anh",
+          "tuitionFee": 88000000,
+          "durationYears": 4.0,
+          "totalQuota": 1380,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A01",
+              "combinationDescription": "Toán (x2), Vật Lý, Tiếng Anh (yêu cầu IELTS ≥ 5.0)",
+              "minScoreThreshold": 50,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7520101",
+          "name": "Kỹ thuật Định hướng Nhật Bản",
+          "trainingType": "LIEN_KET_NUOC_NGOAI",
+          "language": "Tiếng Nhật",
+          "tuitionFee": 63000000,
+          "durationYears": 4.5,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 50,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7520114",
+          "name": "Kỹ thuật Cơ khí (Chương trình PFIEV – Việt Pháp)",
+          "trainingType": "VIET_PHAP",
+          "language": "Tiếng Pháp",
+          "tuitionFee": 31500000,
+          "durationYears": 5.0,
+          "totalQuota": 200,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 50,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7480103",
+          "name": "Kỹ thuật phần mềm (Liên kết Quốc tế UTS Úc)",
+          "trainingType": "LIEN_KET_NUOC_NGOAI",
+          "language": "Tiếng Anh",
+          "tuitionFee": 268000000,
+          "durationYears": 3.0,
+          "totalQuota": 200,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "COMBINED",
+              "subjectCombination": "A01",
+              "combinationDescription": "Toán (x2), Vật Lý, Tiếng Anh (IELTS ≥ 6.5)",
+              "minScoreThreshold": 50,
+              "applyYear": 2026
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

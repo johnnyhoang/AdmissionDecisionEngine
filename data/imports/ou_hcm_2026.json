@@ -1,0 +1,732 @@
+{
+  "sourceName": "Đề án tuyển sinh Đại học Mở TP.HCM 2026 (OU)",
+  "sourceUrl": "https://tuyensinh.ou.edu.vn",
+  "dataYear": 2026,
+  "universities": [
+    {
+      "code": "MBS",
+      "nameVi": "Trường Đại học Mở Thành phố Hồ Chí Minh",
+      "nameEn": "Ho Chi Minh City Open University (HCMCOU)",
+      "website": "https://www.ou.edu.vn",
+      "description": "Trường Đại học Mở TP.HCM là trường đại học công lập đa lĩnh vực. Đào tạo các ngành kinh tế, luật, công nghệ, ngoại ngữ và khoa học xã hội với nhiều hình thức học.",
+      "isPublic": true,
+      "localRanking": 15,
+      "campuses": [
+        {
+          "name": "Cơ sở Võ Văn Tần (Trụ sở chính)",
+          "address": "97 Võ Văn Tần, Phường Võ Thị Sáu, Quận 3",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Cơ sở Hồ Hảo Hớn",
+          "address": "35-37 Hồ Hảo Hớn, Phường Cầu Ông Lãnh, Quận 1",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Cơ sở Nhơn Đức",
+          "address": "Khu dân cư Nhơn Đức, xã Hiệp Phước, huyện Nhà Bè",
+          "city": "TP. Hồ Chí Minh"
+        },
+        {
+          "name": "Cơ sở Bình Dương",
+          "address": "68 Lê Thị Trung, TP. Thủ Dầu Một",
+          "city": "Bình Dương"
+        },
+        {
+          "name": "Cơ sở Đồng Nai",
+          "address": "259/29 Quốc lộ 51, TP. Biên Hòa",
+          "city": "Đồng Nai"
+        }
+      ],
+      "programs": [
+        {
+          "majorCode": "7220201",
+          "name": "Ngôn ngữ Anh",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 25350000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "combinationDescription": "Ngữ Văn, Toán, Tiếng Anh",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 24.20 },
+                { "year": 2025, "benchmarkScore": 22.25 }
+              ]
+            },
+            {
+              "methodCode": "HOCBA",
+              "subjectCombination": "HOCBA",
+              "combinationDescription": "Xét học bạ 3 năm THPT",
+              "minScoreThreshold": 18,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7220201",
+          "name": "Ngôn ngữ Anh (Chương trình Tiên tiến)",
+          "trainingType": "TIEN_TIEN",
+          "language": "Tiếng Anh",
+          "tuitionFee": 50000000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "combinationDescription": "Ngữ Văn, Toán, Tiếng Anh (ưu tiên điểm Anh cao)",
+              "minScoreThreshold": 18,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 19.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7220204",
+          "name": "Ngôn ngữ Trung Quốc",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 22050000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 24.00 },
+                { "year": 2025, "benchmarkScore": 21.50 }
+              ]
+            },
+            {
+              "methodCode": "HOCBA",
+              "subjectCombination": "HOCBA",
+              "minScoreThreshold": 18,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7220209",
+          "name": "Ngôn ngữ Nhật",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 22050000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7220210",
+          "name": "Ngôn ngữ Hàn Quốc",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 22050000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 22.25 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7310101",
+          "name": "Kinh tế",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 18600000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340101",
+          "name": "Quản trị Kinh doanh",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 20.75 },
+                { "year": 2025, "benchmarkScore": 20.60 }
+              ]
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.75 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340101",
+          "name": "Quản trị Kinh doanh (Chương trình Tiên tiến)",
+          "trainingType": "TIEN_TIEN",
+          "language": "Tiếng Anh",
+          "tuitionFee": 46500000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 18,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340115",
+          "name": "Marketing",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 24.50 },
+                { "year": 2025, "benchmarkScore": 23.25 }
+              ]
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 24.50 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340120",
+          "name": "Kinh doanh Quốc tế",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 23.75 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340201",
+          "name": "Tài chính – Ngân hàng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 23.20 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340205",
+          "name": "Công nghệ Tài chính (Fintech)",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27450000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340301",
+          "name": "Kế toán",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 21.00 },
+                { "year": 2025, "benchmarkScore": 20.20 }
+              ]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340302",
+          "name": "Kiểm toán",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340404",
+          "name": "Quản trị Nhân lực",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 24.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7340405",
+          "name": "Hệ thống Thông tin Quản lý",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7510605",
+          "name": "Logistics và Quản lý Chuỗi Cung ứng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 23.50 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7380101",
+          "name": "Luật",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "C00",
+              "combinationDescription": "Ngữ Văn, Lịch Sử, Địa Lý",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 24.75 },
+                { "year": 2025, "benchmarkScore": 23.20 }
+              ]
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 24.75 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7380107",
+          "name": "Luật Kinh tế",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "C00",
+              "combinationDescription": "Ngữ Văn, Lịch Sử, Địa Lý",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 24.75 },
+                { "year": 2025, "benchmarkScore": 23.25 }
+              ]
+            }
+          ]
+        },
+        {
+          "majorCode": "7380107",
+          "name": "Luật Kinh tế (Chương trình Tiên tiến)",
+          "trainingType": "TIEN_TIEN",
+          "language": "Tiếng Anh",
+          "tuitionFee": 46500000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 18,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 20.50 },
+                { "year": 2025, "benchmarkScore": 19.00 }
+              ]
+            }
+          ]
+        },
+        {
+          "majorCode": "7480201",
+          "name": "Công nghệ Thông tin",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27750000,
+          "durationYears": 4.0,
+          "totalQuota": 200,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 21.00 }]
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 21.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7480101",
+          "name": "Khoa học Máy tính",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 20.00 },
+                { "year": 2025, "benchmarkScore": 19.00 }
+              ]
+            }
+          ]
+        },
+        {
+          "majorCode": "7480107",
+          "name": "Trí tuệ Nhân tạo",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27750000,
+          "durationYears": 4.0,
+          "totalQuota": 50,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 20.00 },
+                { "year": 2025, "benchmarkScore": 20.60 }
+              ]
+            }
+          ]
+        },
+        {
+          "majorCode": "7460108",
+          "name": "Khoa học Dữ liệu",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 20.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7480103",
+          "name": "Kỹ thuật Phần mềm",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 20.10 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7310401",
+          "name": "Tâm lý học",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 19950000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "C00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [
+                { "year": 2024, "benchmarkScore": 23.80 },
+                { "year": 2025, "benchmarkScore": 24.00 }
+              ]
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 23.80 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7760105",
+          "name": "Công tác Xã hội",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 19950000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "C00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2025, "benchmarkScore": 22.75 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7420201",
+          "name": "Công nghệ Sinh học",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 25650000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "B00",
+              "combinationDescription": "Toán, Hóa Học, Sinh Học",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 16.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7510102",
+          "name": "Công nghệ Kỹ thuật Công trình Xây dựng",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 27600000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "A00",
+              "minScoreThreshold": 15,
+              "applyYear": 2026,
+              "benchmarkScores": [{ "year": 2024, "benchmarkScore": 16.00 }]
+            }
+          ]
+        },
+        {
+          "majorCode": "7810201",
+          "name": "Du lịch",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026
+            }
+          ]
+        },
+        {
+          "majorCode": "7320104",
+          "name": "Truyền thông Đa phương tiện",
+          "trainingType": "DAI_TRA",
+          "language": "Tiếng Việt",
+          "tuitionFee": 24750000,
+          "durationYears": 4.0,
+          "totalQuota": 0,
+          "dataYear": 2026,
+          "admissionRules": [
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "D01",
+              "minScoreThreshold": 15,
+              "applyYear": 2026
+            },
+            {
+              "methodCode": "THPT",
+              "subjectCombination": "C03",
+              "combinationDescription": "Ngữ Văn, Toán, Lịch Sử",
+              "minScoreThreshold": 15,
+              "applyYear": 2026
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
