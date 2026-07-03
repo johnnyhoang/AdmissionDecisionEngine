@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+/* Modern Typography - Outfit or Inter can be imported if needed, using system-ui for now */
+@layer base {
+  html, body {
+    @apply bg-slate-900 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white;
+  }
+}
+
+/* Glassmorphism utility classes */
+.glass-panel {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+}
+
+.glass-panel-dark {
+  @apply bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl;
+}
+
+/* Animated backgrounds */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

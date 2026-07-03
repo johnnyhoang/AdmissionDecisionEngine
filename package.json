@@ -1,0 +1,17 @@
+{
+  "name": "admission-decision-engine",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "backend": "npm --prefix apps/backend run start:dev",
+    "frontend": "npm --prefix apps/frontend run dev",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "build:all": "npm run build --workspaces"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
