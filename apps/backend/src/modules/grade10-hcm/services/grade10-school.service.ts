@@ -244,9 +244,11 @@ export class Grade10SchoolService {
       id: s.id,
       name: s.name,
       code: s.code,
-      districtName: s.district?.name
+      districtName: s.district?.name,
+      districtCode: s.district?.code
     }));
   }
+
 
   /**
    * Bulk seeds all THPT schools from g10hcm_all_schools.json

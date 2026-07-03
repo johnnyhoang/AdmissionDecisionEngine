@@ -331,7 +331,15 @@ export const triggerG10ImportPayload = async (payload: any): Promise<any> => {
   return res.json();
 };
 
-export const searchAiCutoffs = async (payload: { password?: string; type: 'GRADE10' | 'UNIVERSITY'; schoolQuery: string; majorQuery?: string }): Promise<any> => {
+export const searchAiCutoffs = async (payload: { 
+  password?: string; 
+  type: 'GRADE10' | 'UNIVERSITY'; 
+  schoolQuery: string; 
+  majorQuery?: string;
+  schoolCode?: string;
+  districtName?: string;
+  districtCode?: string;
+}): Promise<any> => {
   const res = await fetch(`${API_BASE_URL}/ai/search-cutoffs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -344,7 +352,16 @@ export const searchAiCutoffs = async (payload: { password?: string; type: 'GRADE
   return res.json();
 };
 
-export const importAiCutoffs = async (payload: { password?: string; type: 'GRADE10' | 'UNIVERSITY'; schoolCode: string; majorCode?: string; overrides: any[] }): Promise<any> => {
+
+export const importAiCutoffs = async (payload: { 
+  password?: string; 
+  type: 'GRADE10' | 'UNIVERSITY'; 
+  schoolCode: string; 
+  majorCode?: string; 
+  districtName?: string;
+  overrides: any[]; 
+}): Promise<any> => {
+
   const res = await fetch(`${API_BASE_URL}/ai/import-cutoffs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

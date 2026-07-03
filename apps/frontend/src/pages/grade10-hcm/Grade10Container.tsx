@@ -27,8 +27,14 @@ export default function Grade10Container() {
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [schoolDetail, setSchoolDetail] = useState<any>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-  const [aiPrefillSchool, setAiPrefillSchool] = useState<string | undefined>(undefined);
+  const [aiPrefillSchool, setAiPrefillSchool] = useState<{
+    name: string;
+    code: string;
+    districtName?: string;
+    districtCode?: string;
+  } | undefined>(undefined);
   const [activeDetailTab, setActiveDetailTab] = useState<'info' | 'cutoff' | 'quota'>('info');
+
 
   // Calculator form
   const [mathScore, setMathScore] = useState('8.5');
@@ -507,12 +513,16 @@ export default function Grade10Container() {
 
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setIsAiModalOpen(true)}
+                  onClick={() => {
+                    setAiPrefillSchool(undefined);
+                    setIsAiModalOpen(true);
+                  }}
                   className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20"
                 >
                   <Sparkles className="h-3.5 w-3.5" />
                   Tìm dữ liệu trường (AI)
                 </button>
+
 
                 <select
                   value={selectedDistrict}
@@ -576,7 +586,12 @@ export default function Grade10Container() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setAiPrefillSchool(school.name);
+                          setAiPrefillSchool({
+                            name: school.name,
+                            code: school.code,
+                            districtName: school.district?.name,
+                            districtCode: school.district?.code
+                          });
                           setIsAiModalOpen(true);
                         }}
                         className="mt-1.5 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/25 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 text-[10px] font-bold transition"
@@ -584,6 +599,7 @@ export default function Grade10Container() {
                         <Sparkles className="h-3 w-3" />
                         Tìm dữ liệu với AI
                       </button>
+
                     </div>
                   </div>
                 );
@@ -970,12 +986,13 @@ export default function Grade10Container() {
         isOpen={isAiModalOpen}
         onClose={() => { setIsAiModalOpen(false); setAiPrefillSchool(undefined); }}
         type="GRADE10"
-        prefillSchoolName={aiPrefillSchool}
+        prefillSchool={aiPrefillSchool}
         onImportSuccess={() => {
           loadSchools(searchQuery, selectedDistrict);
           loadAnalytics();
         }}
       />
+
     </div>
   );
 }

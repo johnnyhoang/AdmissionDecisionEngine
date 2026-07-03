@@ -11,6 +11,7 @@ import { AdmissionScore } from '../database/entities/admission-score.entity';
 import { Grade10School } from '../grade10-hcm/entities/school.entity';
 import { Grade10District } from '../grade10-hcm/entities/district.entity';
 import { Grade10Cutoff } from '../grade10-hcm/entities/cutoff.entity';
+import { Grade10Quota } from '../grade10-hcm/entities/quota.entity';
 import { SearchCutoffsDto, ImportCutoffsDto } from './ai-assistant.controller';
 
 @Injectable()
@@ -36,8 +37,11 @@ export class AiAssistantService {
     @InjectRepository(Grade10District)
     private readonly grade10DistrictRepo: Repository<Grade10District>,
     @InjectRepository(Grade10Cutoff)
-    private readonly grade10CutoffRepo: Repository<Grade10Cutoff>
+    private readonly grade10CutoffRepo: Repository<Grade10Cutoff>,
+    @InjectRepository(Grade10Quota)
+    private readonly grade10QuotaRepo: Repository<Grade10Quota>
   ) {}
+
 
   /**
    * Processes a natural language query in Vietnamese and returns data fetched directly from the database.
@@ -166,11 +170,44 @@ export class AiAssistantService {
         console.log('[AI Search] Attempting Gemini API...');
         let prompt = '';
         if (dto.type === 'GRADE10') {
-          prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh lớp 10 THPT công lập của trường "${dto.schoolQuery}" tại TP.HCM trong 10 năm qua (từ 2016 đến 2025). Tìm điểm chuẩn của cả 3 Nguyện vọng (NV1, NV2, NV3).`;
+          prompt = `Bạn là một chuyên gia tra cứu dữ liệu giáo dục Việt Nam.
+
+Nhiệm vụ:
+Hãy tìm kiếm dữ liệu tuyển sinh lớp 10 THPT công lập tại TP.HCM cho đúng 1 trường được chỉ định bên dưới và trả về kết quả.
+
+Trường cần tra:
+- Tên trường: ${dto.schoolQuery}
+- Mã trường: ${dto.schoolCode || 'Tự động xác định'}
+- Quận/Huyện: ${dto.districtName || 'Tự động xác định'}
+- Mã quận/huyện: ${dto.districtCode || 'Tự động xác định'}
+
+Nguồn dữ liệu ưu tiên:
+- https://hcm.edu.vn
+- https://ts10.hcm.edu.vn
+- Website chính thức của trường
+- Tuổi Trẻ, VnExpress, hoặc báo giáo dục uy tín khác
+- Google query theo mẫu:
+  - "điểm chuẩn lớp 10 ${dto.schoolQuery} TP.HCM 2025"
+  - "điểm chuẩn lớp 10 ${dto.schoolQuery} TP.HCM 2024"
+  - "${dto.schoolQuery} tuyển sinh lớp 10 2025 chỉ tiêu"
+  - "${dto.schoolQuery} số học sinh đăng ký nguyện vọng 1"
+
+Các năm cần tìm:
+- 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Lấy được nhiều năm nhất có thể (tối đa 10 năm từ 2016-2025), ưu tiên độ chính xác hơn độ phủ.
+
+Giải thích các trường điểm và chỉ tiêu cần lấy:
+- cutoffNV1: điểm chuẩn nguyện vọng 1, bắt buộc phải có nếu tìm được
+- cutoffNV2: điểm chuẩn nguyện vọng 2, nếu có
+- cutoffNV3: điểm chuẩn nguyện vọng 3, nếu có
+- quota: chỉ tiêu tuyển sinh của năm đó
+- registeredCount: số học sinh đăng ký nguyện vọng 1 của năm đó
+- competitionRatio = registeredCount / quota (nếu có hoặc tự tính)`;
         } else {
           prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh đại học theo phương thức thi tốt nghiệp THPT của trường "${dto.schoolQuery}" cho ngành "${dto.majorQuery}" trong 10 năm qua (từ 2016 đến 2025).`;
         }
         const text = await this.callGeminiSearch(geminiKey, prompt);
+
         const structuredJson = await this.parseJsonWithGemini(geminiKey, text, dto.type);
         return this.compareWithDatabase(dto, structuredJson);
       } catch (err: any) {
@@ -441,6 +478,19 @@ export class AiAssistantService {
             },
             required: ['year', 'cutoffNV1']
           }
+        },
+        quotas: {
+          type: 'ARRAY',
+          items: {
+            type: 'OBJECT',
+            properties: {
+              year: { type: 'INTEGER' },
+              quota: { type: 'INTEGER' },
+              registeredCount: { type: 'INTEGER' },
+              competitionRatio: { type: 'NUMBER' }
+            },
+            required: ['year', 'quota']
+          }
         }
       },
       required: ['schoolName', 'cutoffs']
@@ -491,22 +541,38 @@ export class AiAssistantService {
         where: { schoolId: school.id }
       }) : [];
 
+      const existingQuotas = school.id ? await this.grade10QuotaRepo.find({
+        where: { schoolId: school.id }
+      }) : [];
+
       const results = aiData.cutoffs.map((item: any) => {
         const scoreNV1 = item.cutoffNV1 !== undefined && item.cutoffNV1 !== null ? item.cutoffNV1 : (item.cutoff_nv1 !== undefined && item.cutoff_nv1 !== null ? item.cutoff_nv1 : item.cutoffNv1);
         const scoreNV2 = item.cutoffNV2 !== undefined && item.cutoffNV2 !== null ? item.cutoffNV2 : (item.cutoff_nv2 !== undefined && item.cutoff_nv2 !== null ? item.cutoff_nv2 : item.cutoffNv2);
         const scoreNV3 = item.cutoffNV3 !== undefined && item.cutoffNV3 !== null ? item.cutoffNV3 : (item.cutoff_nv3 !== undefined && item.cutoff_nv3 !== null ? item.cutoff_nv3 : item.cutoffNv3);
 
         const dbRecord = existingCutoffs.find(c => c.year === item.year);
+        const dbQuota = existingQuotas.find(q => q.year === item.year);
+
+        const aiQuotaItem = (aiData.quotas || []).find((q: any) => q.year === item.year);
+
         return {
           year: item.year,
           cutoffNV1: scoreNV1 !== undefined && scoreNV1 !== null && !isNaN(Number(scoreNV1)) ? Number(scoreNV1) : null,
           cutoffNV2: scoreNV2 !== undefined && scoreNV2 !== null && !isNaN(Number(scoreNV2)) ? Number(scoreNV2) : null,
           cutoffNV3: scoreNV3 !== undefined && scoreNV3 !== null && !isNaN(Number(scoreNV3)) ? Number(scoreNV3) : null,
-          exists: !!dbRecord,
+          quota: aiQuotaItem && aiQuotaItem.quota !== undefined && aiQuotaItem.quota !== null ? Number(aiQuotaItem.quota) : null,
+          registeredCount: aiQuotaItem && aiQuotaItem.registeredCount !== undefined && aiQuotaItem.registeredCount !== null ? Number(aiQuotaItem.registeredCount) : null,
+          competitionRatio: aiQuotaItem && aiQuotaItem.competitionRatio !== undefined && aiQuotaItem.competitionRatio !== null ? Number(aiQuotaItem.competitionRatio) : null,
+          exists: !!dbRecord || !!dbQuota,
           existingScore: dbRecord ? {
             cutoffNV1: Number(dbRecord.cutoffNV1),
             cutoffNV2: dbRecord.cutoffNV2 ? Number(dbRecord.cutoffNV2) : null,
             cutoffNV3: dbRecord.cutoffNV3 ? Number(dbRecord.cutoffNV3) : null
+          } : null,
+          existingQuota: dbQuota ? {
+            quota: Number(dbQuota.quota),
+            registeredCount: dbQuota.registeredCount ? Number(dbQuota.registeredCount) : null,
+            competitionRatio: dbQuota.competitionRatio ? Number(dbQuota.competitionRatio) : null
           } : null
         };
       });
@@ -517,6 +583,7 @@ export class AiAssistantService {
         type: 'GRADE10',
         results
       };
+
     } else {
       let uni = await this.universityRepository.findOne({
         where: [
@@ -614,32 +681,63 @@ export class AiAssistantService {
 
       for (const item of dto.overrides) {
         const scoreNV1 = item.cutoffNV1 !== undefined && item.cutoffNV1 !== null ? item.cutoffNV1 : (item.cutoff_nv1 !== undefined && item.cutoff_nv1 !== null ? item.cutoff_nv1 : item.cutoffNv1);
-        if (scoreNV1 === null || scoreNV1 === undefined || isNaN(Number(scoreNV1))) {
-          continue; // skip invalid or missing score
-        }
+        
+        let hasCutoff = false;
+        if (scoreNV1 !== null && scoreNV1 !== undefined && !isNaN(Number(scoreNV1))) {
+          const scoreNV2 = item.cutoffNV2 !== undefined && item.cutoffNV2 !== null ? item.cutoffNV2 : (item.cutoff_nv2 !== undefined && item.cutoff_nv2 !== null ? item.cutoff_nv2 : item.cutoffNv2);
+          const scoreNV3 = item.cutoffNV3 !== undefined && item.cutoffNV3 !== null ? item.cutoffNV3 : (item.cutoff_nv3 !== undefined && item.cutoff_nv3 !== null ? item.cutoff_nv3 : item.cutoffNv3);
 
-        const scoreNV2 = item.cutoffNV2 !== undefined && item.cutoffNV2 !== null ? item.cutoffNV2 : (item.cutoff_nv2 !== undefined && item.cutoff_nv2 !== null ? item.cutoff_nv2 : item.cutoffNv2);
-        const scoreNV3 = item.cutoffNV3 !== undefined && item.cutoffNV3 !== null ? item.cutoffNV3 : (item.cutoff_nv3 !== undefined && item.cutoff_nv3 !== null ? item.cutoff_nv3 : item.cutoffNv3);
-
-        let cutoff = await this.grade10CutoffRepo.findOne({
-          where: { schoolId: school.id, year: item.year, programType: 'REGULAR' }
-        });
-        if (!cutoff) {
-          cutoff = this.grade10CutoffRepo.create({
-            schoolId: school.id,
-            year: item.year,
-            cutoffNV1: Number(scoreNV1),
-            cutoffNV2: scoreNV2 ? Number(scoreNV2) : null,
-            cutoffNV3: scoreNV3 ? Number(scoreNV3) : null,
-            programType: 'REGULAR'
+          let cutoff = await this.grade10CutoffRepo.findOne({
+            where: { schoolId: school.id, year: item.year, programType: 'REGULAR' }
           });
-        } else {
-          cutoff.cutoffNV1 = Number(scoreNV1);
-          cutoff.cutoffNV2 = scoreNV2 ? Number(scoreNV2) : null;
-          cutoff.cutoffNV3 = scoreNV3 ? Number(scoreNV3) : null;
+          if (!cutoff) {
+            cutoff = this.grade10CutoffRepo.create({
+              schoolId: school.id,
+              year: item.year,
+              cutoffNV1: Number(scoreNV1),
+              cutoffNV2: scoreNV2 ? Number(scoreNV2) : null,
+              cutoffNV3: scoreNV3 ? Number(scoreNV3) : null,
+              programType: 'REGULAR'
+            });
+          } else {
+            cutoff.cutoffNV1 = Number(scoreNV1);
+            cutoff.cutoffNV2 = scoreNV2 ? Number(scoreNV2) : null;
+            cutoff.cutoffNV3 = scoreNV3 ? Number(scoreNV3) : null;
+          }
+          await this.grade10CutoffRepo.save(cutoff);
+          hasCutoff = true;
         }
-        await this.grade10CutoffRepo.save(cutoff);
-        importedCount++;
+
+        let hasQuota = false;
+        const qVal = item.quota !== undefined && item.quota !== null ? Number(item.quota) : null;
+        const regVal = item.registeredCount !== undefined && item.registeredCount !== null ? Number(item.registeredCount) : null;
+        const compVal = item.competitionRatio !== undefined && item.competitionRatio !== null ? Number(item.competitionRatio) : null;
+
+        if (qVal !== null && !isNaN(qVal)) {
+          let quota = await this.grade10QuotaRepo.findOne({
+            where: { schoolId: school.id, year: item.year, programType: 'REGULAR' }
+          });
+          if (!quota) {
+            quota = this.grade10QuotaRepo.create({
+              schoolId: school.id,
+              year: item.year,
+              quota: qVal,
+              registeredCount: regVal !== null && !isNaN(regVal) ? regVal : 0,
+              competitionRatio: compVal !== null && !isNaN(compVal) ? compVal : 0,
+              programType: 'REGULAR'
+            });
+          } else {
+            quota.quota = qVal;
+            if (regVal !== null && !isNaN(regVal)) quota.registeredCount = regVal;
+            if (compVal !== null && !isNaN(compVal)) quota.competitionRatio = compVal;
+          }
+          await this.grade10QuotaRepo.save(quota);
+          hasQuota = true;
+        }
+
+        if (hasCutoff || hasQuota) {
+          importedCount++;
+        }
       }
     } else {
       let uni = await this.universityRepository.findOne({ where: { code: dto.schoolCode } });

@@ -24,7 +24,20 @@ export class SearchCutoffsDto {
   @IsString()
   @IsOptional()
   majorQuery?: string;
+
+  @IsString()
+  @IsOptional()
+  schoolCode?: string;
+
+  @IsString()
+  @IsOptional()
+  districtName?: string;
+
+  @IsString()
+  @IsOptional()
+  districtCode?: string;
 }
+
 
 export class ImportCutoffsDto {
   @IsString()

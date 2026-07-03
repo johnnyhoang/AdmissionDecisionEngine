@@ -12,6 +12,7 @@ import { AdmissionScore } from '../database/entities/admission-score.entity';
 import { Grade10School } from '../grade10-hcm/entities/school.entity';
 import { Grade10District } from '../grade10-hcm/entities/district.entity';
 import { Grade10Cutoff } from '../grade10-hcm/entities/cutoff.entity';
+import { Grade10Quota } from '../grade10-hcm/entities/quota.entity';
 
 @Module({
   imports: [
@@ -26,8 +27,10 @@ import { Grade10Cutoff } from '../grade10-hcm/entities/cutoff.entity';
       Grade10School,
       Grade10District,
       Grade10Cutoff,
+      Grade10Quota,
     ]),
   ],
+
   controllers: [AiAssistantController],
   providers: [AiAssistantService],
   exports: [AiAssistantService],

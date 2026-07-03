@@ -10,6 +10,7 @@ interface SchoolSuggestion {
   name: string;
   code: string;
   districtName?: string;
+  districtCode?: string;
 }
 
 interface AiSearchModalProps {
@@ -17,15 +18,28 @@ interface AiSearchModalProps {
   onClose: () => void;
   type: 'GRADE10' | 'UNIVERSITY';
   onImportSuccess?: () => void;
-  prefillSchoolName?: string;
+  prefillSchool?: {
+    name: string;
+    code: string;
+    districtName?: string;
+    districtCode?: string;
+  };
 }
 
-export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, prefillSchoolName }: AiSearchModalProps) {
+export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, prefillSchool }: AiSearchModalProps) {
   const [password, setPassword] = useState('');
   const [schoolQuery, setSchoolQuery] = useState('');
   const [majorQuery, setMajorQuery] = useState('');
   const [step, setStep] = useState<'input' | 'searching' | 'preview' | 'success'>('input');
   const [error, setError] = useState<string | null>(null);
+
+  // Selected school to store metadata (code, district)
+  const [selectedSchool, setSelectedSchool] = useState<{
+    name: string;
+    code: string;
+    districtName?: string;
+    districtCode?: string;
+  } | null>(null);
 
   // Autocomplete states
   const [suggestions, setSuggestions] = useState<SchoolSuggestion[]>([]);
@@ -42,11 +56,13 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
 
   // Pre-fill school name when opened from a card button
   useEffect(() => {
-    if (isOpen && prefillSchoolName) {
-      setSchoolQuery(prefillSchoolName);
+    if (isOpen && prefillSchool) {
+      setSchoolQuery(prefillSchool.name);
+      setSelectedSchool(prefillSchool);
       setShowSuggestions(false);
     }
-  }, [isOpen, prefillSchoolName]);
+  }, [isOpen, prefillSchool]);
+
 
   // Load initial suggestions when modal opens (Grade10 only)
   useEffect(() => {
@@ -123,14 +139,17 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         password,
         type,
         schoolQuery,
+        schoolCode: selectedSchool?.code,
+        districtName: selectedSchool?.districtName,
+        districtCode: selectedSchool?.districtCode,
         majorQuery: type === 'UNIVERSITY' ? majorQuery : undefined
       });
       setAiData(res);
       
-      // Initialize decisions: default to OVERWRITE for all
+      // Initialize decisions: default to SKIP for existing data to prevent overwrite, OVERWRITE for new
       const initialDecisions: { [year: number]: 'OVERWRITE' | 'SKIP' } = {};
       res.results.forEach((item: any) => {
-        initialDecisions[item.year] = 'OVERWRITE';
+        initialDecisions[item.year] = item.exists ? 'SKIP' : 'OVERWRITE';
       });
       setDecisions(initialDecisions);
       setStep('preview');
@@ -154,7 +173,10 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         year: item.year,
         cutoffNV1: item.cutoffNV1,
         cutoffNV2: item.cutoffNV2,
-        cutoffNV3: item.cutoffNV3
+        cutoffNV3: item.cutoffNV3,
+        quota: item.quota,
+        registeredCount: item.registeredCount,
+        competitionRatio: item.competitionRatio
       }));
 
     if (overrides.length === 0) {
@@ -168,6 +190,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         password,
         type,
         schoolCode: aiData.schoolCode,
+        districtName: selectedSchool?.districtName,
         majorCode: type === 'UNIVERSITY' ? aiData.majorCode : undefined,
         overrides
       });
@@ -184,6 +207,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
     setPassword('');
     setSchoolQuery('');
     setMajorQuery('');
+    setSelectedSchool(null);
     setStep('input');
     setError(null);
     setAiData(null);
@@ -192,8 +216,10 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
 
   const selectSuggestion = (s: SchoolSuggestion) => {
     setSchoolQuery(s.name);
+    setSelectedSchool(s);
     setShowSuggestions(false);
   };
+
 
   // Group suggestions by district for display
   const groupedSuggestions = suggestions.reduce<Record<string, SchoolSuggestion[]>>((acc, s) => {
@@ -361,33 +387,77 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         {/* STEP 3: Preview conflicts resolution */}
         {step === 'preview' && aiData && (
           <div className="flex flex-col gap-4 text-xs">
-            <div className="bg-indigo-950/25 border border-indigo-500/10 p-3 rounded-xl">
-              🔍 Kết quả tìm thấy cho: <strong className="text-white">{aiData.schoolName}</strong> ({aiData.schoolCode})
-              {type === 'UNIVERSITY' && <span> - Ngành: <strong className="text-indigo-400">{aiData.majorName}</strong></span>}
+            <div className="bg-indigo-950/25 border border-indigo-500/10 p-3.5 rounded-xl flex justify-between items-center flex-wrap gap-2">
+              <div>
+                🔍 Kết quả tìm thấy cho: <strong className="text-white">{aiData.schoolName}</strong> ({aiData.schoolCode})
+                {type === 'UNIVERSITY' && <span> - Ngành: <strong className="text-indigo-400">{aiData.majorName}</strong></span>}
+              </div>
+              <div className="text-[10px] text-slate-400">
+                Mặc định giữ lại dữ liệu cũ nếu đã tồn tại để tránh ghi đè ngoài ý muốn.
+              </div>
             </div>
 
-            <div className="overflow-x-auto max-h-60 border border-slate-800 rounded-xl">
+            <div className="overflow-x-auto max-h-80 border border-slate-800 rounded-xl">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold text-[10px]">
-                    <th className="p-3">Năm học</th>
+                  <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold text-[10px] uppercase">
+                    <th className="p-3 w-24">Năm học</th>
                     <th className="p-3">Dữ liệu AI Tìm thấy</th>
                     <th className="p-3">Dữ liệu trong Database</th>
-                    <th className="p-3 text-center">Quyết định hành động</th>
+                    <th className="p-3 text-center w-48">Quyết định hành động</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800 text-slate-300">
                   {aiData.results.map((item: any, idx: number) => {
                     const hasConflict = item.exists;
-                    const choice = decisions[item.year] || 'OVERWRITE';
+                    
+                    // Check if values actually differ
+                    const isScoreDifferent = hasConflict && item.existingScore && (
+                      item.existingScore.cutoffNV1 !== item.cutoffNV1 ||
+                      (item.existingScore.cutoffNV2 !== item.cutoffNV2 && item.cutoffNV2 !== null) ||
+                      (item.existingScore.cutoffNV3 !== item.cutoffNV3 && item.cutoffNV3 !== null)
+                    );
+                    const isQuotaDifferent = hasConflict && item.existingQuota && item.quota !== null && (
+                      item.existingQuota.quota !== item.quota ||
+                      item.existingQuota.registeredCount !== item.registeredCount
+                    );
+                    const isConflicting = isScoreDifferent || isQuotaDifferent;
+
+                    const choice = decisions[item.year] || 'SKIP';
+
                     return (
-                      <tr key={idx} className="hover:bg-slate-800/20">
-                        <td className="p-3 font-bold text-white">{item.year}</td>
+                      <tr key={idx} className={`hover:bg-slate-800/20 transition ${
+                        isConflicting ? 'bg-amber-500/5' : ''
+                      }`}>
+                        <td className="p-3 font-bold text-white">
+                          <div className="flex flex-col gap-1 items-start">
+                            <span>{item.year}</span>
+                            {isConflicting && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold uppercase tracking-wider">
+                                ⚡ Khác biệt
+                              </span>
+                            )}
+                            {!hasConflict && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold uppercase tracking-wider">
+                                ✨ Mới
+                              </span>
+                            )}
+                          </div>
+                        </td>
                         <td className="p-3">
                           {type === 'GRADE10' ? (
-                            <div className="flex flex-col">
-                              <span>NV1: <strong className="text-indigo-400">{item.cutoffNV1}đ</strong></span>
-                              {item.cutoffNV2 && <span className="text-[10px] text-slate-400">NV2: {item.cutoffNV2}đ | NV3: {item.cutoffNV3}đ</span>}
+                            <div className="flex flex-col gap-1">
+                              <span>
+                                NV1: <strong className="text-indigo-400">{item.cutoffNV1}đ</strong>
+                                {item.cutoffNV2 ? ` | NV2: ${item.cutoffNV2}đ | NV3: ${item.cutoffNV3}đ` : ''}
+                              </span>
+                              {item.quota !== null && item.quota !== undefined && (
+                                <span className="text-[10px] text-slate-400">
+                                  Chỉ tiêu: <strong className="text-slate-300">{item.quota}</strong>
+                                  {item.registeredCount ? ` | Đăng ký: ${item.registeredCount}` : ''}
+                                  {item.competitionRatio ? ` | Tỷ lệ chọi: ${item.competitionRatio}` : ''}
+                                </span>
+                              )}
                             </div>
                           ) : (
                             <span>Điểm chuẩn: <strong className="text-indigo-400">{item.cutoffNV1}đ</strong></span>
@@ -396,9 +466,24 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
                         <td className="p-3">
                           {hasConflict ? (
                             type === 'GRADE10' ? (
-                              <div className="flex flex-col text-slate-500">
-                                <span>NV1: {item.existingScore.cutoffNV1}đ</span>
-                                <span>NV2: {item.existingScore.cutoffNV2 || 'N/A'}đ | NV3: {item.existingScore.cutoffNV3 || 'N/A'}đ</span>
+                              <div className="flex flex-col gap-1 text-slate-500">
+                                {item.existingScore ? (
+                                  <span className={isScoreDifferent ? 'text-amber-400/80 font-medium' : ''}>
+                                    NV1: {item.existingScore.cutoffNV1}đ
+                                    {item.existingScore.cutoffNV2 ? ` | NV2: ${item.existingScore.cutoffNV2}đ | NV3: ${item.existingScore.cutoffNV3}đ` : ''}
+                                  </span>
+                                ) : (
+                                  <span className="italic">Chưa có điểm</span>
+                                )}
+                                {item.existingQuota ? (
+                                  <span className={`text-[10px] ${isQuotaDifferent ? 'text-amber-400/60 font-medium' : ''}`}>
+                                    Chỉ tiêu: {item.existingQuota.quota}
+                                    {item.existingQuota.registeredCount ? ` | Đăng ký: ${item.existingQuota.registeredCount}` : ''}
+                                    {item.existingQuota.competitionRatio ? ` | Tỷ lệ chọi: ${item.existingQuota.competitionRatio}` : ''}
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] italic">Chưa có chỉ tiêu</span>
+                                )}
                               </div>
                             ) : (
                               <span className="text-slate-500">Điểm chuẩn: {item.existingScore.cutoffNV1}đ</span>
@@ -408,14 +493,14 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
                           )}
                         </td>
                         <td className="p-3 text-center">
-                          <div className="flex gap-2 justify-center">
+                          <div className="flex gap-1.5 justify-center">
                             <button
                               type="button"
                               onClick={() => handleToggleDecision(item.year, 'OVERWRITE')}
-                              className={`px-2 py-1 rounded text-[10px] font-bold border transition ${
+                              className={`px-2.5 py-1 rounded text-[10px] font-bold border transition ${
                                 choice === 'OVERWRITE'
                                   ? 'bg-indigo-600 border-indigo-500 text-white shadow'
-                                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
+                                  : 'bg-transparent border-slate-700 text-slate-400 hover:text-slate-200'
                               }`}
                             >
                               Lấy thông tin mới
@@ -423,13 +508,13 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
                             <button
                               type="button"
                               onClick={() => handleToggleDecision(item.year, 'SKIP')}
-                              className={`px-2 py-1 rounded text-[10px] font-bold border transition ${
+                              className={`px-2.5 py-1 rounded text-[10px] font-bold border transition ${
                                 choice === 'SKIP'
-                                  ? 'bg-rose-950/40 border-rose-900/60 text-rose-400'
-                                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
+                                  ? 'bg-slate-800 border-slate-700 text-slate-300'
+                                  : 'bg-transparent border-slate-700 text-slate-500 hover:text-slate-300'
                               }`}
                             >
-                              Bỏ qua
+                              Giữ dữ liệu cũ
                             </button>
                           </div>
                         </td>
@@ -470,7 +555,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
             <div>
               <h3 className="text-base font-bold text-white">Nạp Dữ Liệu Thành Công!</h3>
               <p className="text-xs text-slate-400 mt-2 max-w-sm">
-                Điểm chuẩn đã được nạp thành công vào cơ sở dữ liệu. Cổng thông tin điểm chuẩn sẽ hiển thị các cập nhật mới ngay lập tức.
+                Điểm chuẩn và chỉ tiêu tuyển sinh đã được nạp thành công vào cơ sở dữ liệu.
               </p>
             </div>
             <button
@@ -481,6 +566,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
             </button>
           </div>
         )}
+
 
       </div>
     </div>
