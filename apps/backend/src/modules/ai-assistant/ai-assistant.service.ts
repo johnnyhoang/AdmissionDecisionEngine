@@ -153,35 +153,127 @@ export class AiAssistantService {
     }
   }
 
-  private getGeminiApiKey(): string {
-    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
-    if (!apiKey) {
-      throw new BadRequestException('Chưa cấu hình GEMINI_API_KEY trong file .env');
-    }
-    return apiKey;
-  }
-
   async searchCutoffs(dto: SearchCutoffsDto) {
     this.validatePassword(dto.password);
-    const apiKey = this.getGeminiApiKey();
 
-    // 1. Construct prompt
-    let prompt = '';
-    if (dto.type === 'GRADE10') {
-      prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh lớp 10 THPT công lập của trường "${dto.schoolQuery}" tại TP.HCM trong 10 năm qua (từ 2016 đến 2025). Tìm điểm chuẩn của cả 3 Nguyện vọng (NV1, NV2, NV3).`;
+    // List of providers to attempt in order
+    const errors: string[] = [];
+
+    // 1. Try Gemini API
+    const geminiKey = this.configService.get<string>('GEMINI_API_KEY');
+    if (geminiKey) {
+      try {
+        console.log('[AI Search] Attempting Gemini API...');
+        let prompt = '';
+        if (dto.type === 'GRADE10') {
+          prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh lớp 10 THPT công lập của trường "${dto.schoolQuery}" tại TP.HCM trong 10 năm qua (từ 2016 đến 2025). Tìm điểm chuẩn của cả 3 Nguyện vọng (NV1, NV2, NV3).`;
+        } else {
+          prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh đại học theo phương thức thi tốt nghiệp THPT của trường "${dto.schoolQuery}" cho ngành "${dto.majorQuery}" trong 10 năm qua (từ 2016 đến 2025).`;
+        }
+        const text = await this.callGeminiSearch(geminiKey, prompt);
+        const structuredJson = await this.parseJsonWithGemini(geminiKey, text, dto.type);
+        return this.compareWithDatabase(dto, structuredJson);
+      } catch (err: any) {
+        console.warn(`[AI Search] Gemini API failed: ${err.message}`);
+        errors.push(`Gemini: ${err.message}`);
+      }
     } else {
-      prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh đại học theo phương thức thi tốt nghiệp THPT của trường "${dto.schoolQuery}" cho ngành "${dto.majorQuery}" trong 10 năm qua (từ 2016 đến 2025).`;
+      errors.push('Gemini: Chưa cấu hình GEMINI_API_KEY');
     }
 
-    // 2. Perform Gemini Google Search Grounding request
-    const responseText = await this.callGeminiSearch(apiKey, prompt);
+    // 2. Perform web search manually via DuckDuckGo scraper (used as context for OpenAI/Claude/Groq)
+    let searchContext = '';
+    try {
+      console.log('[AI Search] Scraped DuckDuckGo for fallback context...');
+      const searchQuery = dto.type === 'GRADE10' 
+        ? `diem chuan lop 10 THPT ${dto.schoolQuery} TPHCM`
+        : `diem chuan dai hoc ${dto.schoolQuery} nganh ${dto.majorQuery}`;
+      searchContext = await this.fetchWebSearch(searchQuery);
+    } catch (err: any) {
+      console.warn(`[AI Search] Search scraper failed: ${err.message}`);
+    }
 
-    // 3. Format text into strict JSON structure
-    const structuredJson = await this.parseJsonWithGemini(apiKey, responseText, dto.type);
+    // 3. Try OpenAI API
+    const openaiKey = this.configService.get<string>('OPENAI_API_KEY');
+    if (openaiKey) {
+      try {
+        console.log('[AI Search] Attempting OpenAI API...');
+        const structuredJson = await this.callOpenAI(openaiKey, dto, searchContext);
+        return this.compareWithDatabase(dto, structuredJson);
+      } catch (err: any) {
+        console.warn(`[AI Search] OpenAI API failed: ${err.message}`);
+        errors.push(`OpenAI: ${err.message}`);
+      }
+    } else {
+      errors.push('OpenAI: Chưa cấu hình OPENAI_API_KEY');
+    }
 
-    // 4. Match with database records
-    return this.compareWithDatabase(dto, structuredJson);
+    // 4. Try Claude API (Anthropic)
+    const claudeKey = this.configService.get<string>('CLAUDE_API_KEY');
+    if (claudeKey) {
+      try {
+        console.log('[AI Search] Attempting Claude API...');
+        const structuredJson = await this.callClaude(claudeKey, dto, searchContext);
+        return this.compareWithDatabase(dto, structuredJson);
+      } catch (err: any) {
+        console.warn(`[AI Search] Claude API failed: ${err.message}`);
+        errors.push(`Claude: ${err.message}`);
+      }
+    } else {
+      errors.push('Claude: Chưa cấu hình CLAUDE_API_KEY');
+    }
+
+    // 5. Try Groq API
+    const groqKey = this.configService.get<string>('GROQ_API_KEY');
+    if (groqKey) {
+      try {
+        console.log('[AI Search] Attempting Groq API...');
+        const structuredJson = await this.callGroq(groqKey, dto, searchContext);
+        return this.compareWithDatabase(dto, structuredJson);
+      } catch (err: any) {
+        console.warn(`[AI Search] Groq API failed: ${err.message}`);
+        errors.push(`Groq: ${err.message}`);
+      }
+    } else {
+      errors.push('Groq: Chưa cấu hình GROQ_API_KEY');
+    }
+
+    // All failed
+    throw new BadRequestException(`Tất cả các dịch vụ LLM đều thất bại:\n${errors.join('\n')}`);
   }
+
+  // ==========================================
+  // WEB SCRAPER SEARCH GROUNDING
+  // ==========================================
+
+  private async fetchWebSearch(query: string): Promise<string> {
+    try {
+      const url = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36'
+        }
+      });
+      if (!response.ok) return '';
+      const html = await response.text();
+      
+      const matches = html.matchAll(/<a class="result__snippet" href="[^"]*">([\s\S]*?)<\/a>/g);
+      const snippets: string[] = [];
+      for (const match of matches) {
+        const cleanText = match[1].replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+        snippets.push(cleanText);
+        if (snippets.length >= 6) break;
+      }
+      return snippets.join('\n\n');
+    } catch (e) {
+      console.error('[AI Search] DuckDuckGo search scraper failed:', e);
+      return '';
+    }
+  }
+
+  // ==========================================
+  // PROVIDER CALLERS
+  // ==========================================
 
   private async callGeminiSearch(apiKey: string, prompt: string): Promise<string> {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
@@ -198,23 +290,141 @@ export class AiAssistantService {
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new BadRequestException(`Gemini API error: ${errText}`);
+      throw new Error(`Gemini status ${response.status}: ${errText}`);
     }
 
     const resJson = await response.json();
     const text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
-      throw new BadRequestException('Không nhận được phản hồi tìm kiếm từ Gemini.');
+      throw new Error('Không nhận được phản hồi từ Gemini Search.');
     }
     return text;
   }
 
   private async parseJsonWithGemini(apiKey: string, text: string, type: 'GRADE10' | 'UNIVERSITY'): Promise<any> {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const prompt = `Dưới đây là thông tin điểm chuẩn. Hãy trích xuất và định dạng kết quả này thành cấu trúc JSON nghiêm ngặt theo schema mô tả.\n\nVăn bản:\n${text}`;
+    const schema = this.getSchema(type);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: schema
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Lỗi cấu trúc hoá JSON.');
+    }
+
+    const resJson = await response.json();
+    const rawText = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
+    return JSON.parse(rawText);
+  }
+
+  private async callOpenAI(apiKey: string, dto: SearchCutoffsDto, searchContext: string): Promise<any> {
+    const url = 'https://api.openai.com/v1/chat/completions';
+    const schema = this.getSchema(dto.type);
     
-    const prompt = `Dưới đây là kết quả tìm kiếm điểm chuẩn. Hãy trích xuất và định dạng kết quả này thành cấu trúc JSON nghiêm ngặt theo schema mô tả.\n\nVăn bản:\n${text}`;
+    const prompt = `Dưới đây là kết quả tìm kiếm điểm chuẩn từ internet:\n\n${searchContext}\n\nHãy trích xuất dữ liệu trên và trả về duy nhất một đối tượng JSON khớp chính xác với JSON Schema sau:\n${JSON.stringify(schema)}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' }
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`OpenAI status ${response.status}: ${errText}`);
+    }
+
+    const resJson = await response.json();
+    const rawText = resJson.choices?.[0]?.message?.content;
+    return JSON.parse(rawText);
+  }
+
+  private async callClaude(apiKey: string, dto: SearchCutoffsDto, searchContext: string): Promise<any> {
+    const url = 'https://api.anthropic.com/v1/messages';
+    const schema = this.getSchema(dto.type);
+
+    const prompt = `Dưới đây là kết quả tìm kiếm điểm chuẩn từ internet:\n\n${searchContext}\n\nHãy trích xuất dữ liệu trên và trả về duy nhất một đối tượng JSON khớp chính xác với JSON Schema sau (không trả kèm giải thích hay từ ngữ nào khác, chỉ trả về JSON thuần):\n${JSON.stringify(schema)}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Claude status ${response.status}: ${errText}`);
+    }
+
+    const resJson = await response.json();
+    const rawText = resJson.content?.[0]?.text;
     
-    const schema = type === 'GRADE10' ? {
+    // Extract JSON block if Claude wrapped it in ```json
+    const jsonMatch = rawText.match(/({[\s\S]*})/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[1]);
+    }
+    return JSON.parse(rawText);
+  }
+
+  private async callGroq(apiKey: string, dto: SearchCutoffsDto, searchContext: string): Promise<any> {
+    const url = 'https://api.groq.com/openai/v1/chat/completions';
+    const schema = this.getSchema(dto.type);
+
+    const prompt = `Dưới đây là kết quả tìm kiếm điểm chuẩn từ internet:\n\n${searchContext}\n\nHãy trích xuất dữ liệu trên và trả về duy nhất một đối tượng JSON khớp chính xác với JSON Schema sau:\n${JSON.stringify(schema)}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' }
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Groq status ${response.status}: ${errText}`);
+    }
+
+    const resJson = await response.json();
+    const rawText = resJson.choices?.[0]?.message?.content;
+    return JSON.parse(rawText);
+  }
+
+  private getSchema(type: 'GRADE10' | 'UNIVERSITY') {
+    return type === 'GRADE10' ? {
       type: 'OBJECT',
       properties: {
         schoolName: { type: 'STRING' },
@@ -255,33 +465,14 @@ export class AiAssistantService {
       },
       required: ['schoolName', 'majorName', 'cutoffs']
     };
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }],
-        generationConfig: {
-          responseMimeType: 'application/json',
-          responseSchema: schema
-        }
-      })
-    });
-
-    if (!response.ok) {
-      throw new BadRequestException('Lỗi trích xuất cấu trúc dữ liệu JSON từ AI.');
-    }
-
-    const resJson = await response.json();
-    const rawText = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
-    return JSON.parse(rawText);
   }
+
+  // ==========================================
+  // COMPARISON AND MERGING LOGIC
+  // ==========================================
 
   private async compareWithDatabase(dto: SearchCutoffsDto, aiData: any) {
     if (dto.type === 'GRADE10') {
-      // Find matching school in G10HCM_SCHOOL
       let school = await this.grade10SchoolRepo.findOne({
         where: [
           { code: aiData.schoolCode || '___' },
@@ -290,16 +481,15 @@ export class AiAssistantService {
       });
 
       if (!school) {
-        // Fallback: create mock school name for UI preview if not found
         school = this.grade10SchoolRepo.create({
           code: aiData.schoolCode || dto.schoolQuery.toUpperCase().replace(/\s+/g, '_'),
           name: dto.schoolQuery,
         });
       }
 
-      const existingCutoffs = await this.grade10CutoffRepo.find({
+      const existingCutoffs = school.id ? await this.grade10CutoffRepo.find({
         where: { schoolId: school.id }
-      });
+      }) : [];
 
       const results = aiData.cutoffs.map((item: any) => {
         const dbRecord = existingCutoffs.find(c => c.year === item.year);
@@ -324,7 +514,6 @@ export class AiAssistantService {
         results
       };
     } else {
-      // UNIVERSITY MATCHING
       let uni = await this.universityRepository.findOne({
         where: [
           { code: aiData.schoolCode || '___' },
@@ -339,22 +528,23 @@ export class AiAssistantService {
         });
       }
 
-      // Find Program matching major
-      let program = await this.programRepository.findOne({
-        where: {
-          universityId: uni.id,
-          majorCode: Like(`%${aiData.majorCode || ''}%`)
-        }
-      });
+      let program = null;
+      if (uni.id) {
+        program = await this.programRepository.findOne({
+          where: {
+            universityId: uni.id,
+            majorCode: Like(`%${aiData.majorCode || ''}%`)
+          }
+        });
 
-      if (!program) {
-        // Match by major name
-        const majors = await this.majorRepository.find();
-        const matchedMajor = majors.find(m => m.nameVi.toLowerCase().includes((dto.majorQuery || '').toLowerCase()));
-        if (matchedMajor) {
-          program = await this.programRepository.findOne({
-            where: { universityId: uni.id, majorCode: matchedMajor.code }
-          });
+        if (!program) {
+          const majors = await this.majorRepository.find();
+          const matchedMajor = majors.find(m => m.nameVi.toLowerCase().includes((dto.majorQuery || '').toLowerCase()));
+          if (matchedMajor) {
+            program = await this.programRepository.findOne({
+              where: { universityId: uni.id, majorCode: matchedMajor.code }
+            });
+          }
         }
       }
 
@@ -392,7 +582,6 @@ export class AiAssistantService {
     if (dto.type === 'GRADE10') {
       let school = await this.grade10SchoolRepo.findOne({ where: { code: dto.schoolCode } });
       if (!school) {
-        // Create school if not exists
         school = this.grade10SchoolRepo.create({
           code: dto.schoolCode,
           name: dto.schoolCode.replace(/_/g, ' '),
@@ -422,7 +611,6 @@ export class AiAssistantService {
         importedCount++;
       }
     } else {
-      // UNIVERSITY IMPORT
       let uni = await this.universityRepository.findOne({ where: { code: dto.schoolCode } });
       if (!uni) {
         uni = this.universityRepository.create({
@@ -432,14 +620,12 @@ export class AiAssistantService {
         uni = await this.universityRepository.save(uni);
       }
 
-      // Check method THPT
       let method = await this.methodRepository.findOne({ where: { code: 'THPT' } });
       if (!method) {
         method = this.methodRepository.create({ code: 'THPT', name: 'Điểm thi THPT Quốc gia' });
         method = await this.methodRepository.save(method);
       }
 
-      // Check Program
       let program = await this.programRepository.findOne({
         where: { universityId: uni.id, majorCode: dto.majorCode }
       });
@@ -454,7 +640,6 @@ export class AiAssistantService {
         program = await this.programRepository.save(program);
       }
 
-      // Check Rule
       let rule = await this.ruleRepository.findOne({
         where: { program: { id: program.id }, admissionMethod: { id: method.id } }
       });
