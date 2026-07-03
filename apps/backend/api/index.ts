@@ -2,8 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { AppModule } from '../src/app.module';
-import * as express from 'express';
+import { AppModule } from '../dist/src/app.module';
+import express from 'express';
 
 const server = express();
 let isInitialized = false;
