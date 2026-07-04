@@ -460,6 +460,32 @@ export default function Grade10Container() {
               📝 Đánh giá NV lớp 10
             </button>
           )}
+
+          {hasPermission('GRADE10', 'view_recommendation', 'view') && (
+            <button
+              onClick={() => setActiveTab('combo')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                activeTab === 'combo'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <Sparkles className="h-4 w-4" />
+              🌈 Đề xuất Combo 3 NV
+            </button>
+          )}
+
+          <button
+            onClick={() => setActiveTab('distance')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+              activeTab === 'distance'
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <MapPin className="h-4 w-4" />
+            📍 Tìm trường gần bạn
+          </button>
           
           <button
             onClick={() => setActiveTab('search')}
@@ -471,6 +497,30 @@ export default function Grade10Container() {
           >
             <School className="h-4 w-4" />
             🔍 Tra cứu trường THPT
+          </button>
+
+          <button
+            onClick={() => setActiveTab('specialized')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+              activeTab === 'specialized'
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <Award className="h-4 w-4" />
+            🎒 Lớp Chuyên
+          </button>
+
+          <button
+            onClick={() => setActiveTab('adjust')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+              activeTab === 'adjust'
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <RefreshCw className="h-4 w-4" />
+            ⏳ Mô phỏng chỉnh NV
           </button>
 
           <button
