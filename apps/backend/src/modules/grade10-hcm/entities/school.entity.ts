@@ -32,10 +32,10 @@ export class Grade10School {
   @JoinColumn({ name: 'district_id' })
   district: Grade10District;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   address: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   website: string | null;
 
   @Column({ type: 'text', nullable: true })
