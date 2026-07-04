@@ -23,7 +23,15 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function Grade10Container() {
   // ── UI States ──────────────────────────────────────────────────────────────
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('grade10-theme');
+    return (saved === 'dark' || saved === 'light') ? saved : 'light';
+  });
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('grade10-theme', newTheme);
+  };
   const [helpModal, setHelpModal] = useState<'calculator' | 'combo' | null>(null);
   const { user, hasPermission } = useAuth();
   const [activeTab, setActiveTab] = useState<
@@ -483,7 +491,7 @@ export default function Grade10Container() {
           </button>
         </div>
           <button
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            onClick={toggleTheme}
             className="absolute top-2 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer shadow bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20"
           >
             {theme === 'light' ? '🌸 Giao diện: Đáng yêu' : '✨ Giao diện: Tối giản'}
@@ -634,10 +642,10 @@ export default function Grade10Container() {
                   <div className="h-80 w-full bg-slate-950/60 p-4 rounded-xl border border-slate-800">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={analytics.districtAverages} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis dataKey="districtName" stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                        <YAxis domain={[12, 25]} stroke="#94a3b8" />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
+                        <XAxis dataKey="districtName" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                        <YAxis domain={[12, 25]} stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} />
+                        <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b' } : { backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
                         <Bar dataKey="avgCutoff" fill="#6366f1" radius={[4, 4, 0, 0]} name="Điểm chuẩn TB" />
                       </BarChart>
                     </ResponsiveContainer>
@@ -650,10 +658,10 @@ export default function Grade10Container() {
                   <div className="h-80 w-full bg-slate-950/60 p-4 rounded-xl border border-slate-800">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={analytics.trends} margin={{ top: 10, right: 30, left: -10, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis dataKey="year" stroke="#94a3b8" tickFormatter={formatSchoolYear} />
-                        <YAxis stroke="#94a3b8" />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
+                        <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tickFormatter={formatSchoolYear} />
+                        <YAxis stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} />
+                        <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b' } : { backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
                         <Legend />
                         <Line type="monotone" dataKey="totalQuota" stroke="#10b981" name="Chỉ tiêu" strokeWidth={2} />
                         <Line type="monotone" dataKey="totalRegistered" stroke="#f59e0b" name="Số đăng ký" strokeWidth={2} />
@@ -1286,10 +1294,10 @@ export default function Grade10Container() {
                       ) : (
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={[...schoolDetail.cutoffs].reverse()}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                            <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                            <YAxis domain={['auto', 'auto']} stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                            <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
+                            <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
+                            <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                            <YAxis domain={['auto', 'auto']} stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                            <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b', fontSize: 10 } : { backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
                             <Legend wrapperStyle={{ fontSize: 9 }} />
                             <Line type="monotone" dataKey="cutoffNV1" stroke="#6366f1" name="Nguyện vọng 1" strokeWidth={2.5} activeDot={{ r: 5 }} />
                             <Line type="monotone" dataKey="cutoffNV2" stroke="#10b981" name="Nguyện vọng 2" strokeWidth={2} />
@@ -1341,10 +1349,10 @@ export default function Grade10Container() {
                         ) : (
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={[...schoolDetail.quotas].reverse()}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                              <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                              <YAxis stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                              <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
+                              <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
+                              <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                              <YAxis stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                              <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b', fontSize: 10 } : { backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
                               <Legend wrapperStyle={{ fontSize: 9 }} />
                               <Bar dataKey="quota" fill="#3b82f6" name="Chỉ tiêu" radius={[3, 3, 0, 0]} />
                               <Bar dataKey="registeredCount" fill="#ec4899" name="Đăng ký NV1" radius={[3, 3, 0, 0]} />
@@ -1363,10 +1371,10 @@ export default function Grade10Container() {
                         ) : (
                           <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={[...schoolDetail.quotas].reverse()}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                              <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                              <YAxis stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                              <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
+                              <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
+                              <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                              <YAxis stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                              <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b', fontSize: 10 } : { backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
                               <Legend wrapperStyle={{ fontSize: 9 }} />
                               <Line type="monotone" dataKey="competitionRatio" stroke="#f43f5e" name="Tỷ lệ chọi" strokeWidth={2.5} />
                             </LineChart>
