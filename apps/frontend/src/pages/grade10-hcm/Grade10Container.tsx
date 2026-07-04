@@ -433,119 +433,119 @@ export default function Grade10Container() {
   return (
     <div className={`flex-1 flex flex-col ${theme === 'light' ? 'light-theme' : 'dark-theme'}`}>
       {/* Navigation tabs */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none relative">
-        <div className="max-w-7xl mx-auto flex flex-row flex-nowrap gap-2 py-2 whitespace-nowrap">
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'dashboard'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <BarChart2 className="h-4 w-4" />
-            🏫 Tổng quan tuyển sinh
-          </button>
-          
-          {hasPermission('GRADE10', 'view_recommendation', 'view') && (
+      <nav className="bg-slate-900 border-b border-slate-800 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between py-2">
+          {/* Scrollable Tabs Wrapper */}
+          <div className="flex-1 flex flex-row flex-nowrap gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap pr-4">
             <button
-              onClick={() => setActiveTab('calculator')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-                activeTab === 'calculator'
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                activeTab === 'dashboard'
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
               }`}
             >
-              <CalcIcon className="h-4 w-4" />
-              📝 Đánh giá NV lớp 10
+              <BarChart2 className="h-3.5 w-3.5" />
+              Tổng quan
             </button>
-          )}
-
-          {hasPermission('GRADE10', 'view_recommendation', 'view') && (
-            <button
-              onClick={() => setActiveTab('combo')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-                activeTab === 'combo'
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-              }`}
-            >
-              <Sparkles className="h-4 w-4" />
-              🌈 Đề xuất Combo 3 NV
-            </button>
-          )}
-
-          <button
-            onClick={() => setActiveTab('distance')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'distance'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <MapPin className="h-4 w-4" />
-            📍 Tìm trường gần bạn
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('search')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'search'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <School className="h-4 w-4" />
-            🔍 Tra cứu trường THPT
-          </button>
-
-          <button
-            onClick={() => setActiveTab('specialized')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'specialized'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <Award className="h-4 w-4" />
-            🎒 Lớp Chuyên
-          </button>
-
-          <button
-            onClick={() => setActiveTab('adjust')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'adjust'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <RefreshCw className="h-4 w-4" />
-            ⏳ Mô phỏng chỉnh NV
-          </button>
-
-          <button
-            onClick={() => setIsCompareOpen(true)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition relative ${
-              isCompareOpen
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <ArrowUpDown className="h-4 w-4" />
-            So sánh trường ({compareList.length})
-            {compareList.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                {compareList.length}
-              </span>
+            
+            {hasPermission('GRADE10', 'view_recommendation', 'view') && (
+              <button
+                onClick={() => setActiveTab('calculator')}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                  activeTab === 'calculator'
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                <CalcIcon className="h-3.5 w-3.5" />
+                Đánh giá NV
+              </button>
             )}
-          </button>
-        </div>
+
+            {hasPermission('GRADE10', 'view_recommendation', 'view') && (
+              <button
+                onClick={() => setActiveTab('combo')}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                  activeTab === 'combo'
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Đề xuất Combo
+              </button>
+            )}
+
+            <button
+              onClick={() => setActiveTab('distance')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                activeTab === 'distance'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <MapPin className="h-3.5 w-3.5" />
+              Tìm gần nhà
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('search')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                activeTab === 'search'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <School className="h-3.5 w-3.5" />
+              Tra cứu trường
+            </button>
+
+            <button
+              onClick={() => setActiveTab('specialized')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                activeTab === 'specialized'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <Award className="h-3.5 w-3.5" />
+              Lớp Chuyên
+            </button>
+
+            <button
+              onClick={() => setActiveTab('adjust')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                activeTab === 'adjust'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Mô phỏng
+            </button>
+
+            <button
+              onClick={() => setIsCompareOpen(true)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition relative ${
+                isCompareOpen
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <ArrowUpDown className="h-3.5 w-3.5" />
+              So sánh ({compareList.length})
+            </button>
+          </div>
+
+          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="absolute top-2 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer shadow bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20"
+            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer shadow bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20"
           >
-            {theme === 'light' ? '🌸 Giao diện: Đáng yêu' : '✨ Giao diện: Tối giản'}
+            {theme === 'light' ? '🌸 Đáng yêu' : '✨ Tối giản'}
           </button>
+        </div>
       </nav>
 
       {/* Main Content Area */}
