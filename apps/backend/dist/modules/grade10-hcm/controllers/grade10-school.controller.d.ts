@@ -106,6 +106,25 @@ export declare class Grade10SchoolController {
             cutoffNV1: number;
             year: number;
         }[];
+        topDecrease: {
+            schoolId: any;
+            schoolName: any;
+            schoolCode: any;
+            districtName: any;
+            cutoffNew: number;
+            cutoffOld: number;
+            diff: number;
+        }[];
+        topNV3Gap: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            cutoffNV1: number;
+            cutoffNV3: number;
+            gap: number;
+            year: number;
+        }[];
         districtAverages: {
             districtName: any;
             avgCutoff: number;
