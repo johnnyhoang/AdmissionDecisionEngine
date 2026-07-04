@@ -462,7 +462,7 @@ export default function Grade10Container() {
             }`}
           >
             <TrendingUp className="h-4 w-4" />
-            Phân tích thống kê 10 năm
+            Phân tích điểm chuẩn
           </button>
 
           <button
@@ -523,8 +523,8 @@ export default function Grade10Container() {
                   <BookOpen className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-xs text-slate-400 font-semibold uppercase">Lịch sử điểm chuẩn</h3>
-                  <p className="text-2xl font-black text-white m-0">10 năm liên tục</p>
+                  <h3 className="text-xs text-slate-400 font-semibold uppercase">Giải thuật gợi ý</h3>
+                  <p className="text-2xl font-black text-white m-0">Đề xuất thông minh</p>
                 </div>
               </div>
             </div>
@@ -691,7 +691,7 @@ export default function Grade10Container() {
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 bg-slate-900/20 border border-slate-800 rounded-2xl gap-3">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500"></div>
-                  <span className="text-xs text-slate-400">Đang phân tích xác suất từ điểm chuẩn 10 năm của Sở GD&ĐT...</span>
+                  <span className="text-xs text-slate-400">Đang phân tích xác suất đỗ bằng giải thuật SSF...</span>
                 </div>
               ) : !evaluationResult ? (
                 <div className="text-center py-20 bg-slate-900/20 border border-slate-800 rounded-2xl">

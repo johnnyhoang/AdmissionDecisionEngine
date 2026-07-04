@@ -340,16 +340,29 @@ function MainApp() {
     return <Login />;
   }
 
+  let currentPath = window.location.pathname;
   if (isLoginPath) {
     if (user) {
-      window.history.replaceState({}, '', '/');
+      if (hasPermission('GRADE10', 'view_dashboard', 'view')) {
+        window.history.replaceState({}, '', '/l10hcm');
+        currentPath = '/l10hcm';
+      } else {
+        window.history.replaceState({}, '', '/');
+        currentPath = '/';
+      }
     } else {
       return <Login />;
     }
   }
 
+  // Redirect root path to /l10hcm if candidate has Grade 10 permission
+  if (currentPath === '/' && hasPermission('GRADE10', 'view_dashboard', 'view')) {
+    window.history.replaceState({}, '', '/l10hcm');
+    currentPath = '/l10hcm';
+  }
+
   // 3. Admin Hub page (/admin)
-  if (window.location.pathname === '/admin') {
+  if (currentPath === '/admin') {
     if (user.role !== 'ADMIN') {
       return (
         <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
@@ -365,7 +378,7 @@ function MainApp() {
   }
 
   // Admin permissions management page
-  const isPermissionsPath = window.location.pathname === '/admin/permissions';
+  const isPermissionsPath = currentPath === '/admin/permissions';
   if (isPermissionsPath) {
     if (user.role !== 'ADMIN') {
       return (
@@ -382,8 +395,8 @@ function MainApp() {
   }
 
   // 4. Grade 10 routing & guards
-  const isGrade10User = window.location.pathname.startsWith('/grade10-hcm');
-  const isGrade10Admin = window.location.pathname.startsWith('/admin/grade10-hcm');
+  const isGrade10User = currentPath.startsWith('/l10hcm');
+  const isGrade10Admin = currentPath.startsWith('/admin/l10hcm');
 
   if (isGrade10Admin) {
     if (!hasPermission('GRADE10', 'edit_data', 'view')) {
@@ -392,7 +405,7 @@ function MainApp() {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
             <p className="text-xs text-slate-400 mt-2">Yêu cầu quyền chỉnh sửa dữ liệu Lớp 10.</p>
-            <a href="/grade10-hcm" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Quay lại</a>
+            <a href="/l10hcm" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Quay lại</a>
           </div>
         </div>
       );
@@ -447,7 +460,7 @@ function MainApp() {
                 </a>
               )}
               {hasPermission('GRADE10', 'edit_data', 'view') && (
-                <a href="/admin/grade10-hcm" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+                <a href="/admin/l10hcm" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
                   Admin Lớp 10
                 </a>
               )}
@@ -901,7 +914,7 @@ function MainApp() {
               </a>
             )}
             {hasPermission('GRADE10', 'view_dashboard', 'view') && (
-              <a href="/grade10-hcm" className="text-xs font-semibold px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-300 rounded-lg transition">
+              <a href="/l10hcm" className="text-xs font-semibold px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-300 rounded-lg transition">
                 🏫 Cổng Lớp 10
               </a>
             )}

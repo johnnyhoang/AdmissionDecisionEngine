@@ -142,7 +142,7 @@ export default function AdminPermissions() {
               <p className="text-xs text-slate-400 m-0">Quản lý Phân quyền Thành viên Hệ thống</p>
             </div>
           </div>
-          <a href="/grade10-hcm" className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+          <a href="/l10hcm" className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
             Về Cổng Thí Sinh
           </a>
         </div>

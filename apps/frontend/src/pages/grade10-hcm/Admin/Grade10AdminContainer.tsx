@@ -440,7 +440,7 @@ export default function Grade10AdminContainer() {
               <p className="text-xs text-slate-400 m-0">Quản trị Dữ liệu Tuyển sinh Lớp 10 TP.HCM</p>
             </div>
           </div>
-          <a href="/grade10-hcm" className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+          <a href="/l10hcm" className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
             Cổng Thí Sinh Lớp 10
           </a>
         </div>
@@ -499,7 +499,7 @@ export default function Grade10AdminContainer() {
                 <p>🔹 Dùng tab <strong>Dán JSON & Import</strong> để paste dữ liệu từ AI tool, hệ thống sẽ tự phân tích xung đột và cho bạn chọn keep/overwrite từng dòng (cả cutoffs lẫn quotas).</p>
                 <p>🔹 Dùng tab <strong>Tìm AI Hàng Loạt</strong> để tự động tìm kiếm nhiều trường cùng lúc qua Gemini AI và lưu ngay các dữ liệu mới.</p>
                 <p>🔹 Dùng tab <strong>Presets</strong> để đồng bộ các file JSON preset có sẵn trên server.</p>
-                <p>🔹 Hiện có <strong>{stats?.cutoffs ?? 0}</strong> bản ghi điểm chuẩn — mục tiêu tối thiểu là 500 bản ghi (5–10 năm × 75 trường).</p>
+                <p>🔹 Hiện có <strong>{stats?.cutoffs ?? 0}</strong> bản ghi điểm chuẩn phục vụ hệ thống gợi ý nguyện vọng.</p>
               </div>
             </div>
           </div>

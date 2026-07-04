@@ -20,7 +20,7 @@ export default function AdminHub() {
       links: ['Đồng bộ Preset', 'Dán JSON Import', 'Lịch sử Import'],
     },
     {
-      href: '/admin/grade10-hcm',
+      href: '/admin/l10hcm',
       icon: <School className="h-8 w-8" />,
       color: 'from-emerald-600 to-teal-600',
       shadow: 'shadow-emerald-600/30',
@@ -82,7 +82,7 @@ export default function AdminHub() {
             <a href="/" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
               🎓 Cổng Đại Học
             </a>
-            <a href="/grade10-hcm" className="text-xs font-semibold px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-300 rounded-lg transition">
+            <a href="/l10hcm" className="text-xs font-semibold px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-300 rounded-lg transition">
               🏫 Cổng Lớp 10
             </a>
             <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
