@@ -124,7 +124,7 @@ export class Grade10CalcService {
 
     const cutoffs = await query.getMany();
 
-    // 3. For each school, fetch last 3 years of scores to compute trend and stability
+    // Fetch last 3 years of scores (for calculation formulas only — 4th year stored for display/history)
     const schoolIds = cutoffs.map((c) => c.schoolId);
     let historicalScores: Grade10Cutoff[] = [];
     if (schoolIds.length > 0) {
@@ -132,7 +132,7 @@ export class Grade10CalcService {
         .createQueryBuilder('cutoff')
         .where('cutoff.schoolId IN (:...schoolIds)', { schoolIds })
         .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
-        .andWhere('cutoff.year >= :year', { year: latestYear - 3 })
+        .andWhere('cutoff.year >= :year', { year: latestYear - 2 })  // 3 most recent years only
         .orderBy('cutoff.year', 'DESC')
         .getMany();
     }
@@ -148,8 +148,10 @@ export class Grade10CalcService {
       );
       const cutoffVal = Number(c.cutoffNV1);
 
-      // Historical average
-      const historicalNV1s = schoolHist.map((h) => Number(h.cutoffNV1));
+      // Historical average — use only years with valid (non-zero) data
+      const historicalNV1s = schoolHist
+        .map((h) => Number(h.cutoffNV1))
+        .filter((v) => v > 0 && !isNaN(v));
       const avgNV1 =
         historicalNV1s.length > 0
           ? historicalNV1s.reduce((sum, val) => sum + val, 0) /
@@ -292,7 +294,7 @@ export class Grade10CalcService {
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
       .getMany();
 
-    // 3. Fetch last 3 years of scores for all schools to compute average
+    // Fetch last 3 years of scores (calculation only; 4th year kept for display/history)
     const schoolIds = cutoffs.map((c) => c.schoolId);
     let historicalScores: Grade10Cutoff[] = [];
     if (schoolIds.length > 0) {
@@ -300,7 +302,7 @@ export class Grade10CalcService {
         .createQueryBuilder('cutoff')
         .where('cutoff.schoolId IN (:...schoolIds)', { schoolIds })
         .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
-        .andWhere('cutoff.year >= :year', { year: latestYear - 3 })
+        .andWhere('cutoff.year >= :year', { year: latestYear - 2 })  // 3 most recent years only
         .orderBy('cutoff.year', 'DESC')
         .getMany();
     }
@@ -354,8 +356,10 @@ export class Grade10CalcService {
       const schoolHist = historicalScores.filter((h) => h.schoolId === c.schoolId);
       const cutoffVal = Number(c.cutoffNV1);
 
-      // Historical average
-      const historicalNV1s = schoolHist.map((h) => Number(h.cutoffNV1));
+      // Historical average — skip missing/zero data years
+      const historicalNV1s = schoolHist
+        .map((h) => Number(h.cutoffNV1))
+        .filter((v) => v > 0 && !isNaN(v));
       const avgNV1 =
         historicalNV1s.length > 0
           ? historicalNV1s.reduce((sum, val) => sum + val, 0) / historicalNV1s.length

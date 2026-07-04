@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Calculator, Sparkles, BadgeCheck } from 'lucide-react';
-import type { G10SchoolItem } from '../../../services/api';
 import { fetchG10SchoolDetail } from '../../../services/api';
 import { formatSchoolYear, getRecentSchoolYears } from '../../../utils/date';
 

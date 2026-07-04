@@ -122,7 +122,7 @@ let Grade10CalcService = class Grade10CalcService {
                 .createQueryBuilder('cutoff')
                 .where('cutoff.schoolId IN (:...schoolIds)', { schoolIds })
                 .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
-                .andWhere('cutoff.year >= :year', { year: latestYear - 3 })
+                .andWhere('cutoff.year >= :year', { year: latestYear - 2 })
                 .orderBy('cutoff.year', 'DESC')
                 .getMany();
         }
@@ -132,7 +132,9 @@ let Grade10CalcService = class Grade10CalcService {
         const results = cutoffs.map((c) => {
             const schoolHist = historicalScores.filter((h) => h.schoolId === c.schoolId);
             const cutoffVal = Number(c.cutoffNV1);
-            const historicalNV1s = schoolHist.map((h) => Number(h.cutoffNV1));
+            const historicalNV1s = schoolHist
+                .map((h) => Number(h.cutoffNV1))
+                .filter((v) => v > 0 && !isNaN(v));
             const avgNV1 = historicalNV1s.length > 0
                 ? historicalNV1s.reduce((sum, val) => sum + val, 0) /
                     historicalNV1s.length
@@ -264,7 +266,7 @@ let Grade10CalcService = class Grade10CalcService {
                 .createQueryBuilder('cutoff')
                 .where('cutoff.schoolId IN (:...schoolIds)', { schoolIds })
                 .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
-                .andWhere('cutoff.year >= :year', { year: latestYear - 3 })
+                .andWhere('cutoff.year >= :year', { year: latestYear - 2 })
                 .orderBy('cutoff.year', 'DESC')
                 .getMany();
         }
@@ -308,7 +310,9 @@ let Grade10CalcService = class Grade10CalcService {
         const candidates = filteredCutoffs.map((c) => {
             const schoolHist = historicalScores.filter((h) => h.schoolId === c.schoolId);
             const cutoffVal = Number(c.cutoffNV1);
-            const historicalNV1s = schoolHist.map((h) => Number(h.cutoffNV1));
+            const historicalNV1s = schoolHist
+                .map((h) => Number(h.cutoffNV1))
+                .filter((v) => v > 0 && !isNaN(v));
             const avgNV1 = historicalNV1s.length > 0
                 ? historicalNV1s.reduce((sum, val) => sum + val, 0) / historicalNV1s.length
                 : cutoffVal;

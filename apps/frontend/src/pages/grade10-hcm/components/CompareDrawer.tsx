@@ -1,4 +1,4 @@
-import { X, BadgeCheck, School, Trash2, HelpCircle } from 'lucide-react';
+import { X, BadgeCheck, School, Trash2, HelpCircle , TrendingDown } from 'lucide-react';
 import type { G10SchoolItem } from '../../../services/api';
 import { formatSchoolYear, getCurrentSchoolYear } from '../../../utils/date';
 
