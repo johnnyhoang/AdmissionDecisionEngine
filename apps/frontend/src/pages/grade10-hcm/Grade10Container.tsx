@@ -80,6 +80,8 @@ export default function Grade10Container() {
   const [userAddress, setUserAddress] = useState('');
   const [isLocating, setIsLocating] = useState(false);
   const [distanceSchools, setDistanceSchools] = useState<any[]>([]);
+  const [isProximityFilterActive, setIsProximityFilterActive] = useState(false);
+  const [isDistanceModalOpen, setIsDistanceModalOpen] = useState(false);
 
   // ── Combo recommendation states ────────────────────────────────────────────
   const [minMath, setMinMath] = useState('7.5');
@@ -169,48 +171,7 @@ export default function Grade10Container() {
     return R * c;
   };
 
-  const handleLocateAndFind = () => {
-    if (!navigator.geolocation) {
-      alert('Trình duyệt của bạn không hỗ trợ định vị GPS.');
-      return;
-    }
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserAddress('Vị trí hiện tại của bạn');
-        await calculateSchoolDistances(latitude, longitude);
-      },
-      (_err) => {
-        alert('Không thể xác định vị trí GPS của bạn. Vui lòng nhập địa chỉ thủ công.');
-        setIsLocating(false);
-      }
-    );
-  };
 
-  const handleGeocodeAddress = async () => {
-    if (!userAddress.trim()) {
-      alert('Vui lòng nhập địa chỉ nhà.');
-      return;
-    }
-    setIsLocating(true);
-    try {
-      const q = encodeURIComponent(userAddress + ', Hồ Chí Minh');
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
-      const data = await res.json();
-      if (data && data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        await calculateSchoolDistances(lat, lon);
-      } else {
-        alert('Không tìm thấy địa chỉ này trên bản đồ. Vui lòng nhập chi tiết hơn (ví dụ: Số nhà, Tên đường, Quận).');
-      }
-    } catch (e) {
-      alert('Lỗi định vị địa chỉ: Mạng yếu hoặc bị giới hạn.');
-    } finally {
-      setIsLocating(false);
-    }
-  };
 
   const calculateSchoolDistances = async (userLat: number, userLon: number) => {
     setIsLocating(true);
@@ -477,17 +438,7 @@ export default function Grade10Container() {
               </button>
             )}
 
-            <button
-              onClick={() => setActiveTab('distance')}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
-                activeTab === 'distance'
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-              }`}
-            >
-              <MapPin className="h-3.5 w-3.5" />
-              Tìm gần nhà
-            </button>
+
             
             <button
               onClick={() => setActiveTab('search')}
@@ -1028,10 +979,11 @@ export default function Grade10Container() {
                 <SearchIcon className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
                 <input 
                   type="text"
-                  placeholder="Tìm trường theo tên hoặc mã trường (e.g. Bùi Thị Xuân)..."
+                  placeholder={isProximityFilterActive ? "🔒 Lọc cự ly đang kích hoạt (bị khóa)..." : "Tìm trường theo tên hoặc mã trường (e.g. Bùi Thị Xuân)..."}
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 outline-none transition"
+                  disabled={isProximityFilterActive}
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 outline-none transition disabled:opacity-50 disabled:bg-slate-950/40 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -1059,10 +1011,23 @@ export default function Grade10Container() {
                 )}
 
 
+                <button
+                  onClick={() => setIsDistanceModalOpen(true)}
+                  className={`px-3 py-2 rounded-lg text-xs font-bold border transition duration-200 flex items-center gap-1.5 cursor-pointer ${
+                    isProximityFilterActive
+                      ? 'bg-rose-600/10 border-rose-500/20 text-rose-400 hover:bg-rose-600/20'
+                      : 'bg-indigo-650/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-650/20'
+                  }`}
+                >
+                  <MapPin className="h-3.5 w-3.5" />
+                  {isProximityFilterActive ? '📍 Cự ly: Bật' : 'Tìm gần nhà'}
+                </button>
+
                 <select
                   value={selectedDistrict}
                   onChange={(e) => handleDistrictChange(e.target.value)}
-                  className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none"
+                  disabled={isProximityFilterActive}
+                  className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">Tất cả Quận/Huyện</option>
                   {districts.map((d: any) => (
@@ -1070,13 +1035,32 @@ export default function Grade10Container() {
                   ))}
                 </select>
                 <div className="text-xs text-slate-400 whitespace-nowrap">
-                  Tổng số: <span className="font-semibold text-slate-200">{schools.length}</span> trường
+                  Tổng số: <span className="font-semibold text-slate-200">{isProximityFilterActive ? distanceSchools.length : schools.length}</span> trường
                 </div>
               </div>
             </div>
 
+            {isProximityFilterActive && (
+              <div className="flex items-center justify-between bg-indigo-950/20 border border-indigo-500/20 p-3 rounded-xl text-xs text-indigo-300 font-semibold shadow-md">
+                <span className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-indigo-400 animate-bounce" />
+                  Lọc theo cự ly gần nhà: <strong className="text-white">{userAddress || 'GPS'}</strong> (Hiển thị 15 trường gần nhất)
+                </span>
+                <button
+                  onClick={() => {
+                    setIsProximityFilterActive(false);
+                    setDistanceSchools([]);
+                    setUserAddress('');
+                  }}
+                  className="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-extrabold cursor-pointer transition shadow"
+                >
+                  Xóa bộ lọc cự ly
+                </button>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {schools.map((school) => {
+              {(isProximityFilterActive ? distanceSchools : schools).map((school) => {
                 const isCompared = compareList.some(item => item.id === school.id);
                 return (
                   <div key={school.id} className="bg-slate-900/60 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col justify-between gap-4 transition-all duration-200">
@@ -1118,6 +1102,16 @@ export default function Grade10Container() {
                         <span className="text-slate-400">Quận/Huyện:</span>
                         <span className="font-semibold text-slate-200">{school.district?.name || 'N/A'}</span>
                       </div>
+                      {isProximityFilterActive && school.roadDistance !== undefined && (
+                        <div className="flex justify-between text-[10px] bg-indigo-950/20 border border-indigo-900/30 p-2 rounded-lg mt-1 text-indigo-300 font-semibold">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3 text-indigo-400" /> Cự ly:
+                          </span>
+                          <span className="font-extrabold text-indigo-200">
+                            {school.roadDistance} km (~{school.roadDuration} phút)
+                          </span>
+                        </div>
+                      )}
                       {user?.role === 'ADMIN' && (
                         <div className="flex gap-2 mt-1.5">
                           <button
@@ -1452,114 +1446,106 @@ export default function Grade10Container() {
         onClear={() => setCompareList([])}
         theme={theme}
       />
-              {/* Tab: Distance Finder */}
-        {activeTab === 'distance' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Distance Input Modal */}
+      {isDistanceModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setIsDistanceModalOpen(false)}></div>
+          <div className="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md flex flex-col shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-slate-800">
+              <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-indigo-400" />
+                Tìm trường gần bạn
+              </h2>
+              <button 
+                onClick={() => setIsDistanceModalOpen(false)} 
+                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+              >
+                ✕
+              </button>
+            </div>
             
-            {/* Input Address Card */}
-            <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-5">
-              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                <MapPin className="h-5 w-5 text-indigo-400" />
-                <h2 className="text-base font-bold text-white m-0">Vị trí & Địa chỉ nhà</h2>
-              </div>
-
-              <div className="flex flex-col gap-3.5">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Nhập địa chỉ nhà của bạn</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Ví dụ: 227 Nguyễn Văn Cừ, Quận 5..."
-                      value={userAddress}
-                      onChange={(e) => setUserAddress(e.target.value)}
-                      className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition"
-                    />
-                    <button
-                      onClick={handleGeocodeAddress}
-                      disabled={isLocating}
-                      className="px-4 py-2 bg-indigo-650 hover:bg-indigo-600 text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
-                    >
-                      Định vị
-                    </button>
-                  </div>
+            <div className="p-5 flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Địa chỉ nhà của bạn</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Ví dụ: 227 Nguyễn Văn Cừ, Quận 5..."
+                    value={userAddress}
+                    onChange={(e) => setUserAddress(e.target.value)}
+                    className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none transition"
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!userAddress.trim()) {
+                        alert('Vui lòng nhập địa chỉ nhà.');
+                        return;
+                      }
+                      setIsLocating(true);
+                      try {
+                        const q = encodeURIComponent(userAddress + ', Hồ Chí Minh');
+                        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+                        const data = await res.json();
+                        if (data && data.length > 0) {
+                          const lat = parseFloat(data[0].lat);
+                          const lon = parseFloat(data[0].lon);
+                          await calculateSchoolDistances(lat, lon);
+                          setIsProximityFilterActive(true);
+                          setIsDistanceModalOpen(false);
+                        } else {
+                          alert('Không tìm thấy địa chỉ này trên bản đồ. Vui lòng nhập chi tiết hơn (ví dụ: Số nhà, Tên đường, Quận).');
+                        }
+                      } catch (e) {
+                        alert('Lỗi định vị địa chỉ: Mạng yếu hoặc bị giới hạn.');
+                      } finally {
+                        setIsLocating(false);
+                      }
+                    }}
+                    disabled={isLocating}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
+                  >
+                    {isLocating ? 'Đang tìm...' : 'Tìm'}
+                  </button>
                 </div>
-
-                <div className="relative flex py-1 items-center">
-                  <div className="flex-grow border-t border-slate-800"></div>
-                  <span className="flex-shrink mx-4 text-[10px] text-slate-500 font-bold uppercase">Hoặc</span>
-                  <div className="flex-grow border-t border-slate-800"></div>
-                </div>
-
-                <button
-                  onClick={handleLocateAndFind}
-                  disabled={isLocating}
-                  className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 disabled:opacity-50 cursor-pointer"
-                >
-                  <MapPin className="h-4 w-4" />
-                  {isLocating ? 'Đang xác định GPS...' : 'Lấy vị trí GPS hiện tại'}
-                </button>
               </div>
 
-              <div className="bg-slate-950/45 p-3.5 border border-slate-800/80 rounded-xl text-xs text-slate-400 leading-relaxed">
-                ☘️ <strong>Chúng tôi có quan tâm đến khoảng cách di chuyển của bạn:</strong> Hệ thống sẽ tự động cộng thêm điểm ảo ưu tiên đi lại (+1.5đ cho trường dưới 1/3 khoảng cách tối đa, +0.75đ dưới 2/3 khoảng cách) để ưu tiên các trường gần nhà lên đầu combo!
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-800"></div>
+                <span className="flex-shrink mx-3 text-[9px] text-slate-500 font-bold uppercase">Hoặc</span>
+                <div className="flex-grow border-t border-slate-800"></div>
               </div>
+
+              <button
+                onClick={() => {
+                  if (!navigator.geolocation) {
+                    alert('Trình duyệt của bạn không hỗ trợ định vị GPS.');
+                    return;
+                  }
+                  setIsLocating(true);
+                  navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                      const { latitude, longitude } = position.coords;
+                      setUserAddress('Vị trí GPS hiện tại');
+                      await calculateSchoolDistances(latitude, longitude);
+                      setIsProximityFilterActive(true);
+                      setIsDistanceModalOpen(false);
+                    },
+                    (_err) => {
+                      alert('Không thể xác định vị trí GPS của bạn. Vui lòng nhập địa chỉ thủ công.');
+                      setIsLocating(false);
+                    }
+                  );
+                }}
+                disabled={isLocating}
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
+              >
+                <MapPin className="w-4 h-4 text-indigo-400" />
+                {isLocating ? 'Đang định vị...' : 'Sử dụng GPS hiện tại'}
+              </button>
             </div>
-
-            {/* Sorted Schools List Card */}
-            <div className="lg:col-span-8 bg-slate-900/40 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-4">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <School className="w-5 h-5 text-indigo-400" />
-                  Danh sách trường THPT lân cận ({distanceSchools.length})
-                </h3>
-              </div>
-
-              {distanceSchools.length === 0 ? (
-                <div className="text-center py-20 text-slate-500 text-sm">
-                  Vui lòng định vị vị trí hoặc nhập địa chỉ để xem các trường gần bạn nhất.
-                </div>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {distanceSchools.map((school, idx) => (
-                    <div
-                      key={school.id}
-                      onClick={() => openSchoolDetail(school.id)}
-                      className="bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 flex justify-between items-center gap-4 cursor-pointer transition"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="bg-indigo-650/15 text-indigo-400 text-xs font-bold px-2 py-1 rounded-lg border border-indigo-500/20 mt-0.5">
-                          #{idx + 1}
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
-                            {school.name}
-                            {school.isVerified && <BadgeCheck className="w-4 h-4 text-blue-500" />}
-                          </h4>
-                          <p className="text-xs text-slate-400 mt-1 line-clamp-1">{school.address}</p>
-                          <div className="flex items-center gap-4 mt-2 text-[10px] text-slate-500">
-                            <span>Quận: <strong className="text-slate-350">{school.district?.name}</strong></span>
-                            <span>Mã: <strong className="text-slate-350">{school.code}</strong></span>
-                            <span>Điểm NV1 2025: <strong className="text-indigo-400 font-bold">{school.latestCutoffNV1 || 'N/A'}đ</strong></span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="text-right shrink-0 flex flex-col items-end gap-1 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80 min-w-[120px]">
-                        <span className="text-sm font-black text-emerald-400 flex items-center gap-1">
-                          {school.roadDistance} km
-                        </span>
-                        <span className="text-[10px] text-slate-400">
-                          ~{school.roadDuration} phút (xe máy)
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
           </div>
-        )}
+        </div>
+      )}
         {/* Tab: Combo Recommendation */}
         {activeTab === 'combo' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
