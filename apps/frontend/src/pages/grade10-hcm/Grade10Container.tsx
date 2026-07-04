@@ -41,6 +41,18 @@ export default function Grade10Container() {
   const [schools, setSchools] = useState<G10SchoolItem[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [analytics, setAnalytics] = useState<any>(null);
+  const [leaderboardType, setLeaderboardType] = useState<
+    | 'topSchools'
+    | 'bottomSchools'
+    | 'topQuota'
+    | 'topRatio'
+    | 'bottomRatio'
+    | 'topIncrease'
+    | 'topDecrease'
+    | 'topRegistered'
+    | 'topSpecialized'
+    | 'topNV3Gap'
+  >('topSchools');
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = searchQuery;
@@ -537,20 +549,78 @@ export default function Grade10Container() {
                 </div>
               </div>
 
-              <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4">
-                <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Top Trường Điểm Cao Nhất ({formatSchoolYear(getCurrentSchoolYear())})</h3>
-                <div className="flex flex-col gap-3">
-                  {analytics?.topSchools?.slice(0, 5).map((t: any, idx: number) => (
-                    <div key={idx} className="flex justify-between items-center text-xs border-b border-slate-800 pb-2">
-                      <div>
-                        <span className="font-semibold text-slate-200 block">{t.schoolName}</span>
-                        <span className="text-[10px] text-slate-500">{t.districtName}</span>
-                      </div>
-                      <span className="font-bold text-indigo-400 text-sm">{t.cutoffNV1}đ</span>
-                    </div>
-                  )) || (
-                    <div className="text-slate-400 text-xs py-4 text-center">Đang tải thống kê...</div>
-                  )}
+              <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 shadow-lg">
+                <div>
+                  <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">🏆 Bảng Xếp Hạng Tuyển Sinh</h3>
+                  <select
+                    value={leaderboardType}
+                    onChange={(e) => setLeaderboardType(e.target.value as any)}
+                    className="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 outline-none focus:border-indigo-500 transition cursor-pointer"
+                  >
+                    <option value="topSchools">🏆 Top 10 Điểm NV1 cao nhất</option>
+                    <option value="bottomSchools">📉 Top 10 Điểm NV1 thấp nhất</option>
+                    <option value="topQuota">🏫 Top 10 Chỉ tiêu lớn nhất</option>
+                    <option value="topRatio">🔥 Top 10 Tỉ lệ chọi cao nhất</option>
+                    <option value="bottomRatio">❄️ Top 10 Tỉ lệ chọi thấp nhất</option>
+                    <option value="topIncrease">📈 Top 10 Điểm tăng mạnh nhất</option>
+                    <option value="topDecrease">📉 Top 10 Điểm giảm mạnh nhất</option>
+                    <option value="topRegistered">👥 Top 10 Số hồ sơ đăng ký đông</option>
+                    <option value="topSpecialized">💎 Top 10 Điểm trường chuyên cao</option>
+                    <option value="topNV3Gap">⚡ Top 10 Lệch NV3 - NV1 lớn nhất</option>
+                  </select>
+                </div>
+                
+                <div className="flex flex-col gap-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin">
+                  {(() => {
+                    if (!analytics) return <div className="text-slate-400 text-xs py-4 text-center">Đang tải bảng xếp hạng...</div>;
+                    const items = analytics[leaderboardType] || [];
+                    if (items.length === 0) return <div className="text-slate-400 text-xs py-4 text-center">Chưa có dữ liệu thống kê.</div>;
+                    
+                    return items.map((t: any, idx: number) => {
+                      let displayVal = "";
+                      let subVal = "";
+                      
+                      if (leaderboardType === 'topSchools' || leaderboardType === 'bottomSchools' || leaderboardType === 'topSpecialized') {
+                        displayVal = `${t.cutoffNV1}đ`;
+                      } else if (leaderboardType === 'topQuota') {
+                        displayVal = `${t.quota}`;
+                        subVal = "chỉ tiêu";
+                      } else if (leaderboardType === 'topRatio' || leaderboardType === 'bottomRatio') {
+                        displayVal = `1 chọi ${t.ratio}`;
+                      } else if (leaderboardType === 'topIncrease' || leaderboardType === 'topDecrease') {
+                        displayVal = `${t.cutoffNew}đ`;
+                        subVal = `(lệch ${t.diff > 0 ? '+' : ''}${t.diff}đ)`;
+                      } else if (leaderboardType === 'topRegistered') {
+                        displayVal = `${t.registeredCount.toLocaleString()}`;
+                        subVal = "hồ sơ";
+                      } else if (leaderboardType === 'topNV3Gap') {
+                        displayVal = `+${t.gap}đ`;
+                        subVal = `(NV3: ${t.cutoffNV3}đ)`;
+                      }
+                      
+                      return (
+                        <div key={idx} className="flex justify-between items-center text-xs border-b border-slate-800 pb-2.5 last:border-0">
+                          <div className="flex items-center gap-2 max-w-[70%]">
+                            <span className={`font-black w-5 text-center ${idx < 3 ? 'text-indigo-400' : 'text-slate-500'}`}>
+                              {idx + 1}
+                            </span>
+                            <div className="truncate">
+                              <span className="font-semibold text-slate-200 block truncate" title={t.schoolName}>
+                                {t.schoolName}
+                              </span>
+                              <span className="text-[10px] text-slate-500 truncate block">
+                                {t.districtName || 'N/A'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-bold text-indigo-400 block">{displayVal}</span>
+                            {subVal && <span className="text-[10px] text-slate-500 block">{subVal}</span>}
+                          </div>
+                        </div>
+                      );
+                    });
+                  })()}
                 </div>
               </div>
             </div>

@@ -363,6 +363,65 @@ export class Grade10SchoolService {
       year: c.year,
     }));
 
+    // 9. Top Decrease (Largest Cutoff Drop vs Previous Year)
+    const dropSchoolsRaw = await this.cutoffRepo
+      .createQueryBuilder('c1')
+      .innerJoin(
+        Grade10Cutoff,
+        'c2',
+        'c1.schoolId = c2.schoolId AND c2.year = :prevYear AND c2.programType = :pt',
+        { prevYear: latestYear - 1, pt: 'REGULAR' },
+      )
+      .leftJoinAndSelect('c1.school', 'school')
+      .leftJoinAndSelect('school.district', 'district')
+      .select('school.id', 'schoolId')
+      .addSelect('school.name', 'schoolName')
+      .addSelect('school.code', 'schoolCode')
+      .addSelect('district.name', 'districtName')
+      .addSelect('c1.cutoffNV1', 'cutoffNew')
+      .addSelect('c2.cutoffNV1', 'cutoffOld')
+      .addSelect('(c1.cutoffNV1 - c2.cutoffNV1)', 'diff')
+      .where('c1.year = :year', { year: latestYear })
+      .andWhere('c1.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('c1.cutoffNV1 - c2.cutoffNV1 < 0')
+      .orderBy('diff', 'ASC') // Largest drop first (most negative)
+      .limit(10)
+      .getRawMany();
+
+    const topDecrease = dropSchoolsRaw.map((r) => ({
+      schoolId: r.schoolId,
+      schoolName: r.schoolName,
+      schoolCode: r.schoolCode,
+      districtName: r.districtName || 'N/A',
+      cutoffNew: Number(r.cutoffNew),
+      cutoffOld: Number(r.cutoffOld),
+      diff: Number(Number(r.diff).toFixed(2)),
+    }));
+
+    // 10. Top NV3 Gap (Largest Gap between NV3 and NV1)
+    const nv3GapRaw = await this.cutoffRepo
+      .createQueryBuilder('cutoff')
+      .leftJoinAndSelect('cutoff.school', 'school')
+      .leftJoinAndSelect('school.district', 'district')
+      .where('cutoff.year = :year', { year: latestYear })
+      .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('cutoff.cutoffNV3 > 0')
+      .andWhere('cutoff.cutoffNV1 > 0')
+      .orderBy('(cutoff.cutoffNV3 - cutoff.cutoffNV1)', 'DESC')
+      .limit(10)
+      .getMany();
+
+    const topNV3Gap = nv3GapRaw.map((c) => ({
+      schoolId: c.school.id,
+      schoolName: c.school.name,
+      schoolCode: c.school.code,
+      districtName: c.school.district?.name || 'N/A',
+      cutoffNV1: Number(c.cutoffNV1),
+      cutoffNV3: Number(c.cutoffNV3),
+      gap: Number((Number(c.cutoffNV3) - Number(c.cutoffNV1)).toFixed(2)),
+      year: c.year,
+    }));
+
     // Average NV1 Cutoff score by district
     const districtStats = await this.cutoffRepo
       .createQueryBuilder('cutoff')
@@ -414,6 +473,8 @@ export class Grade10SchoolService {
       topIncrease,
       topRegistered,
       topSpecialized,
+      topDecrease,
+      topNV3Gap,
       districtAverages,
       trends,
     };
