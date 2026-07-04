@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Calculator, Sparkles, BadgeCheck, MapPin, Loader2 } from 'lucide-react';
 import { fetchG10SchoolDetail, resolveG10Location } from '../../../services/api';
+import type { G10LocationResult } from '../../../services/api';
 import { formatSchoolYear, getRecentSchoolYears } from '../../../utils/date';
+import AddressConfirmModal from './AddressConfirmModal';
 
 interface EditSchoolModalProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [pendingGeocode, setPendingGeocode] = useState<G10LocationResult | null>(null);
 
   const RECENT_YEARS = getRecentSchoolYears(4);
 
@@ -117,18 +120,26 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
         latitude: formData.latitude || undefined,
         longitude: formData.longitude || undefined,
       });
-      setFormData((prev: any) => ({
-        ...prev,
-        latitude: resolved.latitude,
-        longitude: resolved.longitude,
-        mapUrl: prev.mapUrl || resolved.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.name + ', ' + formData.address)}`,
-      }));
-      alert(`✅ Đã lấy tọa độ: ${resolved.latitude.toFixed(6)}, ${resolved.longitude.toFixed(6)}`);
+      // Apply only after the user confirms the normalized address
+      setPendingGeocode(resolved);
     } catch {
       alert('Lỗi kết nối khi geocode địa chỉ.');
     } finally {
       setIsGeocoding(false);
     }
+  };
+
+  const handleGeocodeConfirm = () => {
+    if (!pendingGeocode) return;
+    const resolved = pendingGeocode;
+    setPendingGeocode(null);
+    setFormData((prev: any) => ({
+      ...prev,
+      address: resolved.formattedAddress || prev.address,
+      latitude: resolved.latitude,
+      longitude: resolved.longitude,
+      mapUrl: prev.mapUrl || resolved.mapUrl || `https://www.google.com/maps/search/?api=1&query=${resolved.latitude},${resolved.longitude}`,
+    }));
   };
 
   const handleAutoMapUrl = () => {
@@ -367,6 +378,14 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
           </button>
         </div>
       </div>
+
+      <AddressConfirmModal
+        isOpen={!!pendingGeocode}
+        originalAddress={formData.address || formData.name}
+        resolved={pendingGeocode}
+        onConfirm={handleGeocodeConfirm}
+        onCancel={() => setPendingGeocode(null)}
+      />
     </div>
   );
 }

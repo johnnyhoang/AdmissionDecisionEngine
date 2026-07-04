@@ -13,8 +13,9 @@ import {
   fetchG10Analytics, evaluateG10Profile, getG10ComboRecommendations,
   fetchNearbyG10Schools, resolveG10Location,
 } from '../../services/api';
-import type { G10SchoolItem, G10RecommendationItem } from '../../services/api';
+import type { G10SchoolItem, G10RecommendationItem, G10LocationResult } from '../../services/api';
 import AiSearchModal from '../../components/AiSearchModal';
+import AddressConfirmModal from './components/AddressConfirmModal';
 import MergeSchoolModal from './components/MergeSchoolModal';
 import EditSchoolModal from './components/EditSchoolModal';
 import CompareDrawer from './components/CompareDrawer';
@@ -87,6 +88,14 @@ export default function Grade10Container() {
   const [distanceSchools, setDistanceSchools] = useState<any[]>([]);
   const [isProximityFilterActive, setIsProximityFilterActive] = useState(false);
   const [isDistanceModalOpen, setIsDistanceModalOpen] = useState(false);
+
+  // Address normalization confirmation — resolved address waiting for the
+  // user to confirm before the follow-up action (distance filter / combo) runs
+  const [addressConfirm, setAddressConfirm] = useState<{
+    context: 'proximity' | 'combo';
+    original: string;
+    resolved: G10LocationResult;
+  } | null>(null);
 
   // ── Combo recommendation states ────────────────────────────────────────────
   const [minMath, setMinMath] = useState('7.5');
@@ -244,24 +253,9 @@ export default function Grade10Container() {
     );
   };
 
-  const handleGetCombo = async () => {
+  const runComboRequest = async (lat?: number, lon?: number) => {
     setIsComboLoading(true);
     try {
-      let lat = comboGPS?.lat;
-      let lon = comboGPS?.lon;
-      
-      // If address is entered but not current position, geocode it
-      if (comboUserAddress && comboUserAddress !== 'Tọa độ hiện tại của bạn' && !comboGPS) {
-        const resolved = await resolveG10Location({
-          address: comboUserAddress,
-          districtName: 'Hồ Chí Minh',
-        });
-        lat = resolved.latitude;
-        lon = resolved.longitude;
-        setComboGPS({ lat, lon });
-        setComboUserAddress(resolved.formattedAddress || comboUserAddress);
-      }
-
       const res = await getG10ComboRecommendations({
         minMath: parseFloat(minMath),
         maxMath: parseFloat(maxMath),
@@ -279,9 +273,53 @@ export default function Grade10Container() {
 
       setComboResult(res);
     } catch (e: any) {
-      alert('Đề xuất thất bại: ' + e.message);
+      alert('Tư vấn thất bại: ' + e.message);
     } finally {
       setIsComboLoading(false);
+    }
+  };
+
+  const handleGetCombo = async () => {
+    // Address typed but not yet geocoded — normalize it and let the user
+    // confirm before running the recommendation
+    if (comboUserAddress && comboUserAddress !== 'Tọa độ hiện tại của bạn' && !comboGPS) {
+      setIsComboLoading(true);
+      try {
+        const resolved = await resolveG10Location({
+          address: comboUserAddress,
+          districtName: 'Hồ Chí Minh',
+        });
+        setAddressConfirm({ context: 'combo', original: comboUserAddress, resolved });
+      } catch (e: any) {
+        alert('Không thể định vị địa chỉ: ' + e.message);
+      } finally {
+        setIsComboLoading(false);
+      }
+      return;
+    }
+
+    await runComboRequest(comboGPS?.lat, comboGPS?.lon);
+  };
+
+  const handleAddressConfirm = async () => {
+    if (!addressConfirm) return;
+    const { context, original, resolved } = addressConfirm;
+    setAddressConfirm(null);
+
+    if (context === 'proximity') {
+      setUserAddress(resolved.formattedAddress || original);
+      setIsLocating(true);
+      try {
+        await calculateSchoolDistances(resolved.latitude, resolved.longitude);
+        setIsProximityFilterActive(true);
+        setIsDistanceModalOpen(false);
+      } finally {
+        setIsLocating(false);
+      }
+    } else {
+      setComboGPS({ lat: resolved.latitude, lon: resolved.longitude });
+      setComboUserAddress(resolved.formattedAddress || original);
+      await runComboRequest(resolved.latitude, resolved.longitude);
     }
   };
 
@@ -1466,6 +1504,13 @@ export default function Grade10Container() {
         onClear={() => setCompareList([])}
         theme={theme}
       />
+      <AddressConfirmModal
+        isOpen={!!addressConfirm}
+        originalAddress={addressConfirm?.original ?? ''}
+        resolved={addressConfirm?.resolved ?? null}
+        onConfirm={handleAddressConfirm}
+        onCancel={() => setAddressConfirm(null)}
+      />
       {/* Distance Input Modal */}
       {isDistanceModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
@@ -1507,10 +1552,9 @@ export default function Grade10Container() {
                           address: userAddress,
                           districtName: 'Hồ Chí Minh',
                         });
-                        await calculateSchoolDistances(resolved.latitude, resolved.longitude);
-                        setUserAddress(resolved.formattedAddress || userAddress);
-                        setIsProximityFilterActive(true);
-                        setIsDistanceModalOpen(false);
+                        // Wait for the user to confirm the normalized address
+                        // before calculating distances (handleAddressConfirm)
+                        setAddressConfirm({ context: 'proximity', original: userAddress, resolved });
                       } catch {
                         alert('Lỗi định vị địa chỉ: Mạng yếu hoặc bị giới hạn.');
                       } finally {
