@@ -15,6 +15,11 @@
       border-color 180ms ease;
   }
 
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+
   body {
     background-image:
       radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 30%),
@@ -99,10 +104,49 @@ a[aria-disabled="true"] {
   color-scheme: light;
   background-color: #fff8fc !important;
   background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cpath d='M20 54c10-18 28-28 54-32' fill='none' stroke='%23f9a8d4' stroke-width='1.4' stroke-linecap='round' opacity='.38'/%3E%3Ccircle cx='28' cy='48' r='3' fill='%23fbcfe8' opacity='.58'/%3E%3Ccircle cx='38' cy='40' r='2.5' fill='%23c4b5fd' opacity='.5'/%3E%3Ccircle cx='52' cy='32' r='3.2' fill='%23fecdd3' opacity='.48'/%3E%3Cpath d='M66 24c5 0 8 3 8 8-5 0-8-3-8-8Z' fill='%2386efac' opacity='.36'/%3E%3Cpath d='M42 62c4-1 8 1 10 5-5 1-8-1-10-5Z' fill='%2399f6e4' opacity='.34'/%3E%3C/svg%3E"),
     radial-gradient(circle at top left, rgba(244, 114, 182, 0.14), transparent 28%),
     radial-gradient(circle at top right, rgba(168, 85, 247, 0.10), transparent 24%),
     linear-gradient(180deg, #fffdfc 0%, #fff7fb 100%) !important;
+  background-attachment: fixed, fixed, fixed, fixed !important;
+  background-position: left 24px top 96px, top left, top right, center !important;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat !important;
+  background-size: 160px 160px, auto, auto, auto !important;
   color: #1e1b4b !important;
+}
+
+body.light-theme {
+  overflow-x: hidden;
+}
+
+body.light-theme::before,
+body.light-theme::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.light-theme::before {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380' viewBox='0 0 380 380'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M282 42c-82 34-134 87-168 166' stroke='%23f0abfc' stroke-width='5' opacity='.28'/%3E%3Cpath d='M316 96c-76 26-120 70-150 134' stroke='%23f9a8d4' stroke-width='3' opacity='.28'/%3E%3Cpath d='M130 220c24-18 49-20 74-8' stroke='%2399f6e4' stroke-width='4' opacity='.26'/%3E%3C/g%3E%3Cg opacity='.78'%3E%3Ccircle cx='270' cy='66' r='17' fill='%23fbcfe8'/%3E%3Ccircle cx='297' cy='83' r='12' fill='%23ddd6fe'/%3E%3Ccircle cx='247' cy='94' r='14' fill='%23fecdd3'/%3E%3Ccircle cx='276' cy='111' r='11' fill='%23bae6fd'/%3E%3Ccircle cx='269' cy='91' r='8' fill='%23fef3c7'/%3E%3Cpath d='M210 144c24-8 43 0 56 24-26 8-45 0-56-24Z' fill='%2386efac' opacity='.46'/%3E%3Cpath d='M168 184c20-7 37 1 48 21-22 7-39 0-48-21Z' fill='%2399f6e4' opacity='.42'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340' viewBox='0 0 340 340'%3E%3Cg opacity='.56'%3E%3Cpath d='M56 276c42-86 116-150 222-193' fill='none' stroke='%23f9a8d4' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='88' cy='228' r='16' fill='%23fecdd3'/%3E%3Ccircle cx='116' cy='207' r='9' fill='%23c4b5fd'/%3E%3Ccircle cx='146' cy='180' r='13' fill='%23fbcfe8'/%3E%3Ccircle cx='185' cy='149' r='10' fill='%23bae6fd'/%3E%3Cpath d='M74 258c22-5 39 5 50 28-24 4-41-5-50-28Z' fill='%2386efac' opacity='.48'/%3E%3Cpath d='M184 170c20-4 35 5 45 25-22 4-37-4-45-25Z' fill='%2399f6e4' opacity='.42'/%3E%3C/g%3E%3C/svg%3E");
+  background-position: right -84px top 70px, left -70px bottom -54px;
+  background-repeat: no-repeat;
+  background-size: 380px 380px, 340px 340px;
+  opacity: 0.82;
+}
+
+body.light-theme::after {
+  background-image:
+    radial-gradient(circle at 14px 14px, rgba(244, 114, 182, 0.15) 1.6px, transparent 1.8px),
+    linear-gradient(135deg, rgba(45, 212, 191, 0.09) 0 1px, transparent 1px 18px);
+  background-size: 56px 56px, 42px 42px;
+  opacity: 0.34;
+  mask-image:
+    radial-gradient(circle at 16% 20%, black, transparent 28%),
+    radial-gradient(circle at 84% 64%, black, transparent 30%);
 }
 
 .light-theme .bg-slate-900,
@@ -367,27 +411,34 @@ a[aria-disabled="true"] {
 }
 
 @media print {
-  /* Hide everything on the page by default using visibility (not display).
-     .print-area is nested several levels deep inside the app's normal
-     component tree (App shell > Grade10Container > ...). display:none on
-     an ancestor removes the whole subtree from rendering and can NEVER be
-     undone by a descendant's own display value - that's why the previous
-     "hide #root's direct children, then re-show .print-area" approach
-     printed a blank page. visibility:hidden doesn't have that problem:
-     descendants can set visibility:visible again regardless of depth. */
-  body * {
-    visibility: hidden !important;
+  /* .print-area is rendered via a React portal as a direct child of <body>,
+     so everything else on the page (the whole #root app shell, toasts, other
+     portals) can be hidden with display:none. Unlike the old visibility:hidden
+     approach, display:none removes the hidden content's layout height too —
+     that leftover height is what used to print as extra blank pages after
+     the real content. */
+  body > *:not(.print-area) {
+    display: none !important;
   }
 
-  .print-area,
-  .print-area * {
-    visibility: visible !important;
+  /* Light-theme decorative backgrounds live on body pseudo-elements
+     (position:fixed) — they escape the rule above and would repeat on
+     every printed page. */
+  body::before,
+  body::after {
+    display: none !important;
+    content: none !important;
   }
 
-  /* Basic page setup */
+  html, body, body.light-theme {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+
+  /* Basic page setup — small margins so content fills the page width */
   @page {
     size: A4 portrait;
-    margin: 12mm 14mm;
+    margin: 8mm;
   }
 
   html, body {
@@ -401,13 +452,6 @@ a[aria-disabled="true"] {
 
   .print-area {
     display: block !important;
-    /* Its (now invisible, but still layout-occupying) siblings/ancestors
-       no longer matter - pull it out of the normal flow and pin it to the
-       top-left of the page so content starts at the top and flows
-       downward across as many A4 pages as needed. */
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
     background: white !important;

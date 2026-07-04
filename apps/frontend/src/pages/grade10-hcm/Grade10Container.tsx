@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Search as SearchIcon, TrendingUp, Calculator as CalcIcon, MapPin,
   BadgeCheck, School, HelpCircle, Sparkles, ArrowUpDown,
@@ -1977,7 +1978,11 @@ export default function Grade10Container() {
       />
 
 
-      {/* ── PRINT AREA (screen:hidden, print:visible) ───────────────────────── */}
+      {/* ── PRINT AREA (screen:hidden, print:visible) ─────────────────────────
+          Portaled to <body> so print CSS can hide the whole #root with
+          display:none — the hidden app then contributes zero layout height
+          and no trailing blank pages are printed. */}
+      {createPortal(
       <div className="print-area" style={{ display: 'none' }}>
         {/* Page Header */}
         <div style={{ borderBottom: '3px solid #4338ca', paddingBottom: 8, marginBottom: 16 }}>
@@ -1994,11 +1999,24 @@ export default function Grade10Container() {
           <div>
             <h2 className="print-section-title">PHẦN 1 — ĐÁNH GIÁ CÁ NHÂN &amp; GỢI Ý TRƯỜNG PHÙ HỢP</h2>
 
-            {/* Score Summary */}
+            {/* Input scores info */}
             <div className="print-card" style={{ marginBottom: 12, background: '#eef2ff', border: '1px solid #c7d2fe' }}>
-              <strong style={{ color: '#3730a3' }}>💡 Điểm xét tuyển của bạn:</strong>{' '}
-              <span style={{ fontSize: 15, fontWeight: 900, color: '#4338ca' }}>{evaluationResult.candidateScore}đ</span>
-              {' '}— Toán: {evaluationResult.details.math} | Văn: {evaluationResult.details.literature} | Anh: {evaluationResult.details.english} | Điểm cộng: {Number(evaluationResult.details.priority) + Number(evaluationResult.details.bonus)}
+              <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 4 }}>📝 Thông tin điểm thi thử đầu vào</div>
+              <div style={{ fontSize: 10, color: '#374151', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                <span>Môn Toán: <strong>{evaluationResult.details.math}</strong></span>
+                <span>Môn Ngữ Văn: <strong>{evaluationResult.details.literature}</strong></span>
+                <span>Môn Tiếng Anh: <strong>{evaluationResult.details.english}</strong></span>
+                <span>Điểm ưu tiên: <strong>{evaluationResult.details.priority}</strong></span>
+                <span>Điểm khuyến khích: <strong>{evaluationResult.details.bonus}</strong></span>
+                <span>Nguyện vọng xét: <strong>{targetNV}</strong></span>
+                {preferredDistrict && (
+                  <span>Quận ưu tiên: <strong>{districts.find((d: any) => String(d.id) === String(preferredDistrict))?.name ?? ''}</strong></span>
+                )}
+              </div>
+              <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid #c7d2fe' }}>
+                <strong style={{ color: '#3730a3' }}>💡 Điểm xét tuyển của bạn:</strong>{' '}
+                <span style={{ fontSize: 15, fontWeight: 900, color: '#4338ca' }}>{evaluationResult.candidateScore}đ</span>
+              </div>
             </div>
 
             {/* Recommendation list */}
@@ -2038,6 +2056,22 @@ export default function Grade10Container() {
         {comboResult && (
           <div>
             <h2 className="print-section-title" style={{ marginTop: 20 }}>PHẦN 2 — ĐỀ XUẤT COMBO 3 NGUYỆN VỌNG</h2>
+
+            {/* Input scores info */}
+            <div className="print-card" style={{ marginBottom: 12, background: '#eef2ff', border: '1px solid #c7d2fe' }}>
+              <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 4 }}>📝 Thông tin điểm thi thử đầu vào</div>
+              <div style={{ fontSize: 10, color: '#374151', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                <span>Môn Toán: <strong>{minMath} – {maxMath}</strong></span>
+                <span>Môn Ngữ Văn: <strong>{minLiterature} – {maxLiterature}</strong></span>
+                <span>Môn Tiếng Anh: <strong>{minEnglish} – {maxEnglish}</strong></span>
+                <span>Điểm cộng ưu tiên: <strong>{priorityScore}</strong></span>
+                {dreamSchoolCode && (
+                  <span>Trường mơ ước NV1: <strong>{schools.find((s) => s.code === dreamSchoolCode)?.name ?? dreamSchoolCode}</strong></span>
+                )}
+                {comboUserAddress && <span>Địa chỉ nhà: <strong>{comboUserAddress}</strong></span>}
+                <span>Khoảng cách tối đa: <strong>{maxCommuteDistance} km</strong></span>
+              </div>
+            </div>
 
             {/* All 3 strategies - each one starts on its own A4 page (see
                 .print-strategy-block) and repeats the score summary at the
@@ -2118,7 +2152,8 @@ export default function Grade10Container() {
         <div style={{ marginTop: 16, paddingTop: 8, borderTop: '1px solid #e0e7ff', fontSize: 9, color: '#9ca3af', textAlign: 'center' }}>
           Tài liệu này được tạo tự động bởi hệ thống AdmissionDecisionEngine. Chỉ mang tính chất tham khảo, không thay thế tư vấn chuyên môn.
         </div>
-      </div>
+      </div>,
+      document.body)}
 
     </div>
   );
