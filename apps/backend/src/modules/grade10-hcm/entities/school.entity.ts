@@ -41,6 +41,9 @@ export class Grade10School {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
+  @Column({ type: 'text', nullable: true })
+  comments: string | null;
+
   @Column({ name: 'map_url', type: 'text', nullable: true })
   mapUrl: string | null;
 

@@ -49,17 +49,29 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
           longitude: data.longitude ?? '',
         });
 
-        // Map cutoffs by year
+        // Backend returns cutoffScores / quotaHistory — postgres decimals
+        // arrive as strings, so convert to numbers for the form inputs
+        const cutoffList = data.cutoffScores ?? data.cutoffs ?? [];
         const cMap: any = {};
-        data.cutoffs?.forEach((c: any) => {
-          cMap[c.year] = c;
+        cutoffList.forEach((c: any) => {
+          cMap[c.year] = {
+            ...c,
+            cutoffNV1: c.cutoffNV1 != null ? Number(c.cutoffNV1) : null,
+            cutoffNV2: c.cutoffNV2 != null ? Number(c.cutoffNV2) : null,
+            cutoffNV3: c.cutoffNV3 != null ? Number(c.cutoffNV3) : null,
+          };
         });
         setCutoffsMap(cMap);
 
-        // Map quotas by year
+        const quotaList = data.quotaHistory ?? data.quotas ?? [];
         const qMap: any = {};
-        data.quotas?.forEach((q: any) => {
-          qMap[q.year] = q;
+        quotaList.forEach((q: any) => {
+          qMap[q.year] = {
+            ...q,
+            quota: q.quota != null ? Number(q.quota) : 0,
+            registeredCount: q.registeredCount != null ? Number(q.registeredCount) : 0,
+            competitionRatio: q.competitionRatio != null ? Number(q.competitionRatio) : 0,
+          };
         });
         setQuotasMap(qMap);
       } catch (e) {

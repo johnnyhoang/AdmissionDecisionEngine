@@ -281,6 +281,9 @@ export class Grade10SchoolService {
       relations: { district: true },
     });
     if (!school) throw new NotFoundException('Không tìm thấy trường THPT');
+    // cutoffs/quotas are persisted separately below — assigning arrays onto
+    // the entity relations would be silently dropped (no cascade)
+    const { cutoffs, quotas, ...schoolDto } = dto;
     const resolvedLocation = await this.locationService.geocodeLocation({
       name: dto.name || school.name,
       address: dto.address || school.address,
@@ -289,7 +292,7 @@ export class Grade10SchoolService {
       latitude: dto.latitude ?? school.latitude,
       longitude: dto.longitude ?? school.longitude,
     });
-    Object.assign(school, dto);
+    Object.assign(school, schoolDto);
     if (dto.latitude === undefined || dto.latitude === null) {
       school.latitude = resolvedLocation.latitude;
     }
@@ -299,7 +302,69 @@ export class Grade10SchoolService {
     if (!school.mapUrl) {
       school.mapUrl = resolvedLocation.mapUrl ?? null;
     }
-    return this.schoolRepo.save(school);
+    const saved = await this.schoolRepo.save(school);
+
+    if (Array.isArray(cutoffs)) {
+      for (const cutoff of cutoffs) {
+        const year = Number(cutoff?.year);
+        const nv1 = cutoff?.cutoffNV1;
+        if (!year || (nv1 === null || nv1 === undefined || nv1 === '')) continue;
+        const programType = cutoff.programType || 'REGULAR';
+        const values = {
+          cutoffNV1: Number(nv1),
+          cutoffNV2:
+            cutoff.cutoffNV2 !== null && cutoff.cutoffNV2 !== undefined && cutoff.cutoffNV2 !== ''
+              ? Number(cutoff.cutoffNV2)
+              : null,
+          cutoffNV3:
+            cutoff.cutoffNV3 !== null && cutoff.cutoffNV3 !== undefined && cutoff.cutoffNV3 !== ''
+              ? Number(cutoff.cutoffNV3)
+              : null,
+        };
+        const existing = await this.cutoffRepo.findOne({
+          where: { schoolId: id, year, programType },
+        });
+        if (existing) {
+          Object.assign(existing, values);
+          await this.cutoffRepo.save(existing);
+        } else {
+          await this.cutoffRepo.save(
+            this.cutoffRepo.create({ schoolId: id, year, programType, ...values }),
+          );
+        }
+      }
+    }
+
+    if (Array.isArray(quotas)) {
+      for (const quota of quotas) {
+        const year = Number(quota?.year);
+        if (!year) continue;
+        const programType = quota.programType || 'REGULAR';
+        const quotaCount = Number(quota.quota) || 0;
+        const registeredCount = Number(quota.registeredCount) || 0;
+        const values = {
+          quota: quotaCount,
+          registeredCount,
+          competitionRatio:
+            quotaCount > 0 && registeredCount > 0
+              ? Number((registeredCount / quotaCount).toFixed(2))
+              : Number(quota.competitionRatio) || 0,
+        };
+        const existing = await this.quotaRepo.findOne({
+          where: { schoolId: id, year, programType },
+        });
+        if (existing) {
+          Object.assign(existing, values);
+          await this.quotaRepo.save(existing);
+        } else {
+          await this.quotaRepo.save(
+            this.quotaRepo.create({ schoolId: id, year, programType, ...values }),
+          );
+        }
+      }
+    }
+
+    return saved;
   }
 
   async deleteSchool(id: string) {

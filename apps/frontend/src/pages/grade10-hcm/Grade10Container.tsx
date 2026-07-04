@@ -383,6 +383,16 @@ export default function Grade10Container() {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   };
 
+  // Keyless Google Maps embed (output=embed) — prefers exact coordinates,
+  // falls back to a name + address search
+  const buildSchoolMapEmbedUrl = (school: any) => {
+    if (school?.latitude != null && school?.longitude != null) {
+      return `https://maps.google.com/maps?q=${school.latitude},${school.longitude}&z=16&output=embed`;
+    }
+    const query = [school?.name, school?.address, 'Hồ Chí Minh'].filter(Boolean).join(', ');
+    return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`;
+  };
+
   const handleEvaluate = async () => {
     setLoading(true);
     try {
@@ -1345,20 +1355,33 @@ export default function Grade10Container() {
                     </div>
 
                     {/* Position Map Card */}
-                    <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-2">
-                      <div className="bg-indigo-500/10 p-3 rounded-full text-indigo-400">
-                        <MapPin className="h-7 w-7" />
-                      </div>
-                      <span className="font-bold text-slate-200 text-xs mt-1">Bản đồ vị trí cơ sở</span>
-                        <p className="text-[10px] text-slate-500 max-w-xs">{schoolDetail.address || 'Hồ Chí Minh, Việt Nam'}</p>
-                        <a 
+                    <div className="bg-slate-950/80 border border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+                      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800">
+                        <span className="font-bold text-slate-200 text-xs flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 text-indigo-400" />
+                          Bản đồ vị trí cơ sở
+                        </span>
+                        <a
                           href={buildSchoolMapUrl(schoolDetail)}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-2 px-4 py-1.5 bg-slate-800 hover:bg-slate-755 text-[10px] text-slate-350 font-bold rounded-lg border border-slate-700 transition"
-                      >
-                        Mở Google Maps
-                      </a>
+                          className="px-3 py-1 bg-slate-800 hover:bg-slate-755 text-[10px] text-slate-350 font-bold rounded-lg border border-slate-700 transition"
+                        >
+                          Mở Google Maps
+                        </a>
+                      </div>
+                      <iframe
+                        title="Bản đồ vị trí cơ sở"
+                        src={buildSchoolMapEmbedUrl(schoolDetail)}
+                        className="w-full flex-1 border-0"
+                        style={{ minHeight: 220 }}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        allowFullScreen
+                      ></iframe>
+                      <p className="text-[10px] text-slate-500 px-4 py-2 m-0 truncate">
+                        📍 {schoolDetail.address || 'Hồ Chí Minh, Việt Nam'}
+                      </p>
                     </div>
                   </div>
 
