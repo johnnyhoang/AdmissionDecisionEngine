@@ -1119,22 +1119,34 @@ export default function Grade10Container() {
                         <span className="font-semibold text-slate-200">{school.district?.name || 'N/A'}</span>
                       </div>
                       {user?.role === 'ADMIN' && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setAiPrefillSchool({
-                              name: school.name,
-                              code: school.code,
-                              districtName: school.district?.name,
-                              districtCode: school.district?.code
-                            });
-                            setIsAiModalOpen(true);
-                          }}
-                          className="mt-1.5 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/25 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 text-[10px] font-bold transition cursor-pointer"
-                        >
-                          <Sparkles className="h-3 w-3" />
-                          Tìm dữ liệu với AI
-                        </button>
+                        <div className="flex gap-2 mt-1.5">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingSchoolId(school.id);
+                            }}
+                            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/25 border border-emerald-500/20 hover:border-emerald-500/40 text-emerald-400 text-[10px] font-bold transition cursor-pointer"
+                          >
+                            <Sliders className="h-3 w-3" />
+                            Sửa toàn diện
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAiPrefillSchool({
+                                name: school.name,
+                                code: school.code,
+                                districtName: school.district?.name,
+                                districtCode: school.district?.code
+                              });
+                              setIsAiModalOpen(true);
+                            }}
+                            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/25 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 text-[10px] font-bold transition cursor-pointer"
+                          >
+                            <Sparkles className="h-3 w-3" />
+                            Tra cứu AI
+                          </button>
+                        </div>
                       )}
 
                     </div>
@@ -1159,17 +1171,31 @@ export default function Grade10Container() {
             </button>
 
             {/* Header */}
-            <div className="border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold px-2 py-0.5 bg-indigo-650/15 border border-indigo-500/30 text-indigo-400 rounded-md">
-                  {schoolDetail.code}
-                </span>
-                <span className="text-xs text-slate-400">{schoolDetail.district?.name || 'Chưa rõ quận'}</span>
+            <div className="border-b border-slate-800 pb-3 flex justify-between items-end">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-bold px-2 py-0.5 bg-indigo-650/15 border border-indigo-500/30 text-indigo-400 rounded-md">
+                    {schoolDetail.code}
+                  </span>
+                  <span className="text-xs text-slate-400">{schoolDetail.district?.name || 'Chưa rõ quận'}</span>
+                </div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <School className="h-5 w-5 text-indigo-400 shrink-0" />
+                  {schoolDetail.name}
+                </h2>
               </div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <School className="h-5 w-5 text-indigo-400 shrink-0" />
-                {schoolDetail.name}
-              </h2>
+              {user?.role === 'ADMIN' && (
+                <button
+                  onClick={() => {
+                    setSelectedSchoolId(null);
+                    setEditingSchoolId(schoolDetail.id);
+                  }}
+                  className="mb-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition shadow cursor-pointer"
+                >
+                  <Sliders className="h-3.5 w-3.5" />
+                  Sửa toàn diện
+                </button>
+              )}
             </div>
 
             {/* Tabs Selector */}
