@@ -215,3 +215,26 @@
   background-color: #ffffff !important;
   border-color: #f3e8ff !important;
 }
+
+/* CompareDrawer Light Theme Specific Overrides */
+.light-theme .bg-slate-950\/20 {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  border-color: #f3e8ff !important;
+}
+
+.light-theme .bg-slate-850\/40 {
+  background-color: #f5f3ff !important;
+  color: #5b21b6 !important;
+  border-bottom: 1px solid #e9d5ff !important;
+}
+
+.light-theme .bg-indigo-650\/15 {
+  background-color: #eef2ff !important;
+  color: #4f46e5 !important;
+  border-color: #c7d2fe !important;
+}
+
+.light-theme .text-slate-650 {
+  color: #94a3b8 !important;
+}
+

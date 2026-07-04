@@ -8,9 +8,10 @@ interface CompareDrawerProps {
   compareList: G10SchoolItem[];
   onRemove: (school: G10SchoolItem) => void;
   onClear: () => void;
+  theme: 'light' | 'dark';
 }
 
-export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, onClear }: CompareDrawerProps) {
+export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, onClear, theme }: CompareDrawerProps) {
   if (!isOpen) return null;
 
   // Helper to find min/max values for highlighting
@@ -130,7 +131,7 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
                     >
                       {val > 0 ? (
                         <div className="flex flex-col">
-                          <span className={`font-bold text-sm ${isMax ? 'text-amber-400' : isMin ? 'text-emerald-400' : 'text-slate-200'}`}>
+                          <span className={`font-bold text-sm ${isMax ? (theme === 'light' ? 'text-amber-600 font-extrabold' : 'text-amber-400') : isMin ? (theme === 'light' ? 'text-emerald-600 font-extrabold' : 'text-emerald-400') : 'text-slate-200'}`}>
                             {val}đ
                           </span>
                           {isMax && <span className="text-[8px] text-amber-500 font-bold">Điểm cao nhất</span>}
@@ -158,7 +159,7 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
                     >
                       {val > 0 ? (
                         <div className="flex flex-col">
-                          <span className={`font-bold ${isMax ? 'text-amber-400' : isMin ? 'text-emerald-400' : 'text-slate-200'}`}>
+                          <span className={`font-bold ${isMax ? (theme === 'light' ? 'text-amber-600 font-extrabold' : 'text-amber-400') : isMin ? (theme === 'light' ? 'text-emerald-600 font-extrabold' : 'text-emerald-400') : 'text-slate-200'}`}>
                             {val}đ
                           </span>
                           {isMax && <span className="text-[8px] text-amber-500 font-bold">Cao nhất</span>}
@@ -186,7 +187,7 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
                     >
                       {val > 0 ? (
                         <div className="flex flex-col">
-                          <span className={`font-bold ${isMax ? 'text-amber-400' : isMin ? 'text-emerald-400' : 'text-slate-200'}`}>
+                          <span className={`font-bold ${isMax ? (theme === 'light' ? 'text-amber-600 font-extrabold' : 'text-amber-400') : isMin ? (theme === 'light' ? 'text-emerald-600 font-extrabold' : 'text-emerald-400') : 'text-slate-200'}`}>
                             {val}đ
                           </span>
                           {isMax && <span className="text-[8px] text-amber-500 font-bold">Cao nhất</span>}
@@ -218,7 +219,7 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
                     >
                       {val > 0 ? (
                         <div className="flex flex-col">
-                          <span className={`font-bold ${isMax ? 'text-emerald-400' : 'text-slate-200'}`}>
+                          <span className={`font-bold ${isMax ? (theme === 'light' ? 'text-emerald-600 font-extrabold' : 'text-emerald-400') : 'text-slate-200'}`}>
                             {val} học sinh
                           </span>
                           {isMax && <span className="text-[8px] text-emerald-500 font-bold">Nhiều nhất</span>}
@@ -244,7 +245,7 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
                     >
                       {val > 0 ? (
                         <div className="flex flex-col">
-                          <span className={`font-bold ${isMin ? 'text-emerald-400' : 'text-slate-200'}`}>
+                          <span className={`font-bold ${isMin ? (theme === 'light' ? 'text-emerald-600 font-extrabold' : 'text-emerald-400') : 'text-slate-200'}`}>
                             1 chọi {val}
                           </span>
                           {isMin && <span className="text-[8px] text-emerald-500 font-bold flex items-center gap-0.5"><TrendingDown className="w-2.5 h-2.5" /> Dễ đỗ nhất</span>}
