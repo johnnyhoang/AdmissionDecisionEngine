@@ -429,10 +429,22 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
                 properties: {
                     schoolName: { type: 'STRING' },
                     schoolCode: { type: 'STRING' },
-                    address: { type: 'STRING', description: 'Địa chỉ đầy đủ của trường THPT' },
-                    website: { type: 'STRING', description: 'Địa chỉ trang web chính thức của trường THPT (nếu có)' },
-                    description: { type: 'STRING', description: 'Bài viết giới thiệu chi tiết về lịch sử, thành tích, cơ sở vật chất của trường (dài khoảng 2-3 đoạn văn)' },
-                    mapUrl: { type: 'STRING', description: 'URL bản đồ Google Maps hoặc toạ độ vị trí của trường' },
+                    address: {
+                        type: 'STRING',
+                        description: 'Địa chỉ đầy đủ của trường THPT',
+                    },
+                    website: {
+                        type: 'STRING',
+                        description: 'Địa chỉ trang web chính thức của trường THPT (nếu có)',
+                    },
+                    description: {
+                        type: 'STRING',
+                        description: 'Bài viết giới thiệu chi tiết về lịch sử, thành tích, cơ sở vật chất của trường (dài khoảng 2-3 đoạn văn)',
+                    },
+                    mapUrl: {
+                        type: 'STRING',
+                        description: 'URL bản đồ Google Maps hoặc toạ độ vị trí của trường',
+                    },
                     cutoffs: {
                         type: 'ARRAY',
                         items: {
@@ -545,19 +557,27 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
                         !isNaN(Number(scoreNV3))
                         ? Number(scoreNV3)
                         : null,
-                    quota: aiQuotaItem && aiQuotaItem.quota !== undefined && aiQuotaItem.quota !== null
+                    quota: aiQuotaItem &&
+                        aiQuotaItem.quota !== undefined &&
+                        aiQuotaItem.quota !== null
                         ? Number(aiQuotaItem.quota)
                         : item.quota !== undefined && item.quota !== null
                             ? Number(item.quota)
                             : null,
-                    registeredCount: aiQuotaItem && aiQuotaItem.registeredCount !== undefined && aiQuotaItem.registeredCount !== null
+                    registeredCount: aiQuotaItem &&
+                        aiQuotaItem.registeredCount !== undefined &&
+                        aiQuotaItem.registeredCount !== null
                         ? Number(aiQuotaItem.registeredCount)
-                        : item.registeredCount !== undefined && item.registeredCount !== null
+                        : item.registeredCount !== undefined &&
+                            item.registeredCount !== null
                             ? Number(item.registeredCount)
                             : null,
-                    competitionRatio: aiQuotaItem && aiQuotaItem.competitionRatio !== undefined && aiQuotaItem.competitionRatio !== null
+                    competitionRatio: aiQuotaItem &&
+                        aiQuotaItem.competitionRatio !== undefined &&
+                        aiQuotaItem.competitionRatio !== null
                         ? Number(aiQuotaItem.competitionRatio)
-                        : item.competitionRatio !== undefined && item.competitionRatio !== null
+                        : item.competitionRatio !== undefined &&
+                            item.competitionRatio !== null
                             ? Number(item.competitionRatio)
                             : null,
                     exists: !!dbRecord || !!dbQuota,

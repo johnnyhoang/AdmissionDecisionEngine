@@ -37,7 +37,7 @@ export declare class Grade10CalcController {
             d4: number;
             nv2Gap: number | null;
             nv3Gap: number | null;
-            safetyCategory: "VERY_SAFE" | "SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
+            safetyCategory: "SAFE" | "VERY_SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
             trend: "UP" | "DOWN" | "STABLE";
             advice: string;
             probability: number;

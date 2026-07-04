@@ -45,7 +45,10 @@ let Grade10SchoolService = class Grade10SchoolService {
             query.andWhere('(unaccent(school.name) ILIKE unaccent(:search) OR unaccent(school.code) ILIKE unaccent(:search))', { search: `%${filters.search}%` });
         }
         if (filters.districtId) {
-            const districtIds = filters.districtId.split(',').map(id => id.trim()).filter(id => id);
+            const districtIds = filters.districtId
+                .split(',')
+                .map((id) => id.trim())
+                .filter((id) => id);
             if (districtIds.length > 0) {
                 query.andWhere('school.districtId IN (:...districtIds)', {
                     districtIds,
@@ -438,7 +441,7 @@ let Grade10SchoolService = class Grade10SchoolService {
             await this.cutoffRepo.delete({ schoolId: secondaryId });
             const newCutoffs = mergedData.cutoffs.map((c) => this.cutoffRepo.create({
                 ...c,
-                schoolId: primaryId
+                schoolId: primaryId,
             }));
             await this.cutoffRepo.save(newCutoffs);
         }
@@ -447,7 +450,7 @@ let Grade10SchoolService = class Grade10SchoolService {
             await this.quotaRepo.delete({ schoolId: secondaryId });
             const newQuotas = mergedData.quotas.map((q) => this.quotaRepo.create({
                 ...q,
-                schoolId: primaryId
+                schoolId: primaryId,
             }));
             await this.quotaRepo.save(newQuotas);
         }

@@ -45,7 +45,10 @@ export class Grade10SchoolService {
     }
 
     if (filters.districtId) {
-      const districtIds = filters.districtId.split(',').map(id => id.trim()).filter(id => id);
+      const districtIds = filters.districtId
+        .split(',')
+        .map((id) => id.trim())
+        .filter((id) => id);
       if (districtIds.length > 0) {
         query.andWhere('school.districtId IN (:...districtIds)', {
           districtIds,
@@ -289,7 +292,12 @@ export class Grade10SchoolService {
     // 6. Top Increase (Difference latest vs previous year)
     const diffSchoolsRaw = await this.cutoffRepo
       .createQueryBuilder('c1')
-      .innerJoin(Grade10Cutoff, 'c2', 'c1.schoolId = c2.schoolId AND c2.year = :prevYear AND c2.programType = :pt', { prevYear: latestYear - 1, pt: 'REGULAR' })
+      .innerJoin(
+        Grade10Cutoff,
+        'c2',
+        'c1.schoolId = c2.schoolId AND c2.year = :prevYear AND c2.programType = :pt',
+        { prevYear: latestYear - 1, pt: 'REGULAR' },
+      )
       .leftJoinAndSelect('c1.school', 'school')
       .leftJoinAndSelect('school.district', 'district')
       .select('school.id', 'schoolId')
@@ -517,11 +525,13 @@ export class Grade10SchoolService {
     if (mergedData.cutoffs && Array.isArray(mergedData.cutoffs)) {
       await this.cutoffRepo.delete({ schoolId: primaryId });
       await this.cutoffRepo.delete({ schoolId: secondaryId });
-      
-      const newCutoffs = mergedData.cutoffs.map((c: any) => this.cutoffRepo.create({
-        ...c,
-        schoolId: primaryId
-      }));
+
+      const newCutoffs = mergedData.cutoffs.map((c: any) =>
+        this.cutoffRepo.create({
+          ...c,
+          schoolId: primaryId,
+        }),
+      );
       await this.cutoffRepo.save(newCutoffs);
     }
 
@@ -529,11 +539,13 @@ export class Grade10SchoolService {
     if (mergedData.quotas && Array.isArray(mergedData.quotas)) {
       await this.quotaRepo.delete({ schoolId: primaryId });
       await this.quotaRepo.delete({ schoolId: secondaryId });
-      
-      const newQuotas = mergedData.quotas.map((q: any) => this.quotaRepo.create({
-        ...q,
-        schoolId: primaryId
-      }));
+
+      const newQuotas = mergedData.quotas.map((q: any) =>
+        this.quotaRepo.create({
+          ...q,
+          schoolId: primaryId,
+        }),
+      );
       await this.quotaRepo.save(newQuotas);
     }
 
@@ -551,5 +563,4 @@ export class Grade10SchoolService {
 
     return primary;
   }
-
 }

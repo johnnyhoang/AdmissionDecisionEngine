@@ -16,10 +16,10 @@ export declare class Grade10CalcService {
     updateMacroConfig(data: any): any;
     calculateScore(dto: CalculateScoreDto): number;
     getRecommendations(dto: GetRecommendationDto, context?: {
-        userId?: string;
-        userName?: string;
-        userAgent?: string;
-        ipAddress?: string;
+        userId?: string | null;
+        userName?: string | null;
+        userAgent?: string | null;
+        ipAddress?: string | null;
     }): Promise<{
         candidateScore: number;
         shiftedScore: number;
@@ -47,7 +47,7 @@ export declare class Grade10CalcService {
             d4: number;
             nv2Gap: number | null;
             nv3Gap: number | null;
-            safetyCategory: "VERY_SAFE" | "SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
+            safetyCategory: "SAFE" | "VERY_SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
             trend: "UP" | "DOWN" | "STABLE";
             advice: string;
             probability: number;
@@ -59,10 +59,10 @@ export declare class Grade10CalcService {
         }[];
     }>;
     getComboRecommendations(dto: any, context?: {
-        userId?: string;
-        userName?: string;
-        userAgent?: string;
-        ipAddress?: string;
+        userId?: string | null;
+        userName?: string | null;
+        userAgent?: string | null;
+        ipAddress?: string | null;
     }): Promise<{
         minScore: number;
         maxScore: number;

@@ -126,5 +126,4 @@ export class Grade10SchoolController {
   ) {
     return this.schoolService.mergeSchools(primaryId, secondaryId, mergedData);
   }
-
 }

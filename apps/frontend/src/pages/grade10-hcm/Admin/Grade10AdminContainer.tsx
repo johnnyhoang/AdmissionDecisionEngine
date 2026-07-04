@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   Database, History, Sliders, TrendingUp, 
   ChevronDown, ChevronUp, CheckCircle2, XCircle, Loader2, ClipboardPaste, ShieldAlert,
-  Sparkles, Square, CheckSquare, Play, StopCircle
+  Sparkles, Square, CheckSquare, Play, StopCircle, Activity
 } from 'lucide-react';
 import { 
   fetchG10AdminStats, fetchG10ImportPresets, runG10ImportPreset, 
   fetchG10ImportHistory, triggerG10ImportPayload, fetchG10SchoolByCode,
-  fetchGrade10SchoolNames, searchAiCutoffs, importAiCutoffs
+  fetchGrade10SchoolNames, searchAiCutoffs, importAiCutoffs,
+  fetchG10ActivityLogs, fetchG10ActivityLogStats
 } from '../../../services/api';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -64,12 +65,21 @@ interface BatchJob {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function Grade10AdminContainer() {
-  const [adminTab, setAdminTab] = useState<'dashboard' | 'presets' | 'paste' | 'batch-ai' | 'history'>('dashboard');
+  const [adminTab, setAdminTab] = useState<'dashboard' | 'presets' | 'paste' | 'batch-ai' | 'history' | 'activity-logs'>('dashboard');
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [presets, setPresets] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [syncingPreset, setSyncingPreset] = useState<string | null>(null);
+
+  // Activity logs state
+  const [logs, setLogs] = useState<any[]>([]);
+  const [logsTotal, setLogsTotal] = useState(0);
+  const [logsPage, setLogsPage] = useState(1);
+  const [logsModuleFilter, setLogsModuleFilter] = useState<'calculator' | 'combo' | ''>('');
+  const [logsStats, setLogsStats] = useState<any>(null);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+
 
   // Paste import state
   const [pasteJson, setPasteJson] = useState('');
@@ -100,6 +110,34 @@ export default function Grade10AdminContainer() {
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   };
+
+  const loadLogs = async () => {
+    setLoadingLogs(true);
+    try {
+      const [logsRes, statsRes] = await Promise.all([
+        fetchG10ActivityLogs({
+          page: logsPage,
+          pageSize: 20,
+          module: logsModuleFilter || undefined,
+        }),
+        fetchG10ActivityLogStats(),
+      ]);
+      setLogs(logsRes.items);
+      setLogsTotal(logsRes.total);
+      setLogsStats(statsRes);
+    } catch (e) {
+      console.error('Lỗi tải activity logs:', e);
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
+
+  useEffect(() => {
+    if (adminTab === 'activity-logs') {
+      loadLogs();
+    }
+  }, [adminTab, logsPage, logsModuleFilter]);
+
 
   // Load schools for batch tab on first open
   useEffect(() => {
@@ -417,6 +455,7 @@ export default function Grade10AdminContainer() {
             ['paste',      'paste',      <ClipboardPaste key="c" className="h-4 w-4" />,  'Dán JSON & Import'],
             ['batch-ai',   'batch-ai',   <Sparkles key="s" className="h-4 w-4" />,        'Tìm AI Hàng Loạt'],
             ['history',    'history',    <History key="h" className="h-4 w-4" />,         `Lịch sử (${history.length})`],
+            ['activity-logs', 'activity-logs', <Activity key="a" className="h-4 w-4" />,  'Nhật ký hoạt động'],
           ] as const).map(([tab, key, icon, label]) => (
             <button key={key} onClick={() => setAdminTab(tab as any)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition whitespace-nowrap ${
@@ -993,7 +1032,7 @@ export default function Grade10AdminContainer() {
             )}
           </div>
 
-        ) : (
+        ) : adminTab === 'history' ? (
           /* ── HISTORY ──────────────────────────────────────────────────────── */
           <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
             <div className="p-6 border-b border-slate-800">
@@ -1037,6 +1076,197 @@ export default function Grade10AdminContainer() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        ) : (
+          /* ── ACTIVITY LOGS ────────────────────────────────────────────────── */
+          <div className="flex flex-col gap-6">
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tổng Lượt Sử Dụng</span>
+                  <h4 className="text-2xl font-extrabold text-white mt-1">{logsStats?.total ?? 0}</h4>
+                </div>
+                <div className="bg-indigo-500/10 text-indigo-400 p-3 rounded-xl">
+                  <Activity className="h-6 w-6" />
+                </div>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Phân Hệ Đánh Giá Điểm</span>
+                  <h4 className="text-2xl font-extrabold text-indigo-400 mt-1">{logsStats?.totalCalc ?? 0}</h4>
+                </div>
+                <div className="bg-indigo-500/10 text-indigo-400 p-3 rounded-xl">
+                  <Sliders className="h-6 w-6" />
+                </div>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Phân Hệ Combo 3 NV</span>
+                  <h4 className="text-2xl font-extrabold text-pink-400 mt-1">{logsStats?.totalCombo ?? 0}</h4>
+                </div>
+                <div className="bg-pink-500/10 text-pink-400 p-3 rounded-xl">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+              </div>
+            </div>
+
+            {/* Filter and Table Card */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+              <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2 m-0">
+                  <Activity className="h-5 w-5 text-indigo-400" /> Nhật Ký Hoạt Động Thí Sinh
+                </h3>
+                {/* Filter Actions */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setLogsModuleFilter(''); setLogsPage(1); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${
+                      logsModuleFilter === ''
+                        ? 'bg-slate-800 border-slate-700 text-white'
+                        : 'border-transparent text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    Tất cả
+                  </button>
+                  <button
+                    onClick={() => { setLogsModuleFilter('calculator'); setLogsPage(1); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${
+                      logsModuleFilter === 'calculator'
+                        ? 'bg-indigo-600/20 border-indigo-500/30 text-indigo-400'
+                        : 'border-transparent text-slate-400 hover:text-indigo-400'
+                    }`}
+                  >
+                    Đánh Giá Điểm
+                  </button>
+                  <button
+                    onClick={() => { setLogsModuleFilter('combo'); setLogsPage(1); }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${
+                      logsModuleFilter === 'combo'
+                        ? 'bg-pink-600/20 border-pink-500/30 text-pink-400'
+                        : 'border-transparent text-slate-400 hover:text-pink-400'
+                    }`}
+                  >
+                    Combo 3 NV
+                  </button>
+                </div>
+              </div>
+
+              {loadingLogs ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-3">
+                  <Loader2 className="animate-spin rounded-full h-8 w-8 text-indigo-500" />
+                  <span className="text-xs text-slate-400">Đang tải nhật ký...</span>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold font-bold">
+                        <th className="p-4">Thời gian</th>
+                        <th className="p-4">Phân hệ</th>
+                        <th className="p-4">Tài khoản / Thiết bị</th>
+                        <th className="p-4">Tham số đầu vào</th>
+                        <th className="p-4">Kết quả gợi ý</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800 text-slate-300">
+                      {logs.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="p-8 text-center text-slate-500">Chưa ghi nhận hoạt động nào thỏa mãn bộ lọc.</td>
+                        </tr>
+                      ) : logs.map((log) => (
+                        <tr key={log.id} className="hover:bg-slate-800/10 align-top">
+                          <td className="p-4 text-slate-400 whitespace-nowrap">
+                            {new Date(log.createdAt).toLocaleString('vi-VN')}
+                          </td>
+                          <td className="p-4 whitespace-nowrap">
+                            <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] border ${
+                              log.module === 'calculator'
+                                ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400'
+                                : 'bg-pink-500/10 border-pink-500/20 text-pink-400'
+                            }`}>
+                              {log.module === 'calculator' ? 'Đánh Giá Điểm' : 'Combo 3 NV'}
+                            </span>
+                          </td>
+                          <td className="p-4 max-w-[200px]">
+                            <div className="font-semibold text-white truncate" title={log.userName || 'Ẩn danh'}>
+                              {log.userName || <span className="text-slate-500 italic">Khách (Ẩn danh)</span>}
+                            </div>
+                            <div className="text-[10px] text-slate-500 truncate" title={log.userAgent}>
+                              {log.userAgent || 'Unknown Browser'}
+                            </div>
+                            <div className="text-[10px] text-slate-600">IP: {log.ipAddress || 'Unknown'}</div>
+                          </td>
+                          <td className="p-4">
+                            {log.module === 'calculator' ? (
+                              <div className="space-y-1 text-slate-300">
+                                <div>Điểm thi: <strong className="text-indigo-400">T: {log.inputPayload?.math} | V: {log.inputPayload?.literature} | A: {log.inputPayload?.english}</strong></div>
+                                <div className="text-[10px] text-slate-400">Điểm cộng: ƯT +{log.inputPayload?.priority} | KK +{log.inputPayload?.bonus}</div>
+                                <div className="text-[10px] text-slate-400">Nguyện vọng: {log.inputPayload?.targetNV} | Quận: {log.inputPayload?.preferredDistrict || 'Tất cả'}</div>
+                              </div>
+                            ) : (
+                              <div className="space-y-1 text-slate-300">
+                                <div>Khoảng điểm:</div>
+                                <div className="text-[10px] text-slate-400">Toán: {log.inputPayload?.minMath} - {log.inputPayload?.maxMath}</div>
+                                <div className="text-[10px] text-slate-400">Văn: {log.inputPayload?.minLiterature} - {log.inputPayload?.maxLiterature}</div>
+                                <div className="text-[10px] text-slate-400">Anh: {log.inputPayload?.minEnglish} - {log.inputPayload?.maxEnglish}</div>
+                                <div className="text-[10px] text-slate-400">Cự ly tối đa: {log.inputPayload?.maxCommuteDistance} km</div>
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            {log.module === 'calculator' ? (
+                              <div className="space-y-1">
+                                <div>Tổng điểm xét tuyển: <strong className="text-white">{log.resultSummary?.totalScore}</strong>đ (SSF: {log.resultSummary?.shiftedScore}đ)</div>
+                                <div className="text-[10px] text-slate-400 font-semibold">Gợi ý hàng đầu:</div>
+                                <div className="flex flex-wrap gap-1 mt-1 font-semibold">
+                                  {log.resultSummary?.topSchools?.map((s: any, idx: number) => (
+                                    <span key={idx} className="bg-slate-955 px-1.5 py-0.5 rounded text-[10px] border border-slate-800 text-indigo-300">
+                                      {s.name} ({s.probability}%)
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-1">
+                                <div>Điểm TB: <strong className="text-white">{log.resultSummary?.avgScore}</strong>đ</div>
+                                <div className="text-[10px] text-slate-400"><span className="text-emerald-400 font-semibold">Safe:</span> {log.resultSummary?.safe?.map((s: any) => s.name).join(', ') || 'N/A'}</div>
+                                <div className="text-[10px] text-slate-400"><span className="text-amber-400 font-semibold">Effort:</span> {log.resultSummary?.effort?.map((s: any) => s.name).join(', ') || 'N/A'}</div>
+                                <div className="text-[10px] text-slate-400"><span className="text-rose-400 font-semibold">Defense:</span> {log.resultSummary?.defense?.map((s: any) => s.name).join(', ') || 'N/A'}</div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Pagination Controls */}
+              {logsTotal > 20 && (
+                <div className="p-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400 bg-slate-950/20">
+                  <div>Hiển thị {logs.length} / {logsTotal} hoạt động</div>
+                  <div className="flex gap-2">
+                    <button
+                      disabled={logsPage === 1}
+                      onClick={() => setLogsPage(p => Math.max(1, p - 1))}
+                      className="px-3 py-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-white rounded font-medium disabled:cursor-not-allowed transition"
+                    >
+                      Trang trước
+                    </button>
+                    <span className="flex items-center px-1 font-semibold text-white">Trang {logsPage} / {Math.ceil(logsTotal / 20)}</span>
+                    <button
+                      disabled={logsPage >= Math.ceil(logsTotal / 20)}
+                      onClick={() => setLogsPage(p => p + 1)}
+                      className="px-3 py-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-white rounded font-medium disabled:cursor-not-allowed transition"
+                    >
+                      Trang sau
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -402,6 +402,36 @@ export const triggerG10ImportPayload = async (payload: any): Promise<any> => {
   return res.json();
 };
 
+export interface G10ActivityLogFilters {
+  page?: number;
+  pageSize?: number;
+  module?: 'calculator' | 'combo';
+  userId?: string;
+  from?: string;
+  to?: string;
+}
+
+export const fetchG10ActivityLogs = async (filters: G10ActivityLogFilters = {}): Promise<any> => {
+  const url = new URL(`${API_BASE_URL}/grade10-hcm/admin/activity-logs`);
+  if (filters.page) url.searchParams.append('page', filters.page.toString());
+  if (filters.pageSize) url.searchParams.append('pageSize', filters.pageSize.toString());
+  if (filters.module) url.searchParams.append('module', filters.module);
+  if (filters.userId) url.searchParams.append('userId', filters.userId);
+  if (filters.from) url.searchParams.append('from', filters.from);
+  if (filters.to) url.searchParams.append('to', filters.to);
+
+  const res = await apiFetch(url.toString());
+  if (!res.ok) throw new Error('Không thể tải nhật ký hoạt động');
+  return res.json();
+};
+
+export const fetchG10ActivityLogStats = async (): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/admin/activity-logs/stats`);
+  if (!res.ok) throw new Error('Không thể tải thống kê hoạt động');
+  return res.json();
+};
+
+
 export const searchAiCutoffs = async (payload: { 
   type: 'GRADE10' | 'UNIVERSITY'; 
   schoolQuery: string; 

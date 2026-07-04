@@ -12,7 +12,10 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Grade10CalcService } from '../services/grade10-calc.service';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
-import { GetRecommendationDto, GetComboRecommendationDto } from '../dtos/recommendation.dto';
+import {
+  GetRecommendationDto,
+  GetComboRecommendationDto,
+} from '../dtos/recommendation.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/permissions.guard';
 import { RequirePermission } from '../../auth/require-permission.decorator';
@@ -52,7 +55,10 @@ export class Grade10CalcController {
     summary: 'Get smart school recommendations with estimated pass probability',
   })
   @RequirePermission('GRADE10', 'view_recommendation', 'view')
-  async getRecommendations(@Body() dto: GetRecommendationDto, @Req() req: Request) {
+  async getRecommendations(
+    @Body() dto: GetRecommendationDto,
+    @Req() req: Request,
+  ) {
     const user = (req as any).user;
     const context = {
       userId: user?.id ?? null,
@@ -72,7 +78,10 @@ export class Grade10CalcController {
     summary: 'Get smart 3-NV combo recommendations',
   })
   @RequirePermission('GRADE10', 'view_recommendation', 'view')
-  async getComboRecommendations(@Body() dto: GetComboRecommendationDto, @Req() req: Request) {
+  async getComboRecommendations(
+    @Body() dto: GetComboRecommendationDto,
+    @Req() req: Request,
+  ) {
     const user = (req as any).user;
     const context = {
       userId: user?.id ?? null,

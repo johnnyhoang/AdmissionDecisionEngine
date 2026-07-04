@@ -41,10 +41,15 @@ let Grade10CalcService = class Grade10CalcService {
         if (fs.existsSync(p)) {
             try {
                 const data = JSON.parse(fs.readFileSync(p, 'utf8'));
-                const examineesChange = (data.totalExamineesCurr - data.totalExamineesPrev) / data.totalExamineesPrev;
+                const examineesChange = (data.totalExamineesCurr - data.totalExamineesPrev) /
+                    data.totalExamineesPrev;
                 const quotasChange = (data.totalQuotasCurr - data.totalQuotasPrev) / data.totalQuotasPrev;
-                const diffShift = data.examDifficulty === 'easy' ? 0.75 : data.examDifficulty === 'hard' ? -0.75 : 0;
-                const ssf = (examineesChange * 15 - quotasChange * 20) + diffShift;
+                const diffShift = data.examDifficulty === 'easy'
+                    ? 0.75
+                    : data.examDifficulty === 'hard'
+                        ? -0.75
+                        : 0;
+                const ssf = examineesChange * 15 - quotasChange * 20 + diffShift;
                 return {
                     ...data,
                     ssf: parseFloat(ssf.toFixed(2)),
@@ -144,10 +149,10 @@ let Grade10CalcService = class Grade10CalcService {
                 : cutoffVal;
             const d1 = shiftedScore - cutoffVal;
             const d2 = shiftedScore - avgNV1;
-            const d3 = c.cutoffNV2 ? (shiftedScore - Number(c.cutoffNV2)) : (d1 - 1.0);
-            const d4 = c.cutoffNV3 ? (shiftedScore - Number(c.cutoffNV3)) : (d1 - 2.0);
-            const nv2Gap = c.cutoffNV2 ? (Number(c.cutoffNV2) - cutoffVal) : null;
-            const nv3Gap = c.cutoffNV3 ? (Number(c.cutoffNV3) - cutoffVal) : null;
+            const d3 = c.cutoffNV2 ? shiftedScore - Number(c.cutoffNV2) : d1 - 1.0;
+            const d4 = c.cutoffNV3 ? shiftedScore - Number(c.cutoffNV3) : d1 - 2.0;
+            const nv2Gap = c.cutoffNV2 ? Number(c.cutoffNV2) - cutoffVal : null;
+            const nv3Gap = c.cutoffNV3 ? Number(c.cutoffNV3) - cutoffVal : null;
             let safetyCategory = 'VERY_RISKY';
             if (d1 >= 2.0 && d2 >= 2.0 && d3 >= 1.0 && d4 >= 0.5)
                 safetyCategory = 'VERY_SAFE';
@@ -176,23 +181,28 @@ let Grade10CalcService = class Grade10CalcService {
             }
             let advice = '';
             if (safetyCategory === 'VERY_SAFE') {
-                advice = 'Điểm của bạn vượt trội hoàn toàn cả 3 nguyện vọng. Cực kỳ an toàn.';
+                advice =
+                    'Điểm của bạn vượt trội hoàn toàn cả 3 nguyện vọng. Cực kỳ an toàn.';
             }
             else if (safetyCategory === 'SAFE') {
-                advice = trend === 'UP'
-                    ? 'An toàn nhưng điểm trường đang có xu hướng tăng nhẹ. Phù hợp đặt làm NV1 hoặc NV2.'
-                    : 'Lựa chọn an toàn cho cả NV1 lẫn NV2. Rất phù hợp để nộp hồ sơ.';
+                advice =
+                    trend === 'UP'
+                        ? 'An toàn nhưng điểm trường đang có xu hướng tăng nhẹ. Phù hợp đặt làm NV1 hoặc NV2.'
+                        : 'Lựa chọn an toàn cho cả NV1 lẫn NV2. Rất phù hợp để nộp hồ sơ.';
             }
             else if (safetyCategory === 'COMPETITIVE') {
-                advice = trend === 'DOWN'
-                    ? 'Điểm bám sát điểm chuẩn và trường có xu hướng giảm nhẹ. Rất tốt để làm NV1.'
-                    : 'Mức độ cạnh tranh cao. Đây là một NV1 lý tưởng, hãy chuẩn bị thêm NV2 an toàn hơn.';
+                advice =
+                    trend === 'DOWN'
+                        ? 'Điểm bám sát điểm chuẩn và trường có xu hướng giảm nhẹ. Rất tốt để làm NV1.'
+                        : 'Mức độ cạnh tranh cao. Đây là một NV1 lý tưởng, hãy chuẩn bị thêm NV2 an toàn hơn.';
             }
             else if (safetyCategory === 'RISKY') {
-                advice = 'Điểm của bạn đang tiệm cận rìa điểm chuẩn. Thích hợp làm NV1 thử thách nếu quyết tâm ôn tập.';
+                advice =
+                    'Điểm của bạn đang tiệm cận rìa điểm chuẩn. Thích hợp làm NV1 thử thách nếu quyết tâm ôn tập.';
             }
             else {
-                advice = 'Xác suất đỗ khá thấp ở mọi nguyện vọng. Nên hạ chỉ tiêu xuống trường an toàn hơn làm NV2/3.';
+                advice =
+                    'Xác suất đỗ khá thấp ở mọi nguyện vọng. Nên hạ chỉ tiêu xuống trường an toàn hơn làm NV2/3.';
             }
             return {
                 schoolId: c.school.id,
@@ -229,27 +239,32 @@ let Grade10CalcService = class Grade10CalcService {
                 return 1;
             return b.cutoffNV1 - a.cutoffNV1;
         });
-        const topSchools = results.slice(0, 3).map(r => ({
+        const topSchools = results.slice(0, 3).map((r) => ({
             name: r.schoolName,
             code: r.schoolCode,
             probability: r.probability,
             cutoffNV1: r.cutoffNV1,
             safetyCategory: r.safetyCategory,
         }));
-        this.activityLogRepo.save(this.activityLogRepo.create({
+        this.activityLogRepo
+            .save(this.activityLogRepo.create({
             module: 'calculator',
             userId: context?.userId ?? null,
             userName: context?.userName ?? null,
             inputPayload: {
-                math: dto.math, literature: dto.literature, english: dto.english,
-                priority: dto.priority ?? 0, bonus: dto.bonus ?? 0,
+                math: dto.math,
+                literature: dto.literature,
+                english: dto.english,
+                priority: dto.priority ?? 0,
+                bonus: dto.bonus ?? 0,
                 preferredDistrict: dto.preferredDistrict ?? null,
                 targetNV: dto.targetNV,
             },
             resultSummary: { totalScore, shiftedScore, ssf, topSchools },
             userAgent: context?.userAgent ?? null,
             ipAddress: context?.ipAddress ?? null,
-        })).catch(err => console.error('ActivityLog save failed:', err));
+        }))
+            .catch((err) => console.error('ActivityLog save failed:', err));
         return {
             candidateScore: totalScore,
             shiftedScore,
@@ -266,8 +281,16 @@ let Grade10CalcService = class Grade10CalcService {
         };
     }
     async getComboRecommendations(dto, context) {
-        const minScore = Number(dto.minMath) + Number(dto.minLiterature) + Number(dto.minEnglish) + Number(dto.priority || 0) + Number(dto.bonus || 0);
-        const maxScore = Number(dto.maxMath) + Number(dto.maxLiterature) + Number(dto.maxEnglish) + Number(dto.priority || 0) + Number(dto.bonus || 0);
+        const minScore = Number(dto.minMath) +
+            Number(dto.minLiterature) +
+            Number(dto.minEnglish) +
+            Number(dto.priority || 0) +
+            Number(dto.bonus || 0);
+        const maxScore = Number(dto.maxMath) +
+            Number(dto.maxLiterature) +
+            Number(dto.maxEnglish) +
+            Number(dto.priority || 0) +
+            Number(dto.bonus || 0);
         const avgScore = (minScore + maxScore) / 2;
         const config = this.getMacroConfig();
         const ssf = config.ssf || 0;
@@ -296,11 +319,13 @@ let Grade10CalcService = class Grade10CalcService {
         }
         const getDistance = (lat1, lon1, lat2, lon2) => {
             const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const dLat = ((lat2 - lat1) * Math.PI) / 180;
+            const dLon = ((lon2 - lon1) * Math.PI) / 180;
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                Math.cos((lat1 * Math.PI) / 180) *
+                    Math.cos((lat2 * Math.PI) / 180) *
+                    Math.sin(dLon / 2) *
+                    Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c;
         };
@@ -317,7 +342,7 @@ let Grade10CalcService = class Grade10CalcService {
         let adjusted = false;
         if (dto.userLat && dto.userLon) {
             while (rawMaxDist < 80) {
-                const temp = cutoffs.filter(c => {
+                const temp = cutoffs.filter((c) => {
                     if (!c.school.latitude || !c.school.longitude)
                         return false;
                     const d = getDistance(dto.userLat, dto.userLon, c.school.latitude, c.school.longitude);
@@ -338,11 +363,15 @@ let Grade10CalcService = class Grade10CalcService {
                 .map((h) => Number(h.cutoffNV1))
                 .filter((v) => v > 0 && !isNaN(v));
             const avgNV1 = historicalNV1s.length > 0
-                ? historicalNV1s.reduce((sum, val) => sum + val, 0) / historicalNV1s.length
+                ? historicalNV1s.reduce((sum, val) => sum + val, 0) /
+                    historicalNV1s.length
                 : cutoffVal;
             let distance = null;
             let commuteBonus = 0;
-            if (dto.userLat && dto.userLon && c.school.latitude && c.school.longitude) {
+            if (dto.userLat &&
+                dto.userLon &&
+                c.school.latitude &&
+                c.school.longitude) {
                 distance = getDistance(dto.userLat, dto.userLon, c.school.latitude, c.school.longitude);
                 const ratio = distance / rawMaxDist;
                 if (ratio < 1 / 3) {
@@ -352,13 +381,17 @@ let Grade10CalcService = class Grade10CalcService {
                     commuteBonus = 0.75;
                 }
             }
-            const nv2Gap = c.cutoffNV2 ? (Number(c.cutoffNV2) - cutoffVal) : 1.0;
-            const nv3Gap = c.cutoffNV3 ? (Number(c.cutoffNV3) - cutoffVal) : 2.0;
+            const nv2Gap = c.cutoffNV2 ? Number(c.cutoffNV2) - cutoffVal : 1.0;
+            const nv3Gap = c.cutoffNV3 ? Number(c.cutoffNV3) - cutoffVal : 2.0;
             const adjustedAvgScore = avgScore - ssf + commuteBonus;
             const d1 = adjustedAvgScore - cutoffVal;
             const d2 = adjustedAvgScore - avgNV1;
-            const d3 = c.cutoffNV2 ? (adjustedAvgScore - Number(c.cutoffNV2)) : (d1 - nv2Gap);
-            const d4 = c.cutoffNV3 ? (adjustedAvgScore - Number(c.cutoffNV3)) : (d1 - nv3Gap);
+            const d3 = c.cutoffNV2
+                ? adjustedAvgScore - Number(c.cutoffNV2)
+                : d1 - nv2Gap;
+            const d4 = c.cutoffNV3
+                ? adjustedAvgScore - Number(c.cutoffNV3)
+                : d1 - nv3Gap;
             const wDiffNV1 = d1 * 0.6 + d2 * 0.4;
             const wDiffNV2 = d3 * 0.6 + (d2 - nv2Gap) * 0.4;
             const wDiffNV3 = d4 * 0.6 + (d2 - nv3Gap) * 0.4;
@@ -376,8 +409,13 @@ let Grade10CalcService = class Grade10CalcService {
                 cutoffNV1: cutoffVal,
                 cutoffNV2: c.cutoffNV2 ? Number(c.cutoffNV2) : null,
                 cutoffNV3: c.cutoffNV3 ? Number(c.cutoffNV3) : null,
-                d1, d2, d3, d4,
-                probNV1, probNV2, probNV3,
+                d1,
+                d2,
+                d3,
+                d4,
+                probNV1,
+                probNV2,
+                probNV3,
                 distance: distance ? parseFloat(distance.toFixed(2)) : null,
                 commuteBonus,
                 nv2Gap,
@@ -385,11 +423,13 @@ let Grade10CalcService = class Grade10CalcService {
             };
         });
         const findBestSchool = (pool, targetProb, nvType, excludeIds) => {
-            let filtered = pool.filter(s => !excludeIds.includes(s.schoolId));
+            const filtered = pool.filter((s) => !excludeIds.includes(s.schoolId));
             filtered.sort((a, b) => {
                 const diffA = Math.abs(a[nvType] - targetProb);
                 const diffB = Math.abs(b[nvType] - targetProb);
-                if (Math.abs(diffA - diffB) < 5 && a.distance !== null && b.distance !== null) {
+                if (Math.abs(diffA - diffB) < 5 &&
+                    a.distance !== null &&
+                    b.distance !== null) {
                     return a.distance - b.distance;
                 }
                 return diffA - diffB;
@@ -404,7 +444,7 @@ let Grade10CalcService = class Grade10CalcService {
             ...(safeNV2 ? [safeNV2.schoolId] : []),
         ]);
         combos.safe = [safeNV1, safeNV2, safeNV3].filter(Boolean);
-        let dreamSchool = candidates.find(s => s.schoolCode === dto.dreamSchoolCode);
+        let dreamSchool = candidates.find((s) => s.schoolCode === dto.dreamSchoolCode);
         if (!dreamSchool && candidates.length > 0) {
             dreamSchool = findBestSchool(candidates, 50, 'probNV1', []);
         }
@@ -427,60 +467,111 @@ let Grade10CalcService = class Grade10CalcService {
                 return '';
             const prob = nv === 1 ? s.probNV1 : nv === 2 ? s.probNV2 : s.probNV3;
             const distStr = s.distance !== null ? ' (cách nhà ' + s.distance + 'km)' : '';
-            const bonusStr = s.commuteBonus > 0 ? ' (được cộng ưu tiên ' + s.commuteBonus + 'đ di chuyển)' : '';
-            return 'NV' + nv + ' [' + s.schoolName + '] (Xác suất đỗ: ' + prob + '%' + distStr + bonusStr + ')';
+            const bonusStr = s.commuteBonus > 0
+                ? ' (được cộng ưu tiên ' + s.commuteBonus + 'đ di chuyển)'
+                : '';
+            return ('NV' +
+                nv +
+                ' [' +
+                s.schoolName +
+                '] (Xác suất đỗ: ' +
+                prob +
+                '%' +
+                distStr +
+                bonusStr +
+                ')');
         };
         if (combos.safe.length === 3) {
-            explanations.safe = 'Chiến lược An toàn đề xuất combo phân bổ điểm chuẩn giảm dần hợp lý giúp bạn tối ưu cơ hội học công lập gần nhà. ' +
-                'Bao gồm: ' + getSchoolDesc(combos.safe[0], 1) + ', ' + getSchoolDesc(combos.safe[1], 2) + ', và chốt chặn cuối cùng là ' + getSchoolDesc(combos.safe[2], 3) + '. ' +
-                'Tất cả các nguyện vọng này được xếp xen kẽ dựa trên khoảng cách địa lý và điểm chuẩn lịch sử để giảm thiểu rủi ro điểm chuẩn biến động đột ngột.';
+            explanations.safe =
+                'Chiến lược An toàn đề xuất combo phân bổ điểm chuẩn giảm dần hợp lý giúp bạn tối ưu cơ hội học công lập gần nhà. ' +
+                    'Bao gồm: ' +
+                    getSchoolDesc(combos.safe[0], 1) +
+                    ', ' +
+                    getSchoolDesc(combos.safe[1], 2) +
+                    ', và chốt chặn cuối cùng là ' +
+                    getSchoolDesc(combos.safe[2], 3) +
+                    '. ' +
+                    'Tất cả các nguyện vọng này được xếp xen kẽ dựa trên khoảng cách địa lý và điểm chuẩn lịch sử để giảm thiểu rủi ro điểm chuẩn biến động đột ngột.';
         }
         else {
-            explanations.safe = 'Không tìm đủ trường gần nhà để ghép combo an toàn hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
+            explanations.safe =
+                'Không tìm đủ trường gần nhà để ghép combo an toàn hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
         }
         if (combos.effort.length === 3) {
-            explanations.effort = 'Chiến lược Nỗ lực được thiết kế để bạn dốc sức theo đuổi đam mê. ' +
-                'NV1 đặt vào trường mơ ước của bạn là ' + getSchoolDesc(combos.effort[0], 1) + '. ' +
-                'Nếu NV1 trượt do điểm chuẩn biến động tăng cao, bạn vẫn hoàn toàn yên tâm vì phía sau đã có các chốt chặn chất lượng: ' +
-                'NV2 là ' + getSchoolDesc(combos.effort[1], 2) + ' và bệ đỡ phòng thủ vững vàng tại NV3 là ' + getSchoolDesc(combos.effort[2], 3) + '.';
+            explanations.effort =
+                'Chiến lược Nỗ lực được thiết kế để bạn dốc sức theo đuổi đam mê. ' +
+                    'NV1 đặt vào trường mơ ước của bạn là ' +
+                    getSchoolDesc(combos.effort[0], 1) +
+                    '. ' +
+                    'Nếu NV1 trượt do điểm chuẩn biến động tăng cao, bạn vẫn hoàn toàn yên tâm vì phía sau đã có các chốt chặn chất lượng: ' +
+                    'NV2 là ' +
+                    getSchoolDesc(combos.effort[1], 2) +
+                    ' và bệ đỡ phòng thủ vững vàng tại NV3 là ' +
+                    getSchoolDesc(combos.effort[2], 3) +
+                    '.';
         }
         else {
-            explanations.effort = 'Không tìm đủ trường gần nhà để ghép combo nỗ lực hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
+            explanations.effort =
+                'Không tìm đủ trường gần nhà để ghép combo nỗ lực hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
         }
         if (combos.defense.length === 3) {
-            explanations.defense = 'Chiến lược Phòng thủ ưu tiên tính an tâm tuyệt đối, hạn chế tối đa rủi ro trượt công lập. ' +
-                'Ngay tại NV1, hệ thống đã xếp bạn vào trường cực kỳ chắc cú: ' + getSchoolDesc(combos.defense[0], 1) + '. ' +
-                'Tiếp theo là chốt chặn NV2 ' + getSchoolDesc(combos.defense[1], 2) + ' và NV3 ' + getSchoolDesc(combos.defense[2], 3) + ' ' +
-                'với xác suất đỗ cao gần như tuyệt đối để đảm bảo bạn luôn có một suất học THPT Công lập thuận tiện đi lại nhất.';
+            explanations.defense =
+                'Chiến lược Phòng thủ ưu tiên tính an tâm tuyệt đối, hạn chế tối đa rủi ro trượt công lập. ' +
+                    'Ngay tại NV1, hệ thống đã xếp bạn vào trường cực kỳ chắc cú: ' +
+                    getSchoolDesc(combos.defense[0], 1) +
+                    '. ' +
+                    'Tiếp theo là chốt chặn NV2 ' +
+                    getSchoolDesc(combos.defense[1], 2) +
+                    ' và NV3 ' +
+                    getSchoolDesc(combos.defense[2], 3) +
+                    ' ' +
+                    'với xác suất đỗ cao gần như tuyệt đối để đảm bảo bạn luôn có một suất học THPT Công lập thuận tiện đi lại nhất.';
         }
         else {
-            explanations.defense = 'Không tìm đủ trường gần nhà để ghép combo phòng thủ hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
+            explanations.defense =
+                'Không tìm đủ trường gần nhà để ghép combo phòng thủ hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
         }
-        this.activityLogRepo.save(this.activityLogRepo.create({
+        this.activityLogRepo
+            .save(this.activityLogRepo.create({
             module: 'combo',
             userId: context?.userId ?? null,
             userName: context?.userName ?? null,
             inputPayload: {
-                minMath: dto.minMath, maxMath: dto.maxMath,
-                minLiterature: dto.minLiterature, maxLiterature: dto.maxLiterature,
-                minEnglish: dto.minEnglish, maxEnglish: dto.maxEnglish,
-                priority: dto.priority ?? 0, bonus: dto.bonus ?? 0,
+                minMath: dto.minMath,
+                maxMath: dto.maxMath,
+                minLiterature: dto.minLiterature,
+                maxLiterature: dto.maxLiterature,
+                minEnglish: dto.minEnglish,
+                maxEnglish: dto.maxEnglish,
+                priority: dto.priority ?? 0,
+                bonus: dto.bonus ?? 0,
                 dreamSchoolCode: dto.dreamSchoolCode ?? null,
                 maxCommuteDistance: dto.maxCommuteDistance,
-                userLat: dto.userLat ?? null, userLon: dto.userLon ?? null,
+                userLat: dto.userLat ?? null,
+                userLon: dto.userLon ?? null,
             },
             resultSummary: {
                 avgScore,
                 ssf,
                 adjusted,
                 maxCommuteDistance: parseFloat(rawMaxDist.toFixed(1)),
-                safe: combos.safe.map((s) => ({ name: s?.schoolName, prob: s?.probNV1 })),
-                effort: combos.effort.map((s) => ({ name: s?.schoolName, prob: s?.probNV1 })),
-                defense: combos.defense.map((s) => ({ name: s?.schoolName, prob: s?.probNV1 })),
+                safe: combos.safe.map((s) => ({
+                    name: s?.schoolName,
+                    prob: s?.probNV1,
+                })),
+                effort: combos.effort.map((s) => ({
+                    name: s?.schoolName,
+                    prob: s?.probNV1,
+                })),
+                defense: combos.defense.map((s) => ({
+                    name: s?.schoolName,
+                    prob: s?.probNV1,
+                })),
             },
             userAgent: context?.userAgent ?? null,
             ipAddress: context?.ipAddress ?? null,
-        })).catch(err => console.error('ActivityLog save failed:', err));
+        }))
+            .catch((err) => console.error('ActivityLog save failed:', err));
         return {
             minScore,
             maxScore,

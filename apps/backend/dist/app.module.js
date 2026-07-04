@@ -38,6 +38,7 @@ const quota_entity_1 = require("./modules/grade10-hcm/entities/quota.entity");
 const cutoff_entity_1 = require("./modules/grade10-hcm/entities/cutoff.entity");
 const history_entity_1 = require("./modules/grade10-hcm/entities/history.entity");
 const import_log_entity_1 = require("./modules/grade10-hcm/entities/import-log.entity");
+const activity_log_entity_1 = require("./modules/grade10-hcm/entities/activity-log.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -86,6 +87,7 @@ exports.AppModule = AppModule = __decorate([
                             cutoff_entity_1.Grade10Cutoff,
                             history_entity_1.Grade10History,
                             import_log_entity_1.Grade10ImportLog,
+                            activity_log_entity_1.Grade10ActivityLog,
                         ],
                         synchronize: true,
                         ssl: {

@@ -30,6 +30,7 @@ import { Grade10Quota } from './modules/grade10-hcm/entities/quota.entity';
 import { Grade10Cutoff } from './modules/grade10-hcm/entities/cutoff.entity';
 import { Grade10History } from './modules/grade10-hcm/entities/history.entity';
 import { Grade10ImportLog } from './modules/grade10-hcm/entities/import-log.entity';
+import { Grade10ActivityLog } from './modules/grade10-hcm/entities/activity-log.entity';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { Grade10ImportLog } from './modules/grade10-hcm/entities/import-log.enti
             Grade10Cutoff,
             Grade10History,
             Grade10ImportLog,
+            Grade10ActivityLog,
           ],
           synchronize: true,
           ssl: {

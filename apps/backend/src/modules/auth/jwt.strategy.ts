@@ -12,7 +12,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
   ) {
-    const supabaseUrl = configService.get<string>('SUPABASE_URL', 'https://czngbleeeiljsrpbaksg.supabase.co');
+    const supabaseUrl = configService.get<string>(
+      'SUPABASE_URL',
+      'https://czngbleeeiljsrpbaksg.supabase.co',
+    );
     const jwksUri = `${supabaseUrl}/auth/v1/.well-known/jwks.json`;
 
     const jwksSecretProvider = passportJwtSecret({
@@ -22,7 +25,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwksUri: jwksUri,
     });
 
-    const symmetricSecret = configService.get<string>('JWT_SECRET', 'super_secret_jwt_key_hieu_hoa');
+    const symmetricSecret = configService.get<string>(
+      'JWT_SECRET',
+      'super_secret_jwt_key_hieu_hoa',
+    );
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
