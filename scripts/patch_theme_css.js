@@ -1,35 +1,10 @@
-@import "tailwindcss";
+const fs = require('fs');
+const path = require('path');
 
-/* Modern Typography - Outfit or Inter can be imported if needed, using system-ui for now */
-@layer base {
-  html, body {
-    @apply bg-slate-900 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white;
-  }
-}
+const cssPath = path.join(__dirname, '../apps/frontend/src/index.css');
+let cssContent = fs.readFileSync(cssPath, 'utf8');
 
-/* Glassmorphism utility classes */
-.glass-panel {
-  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
-}
-
-.glass-panel-dark {
-  @apply bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl;
-}
-
-/* Animated backgrounds */
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
+const themeCss = `
 /* Cute Light Theme Overrides (Default) */
 .light-theme {
   background-color: #faf5ff !important; /* Soft cream-lavender background */
@@ -45,14 +20,14 @@
   color: #1e1b4b !important;
 }
 
-.light-theme .bg-slate-900\/60 {
+.light-theme .bg-slate-900\\/60 {
   background-color: rgba(255, 255, 255, 0.85) !important;
   border-color: #f3e8ff !important;
   box-shadow: 0 10px 25px -5px rgba(167, 139, 250, 0.08) !important;
   color: #1e1b4b !important;
 }
 
-.light-theme .bg-slate-900\/50 {
+.light-theme .bg-slate-900\\/50 {
   background-color: rgba(255, 255, 255, 0.85) !important;
   border-color: #f3e8ff !important;
   color: #1e1b4b !important;
@@ -64,13 +39,13 @@
   color: #1e1b4b !important;
 }
 
-.light-theme .bg-slate-950\/40 {
+.light-theme .bg-slate-950\\/40 {
   background-color: #ffffff !important;
   border-color: #e9d5ff !important;
   color: #1e1b4b !important;
 }
 
-.light-theme .bg-slate-950\/45 {
+.light-theme .bg-slate-950\\/45 {
   background-color: #fbf7f9 !important;
   border-color: #fae8ff !important;
   color: #1e1b4b !important;
@@ -80,7 +55,7 @@
   border-color: #f3e8ff !important;
 }
 
-.light-theme .border-slate-800\/80 {
+.light-theme .border-slate-800\\/80 {
   border-color: #f3e8ff !important;
 }
 
@@ -116,12 +91,12 @@
   color: #1e1b4b !important;
 }
 
-.light-theme .bg-indigo-950\/20 {
+.light-theme .bg-indigo-950\\/20 {
   background-color: #eef2ff !important;
   border-color: #c7d2fe !important;
 }
 
-.light-theme .bg-indigo-950\/25 {
+.light-theme .bg-indigo-950\\/25 {
   background-color: #eef2ff !important;
   border-color: #c7d2fe !important;
 }
@@ -165,10 +140,17 @@
   color: #312e81 !important;
 }
 
-.light-theme .hover\:bg-slate-850\/10:hover {
+.light-theme .hover\\:bg-slate-850\\/10:hover {
   background-color: rgba(245, 243, 255, 0.5) !important;
 }
 
 .light-theme .text-slate-100 {
   color: #1e1b4b !important;
+}
+`;
+
+if (!cssContent.includes('.light-theme')) {
+  cssContent += themeCss;
+  fs.writeFileSync(cssPath, cssContent, 'utf8');
+  console.log('Appended light-theme overrides to index.css');
 }

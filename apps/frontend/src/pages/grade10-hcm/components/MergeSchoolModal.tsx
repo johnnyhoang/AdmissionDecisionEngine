@@ -19,6 +19,7 @@ const FIELDS = [
   { key: 'schoolType', label: 'Loại trường' },
   { key: 'description', label: 'Mô tả (Description)', isLongText: true },
   { key: 'comments', label: 'Đánh giá/Comments', isLongText: true },
+  { key: 'comments', label: 'Đánh giá/Comments', isLongText: true },
 ];
 
 export default function MergeSchoolModal({ isOpen, onClose, school1, school2, onMerge }: MergeSchoolModalProps) {

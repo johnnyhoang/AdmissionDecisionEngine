@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
-  Search as SearchIcon, TrendingUp, Calculator as CalcIcon, MapPin, 
+  Search as SearchIcon, TrendingUp, Calculator as CalcIcon, MapPin,
+  BadgeCheck, 
   School, HelpCircle, Sparkles, ArrowUpDown, 
   BarChart2, BookOpen, Sliders
 } from 'lucide-react';
@@ -9,15 +10,29 @@ import {
 } from 'recharts';
 import { 
   fetchG10Schools, fetchG10SchoolDetail, fetchG10Districts, 
-  fetchG10Analytics, evaluateG10Profile 
+  fetchG10Analytics, evaluateG10Profile, fetchG10AdminStats, getG10ComboRecommendations, getG10MacroConfig, updateG10MacroConfig 
 } from '../../services/api';
 import type { G10SchoolItem, G10RecommendationItem } from '../../services/api';
 import AiSearchModal from '../../components/AiSearchModal';
+import MergeSchoolModal from './components/MergeSchoolModal';
+import EditSchoolModal from './components/EditSchoolModal';
+import CompareDrawer from './components/CompareDrawer';
+import { updateG10School } from '../../services/api';
+import { mergeG10Schools } from '../../services/api';
+import { getCurrentSchoolYear, formatSchoolYear } from '../../utils/date';
 import { useAuth } from '../../context/AuthContext';
+import { useDebounce } from '../../hooks/useDebounce';
+import { Check, ChevronDown, Save, Award, RefreshCw } from 'lucide-react';
 
 export default function Grade10Container() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const { user, hasPermission } = useAuth();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'calculator' | 'search' | 'analytics' | 'compare'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'calculator' | 'search' | 'admin' | 'distance' | 'combo' | 'specialized' | 'adjust'>('dashboard');
+  const [adminStats, setAdminStats] = useState<any>(null);
+  const [selectedTopType, setSelectedTopType] = useState<
+    'highestCutoff' | 'lowestCutoff' | 'highestRatio' | 'lowestRatio' | 'highestQuota' | 'highestDiff' | 'highestRegistered' | 'highestSpecialized'
+  >('highestCutoff');
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
   
   // States
   const [schools, setSchools] = useState<G10SchoolItem[]>([]);
@@ -36,6 +51,70 @@ export default function Grade10Container() {
     districtCode?: string;
   } | undefined>(undefined);
   const [activeDetailTab, setActiveDetailTab] = useState<'info' | 'cutoff' | 'quota'>('info');
+  // Distance Finder states
+  const [userAddress, setUserAddress] = useState('');
+  const [isLocating, setIsLocating] = useState(false);
+  // Combo recommendation states
+  const [minMath, setMinMath] = useState('7.5');
+  const [maxMath, setMaxMath] = useState('8.5');
+  const [minLiterature, setMinLiterature] = useState('7.5');
+  const [maxLiterature, setMaxLiterature] = useState('8.5');
+  const [minEnglish, setMinEnglish] = useState('8.0');
+  const [maxEnglish, setMaxEnglish] = useState('9.0');
+  const [dreamSchoolCode, setDreamSchoolCode] = useState('');
+  const [comboUserAddress, setComboUserAddress] = useState('');
+  const [comboGPS, setComboGPS] = useState<{lat: number, lon: number} | null>(null);
+  const [isComboLoading, setIsComboLoading] = useState(false);
+  const [comboResult, setComboResult] = useState<any>(null);
+  const [selectedStrategy, setSelectedStrategy] = useState<'safe' | 'effort' | 'defense'>('safe');
+  const [maxCommuteDistance, setMaxCommuteDistance] = useState('10');
+  // Macro configuration states
+  const [macroConfig, setMacroConfig] = useState<any>(null);
+  const [macroExamineesPrev, setMacroExamineesPrev] = useState('');
+  const [macroExamineesCurr, setMacroExamineesCurr] = useState('');
+  const [macroQuotasPrev, setMacroQuotasPrev] = useState('');
+  const [macroQuotasCurr, setMacroQuotasCurr] = useState('');
+  const [macroDifficulty, setMacroDifficulty] = useState('medium');
+  const [isSavingMacro, setIsSavingMacro] = useState(false);
+
+  const loadMacroConfig = async () => {
+    try {
+      const res = await getG10MacroConfig();
+      setMacroConfig(res);
+      setMacroExamineesPrev(res.totalExamineesPrev.toString());
+      setMacroExamineesCurr(res.totalExamineesCurr.toString());
+      setMacroQuotasPrev(res.totalQuotasPrev.toString());
+      setMacroQuotasCurr(res.totalQuotasCurr.toString());
+      setMacroDifficulty(res.examDifficulty);
+    } catch (e) {
+      console.error('Lỗi tải cấu hình vĩ mô:', e);
+    }
+  };
+
+  const handleSaveMacro = async () => {
+    setIsSavingMacro(true);
+    try {
+      const res = await updateG10MacroConfig({
+        totalExamineesPrev: parseInt(macroExamineesPrev),
+        totalExamineesCurr: parseInt(macroExamineesCurr),
+        totalQuotasPrev: parseInt(macroQuotasPrev),
+        totalQuotasCurr: parseInt(macroQuotasCurr),
+        examDifficulty: macroDifficulty,
+      });
+      setMacroConfig(res);
+      alert('Đã cập nhật cấu hình vĩ mô và chỉ số SSF thành công!');
+    } catch (e: any) {
+      alert('Không thể lưu cấu hình vĩ mô: ' + e.message);
+    } finally {
+      setIsSavingMacro(false);
+    }
+  };
+
+  
+
+  const [distanceSchools, setDistanceSchools] = useState<any[]>([]);
+  const [distanceMode, setDistanceMode] = useState<'driving' | 'straight'>('driving');
+
 
 
   // Calculator form
@@ -56,6 +135,16 @@ export default function Grade10Container() {
     loadSchools();
     loadAnalytics();
   }, []);
+
+  
+  const loadAdminStats = async () => {
+    try {
+      const stats = await fetchG10AdminStats();
+      setAdminStats(stats);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const loadDistricts = async () => {
     try {
@@ -95,6 +184,234 @@ export default function Grade10Container() {
   const handleDistrictChange = (val: string) => {
     setSelectedDistrict(val);
     loadSchools(searchQuery, val);
+  };
+
+  
+  
+  const getHaversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // Radius of earth in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  const handleLocateAndFind = () => {
+    if (!navigator.geolocation) {
+      alert('Trình duyệt của bạn không hỗ trợ định vị GPS.');
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserAddress('Vị trí hiện tại của bạn');
+        await calculateSchoolDistances(latitude, longitude);
+      },
+      (error) => {
+        alert('Không thể xác định vị trí GPS của bạn. Vui lòng nhập địa chỉ thủ công.');
+        setIsLocating(false);
+      }
+    );
+  };
+
+  const handleGeocodeAddress = async () => {
+    if (!userAddress.trim()) {
+      alert('Vui lòng nhập địa chỉ nhà.');
+      return;
+    }
+    setIsLocating(true);
+    try {
+      const q = encodeURIComponent(userAddress + ', Hồ Chí Minh');
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        await calculateSchoolDistances(lat, lon);
+      } else {
+        alert('Không tìm thấy địa chỉ này trên bản đồ. Vui lòng nhập chi tiết hơn (ví dụ: Số nhà, Tên đường, Quận).');
+      }
+    } catch (e) {
+      alert('Lỗi định vị địa chỉ: Mạng yếu hoặc bị giới hạn.');
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
+  const calculateSchoolDistances = async (userLat: number, userLon: number) => {
+    setIsLocating(true);
+    try {
+      // 1. Calculate straight-line distance to filter top 15 closest schools
+      const tempSchools = schools
+        .filter(s => s.latitude && s.longitude)
+        .map(s => ({
+          ...s,
+          straightDistance: getHaversineDistance(userLat, userLon, s.latitude!, s.longitude!)
+        }))
+        .sort((a, b) => a.straightDistance - b.straightDistance)
+        .slice(0, 15);
+
+      if (tempSchools.length === 0) {
+        alert('Dữ liệu tọa độ của các trường đang được đồng bộ hoặc chưa sẵn sàng. Vui lòng thử lại sau.');
+        return;
+      }
+
+      // 2. Fetch OSRM driving distance for these top 15 schools
+      const coordsString = tempSchools.map(s => `${s.longitude},${s.latitude}`).join(';');
+      const url = `https://router.project-osrm.org/table/v1/driving/${userLon},${userLat};${coordsString}?sources=0`;
+      
+      const osrmRes = await fetch(url);
+      const osrmData = await osrmRes.json();
+
+      if (osrmData && osrmData.code === 'Ok' && osrmData.distances) {
+        const distances = osrmData.distances[0]; // meters from source 0 (user)
+        const durations = osrmData.durations[0]; // seconds from source 0
+
+        const finalSchools = tempSchools.map((s, idx) => {
+          const mDist = distances[idx + 1]; // index 0 is user to user (0)
+          const sDur = durations[idx + 1];
+          return {
+            ...s,
+            roadDistance: mDist ? parseFloat((mDist / 1000).toFixed(2)) : parseFloat(s.straightDistance.toFixed(2)),
+            roadDuration: sDur ? Math.round(sDur / 60) : Math.round(s.straightDistance * 2) // fallback estimate
+          };
+        }).sort((a, b) => a.roadDistance - b.roadDistance);
+
+        setDistanceSchools(finalSchools);
+      } else {
+        // Fallback to straight line
+        const finalSchools = tempSchools.map(s => ({
+          ...s,
+          roadDistance: parseFloat(s.straightDistance.toFixed(2)),
+          roadDuration: Math.round(s.straightDistance * 2)
+        }));
+        setDistanceSchools(finalSchools);
+      }
+    } catch (e) {
+      console.error(e);
+      // Fallback to straight line on fetch failure
+      const finalSchools = schools
+        .filter(s => s.latitude && s.longitude)
+        .map(s => {
+          const d = getHaversineDistance(userLat, userLon, s.latitude!, s.longitude!);
+          return {
+            ...s,
+            roadDistance: parseFloat(d.toFixed(2)),
+            roadDuration: Math.round(d * 2)
+          };
+        })
+        .sort((a, b) => a.roadDistance - b.roadDistance)
+        .slice(0, 15);
+      setDistanceSchools(finalSchools);
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
+  
+  const handleComboGPS = () => {
+    if (!navigator.geolocation) {
+      alert('Trình duyệt không hỗ trợ GPS');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setComboGPS({ lat: position.coords.latitude, lon: position.coords.longitude });
+        setComboUserAddress('Tọa độ hiện tại của bạn');
+      },
+      () => alert('Không thể lấy vị trí hiện tại')
+    );
+  };
+
+  const handleGetCombo = async () => {
+    setIsComboLoading(true);
+    try {
+      let lat = comboGPS?.lat;
+      let lon = comboGPS?.lon;
+      
+      // If address is entered but not current position, geocode it
+      if (comboUserAddress && comboUserAddress !== 'Tọa độ hiện tại của bạn' && !comboGPS) {
+        const q = encodeURIComponent(comboUserAddress + ', Hồ Chí Minh');
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lon = parseFloat(data[0].lon);
+        }
+      }
+
+      const res = await getG10ComboRecommendations({
+        minMath: parseFloat(minMath),
+        maxMath: parseFloat(maxMath),
+        minLiterature: parseFloat(minLiterature),
+        maxLiterature: parseFloat(maxLiterature),
+        minEnglish: parseFloat(minEnglish),
+        maxEnglish: parseFloat(maxEnglish),
+        priority: parseFloat(priorityScore),
+        bonus: parseFloat(bonusScore),
+        userLat: lat,
+        userLon: lon,
+        dreamSchoolCode: dreamSchoolCode || undefined,
+        maxCommuteDistance: parseFloat(maxCommuteDistance),
+      });
+
+      // Calculate driving distance for combos using OSRM if coords are available
+      if (lat && lon) {
+        const fetchRoadDistance = async (comboList: any[]) => {
+          if (!comboList || comboList.length === 0) return comboList;
+          try {
+            const valid = comboList.filter(s => s.latitude && s.longitude);
+            if (valid.length === 0) return comboList;
+            const coordsString = valid.map(s => `${s.longitude},${s.latitude}`).join(';');
+            const url = `https://router.project-osrm.org/table/v1/driving/${lon},${lat};${coordsString}?sources=0`;
+            const osrmRes = await fetch(url);
+            const osrmData = await osrmRes.json();
+            if (osrmData && osrmData.code === 'Ok' && osrmData.distances) {
+              const distances = osrmData.distances[0];
+              const durations = osrmData.durations[0];
+              return comboList.map((s, idx) => ({
+                ...s,
+                roadDistance: distances[idx + 1] ? parseFloat((distances[idx + 1] / 1000).toFixed(2)) : s.distance,
+                roadDuration: durations[idx + 1] ? Math.round(durations[idx + 1] / 60) : Math.round(s.distance * 2)
+              }));
+            }
+          } catch (e) {
+            console.error(e);
+          }
+          return comboList.map(s => ({ ...s, roadDistance: s.distance, roadDuration: Math.round(s.distance * 2) }));
+        };
+
+        res.combos.safe = await fetchRoadDistance(res.combos.safe);
+        res.combos.effort = await fetchRoadDistance(res.combos.effort);
+        res.combos.defense = await fetchRoadDistance(res.combos.defense);
+      }
+
+      setComboResult(res);
+    } catch (e: any) {
+      alert('Đề xuất thất bại: ' + e.message);
+    } finally {
+      setIsComboLoading(false);
+    }
+  };
+
+  
+
+  
+  const handleEditSave = async (id: string, payload: any) => {
+    await updateG10School(id, payload);
+    setEditingSchoolId(null);
+    loadSchools(debouncedSearchQuery, selectedDistricts.join(','));
+  };
+
+  const handleMergeSave = async (primaryId: string, secondaryId: string, mergedData: any) => {
+    await mergeG10Schools(primaryId, secondaryId, mergedData);
+    setSelectedMergeIds([]);
+    loadSchools(debouncedSearchQuery, selectedDistricts.join(','));
   };
 
   const handleEvaluate = async () => {
@@ -145,9 +462,9 @@ export default function Grade10Container() {
   };
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className={`flex-1 flex flex-col ${theme === 'light' ? 'light-theme' : 'dark-theme'}`}>
       {/* Navigation tabs */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
+      <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none relative">
         <div className="max-w-7xl mx-auto flex flex-row flex-nowrap gap-2 py-2 whitespace-nowrap">
           <button
             onClick={() => setActiveTab('dashboard')}
@@ -158,7 +475,7 @@ export default function Grade10Container() {
             }`}
           >
             <BarChart2 className="h-4 w-4" />
-            Tổng quan tuyển sinh
+            🏫 Tổng quan tuyển sinh
           </button>
           
           {hasPermission('GRADE10', 'view_recommendation', 'view') && (
@@ -171,7 +488,7 @@ export default function Grade10Container() {
               }`}
             >
               <CalcIcon className="h-4 w-4" />
-              Đánh giá NV lớp 10
+              📝 Đánh giá NV lớp 10
             </button>
           )}
           
@@ -184,7 +501,7 @@ export default function Grade10Container() {
             }`}
           >
             <School className="h-4 w-4" />
-            Tra cứu trường THPT
+            🔍 Tra cứu trường THPT
           </button>
 
           <button
@@ -215,7 +532,14 @@ export default function Grade10Container() {
               </span>
             )}
           </button>
-        </div>
+        </div
+          <button
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className="absolute top-2 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer shadow bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20"
+          >
+            {theme === 'light' ? '🌸 Giao diện: Đáng yêu' : '✨ Giao diện: Tối giản'}
+          </button>
+    >
       </nav>
 
       {/* Main Content Area */}
@@ -262,14 +586,14 @@ export default function Grade10Container() {
               <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-indigo-400" />
-                  Hồ Chí Minh Public High School Admission (Grade 10)
+                  🏫 Tuyển Sinh Lớp 10 Công Lập TP.HCM 🎒
                 </h2>
                 <div className="text-xs text-slate-300 leading-relaxed flex flex-col gap-3">
                   <p>
                     Chào mừng bạn đến với mô-đun tư vấn và gợi ý nguyện vọng tuyển sinh Lớp 10 các trường THPT Công lập tại TP. Hồ Chí Minh.
                   </p>
                   <p>
-                    Hệ thống lưu trữ lịch sử điểm chuẩn, chỉ tiêu tuyển sinh, số lượng thí sinh đăng ký và tỉ lệ chọi từ năm 2016 đến 2025 giúp học sinh và phụ huynh đưa ra quyết định đăng ký nguyện vọng tối ưu nhất.
+                    Hệ thống lưu trữ lịch sử điểm chuẩn, chỉ tiêu tuyển sinh, số lượng thí sinh đăng ký và tỉ lệ chọi 4 năm gần nhất giúp học sinh và phụ huynh đưa ra quyết định đăng ký nguyện vọng tối ưu nhất.
                   </p>
                   <p className="bg-slate-950/45 p-3 border border-slate-800 rounded-xl">
                     💡 <strong>Mẹo nhỏ:</strong> Hãy nhập điểm thử của 3 môn (Toán, Văn, Anh) và điểm ưu tiên vào tab <strong>"Đánh giá NV lớp 10"</strong> để nhận đề xuất trường công lập phù hợp nhất dựa trên tỉ lệ đỗ lịch sử!
@@ -278,7 +602,7 @@ export default function Grade10Container() {
               </div>
 
               <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4">
-                <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Top Trường Điểm Cao Nhất (2025)</h3>
+                <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Top Trường Điểm Cao Nhất ({formatSchoolYear(getCurrentSchoolYear())})</h3>
                 <div className="flex flex-col gap-3">
                   {analytics?.topSchools?.slice(0, 5).map((t: any, idx: number) => (
                     <div key={idx} className="flex justify-between items-center text-xs border-b border-slate-800 pb-2">
@@ -460,11 +784,51 @@ export default function Grade10Container() {
                           <h3 className="text-sm font-bold text-white mb-1.5">{rec.schoolName}</h3>
                           
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] text-slate-400">
-                            <div>Chỉ tiêu 2025: <span className="font-semibold text-slate-300">N/A</span></div>
-                            <div>Điểm chuẩn NV1 2025: <span className="font-semibold text-slate-300">{rec.cutoffNV1}đ</span></div>
+                            <div>Chỉ tiêu {formatSchoolYear(getCurrentSchoolYear())}: <span className="font-semibold text-slate-300">N/A</span></div>
+                            <div>Điểm chuẩn NV1 {formatSchoolYear(getCurrentSchoolYear())}: <span className="font-semibold text-slate-300">{rec.cutoffNV1}đ</span></div>
                             <div>TB 3 năm: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span></div>
-                            <div>Mức chênh lệch: <span className={`font-bold ${rec.diff >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.diff > 0 ? `+${rec.diff}` : rec.diff}đ</span></div>
                           </div>
+                          {/* NV Gaps / Chênh lệch NV */}
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {rec.nv2Gap !== null ? (
+                              <span className="text-[10px] px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full font-semibold">
+                                NV2 Chênh lệch: +{rec.nv2Gap}đ
+                              </span>
+                            ) : (
+                              <span className="text-[10px] px-2 py-0.5 bg-slate-800 text-slate-500 rounded-full font-semibold">
+                                Không tuyển NV2
+                              </span>
+                            )}
+                            {rec.nv3Gap !== null ? (
+                              <span className="text-[10px] px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-400 rounded-full font-semibold">
+                                NV3 Chênh lệch: +{rec.nv3Gap}đ
+                              </span>
+                            ) : (
+                              <span className="text-[10px] px-2 py-0.5 bg-slate-800 text-slate-500 rounded-full font-semibold">
+                                Không tuyển NV3
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-[11px] text-slate-400 mb-2">
+                            <div>Điểm chuẩn NV1: <span className="font-semibold text-slate-300">{rec.cutoffNV1}đ</span></div>
+                            <div>TB NV1 3 năm: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span></div>
+                          </div>
+
+                          {/* 4 Diffs Expandable details */}
+                          <details className="mt-2 group">
+                            <summary className="text-[10px] text-slate-400 hover:text-slate-200 cursor-pointer list-none flex items-center gap-1 font-semibold select-none">
+                              <span>📊 Xem thông số kỹ thuật (d1, d2, d3, d4)</span>
+                              <span className="transition-transform group-open:rotate-180">▼</span>
+                            </summary>
+                            
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80 mt-1.5">
+                              <div>d1 (NV1): <span className={`font-bold ${rec.d1 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d1 > 0 ? `+${rec.d1}` : rec.d1}đ</span></div>
+                              <div>d2 (TB): <span className={`font-bold ${rec.d2 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d2 > 0 ? `+${rec.d2}` : rec.d2}đ</span></div>
+                              <div>d3 (NV2): <span className={`font-bold ${rec.d3 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d3 > 0 ? `+${rec.d3}` : rec.d3}đ</span></div>
+                              <div>d4 (NV3): <span className={`font-bold ${rec.d4 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d4 > 0 ? `+${rec.d4}` : rec.d4}đ</span></div>
+                            </div>
+                          </details>
                           
                           {rec.advice && (
                             <div className="mt-3 bg-slate-950/40 p-2.5 border border-slate-800/80 rounded-lg text-[11px] text-slate-300 italic flex items-start gap-2">
@@ -512,6 +876,38 @@ export default function Grade10Container() {
           </div>
         )}
 
+        {/* Tab: Specialized Placeholder */}
+        {activeTab === 'specialized' && (
+          <div className="flex flex-col items-center justify-center py-20 bg-slate-900/30 border border-slate-850 rounded-2xl gap-4 max-w-2xl mx-auto text-center p-8 shadow-xl">
+            <div className="bg-indigo-600/10 p-4 rounded-full text-indigo-400">
+              <Award className="h-10 w-10 animate-bounce" />
+            </div>
+            <h2 className="text-lg font-bold text-white m-0">Tư Vấn Nguyện Vọng Chuyên & Tích Hợp</h2>
+            <p className="text-xs text-slate-400 max-w-md leading-relaxed">
+              Tính năng đang trong quá trình phát triển. Hệ thống dự kiến sẽ phân tích điểm thi chuyên môn tự chọn, áp dụng công thức đặc thù <strong>Toán + Văn + Anh + Môn chuyên * 2</strong> và đề xuất 2 trường chuyên tối ưu tại TP.HCM.
+            </p>
+            <div className="px-3 py-1 bg-slate-800 text-[10px] text-slate-400 rounded-full font-bold uppercase">
+              ⚙️ Sẽ ra mắt trong đợt thảo luận tiếp theo
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Adjust Placeholder */}
+        {activeTab === 'adjust' && (
+          <div className="flex flex-col items-center justify-center py-20 bg-slate-900/30 border border-slate-850 rounded-2xl gap-4 max-w-2xl mx-auto text-center p-8 shadow-xl">
+            <div className="bg-emerald-600/10 p-4 rounded-full text-emerald-400">
+              <RefreshCw className="h-10 w-10 animate-spin" />
+            </div>
+            <h2 className="text-lg font-bold text-white m-0">Mô Phỏng Đợt Điều Chỉnh Nguyện Vọng Lớp 10</h2>
+            <p className="text-xs text-slate-400 max-w-md leading-relaxed">
+              Tính năng đang được phát triển. Khi Sở GD&ĐT TP.HCM công bố số liệu hồ sơ ban đầu, hệ thống sẽ tự động tính toán lại tỷ lệ chọi đột biến và khuyên phụ huynh dịch chuyển nguyện vọng để tối ưu hóa an toàn.
+            </p>
+            <div className="px-3 py-1 bg-slate-800 text-[10px] text-slate-400 rounded-full font-bold uppercase">
+              ⏳ Sẽ ra mắt trong đợt thảo luận tiếp theo
+            </div>
+          </div>
+        )}
+
         {/* Tab 3: Search Schools */}
         {activeTab === 'search' && (
           <div className="flex flex-col gap-6">
@@ -528,6 +924,15 @@ export default function Grade10Container() {
               </div>
 
               <div className="flex items-center gap-3">
+                {user?.role === 'ADMIN' && selectedMergeIds.length === 2 && (
+                  <button
+                    onClick={() => setIsMergeModalOpen(true)}
+                    className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
+                  >
+                    Merge 2 Trường Đã Chọn
+                  </button>
+                )}
+
                 {user?.role === 'ADMIN' && (
                   <button
                     onClick={() => {
@@ -581,7 +986,7 @@ export default function Grade10Container() {
                           </button>
                         </div>
                       </div>
-                      <h3 className="text-sm font-bold text-white mb-2 hover:text-indigo-400 cursor-pointer" onClick={() => openSchoolDetail(school.id)}>{school.name}</h3>
+                      <h3 className="text-sm font-bold text-white mb-2 hover:text-indigo-400 cursor-pointer flex items-center gap-1.5" onClick={() => openSchoolDetail(school.id)}>{school.name} {school.isVerified && <span title="Trường đã xác thực"><BadgeCheck className="w-4 h-4 text-blue-500 shrink-0" /></span>}</h3>
                       <p className="text-xs text-slate-400 flex items-start gap-1 leading-normal">
                         <MapPin className="h-3.5 w-3.5 text-slate-500 shrink-0 mt-0.5" />
                         <span className="line-clamp-2">{school.address || 'Hồ Chí Minh'}</span>
@@ -590,11 +995,11 @@ export default function Grade10Container() {
 
                     <div className="border-t border-slate-800 pt-4 flex flex-col gap-1.5">
                       <div className="flex justify-between text-[11px]">
-                        <span className="text-slate-400">Điểm NV1 2025:</span>
+                        <span className="text-slate-400">Điểm NV1 {formatSchoolYear(getCurrentSchoolYear())}:</span>
                         <span className="font-bold text-indigo-400">{school.latestCutoffNV1 || 'N/A'}đ</span>
                       </div>
                       <div className="flex justify-between text-[11px]">
-                        <span className="text-slate-400">Điểm NV2 2025:</span>
+                        <span className="text-slate-400">Điểm NV2 {formatSchoolYear(getCurrentSchoolYear())}:</span>
                         <span className="font-semibold text-slate-200">{school.latestCutoffNV2 || 'N/A'}đ</span>
                       </div>
                       <div className="flex justify-between text-[11px]">
@@ -661,7 +1066,7 @@ export default function Grade10Container() {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={analytics.trends} margin={{ top: 10, right: 30, left: -10, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis dataKey="year" stroke="#94a3b8" />
+                        <XAxis dataKey="year" stroke="#94a3b8" tickFormatter={formatSchoolYear} />
                         <YAxis stroke="#94a3b8" />
                         <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
                         <Legend />
@@ -717,11 +1122,11 @@ export default function Grade10Container() {
                           <div className="font-bold text-indigo-400 text-sm">{school.latestCutoffNV1 || 'N/A'}đ</div>
                         </div>
                         <div>
-                          <div className="text-slate-400 mb-0.5">Điểm chuẩn NV2 2025</div>
+                          <div className="text-slate-400 mb-0.5">Điểm chuẩn NV2 {formatSchoolYear(getCurrentSchoolYear())}</div>
                           <div className="font-semibold text-slate-200">{school.latestCutoffNV2 || 'N/A'}đ</div>
                         </div>
                         <div>
-                          <div className="text-slate-400 mb-0.5">Điểm chuẩn NV3 2025</div>
+                          <div className="text-slate-400 mb-0.5">Điểm chuẩn NV3 {formatSchoolYear(getCurrentSchoolYear())}</div>
                           <div className="font-semibold text-slate-200">{school.latestCutoffNV3 || 'N/A'}đ</div>
                         </div>
                         <div>
@@ -871,7 +1276,7 @@ export default function Grade10Container() {
                   <div className="flex flex-col gap-1.5">
                     <h4 className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
                       <TrendingUp className="h-4 w-4 text-indigo-400" />
-                      Đồ thị biến động điểm chuẩn 10 năm gần đây (2016-2025)
+                      Đồ thị biến động điểm chuẩn 4 năm gần đây
                     </h4>
                     <div className="h-48 w-full bg-slate-950/60 p-2 rounded-xl border border-slate-800">
                       {schoolDetail.cutoffs.length === 0 ? (
@@ -1001,6 +1406,447 @@ export default function Grade10Container() {
           </div>
         </div>
       )}
+      <MergeSchoolModal 
+        isOpen={isMergeModalOpen} 
+        onClose={() => setIsMergeModalOpen(false)} 
+        school1={schools.find(s => s.id === selectedMergeIds[0]) || null}
+        school2={schools.find(s => s.id === selectedMergeIds[1]) || null}
+        onMerge={handleMergeSave}
+      />
+      <EditSchoolModal 
+        isOpen={!!editingSchoolId}
+        onClose={() => setEditingSchoolId(null)}
+        schoolId={editingSchoolId || ''}
+        onSave={handleEditSave}
+        onAiPrefill={(name, code) => { setAiPrefillSchool({name, code}); setIsAiModalOpen(true); }}
+      />
+      <CompareDrawer
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        compareList={compareList}
+        onRemove={toggleCompare}
+        onClear={() => setCompareList([])}
+      />
+              {/* Tab: Distance Finder */}
+        {activeTab === 'distance' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            {/* Input Address Card */}
+            <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-5">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                <MapPin className="h-5 w-5 text-indigo-400" />
+                <h2 className="text-base font-bold text-white m-0">Vị trí & Địa chỉ nhà</h2>
+              </div>
+
+              <div className="flex flex-col gap-3.5">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Nhập địa chỉ nhà của bạn</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ví dụ: 227 Nguyễn Văn Cừ, Quận 5..."
+                      value={userAddress}
+                      onChange={(e) => setUserAddress(e.target.value)}
+                      className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition"
+                    />
+                    <button
+                      onClick={handleGeocodeAddress}
+                      disabled={isLocating}
+                      className="px-4 py-2 bg-indigo-650 hover:bg-indigo-600 text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
+                    >
+                      Định vị
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative flex py-1 items-center">
+                  <div className="flex-grow border-t border-slate-800"></div>
+                  <span className="flex-shrink mx-4 text-[10px] text-slate-500 font-bold uppercase">Hoặc</span>
+                  <div className="flex-grow border-t border-slate-800"></div>
+                </div>
+
+                <button
+                  onClick={handleLocateAndFind}
+                  disabled={isLocating}
+                  className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 disabled:opacity-50 cursor-pointer"
+                >
+                  <MapPin className="h-4 w-4" />
+                  {isLocating ? 'Đang xác định GPS...' : 'Lấy vị trí GPS hiện tại'}
+                </button>
+              </div>
+
+              <div className="bg-slate-950/45 p-3.5 border border-slate-800/80 rounded-xl text-xs text-slate-400 leading-relaxed">
+                ☘️ <strong>Chúng tôi có quan tâm đến khoảng cách di chuyển của bạn:</strong> Hệ thống sẽ tự động cộng thêm điểm ảo ưu tiên đi lại (+1.5đ cho trường dưới 1/3 khoảng cách tối đa, +0.75đ dưới 2/3 khoảng cách) để ưu tiên các trường gần nhà lên đầu combo!
+              </div>
+            </div>
+
+            {/* Sorted Schools List Card */}
+            <div className="lg:col-span-8 bg-slate-900/40 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-4">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <School className="w-5 h-5 text-indigo-400" />
+                  Danh sách trường THPT lân cận ({distanceSchools.length})
+                </h3>
+              </div>
+
+              {distanceSchools.length === 0 ? (
+                <div className="text-center py-20 text-slate-500 text-sm">
+                  Vui lòng định vị vị trí hoặc nhập địa chỉ để xem các trường gần bạn nhất.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {distanceSchools.map((school, idx) => (
+                    <div
+                      key={school.id}
+                      onClick={() => openSchoolDetail(school.id)}
+                      className="bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 flex justify-between items-center gap-4 cursor-pointer transition"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="bg-indigo-650/15 text-indigo-400 text-xs font-bold px-2 py-1 rounded-lg border border-indigo-500/20 mt-0.5">
+                          #{idx + 1}
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                            {school.name}
+                            {school.isVerified && <BadgeCheck className="w-4 h-4 text-blue-500" />}
+                          </h4>
+                          <p className="text-xs text-slate-400 mt-1 line-clamp-1">{school.address}</p>
+                          <div className="flex items-center gap-4 mt-2 text-[10px] text-slate-500">
+                            <span>Quận: <strong className="text-slate-350">{school.district?.name}</strong></span>
+                            <span>Mã: <strong className="text-slate-350">{school.code}</strong></span>
+                            <span>Điểm NV1 2025: <strong className="text-indigo-400 font-bold">{school.latestCutoffNV1 || 'N/A'}đ</strong></span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0 flex flex-col items-end gap-1 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80 min-w-[120px]">
+                        <span className="text-sm font-black text-emerald-400 flex items-center gap-1">
+                          {school.roadDistance} km
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          ~{school.roadDuration} phút (xe máy)
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
+        )}
+        {/* Tab: Combo Recommendation */}
+        {activeTab === 'combo' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            {/* Input Config Panel */}
+            <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                <Sparkles className="h-5 w-5 text-indigo-400" />
+                <h2 className="text-base font-bold text-white m-0">🌈 Đề xuất Combo 3 NV</h2>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                {/* Score ranges */}
+                <div className="flex flex-col gap-3">
+                  <h4 className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Khoảng điểm dự đoán</h4>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-1">Toán (Min - Max)</label>
+                      <div className="flex gap-1 items-center">
+                        <input type="number" step="0.25" value={minMath} onChange={e => setMinMath(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                        <span className="text-slate-500 text-xs">-</span>
+                        <input type="number" step="0.25" value={maxMath} onChange={e => setMaxMath(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-1">Văn (Min - Max)</label>
+                      <div className="flex gap-1 items-center">
+                        <input type="number" step="0.25" value={minLiterature} onChange={e => setMinLiterature(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                        <span className="text-slate-500 text-xs">-</span>
+                        <input type="number" step="0.25" value={maxLiterature} onChange={e => setMaxLiterature(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-1">Anh (Min - Max)</label>
+                      <div className="flex gap-1 items-center">
+                        <input type="number" step="0.25" value={minEnglish} onChange={e => setMinEnglish(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                        <span className="text-slate-500 text-xs">-</span>
+                        <input type="number" step="0.25" value={maxEnglish} onChange={e => setMaxEnglish(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-1">Điểm cộng ưu tiên</label>
+                      <input type="number" step="0.5" value={priorityScore} onChange={e => setPriorityScore(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dream school selector */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1">Trường Mơ ước NV1</label>
+                  <select
+                    value={dreamSchoolCode}
+                    onChange={(e) => setDreamSchoolCode(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
+                  >
+                    <option value="">-- Chọn trường mơ ước --</option>
+                    {schools.slice().sort((a,b) => a.name.localeCompare(b.name)).map(s => (
+                      <option key={s.id} value={s.code}>{s.name} ({s.code})</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (Để tính khoảng cách)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Số nhà, tên đường, quận..."
+                      value={comboUserAddress}
+                      onChange={(e) => { setComboUserAddress(e.target.value); setComboGPS(null); }}
+                      className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
+                    />
+                    <button
+                      onClick={handleComboGPS}
+                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs"
+                      title="Sử dụng GPS thiết bị"
+                    >
+                      GPS
+                    </button>
+                  </div>
+                </div>
+
+                {/* Max commute distance input */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Khoảng cách đi học tối đa (km)</label>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="number"
+                      min="1"
+                      max="50"
+                      value={maxCommuteDistance}
+                      onChange={(e) => setMaxCommuteDistance(e.target.value)}
+                      className="w-24 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
+                    />
+                    <span className="text-xs text-slate-500">km</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleGetCombo}
+                  disabled={isComboLoading}
+                  className="w-full py-3 bg-indigo-650 hover:bg-indigo-600 active:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition text-xs mt-2"
+                >
+                  {isComboLoading ? 'Đang phân tích dữ liệu...' : '🚀 Đề Xuất Combo Nguyện Vọng'}
+                </button>
+              </div>
+            </div>
+
+            {/* Results Panel */}
+            <div className="lg:col-span-8 flex flex-col gap-4">
+              {isComboLoading ? (
+                <div className="flex flex-col items-center justify-center py-20 bg-slate-900/20 border border-slate-800 rounded-2xl gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500"></div>
+                  <span className="text-xs text-slate-400">Đang tối ưu hóa các phương án nguyện vọng cho bạn...</span>
+                </div>
+              ) : !comboResult ? (
+                <div className="text-center py-20 bg-slate-900/20 border border-slate-800 rounded-2xl">
+                  <HelpCircle className="h-12 w-12 text-slate-500 mx-auto mb-3" />
+                  <p className="text-slate-400 text-sm">Vui lòng nhập khoảng điểm và bấm "Đề Xuất Combo Nguyện Vọng".</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {/* Summary of score */}
+                  <div className="bg-indigo-950/20 border border-indigo-500/10 p-4 rounded-2xl text-xs text-slate-350 flex justify-between items-center">
+                    <div>
+                      Điểm thi dự kiến: <strong className="text-indigo-400 text-sm">{comboResult.minScore}đ - {comboResult.maxScore}đ</strong>
+                      <span className="text-slate-500 ml-2">(Trung bình xét: {comboResult.avgScore}đ)</span>
+                    </div>
+                    {comboResult.ssf !== undefined && comboResult.ssf !== 0 && (
+                      <div className={`px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 ${
+                        comboResult.ssf > 0
+                          ? 'bg-amber-500/10 border border-amber-500/25 text-amber-400'
+                          : 'bg-emerald-500/10 border border-emerald-500/25 text-emerald-400'
+                      }`}>
+                        {comboResult.ssf > 0 ? '⚠️ Cạnh tranh tăng nhẹ năm nay' : '✨ Điểm chuẩn dự kiến hạ nhẹ'} ({comboResult.ssf > 0 ? `+${comboResult.ssf}` : comboResult.ssf}đ)
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Strategy Tabs */}
+                  <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+                    <button
+                      onClick={() => setSelectedStrategy('safe')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                        selectedStrategy === 'safe'
+                          ? 'bg-indigo-650 text-white shadow-md'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      🛡️ Tab 1: An Toàn
+                    </button>
+                    <button
+                      onClick={() => setSelectedStrategy('effort')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                        selectedStrategy === 'effort'
+                          ? 'bg-indigo-650 text-white shadow-md'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      🔥 Tab 2: Nỗ Lực (Dream NV1)
+                    </button>
+                    <button
+                      onClick={() => setSelectedStrategy('defense')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                        selectedStrategy === 'defense'
+                          ? 'bg-indigo-650 text-white shadow-md'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      🏰 Tab 3: Phòng Thủ (Chắc chắn)
+                    </button>
+                  </div>
+
+                  {/* Strategy Info Note */}
+                  <div className="bg-slate-950/45 p-3.5 border border-slate-850 rounded-xl text-xs text-slate-300">
+                    {selectedStrategy === 'safe' && (
+                      <p className="m-0">💡 <strong>Chiến lược An Toàn:</strong> Tự động phân bổ 3 NV theo thứ tự điểm chuẩn giảm dần quanh điểm trung bình dự đoán của bạn. Không bắt buộc có trường mơ ước.</p>
+                    )}
+                    {selectedStrategy === 'effort' && (
+                      <p className="m-0">💡 <strong>Chiến lược Nỗ Lực:</strong> Bạn đang rất quyết tâm, nỗ lực vượt lên chính mình! Đưa trường Mơ ước lên NV1 bất kể tỉ lệ chọi, sau đó lùi NV2 cạnh tranh và NV3 thủ vững chắc.</p>
+                    )}
+                    {selectedStrategy === 'defense' && (
+                      <p className="m-0">💡 <strong>Chiến lược Phòng Thủ:</strong> Bạn không tự tin và thời gian sắp cạn, cần chắc cú! Hạ chỉ tiêu xuống trường an toàn ngay từ NV1, lùi sâu NV2/NV3 để đảm bảo 100% có vé vào trường công lập.</p>
+                    )}
+                  </div>
+
+                  {/* Auto-relaxed warning */}
+                  {comboResult.adjusted && (
+                    <div className="bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-xl text-xs text-amber-500 font-semibold leading-relaxed">
+                      ⚠️ <strong>Lưu ý:</strong> Do trong vòng {maxCommuteDistance} km không tìm đủ trường phù hợp để xếp combo, chúng tôi đã tự động nới rộng giới hạn khoảng cách lên <strong>{comboResult.maxCommuteDistance} km</strong>.
+                    </div>
+                  )}
+
+                  {/* Dynamic Explanation Card */}
+                  {comboResult.explanations && comboResult.explanations[selectedStrategy] && (
+                    <div className="bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-2xl text-xs text-indigo-200 leading-relaxed shadow-lg flex flex-col gap-2">
+                      <span className="font-bold uppercase tracking-wider text-[10px] text-indigo-400">Phân tích chiến thuật của chuyên gia AI:</span>
+                      <p className="m-0 italic">{comboResult.explanations[selectedStrategy]}</p>
+                    </div>
+                  )}
+
+
+                  {/* Recommended 3-NV Combo List */}
+                  <div className="flex flex-col gap-3">
+                    {comboResult.combos[selectedStrategy]?.map((school: any, idx: number) => {
+                      const nvNum = idx + 1;
+                      const prob = nvNum === 1 ? school.probNV1 : nvNum === 2 ? school.probNV2 : school.probNV3;
+                      const cutoff = nvNum === 1 ? school.cutoffNV1 : nvNum === 2 ? school.cutoffNV2 : school.cutoffNV3;
+                      
+                      // Highlight color
+                      const probColor = prob >= 80 ? 'emerald' : prob >= 65 ? 'blue' : prob >= 50 ? 'amber' : 'rose';
+                      const isTooFar = school.distance && school.distance > 15;
+
+                      return (
+                        <div
+                          key={school.schoolId}
+                          onClick={() => openSchoolDetail(school.schoolId)}
+                          className={`bg-slate-900/60 border hover:border-indigo-500/40 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer transition ${
+                            isTooFar ? 'border-amber-500/10' : 'border-slate-800'
+                          }`}
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                              <span className={`text-[11px] font-black px-2 py-0.5 rounded border ${
+                                nvNum === 1 ? 'bg-indigo-650/15 border-indigo-500/30 text-indigo-400' :
+                                nvNum === 2 ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+                              }`}>
+                                NGUYỆN VỌNG {nvNum}
+                              </span>
+                              <span className="text-xs text-slate-400 font-bold px-2 py-0.5 bg-slate-800 rounded">
+                                {school.schoolCode}
+                              </span>
+                              <span className="text-xs text-slate-500">
+                                {school.districtName}
+                              </span>
+                            </div>
+
+                            <h3 className="text-base font-extrabold text-white mb-2">{school.schoolName}</h3>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] text-slate-400">
+                              <div>Điểm chuẩn NV{nvNum}: <span className="font-semibold text-slate-200">{cutoff || 'Không tuyển'}đ</span></div>
+                              {nvNum > 1 && school[`nv${nvNum}Gap`] !== null && (
+                                <div>Chênh lệch NV{nvNum}: <span className="font-semibold text-amber-500">+{school[`nv${nvNum}Gap`]}đ</span></div>
+                              )}
+                              {school.distance !== null && (
+                                <div className={`flex items-center gap-1 ${isTooFar ? 'text-amber-500 font-medium' : ''}`}>
+                                  <span>Khoảng cách:</span>
+                                  <span>{school.roadDistance || school.distance} km {isTooFar && '⚠️'}</span>
+                                </div>
+                              )}
+                              {school.commuteBonus > 0 && (
+                                <div className="text-emerald-400 font-semibold">
+                                  Điểm thưởng cự ly: +{school.commuteBonus}đ
+                                </div>
+                              )}
+                            </div>
+
+                            <details className="mt-2.5 group">
+                              <summary className="text-[10px] text-slate-400 hover:text-slate-200 cursor-pointer list-none flex items-center gap-1 font-semibold select-none">
+                                <span>📊 Xem thông số kỹ thuật (d1, d2, d3, d4)</span>
+                                <span className="transition-transform group-open:rotate-180">▼</span>
+                              </summary>
+                              
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80 mt-1.5">
+                                <div>d1 (NV1): <span className={`font-bold ${school.d1 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d1 > 0 ? `+${school.d1}` : school.d1}đ</span></div>
+                                <div>d2 (TB): <span className={`font-bold ${school.d2 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d2 > 0 ? `+${school.d2}` : school.d2}đ</span></div>
+                                <div>d3 (NV2): <span className={`font-bold ${school.d3 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d3 > 0 ? `+${school.d3}` : school.d3}đ</span></div>
+                                <div>d4 (NV3): <span className={`font-bold ${school.d4 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d4 > 0 ? `+${school.d4}` : school.d4}đ</span></div>
+                              </div>
+                            </details>
+
+                            {isTooFar && (
+                              <p className="text-[10px] text-amber-500 mt-2 m-0 leading-relaxed">
+                                ⚠️ <strong>Cảnh báo:</strong> Trường nằm khá xa địa chỉ nhà của bạn ({school.roadDistance || school.distance}km). Hãy cân nhắc về phương tiện đi lại nếu đăng ký!
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Pass probability for this NV */}
+                          <div className="md:w-36 shrink-0 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-4">
+                            <div className="text-xs text-slate-400 mb-0.5">Xác suất đỗ NV{nvNum}</div>
+                            <div className={`text-2xl font-black ${
+                              probColor === 'emerald' ? 'text-emerald-400' :
+                              probColor === 'blue' ? 'text-blue-400' :
+                              probColor === 'amber' ? 'text-amber-400' : 'text-rose-400'
+                            }`}>
+                              {prob}%
+                            </div>
+                            <span className={`text-[9px] font-bold uppercase mt-1.5 px-2 py-0.5 rounded-full block text-center ${
+                              probColor === 'emerald' ? 'bg-emerald-500/10 text-emerald-400' :
+                              probColor === 'blue' ? 'bg-blue-500/10 text-blue-400' :
+                              probColor === 'amber' ? 'bg-amber-500/10 text-amber-400' : 'bg-rose-500/10 text-rose-400'
+                            }`}>
+                              {prob >= 80 ? 'An tâm cao' : prob >= 65 ? 'An toàn' : prob >= 50 ? 'Cạnh tranh' : 'Rủi ro'}
+                            </span>
+                          </div>
+
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+          </div>
+        )}
       {/* AI Search Modal */}
       <AiSearchModal 
         isOpen={isAiModalOpen}
@@ -1008,7 +1854,7 @@ export default function Grade10Container() {
         type="GRADE10"
         prefillSchool={aiPrefillSchool}
         onImportSuccess={() => {
-          loadSchools(searchQuery, selectedDistrict);
+          loadSchools(searchQuery, selectedDistricts.join(','));
           loadAnalytics();
         }}
       />
