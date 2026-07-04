@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Calculator, Sparkles, BadgeCheck, MapPin, Loader2 } from 'lucide-react';
-import { fetchG10SchoolDetail, resolveG10Location } from '../../../services/api';
+import { fetchG10SchoolDetail, resolveG10Location, reverseG10Location } from '../../../services/api';
 import type { G10LocationResult } from '../../../services/api';
 import { formatSchoolYear, getRecentSchoolYears } from '../../../utils/date';
 import AddressConfirmModal from './AddressConfirmModal';
+import MapPickerModal from './MapPickerModal';
 
 interface EditSchoolModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [pendingGeocode, setPendingGeocode] = useState<G10LocationResult | null>(null);
+  const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
 
   const RECENT_YEARS = getRecentSchoolYears(4);
 
@@ -127,6 +129,26 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
     } finally {
       setIsGeocoding(false);
     }
+  };
+
+  const handleMapPick = async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+    // Fill the address from reverse geocoding only when it is still empty —
+    // never overwrite an address the admin already typed
+    let reverseAddress: string | null = null;
+    try {
+      const rev = await reverseG10Location({ latitude, longitude });
+      reverseAddress = rev.formattedAddress || null;
+    } catch {
+      // coordinates alone are still useful
+    }
+    setFormData((prev: any) => ({
+      ...prev,
+      latitude,
+      longitude,
+      address: prev.address || reverseAddress || '',
+      mapUrl: `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`,
+    }));
+    setIsMapPickerOpen(false);
   };
 
   const handleGeocodeConfirm = () => {
@@ -242,6 +264,14 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                       >
                         {isGeocoding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
                         {isGeocoding ? 'Đang tìm...' : 'Lấy tọa độ'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsMapPickerOpen(true)}
+                        title="Chọn vị trí trên bản đồ"
+                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold rounded-lg transition cursor-pointer shrink-0"
+                      >
+                        🗺️
                       </button>
                     </div>
                   </div>
@@ -385,6 +415,14 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
         resolved={pendingGeocode}
         onConfirm={handleGeocodeConfirm}
         onCancel={() => setPendingGeocode(null)}
+      />
+      <MapPickerModal
+        isOpen={isMapPickerOpen}
+        title={`Chọn vị trí: ${formData.name || 'trường'}`}
+        initialLat={formData.latitude !== '' ? Number(formData.latitude) : null}
+        initialLng={formData.longitude !== '' ? Number(formData.longitude) : null}
+        onClose={() => setIsMapPickerOpen(false)}
+        onPick={handleMapPick}
       />
     </div>
   );

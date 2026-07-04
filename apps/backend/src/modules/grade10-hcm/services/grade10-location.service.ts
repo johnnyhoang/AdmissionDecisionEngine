@@ -322,6 +322,54 @@ export class Grade10LocationService {
     }
   }
 
+  async reverseGeocode(latitude: number, longitude: number): Promise<GeoPoint> {
+    const cacheKey = `reverse:${latitude.toFixed(6)},${longitude.toFixed(6)}`;
+    const cached = this.geocodeCache.get(cacheKey);
+    if (cached) return cached;
+
+    let formattedAddress: string | null = null;
+    let source: GeoSource = 'fallback';
+
+    if (this.googleMapsApiKey) {
+      try {
+        const url = new URL(`${this.googleMapsBase}/geocode/json`);
+        url.searchParams.set('latlng', `${latitude},${longitude}`);
+        url.searchParams.set('key', this.googleMapsApiKey);
+        const data = await this.fetchJson(url.toString());
+        formattedAddress = data?.results?.[0]?.formatted_address ?? null;
+        if (formattedAddress) source = 'google';
+      } catch {
+        // fall through to Nominatim
+      }
+    }
+
+    if (!formattedAddress) {
+      try {
+        const url = new URL('https://nominatim.openstreetmap.org/reverse');
+        url.searchParams.set('lat', String(latitude));
+        url.searchParams.set('lon', String(longitude));
+        url.searchParams.set('format', 'json');
+        const data = await this.fetchJson(url.toString());
+        formattedAddress = data?.display_name ?? null;
+        if (formattedAddress) source = 'nominatim';
+      } catch {
+        // keep coordinates-only result
+      }
+    }
+
+    const resolved: GeoPoint = {
+      latitude,
+      longitude,
+      formattedAddress,
+      mapUrl: this.buildMapsUrl(`${latitude},${longitude}`),
+      source,
+      precision: 'exact',
+    };
+
+    this.geocodeCache.set(cacheKey, resolved);
+    return resolved;
+  }
+
   async resolveOrigin(input: LocationInput) {
     return this.geocodeLocation(input);
   }

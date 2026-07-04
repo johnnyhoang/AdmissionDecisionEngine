@@ -11,11 +11,12 @@ import {
 import {
   fetchG10Schools, fetchG10SchoolDetail, fetchG10Districts,
   fetchG10Analytics, evaluateG10Profile, getG10ComboRecommendations,
-  fetchNearbyG10Schools, resolveG10Location,
+  fetchNearbyG10Schools, resolveG10Location, reverseG10Location,
 } from '../../services/api';
 import type { G10SchoolItem, G10RecommendationItem, G10LocationResult } from '../../services/api';
 import AiSearchModal from '../../components/AiSearchModal';
 import AddressConfirmModal from './components/AddressConfirmModal';
+import MapPickerModal from './components/MapPickerModal';
 import MergeSchoolModal from './components/MergeSchoolModal';
 import EditSchoolModal from './components/EditSchoolModal';
 import CompareDrawer from './components/CompareDrawer';
@@ -96,6 +97,9 @@ export default function Grade10Container() {
     original: string;
     resolved: G10LocationResult;
   } | null>(null);
+
+  // Map picker — pick coordinates directly on the map instead of typing an address
+  const [mapPickerContext, setMapPickerContext] = useState<'proximity' | 'combo' | null>(null);
 
   // ── Combo recommendation states ────────────────────────────────────────────
   const [minMath, setMinMath] = useState('7.5');
@@ -299,6 +303,38 @@ export default function Grade10Container() {
     }
 
     await runComboRequest(comboGPS?.lat, comboGPS?.lon);
+  };
+
+  const handleMapPick = async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+    const context = mapPickerContext;
+    if (!context) return;
+
+    // Reverse-geocode so the picked point gets a readable address label;
+    // the pin itself was already visually confirmed by the user on the map
+    let label = `Vị trí trên bản đồ (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
+    try {
+      const rev = await reverseG10Location({ latitude, longitude });
+      if (rev.formattedAddress) label = rev.formattedAddress;
+    } catch {
+      // keep coordinate label
+    }
+
+    setMapPickerContext(null);
+
+    if (context === 'proximity') {
+      setUserAddress(label);
+      setIsLocating(true);
+      try {
+        await calculateSchoolDistances(latitude, longitude);
+        setIsProximityFilterActive(true);
+        setIsDistanceModalOpen(false);
+      } finally {
+        setIsLocating(false);
+      }
+    } else {
+      setComboGPS({ lat: latitude, lon: longitude });
+      setComboUserAddress(label);
+    }
   };
 
   const handleAddressConfirm = async () => {
@@ -1511,6 +1547,12 @@ export default function Grade10Container() {
         onConfirm={handleAddressConfirm}
         onCancel={() => setAddressConfirm(null)}
       />
+      <MapPickerModal
+        isOpen={!!mapPickerContext}
+        title="Chọn vị trí nhà của bạn"
+        onClose={() => setMapPickerContext(null)}
+        onPick={handleMapPick}
+      />
       {/* Distance Input Modal */}
       {isDistanceModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
@@ -1601,6 +1643,14 @@ export default function Grade10Container() {
               >
                 <MapPin className="w-4 h-4 text-indigo-400" />
                 {isLocating ? 'Đang định vị...' : 'Sử dụng GPS hiện tại'}
+              </button>
+
+              <button
+                onClick={() => setMapPickerContext('proximity')}
+                disabled={isLocating}
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
+              >
+                🗺️ Chọn vị trí trên bản đồ
               </button>
             </div>
           </div>
@@ -1694,6 +1744,13 @@ export default function Grade10Container() {
                       title="Sử dụng GPS thiết bị"
                     >
                       GPS
+                    </button>
+                    <button
+                      onClick={() => setMapPickerContext('combo')}
+                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs"
+                      title="Chọn vị trí trên bản đồ"
+                    >
+                      🗺️
                     </button>
                   </div>
                 </div>

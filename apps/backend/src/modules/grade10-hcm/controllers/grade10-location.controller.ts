@@ -34,6 +34,14 @@ export class Grade10LocationController {
     return this.locationService.geocodeLocation(body);
   }
 
+  @Post('reverse-geocode')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resolve coordinates back to a human-readable address' })
+  @RequirePermission('GRADE10', 'view_dashboard', 'view')
+  async reverseGeocode(@Body() body: { latitude: number; longitude: number }) {
+    return this.locationService.reverseGeocode(body.latitude, body.longitude);
+  }
+
   @Post('nearby-schools')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Find nearby Grade 10 schools and return route-aware distance' })

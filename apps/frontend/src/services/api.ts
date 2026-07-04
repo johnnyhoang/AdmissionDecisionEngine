@@ -303,6 +303,19 @@ export const resolveG10Location = async (payload: {
   return res.json();
 };
 
+export const reverseG10Location = async (payload: {
+  latitude: number;
+  longitude: number;
+}): Promise<G10LocationResult> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/location/reverse-geocode`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Không thể xác định địa chỉ từ tọa độ');
+  return res.json();
+};
+
 export const fetchNearbyG10Schools = async (payload: {
   userLat: number;
   userLon: number;
