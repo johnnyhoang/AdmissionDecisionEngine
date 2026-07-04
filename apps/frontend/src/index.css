@@ -149,6 +149,31 @@ body.light-theme::after {
     radial-gradient(circle at 84% 64%, black, transparent 30%);
 }
 
+body.light-theme #root > .min-h-screen.bg-slate-950,
+body.light-theme #root > .min-h-screen.bg-slate-900 {
+  background-color: rgba(255, 248, 252, 0.74) !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg opacity='.72'%3E%3Cpath d='M18 92c30-42 62-62 104-72' fill='none' stroke='%23f9a8d4' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='42' cy='70' r='7' fill='%23fbcfe8'/%3E%3Ccircle cx='62' cy='56' r='5' fill='%23ddd6fe'/%3E%3Ccircle cx='84' cy='43' r='6' fill='%23bae6fd'/%3E%3Cpath d='M94 34c11-1 18 4 21 15-12 1-19-4-21-15Z' fill='%2386efac' opacity='.56'/%3E%3Cpath d='M34 91c10-2 18 3 22 14-12 2-20-3-22-14Z' fill='%2399f6e4' opacity='.54'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(circle at 94% 7%, rgba(244, 114, 182, 0.22), transparent 22rem),
+    radial-gradient(circle at 7% 92%, rgba(45, 212, 191, 0.16), transparent 20rem),
+    linear-gradient(180deg, rgba(255, 253, 252, 0.92), rgba(255, 247, 251, 0.86)) !important;
+  background-attachment: fixed, fixed, fixed, fixed !important;
+  background-position: left 26px top 118px, right top, left bottom, center !important;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat !important;
+  background-size: 190px 190px, auto, auto, auto !important;
+}
+
+body.light-theme header.bg-slate-900\/60,
+body.light-theme footer.bg-slate-900\/60,
+body.light-theme nav.bg-slate-900 {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='32' viewBox='0 0 80 32'%3E%3Cpath d='M3 24c18-15 37-21 68-21' fill='none' stroke='%23f9a8d4' stroke-width='1.1' stroke-linecap='round' opacity='.38'/%3E%3Ccircle cx='23' cy='17' r='2.3' fill='%23fbcfe8' opacity='.68'/%3E%3Ccircle cx='39' cy='11' r='1.8' fill='%23c4b5fd' opacity='.58'/%3E%3Cpath d='M53 8c5 0 8 3 9 7-6 0-9-3-9-7Z' fill='%2386efac' opacity='.42'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 244, 250, 0.90)) !important;
+  background-position: right 22px center, center !important;
+  background-repeat: repeat-x, no-repeat !important;
+  background-size: 112px 45px, auto !important;
+}
+
 .light-theme .bg-slate-900,
 .light-theme .bg-slate-900\/60,
 .light-theme .bg-slate-900\/80,
