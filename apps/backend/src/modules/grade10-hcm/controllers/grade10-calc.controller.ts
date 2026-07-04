@@ -6,8 +6,10 @@ import {
   HttpStatus,
   UseGuards,
   Get,
+  Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Request } from 'express';
 import { Grade10CalcService } from '../services/grade10-calc.service';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
 import { GetRecommendationDto, GetComboRecommendationDto } from '../dtos/recommendation.dto';
@@ -50,8 +52,18 @@ export class Grade10CalcController {
     summary: 'Get smart school recommendations with estimated pass probability',
   })
   @RequirePermission('GRADE10', 'view_recommendation', 'view')
-  async getRecommendations(@Body() dto: GetRecommendationDto) {
-    return this.calcService.getRecommendations(dto);
+  async getRecommendations(@Body() dto: GetRecommendationDto, @Req() req: Request) {
+    const user = (req as any).user;
+    const context = {
+      userId: user?.id ?? null,
+      userName: user?.email ?? user?.displayName ?? null,
+      userAgent: req.headers['user-agent'] ?? null,
+      ipAddress:
+        (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ??
+        req.socket?.remoteAddress ??
+        null,
+    };
+    return this.calcService.getRecommendations(dto, context);
   }
 
   @Post('recommendation/combo')
@@ -60,7 +72,17 @@ export class Grade10CalcController {
     summary: 'Get smart 3-NV combo recommendations',
   })
   @RequirePermission('GRADE10', 'view_recommendation', 'view')
-  async getComboRecommendations(@Body() dto: GetComboRecommendationDto) {
-    return this.calcService.getComboRecommendations(dto);
+  async getComboRecommendations(@Body() dto: GetComboRecommendationDto, @Req() req: Request) {
+    const user = (req as any).user;
+    const context = {
+      userId: user?.id ?? null,
+      userName: user?.email ?? user?.displayName ?? null,
+      userAgent: req.headers['user-agent'] ?? null,
+      ipAddress:
+        (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ??
+        req.socket?.remoteAddress ??
+        null,
+    };
+    return this.calcService.getComboRecommendations(dto, context);
   }
 }

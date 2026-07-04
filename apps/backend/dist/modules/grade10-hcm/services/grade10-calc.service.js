@@ -21,14 +21,17 @@ const typeorm_2 = require("typeorm");
 const school_entity_1 = require("../entities/school.entity");
 const cutoff_entity_1 = require("../entities/cutoff.entity");
 const history_entity_1 = require("../entities/history.entity");
+const activity_log_entity_1 = require("../entities/activity-log.entity");
 let Grade10CalcService = class Grade10CalcService {
     schoolRepo;
     cutoffRepo;
     historyRepo;
-    constructor(schoolRepo, cutoffRepo, historyRepo) {
+    activityLogRepo;
+    constructor(schoolRepo, cutoffRepo, historyRepo, activityLogRepo) {
         this.schoolRepo = schoolRepo;
         this.cutoffRepo = cutoffRepo;
         this.historyRepo = historyRepo;
+        this.activityLogRepo = activityLogRepo;
     }
     getMacroConfigPath() {
         return path.join(__dirname, '../macro-config.json');
@@ -79,7 +82,7 @@ let Grade10CalcService = class Grade10CalcService {
             Number(dto.priority || 0) +
             Number(dto.bonus || 0));
     }
-    async getRecommendations(dto) {
+    async getRecommendations(dto, context) {
         const totalScore = this.calculateScore({
             math: dto.math,
             literature: dto.literature,
@@ -226,6 +229,27 @@ let Grade10CalcService = class Grade10CalcService {
                 return 1;
             return b.cutoffNV1 - a.cutoffNV1;
         });
+        const topSchools = results.slice(0, 3).map(r => ({
+            name: r.schoolName,
+            code: r.schoolCode,
+            probability: r.probability,
+            cutoffNV1: r.cutoffNV1,
+            safetyCategory: r.safetyCategory,
+        }));
+        this.activityLogRepo.save(this.activityLogRepo.create({
+            module: 'calculator',
+            userId: context?.userId ?? null,
+            userName: context?.userName ?? null,
+            inputPayload: {
+                math: dto.math, literature: dto.literature, english: dto.english,
+                priority: dto.priority ?? 0, bonus: dto.bonus ?? 0,
+                preferredDistrict: dto.preferredDistrict ?? null,
+                targetNV: dto.targetNV,
+            },
+            resultSummary: { totalScore, shiftedScore, ssf, topSchools },
+            userAgent: context?.userAgent ?? null,
+            ipAddress: context?.ipAddress ?? null,
+        })).catch(err => console.error('ActivityLog save failed:', err));
         return {
             candidateScore: totalScore,
             shiftedScore,
@@ -241,7 +265,7 @@ let Grade10CalcService = class Grade10CalcService {
             recommendations: results,
         };
     }
-    async getComboRecommendations(dto) {
+    async getComboRecommendations(dto, context) {
         const minScore = Number(dto.minMath) + Number(dto.minLiterature) + Number(dto.minEnglish) + Number(dto.priority || 0) + Number(dto.bonus || 0);
         const maxScore = Number(dto.maxMath) + Number(dto.maxLiterature) + Number(dto.maxEnglish) + Number(dto.priority || 0) + Number(dto.bonus || 0);
         const avgScore = (minScore + maxScore) / 2;
@@ -432,6 +456,31 @@ let Grade10CalcService = class Grade10CalcService {
         else {
             explanations.defense = 'Không tìm đủ trường gần nhà để ghép combo phòng thủ hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
         }
+        this.activityLogRepo.save(this.activityLogRepo.create({
+            module: 'combo',
+            userId: context?.userId ?? null,
+            userName: context?.userName ?? null,
+            inputPayload: {
+                minMath: dto.minMath, maxMath: dto.maxMath,
+                minLiterature: dto.minLiterature, maxLiterature: dto.maxLiterature,
+                minEnglish: dto.minEnglish, maxEnglish: dto.maxEnglish,
+                priority: dto.priority ?? 0, bonus: dto.bonus ?? 0,
+                dreamSchoolCode: dto.dreamSchoolCode ?? null,
+                maxCommuteDistance: dto.maxCommuteDistance,
+                userLat: dto.userLat ?? null, userLon: dto.userLon ?? null,
+            },
+            resultSummary: {
+                avgScore,
+                ssf,
+                adjusted,
+                maxCommuteDistance: parseFloat(rawMaxDist.toFixed(1)),
+                safe: combos.safe.map((s) => ({ name: s?.schoolName, prob: s?.probNV1 })),
+                effort: combos.effort.map((s) => ({ name: s?.schoolName, prob: s?.probNV1 })),
+                defense: combos.defense.map((s) => ({ name: s?.schoolName, prob: s?.probNV1 })),
+            },
+            userAgent: context?.userAgent ?? null,
+            ipAddress: context?.ipAddress ?? null,
+        })).catch(err => console.error('ActivityLog save failed:', err));
         return {
             minScore,
             maxScore,
@@ -451,7 +500,9 @@ exports.Grade10CalcService = Grade10CalcService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(school_entity_1.Grade10School)),
     __param(1, (0, typeorm_1.InjectRepository)(cutoff_entity_1.Grade10Cutoff)),
     __param(2, (0, typeorm_1.InjectRepository)(history_entity_1.Grade10History)),
+    __param(3, (0, typeorm_1.InjectRepository)(activity_log_entity_1.Grade10ActivityLog)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], Grade10CalcService);

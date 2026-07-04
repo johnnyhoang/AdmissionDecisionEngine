@@ -36,11 +36,29 @@ let Grade10CalcController = class Grade10CalcController {
         const finalScore = this.calcService.calculateScore(dto);
         return { finalScore };
     }
-    async getRecommendations(dto) {
-        return this.calcService.getRecommendations(dto);
+    async getRecommendations(dto, req) {
+        const user = req.user;
+        const context = {
+            userId: user?.id ?? null,
+            userName: user?.email ?? user?.displayName ?? null,
+            userAgent: req.headers['user-agent'] ?? null,
+            ipAddress: req.headers['x-forwarded-for']?.split(',')[0]?.trim() ??
+                req.socket?.remoteAddress ??
+                null,
+        };
+        return this.calcService.getRecommendations(dto, context);
     }
-    async getComboRecommendations(dto) {
-        return this.calcService.getComboRecommendations(dto);
+    async getComboRecommendations(dto, req) {
+        const user = req.user;
+        const context = {
+            userId: user?.id ?? null,
+            userName: user?.email ?? user?.displayName ?? null,
+            userAgent: req.headers['user-agent'] ?? null,
+            ipAddress: req.headers['x-forwarded-for']?.split(',')[0]?.trim() ??
+                req.socket?.remoteAddress ??
+                null,
+        };
+        return this.calcService.getComboRecommendations(dto, context);
     }
 };
 exports.Grade10CalcController = Grade10CalcController;
@@ -79,8 +97,9 @@ __decorate([
     }),
     (0, require_permission_decorator_1.RequirePermission)('GRADE10', 'view_recommendation', 'view'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [recommendation_dto_1.GetRecommendationDto]),
+    __metadata("design:paramtypes", [recommendation_dto_1.GetRecommendationDto, Object]),
     __metadata("design:returntype", Promise)
 ], Grade10CalcController.prototype, "getRecommendations", null);
 __decorate([
@@ -91,8 +110,9 @@ __decorate([
     }),
     (0, require_permission_decorator_1.RequirePermission)('GRADE10', 'view_recommendation', 'view'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [recommendation_dto_1.GetComboRecommendationDto]),
+    __metadata("design:paramtypes", [recommendation_dto_1.GetComboRecommendationDto, Object]),
     __metadata("design:returntype", Promise)
 ], Grade10CalcController.prototype, "getComboRecommendations", null);
 exports.Grade10CalcController = Grade10CalcController = __decorate([

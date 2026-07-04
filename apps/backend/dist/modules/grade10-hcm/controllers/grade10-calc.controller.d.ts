@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { Grade10CalcService } from '../services/grade10-calc.service';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
 import { GetRecommendationDto, GetComboRecommendationDto } from '../dtos/recommendation.dto';
@@ -9,7 +10,7 @@ export declare class Grade10CalcController {
     calculate(dto: CalculateScoreDto): Promise<{
         finalScore: number;
     }>;
-    getRecommendations(dto: GetRecommendationDto): Promise<{
+    getRecommendations(dto: GetRecommendationDto, req: Request): Promise<{
         candidateScore: number;
         shiftedScore: number;
         ssf: any;
@@ -36,7 +37,7 @@ export declare class Grade10CalcController {
             d4: number;
             nv2Gap: number | null;
             nv3Gap: number | null;
-            safetyCategory: "SAFE" | "VERY_SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
+            safetyCategory: "VERY_SAFE" | "SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
             trend: "UP" | "DOWN" | "STABLE";
             advice: string;
             probability: number;
@@ -47,7 +48,7 @@ export declare class Grade10CalcController {
             }[];
         }[];
     }>;
-    getComboRecommendations(dto: GetComboRecommendationDto): Promise<{
+    getComboRecommendations(dto: GetComboRecommendationDto, req: Request): Promise<{
         minScore: number;
         maxScore: number;
         avgScore: number;

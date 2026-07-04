@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Grade10School } from '../entities/school.entity';
 import { Grade10Cutoff } from '../entities/cutoff.entity';
 import { Grade10History } from '../entities/history.entity';
+import { Grade10ActivityLog } from '../entities/activity-log.entity';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
 import { GetRecommendationDto } from '../dtos/recommendation.dto';
 
@@ -18,6 +19,8 @@ export class Grade10CalcService {
     private readonly cutoffRepo: Repository<Grade10Cutoff>,
     @InjectRepository(Grade10History)
     private readonly historyRepo: Repository<Grade10History>,
+    @InjectRepository(Grade10ActivityLog)
+    private readonly activityLogRepo: Repository<Grade10ActivityLog>,
   ) {}
 
   
@@ -76,7 +79,7 @@ export class Grade10CalcService {
     );
   }
 
-  async getRecommendations(dto: GetRecommendationDto) {
+  async getRecommendations(dto: GetRecommendationDto, context?: { userId?: string; userName?: string; userAgent?: string; ipAddress?: string }) {
     const totalScore = this.calculateScore({
       math: dto.math,
       literature: dto.literature,
@@ -254,6 +257,29 @@ export class Grade10CalcService {
       return b.cutoffNV1 - a.cutoffNV1;
     });
 
+    // Fire-and-forget activity log
+    const topSchools = results.slice(0, 3).map(r => ({
+      name: r.schoolName,
+      code: r.schoolCode,
+      probability: r.probability,
+      cutoffNV1: r.cutoffNV1,
+      safetyCategory: r.safetyCategory,
+    }));
+    this.activityLogRepo.save(this.activityLogRepo.create({
+      module: 'calculator',
+      userId: context?.userId ?? null,
+      userName: context?.userName ?? null,
+      inputPayload: {
+        math: dto.math, literature: dto.literature, english: dto.english,
+        priority: dto.priority ?? 0, bonus: dto.bonus ?? 0,
+        preferredDistrict: dto.preferredDistrict ?? null,
+        targetNV: dto.targetNV,
+      },
+      resultSummary: { totalScore, shiftedScore, ssf, topSchools },
+      userAgent: context?.userAgent ?? null,
+      ipAddress: context?.ipAddress ?? null,
+    })).catch(err => console.error('ActivityLog save failed:', err));
+
     return {
       candidateScore: totalScore,
       shiftedScore,
@@ -270,7 +296,7 @@ export class Grade10CalcService {
     };
   }
 
-  async getComboRecommendations(dto: any) {
+  async getComboRecommendations(dto: any, context?: { userId?: string; userName?: string; userAgent?: string; ipAddress?: string }) {
     const minScore = Number(dto.minMath) + Number(dto.minLiterature) + Number(dto.minEnglish) + Number(dto.priority || 0) + Number(dto.bonus || 0);
     const maxScore = Number(dto.maxMath) + Number(dto.maxLiterature) + Number(dto.maxEnglish) + Number(dto.priority || 0) + Number(dto.bonus || 0);
     const avgScore = (minScore + maxScore) / 2;
@@ -513,6 +539,33 @@ export class Grade10CalcService {
     } else {
       explanations.defense = 'Không tìm đủ trường gần nhà để ghép combo phòng thủ hoàn chỉnh. Hãy nới rộng khoảng cách giới hạn đi học.';
     }
+
+    // Fire-and-forget activity log
+    this.activityLogRepo.save(this.activityLogRepo.create({
+      module: 'combo',
+      userId: context?.userId ?? null,
+      userName: context?.userName ?? null,
+      inputPayload: {
+        minMath: dto.minMath, maxMath: dto.maxMath,
+        minLiterature: dto.minLiterature, maxLiterature: dto.maxLiterature,
+        minEnglish: dto.minEnglish, maxEnglish: dto.maxEnglish,
+        priority: dto.priority ?? 0, bonus: dto.bonus ?? 0,
+        dreamSchoolCode: dto.dreamSchoolCode ?? null,
+        maxCommuteDistance: dto.maxCommuteDistance,
+        userLat: dto.userLat ?? null, userLon: dto.userLon ?? null,
+      },
+      resultSummary: {
+        avgScore,
+        ssf,
+        adjusted,
+        maxCommuteDistance: parseFloat(rawMaxDist.toFixed(1)),
+        safe: combos.safe.map((s: any) => ({ name: s?.schoolName, prob: s?.probNV1 })),
+        effort: combos.effort.map((s: any) => ({ name: s?.schoolName, prob: s?.probNV1 })),
+        defense: combos.defense.map((s: any) => ({ name: s?.schoolName, prob: s?.probNV1 })),
+      },
+      userAgent: context?.userAgent ?? null,
+      ipAddress: context?.ipAddress ?? null,
+    })).catch(err => console.error('ActivityLog save failed:', err));
 
     return {
       minScore,

@@ -2,18 +2,25 @@ import { Repository } from 'typeorm';
 import { Grade10School } from '../entities/school.entity';
 import { Grade10Cutoff } from '../entities/cutoff.entity';
 import { Grade10History } from '../entities/history.entity';
+import { Grade10ActivityLog } from '../entities/activity-log.entity';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
 import { GetRecommendationDto } from '../dtos/recommendation.dto';
 export declare class Grade10CalcService {
     private readonly schoolRepo;
     private readonly cutoffRepo;
     private readonly historyRepo;
-    constructor(schoolRepo: Repository<Grade10School>, cutoffRepo: Repository<Grade10Cutoff>, historyRepo: Repository<Grade10History>);
+    private readonly activityLogRepo;
+    constructor(schoolRepo: Repository<Grade10School>, cutoffRepo: Repository<Grade10Cutoff>, historyRepo: Repository<Grade10History>, activityLogRepo: Repository<Grade10ActivityLog>);
     private getMacroConfigPath;
     getMacroConfig(): any;
     updateMacroConfig(data: any): any;
     calculateScore(dto: CalculateScoreDto): number;
-    getRecommendations(dto: GetRecommendationDto): Promise<{
+    getRecommendations(dto: GetRecommendationDto, context?: {
+        userId?: string;
+        userName?: string;
+        userAgent?: string;
+        ipAddress?: string;
+    }): Promise<{
         candidateScore: number;
         shiftedScore: number;
         ssf: any;
@@ -40,7 +47,7 @@ export declare class Grade10CalcService {
             d4: number;
             nv2Gap: number | null;
             nv3Gap: number | null;
-            safetyCategory: "SAFE" | "VERY_SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
+            safetyCategory: "VERY_SAFE" | "SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
             trend: "UP" | "DOWN" | "STABLE";
             advice: string;
             probability: number;
@@ -51,7 +58,12 @@ export declare class Grade10CalcService {
             }[];
         }[];
     }>;
-    getComboRecommendations(dto: any): Promise<{
+    getComboRecommendations(dto: any, context?: {
+        userId?: string;
+        userName?: string;
+        userAgent?: string;
+        ipAddress?: string;
+    }): Promise<{
         minScore: number;
         maxScore: number;
         avgScore: number;
