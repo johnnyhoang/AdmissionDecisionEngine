@@ -13,6 +13,9 @@ export declare class Grade10School {
     mapUrl: string;
     schoolType: string;
     isActive: boolean;
+    isVerified: boolean;
+    latitude: number;
+    longitude: number;
     quotas: Grade10Quota[];
     cutoffs: Grade10Cutoff[];
     createdAt: Date;

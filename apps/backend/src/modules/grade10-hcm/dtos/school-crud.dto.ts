@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsUUID, IsNumber } from 'class-validator';
 
 export class CreateSchoolDto {
   @IsString()
@@ -34,6 +34,22 @@ export class CreateSchoolDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  isVerified?: boolean;
+
+  @IsString()
+  @IsOptional()
+  comments?: string;
+
+  @IsNumber()
+  @IsOptional()
+  latitude?: number;
+
+  @IsNumber()
+  @IsOptional()
+  longitude?: number;
 }
 
 export class UpdateSchoolDto {
@@ -72,4 +88,26 @@ export class UpdateSchoolDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  isVerified?: boolean;
+
+  @IsString()
+  @IsOptional()
+  comments?: string;
+
+  @IsNumber()
+  @IsOptional()
+  latitude?: number;
+
+  @IsNumber()
+  @IsOptional()
+  longitude?: number;
+
+  @IsOptional()
+  cutoffs?: any[];
+
+  @IsOptional()
+  quotas?: any[];
 }

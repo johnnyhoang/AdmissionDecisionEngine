@@ -9,9 +9,15 @@ export declare class Grade10CalcService {
     private readonly cutoffRepo;
     private readonly historyRepo;
     constructor(schoolRepo: Repository<Grade10School>, cutoffRepo: Repository<Grade10Cutoff>, historyRepo: Repository<Grade10History>);
+    private getMacroConfigPath;
+    getMacroConfig(): any;
+    updateMacroConfig(data: any): any;
     calculateScore(dto: CalculateScoreDto): number;
     getRecommendations(dto: GetRecommendationDto): Promise<{
         candidateScore: number;
+        shiftedScore: number;
+        ssf: any;
+        macroConfig: any;
         details: {
             math: number;
             literature: number;
@@ -28,6 +34,12 @@ export declare class Grade10CalcService {
             cutoffNV2: number | null;
             cutoffNV3: number | null;
             diff: number;
+            d1: number;
+            d2: number;
+            d3: number;
+            d4: number;
+            nv2Gap: number | null;
+            nv3Gap: number | null;
             safetyCategory: "SAFE" | "VERY_SAFE" | "COMPETITIVE" | "RISKY" | "VERY_RISKY";
             trend: "UP" | "DOWN" | "STABLE";
             advice: string;
@@ -38,5 +50,16 @@ export declare class Grade10CalcService {
                 score: number;
             }[];
         }[];
+    }>;
+    getComboRecommendations(dto: any): Promise<{
+        minScore: number;
+        maxScore: number;
+        avgScore: number;
+        combos: any;
+        explanations: any;
+        ssf: any;
+        macroConfig: any;
+        maxCommuteDistance: number;
+        adjusted: boolean;
     }>;
 }

@@ -21,6 +21,10 @@ class CreateSchoolDto {
     mapUrl;
     schoolType;
     isActive;
+    isVerified;
+    comments;
+    latitude;
+    longitude;
 }
 exports.CreateSchoolDto = CreateSchoolDto;
 __decorate([
@@ -66,6 +70,26 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], CreateSchoolDto.prototype, "isActive", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreateSchoolDto.prototype, "isVerified", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateSchoolDto.prototype, "comments", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateSchoolDto.prototype, "latitude", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateSchoolDto.prototype, "longitude", void 0);
 class UpdateSchoolDto {
     name;
     code;
@@ -76,6 +100,12 @@ class UpdateSchoolDto {
     mapUrl;
     schoolType;
     isActive;
+    isVerified;
+    comments;
+    latitude;
+    longitude;
+    cutoffs;
+    quotas;
 }
 exports.UpdateSchoolDto = UpdateSchoolDto;
 __decorate([
@@ -123,4 +153,32 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], UpdateSchoolDto.prototype, "isActive", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], UpdateSchoolDto.prototype, "isVerified", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateSchoolDto.prototype, "comments", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateSchoolDto.prototype, "latitude", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateSchoolDto.prototype, "longitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateSchoolDto.prototype, "cutoffs", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateSchoolDto.prototype, "quotas", void 0);
 //# sourceMappingURL=school-crud.dto.js.map

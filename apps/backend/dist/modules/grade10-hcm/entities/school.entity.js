@@ -26,6 +26,9 @@ let Grade10School = class Grade10School {
     mapUrl;
     schoolType;
     isActive;
+    isVerified;
+    latitude;
+    longitude;
     quotas;
     cutoffs;
     createdAt;
@@ -79,6 +82,18 @@ __decorate([
     (0, typeorm_1.Column)({ name: 'is_active', default: true }),
     __metadata("design:type", Boolean)
 ], Grade10School.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'is_verified', default: false }),
+    __metadata("design:type", Boolean)
+], Grade10School.prototype, "isVerified", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'latitude', type: 'double precision', nullable: true }),
+    __metadata("design:type", Number)
+], Grade10School.prototype, "latitude", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'longitude', type: 'double precision', nullable: true }),
+    __metadata("design:type", Number)
+], Grade10School.prototype, "longitude", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => quota_entity_1.Grade10Quota, (quota) => quota.school),
     __metadata("design:type", Array)

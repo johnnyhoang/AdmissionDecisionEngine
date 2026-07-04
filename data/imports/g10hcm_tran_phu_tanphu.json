@@ -1,0 +1,36 @@
+{
+  "sourceName": "Sở GD&ĐT TP.HCM - Điểm chuẩn lớp 10 THPT Trần Phú (Tân Phú)",
+  "sourceUrl": "https://thcstranquangkhaitanphu.hcm.edu.vn/tin-tuc-su-kien/cong-bo-diem-chuan-tuyen-sinh-lop-10-nam-hoc-2025-2026/ctmb/27450/709891",
+  "dataYear": 2025,
+  "districts": [
+    {
+      "code": "TAN_PHU",
+      "name": "Tân Phú",
+      "schools": [
+        {
+          "code": "TRAN_PHU",
+          "name": "THPT Trần Phú",
+          "address": "Số 18, đường Lê Thúc Hoạch, Phường Phú Thọ Hoà, Thành phố Hồ Chí Minh",
+          "website": "https://thpttranphu.hcm.edu.vn",
+          "schoolType": "REGULAR",
+          "cutoffs": [
+            {
+              "year": 2024,
+              "cutoffNV1": 23.25,
+              "cutoffNV2": 23.25,
+              "cutoffNV3": 23.5,
+              "dataSource": "Sở GD&ĐT TP.HCM"
+            },
+            {
+              "year": 2025,
+              "cutoffNV1": 22.75,
+              "cutoffNV2": 23.25,
+              "cutoffNV3": 23.5,
+              "dataSource": "Sở GD&ĐT TP.HCM"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

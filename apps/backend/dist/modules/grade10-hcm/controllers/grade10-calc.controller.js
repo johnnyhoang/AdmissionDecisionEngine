@@ -26,6 +26,12 @@ let Grade10CalcController = class Grade10CalcController {
     constructor(calcService) {
         this.calcService = calcService;
     }
+    async getMacroConfig() {
+        return this.calcService.getMacroConfig();
+    }
+    async updateMacroConfig(body) {
+        return this.calcService.updateMacroConfig(body);
+    }
     async calculate(dto) {
         const finalScore = this.calcService.calculateScore(dto);
         return { finalScore };
@@ -33,8 +39,26 @@ let Grade10CalcController = class Grade10CalcController {
     async getRecommendations(dto) {
         return this.calcService.getRecommendations(dto);
     }
+    async getComboRecommendations(dto) {
+        return this.calcService.getComboRecommendations(dto);
+    }
 };
 exports.Grade10CalcController = Grade10CalcController;
+__decorate([
+    (0, common_1.Get)('recommendation/macro-config'),
+    (0, require_permission_decorator_1.RequirePermission)('GRADE10', 'view_recommendation', 'view'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], Grade10CalcController.prototype, "getMacroConfig", null);
+__decorate([
+    (0, common_1.Post)('recommendation/macro-config'),
+    (0, require_permission_decorator_1.RequirePermission)('GRADE10', 'manage_schools', 'edit'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], Grade10CalcController.prototype, "updateMacroConfig", null);
 __decorate([
     (0, common_1.Post)('calculate'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
@@ -59,6 +83,18 @@ __decorate([
     __metadata("design:paramtypes", [recommendation_dto_1.GetRecommendationDto]),
     __metadata("design:returntype", Promise)
 ], Grade10CalcController.prototype, "getRecommendations", null);
+__decorate([
+    (0, common_1.Post)('recommendation/combo'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get smart 3-NV combo recommendations',
+    }),
+    (0, require_permission_decorator_1.RequirePermission)('GRADE10', 'view_recommendation', 'view'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [recommendation_dto_1.GetComboRecommendationDto]),
+    __metadata("design:returntype", Promise)
+], Grade10CalcController.prototype, "getComboRecommendations", null);
 exports.Grade10CalcController = Grade10CalcController = __decorate([
     (0, swagger_1.ApiTags)('grade10-hcm-calculator'),
     (0, common_1.Controller)('api/v1/grade10-hcm'),

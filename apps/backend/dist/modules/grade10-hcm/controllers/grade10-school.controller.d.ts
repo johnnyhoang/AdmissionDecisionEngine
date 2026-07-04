@@ -20,6 +20,9 @@ export declare class Grade10SchoolController {
             mapUrl: string;
             schoolType: string;
             isActive: boolean;
+            isVerified: boolean;
+            latitude: number;
+            longitude: number;
             quotas: import("../entities/quota.entity").Grade10Quota[];
             cutoffs: import("../entities/cutoff.entity").Grade10Cutoff[];
             createdAt: Date;
@@ -39,6 +42,63 @@ export declare class Grade10SchoolController {
     getAnalytics(): Promise<{
         latestYear: any;
         topSchools: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            cutoffNV1: number;
+            year: number;
+        }[];
+        bottomSchools: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            cutoffNV1: number;
+            year: number;
+        }[];
+        topQuota: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            quota: number;
+            year: number;
+        }[];
+        topRatio: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            ratio: number;
+            year: number;
+        }[];
+        bottomRatio: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            ratio: number;
+            year: number;
+        }[];
+        topIncrease: {
+            schoolId: any;
+            schoolName: any;
+            schoolCode: any;
+            districtName: any;
+            cutoffNew: number;
+            cutoffOld: number;
+            diff: number;
+        }[];
+        topRegistered: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            registeredCount: number;
+            year: number;
+        }[];
+        topSpecialized: {
             schoolId: string;
             schoolName: string;
             schoolCode: string;
@@ -98,6 +158,9 @@ export declare class Grade10SchoolController {
         mapUrl: string;
         schoolType: string;
         isActive: boolean;
+        isVerified: boolean;
+        latitude: number;
+        longitude: number;
         cutoffs: import("../entities/cutoff.entity").Grade10Cutoff[];
         createdAt: Date;
         updatedAt: Date;
@@ -116,6 +179,9 @@ export declare class Grade10SchoolController {
         mapUrl: string;
         schoolType: string;
         isActive: boolean;
+        isVerified: boolean;
+        latitude: number;
+        longitude: number;
         quotas: import("../entities/quota.entity").Grade10Quota[];
         cutoffs: import("../entities/cutoff.entity").Grade10Cutoff[];
         createdAt: Date;
@@ -124,4 +190,5 @@ export declare class Grade10SchoolController {
     createSchool(dto: CreateSchoolDto): Promise<import("../entities/school.entity").Grade10School>;
     updateSchool(id: string, dto: UpdateSchoolDto): Promise<import("../entities/school.entity").Grade10School>;
     deleteSchool(id: string): Promise<void>;
+    mergeSchools(primaryId: string, secondaryId: string, mergedData: any): Promise<import("../entities/school.entity").Grade10School>;
 }

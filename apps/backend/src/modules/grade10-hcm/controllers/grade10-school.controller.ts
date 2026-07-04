@@ -115,4 +115,16 @@ export class Grade10SchoolController {
   async deleteSchool(@Param('id') id: string) {
     await this.schoolService.deleteSchool(id);
   }
+
+  @Post('merge')
+  @ApiOperation({ summary: 'Merge two high schools' })
+  @RequirePermission('GRADE10', 'edit_data', 'edit')
+  async mergeSchools(
+    @Body('primaryId') primaryId: string,
+    @Body('secondaryId') secondaryId: string,
+    @Body('mergedData') mergedData: any,
+  ) {
+    return this.schoolService.mergeSchools(primaryId, secondaryId, mergedData);
+  }
+
 }

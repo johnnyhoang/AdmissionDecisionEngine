@@ -221,10 +221,15 @@ export interface G10SchoolItem {
   mapUrl?: string;
   schoolType: string;
   isActive: boolean;
+  isVerified?: boolean;
+  latitude?: number;
+  longitude?: number;
   latestCutoffNV1?: number;
   latestCutoffNV2?: number;
   latestCutoffNV3?: number;
   latestYear?: number;
+  latestQuota?: number;
+  latestCompetitionRatio?: number;
   district?: {
     id: string;
     name: string;
@@ -241,6 +246,12 @@ export interface G10RecommendationItem {
   cutoffNV2: number | null;
   cutoffNV3: number | null;
   diff: number;
+  d1: number;
+  d2: number;
+  d3: number;
+  d4: number;
+  nv2Gap: number | null;
+  nv3Gap: number | null;
   safetyCategory: 'VERY_SAFE' | 'SAFE' | 'COMPETITIVE' | 'RISKY' | 'VERY_RISKY';
   trend: 'UP' | 'DOWN' | 'STABLE';
   probability: number;
@@ -307,6 +318,47 @@ export const calculateG10Score = async (scores: { math: number; literature: numb
     body: JSON.stringify(scores),
   });
   if (!res.ok) throw new Error('Tính điểm thi lớp 10 thất bại');
+  return res.json();
+};
+
+
+export const getG10ComboRecommendations = async (payload: {
+  minMath: number;
+  maxMath: number;
+  minLiterature: number;
+  maxLiterature: number;
+  minEnglish: number;
+  maxEnglish: number;
+  priority?: number;
+  bonus?: number;
+  userLat?: number;
+  userLon?: number;
+  dreamSchoolCode?: string;
+  maxCommuteDistance?: number;
+}): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/recommendation/combo`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Không thể tải đề xuất combo nguyện vọng');
+  return res.json();
+};
+
+
+export const getG10MacroConfig = async (): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/recommendation/macro-config`);
+  if (!res.ok) throw new Error('Không thể tải cấu hình vĩ mô');
+  return res.json();
+};
+
+export const updateG10MacroConfig = async (payload: any): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/recommendation/macro-config`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Không thể cập nhật cấu hình vĩ mô');
   return res.json();
 };
 
@@ -435,5 +487,23 @@ export const updateUserPermissions = async (userId: string, permissions: any[]):
     body: JSON.stringify({ permissions }),
   });
   if (!res.ok) throw new Error('Không thể cập nhật phân quyền người dùng');
+  return res.json();
+};
+
+export const mergeG10Schools = async (primaryId: string, secondaryId: string, mergedData: any): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/merge`, {
+    method: 'POST',
+    body: JSON.stringify({ primaryId, secondaryId, mergedData }),
+  });
+  if (!res.ok) throw new Error('Không thể merge trường');
+  return res.json();
+};
+
+export const updateG10School = async (id: string, data: any): Promise<any> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Không thể cập nhật trường');
   return res.json();
 };

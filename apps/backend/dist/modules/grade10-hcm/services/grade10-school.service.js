@@ -42,12 +42,15 @@ let Grade10SchoolService = class Grade10SchoolService {
             .leftJoinAndSelect('school.district', 'district')
             .where('school.isActive = :isActive', { isActive: true });
         if (filters.search) {
-            query.andWhere('(school.name ILIKE :search OR school.code ILIKE :search)', { search: `%${filters.search}%` });
+            query.andWhere('(unaccent(school.name) ILIKE unaccent(:search) OR unaccent(school.code) ILIKE unaccent(:search))', { search: `%${filters.search}%` });
         }
         if (filters.districtId) {
-            query.andWhere('school.districtId = :districtId', {
-                districtId: filters.districtId,
-            });
+            const districtIds = filters.districtId.split(',').map(id => id.trim()).filter(id => id);
+            if (districtIds.length > 0) {
+                query.andWhere('school.districtId IN (:...districtIds)', {
+                    districtIds,
+                });
+            }
         }
         const [items, total] = await query
             .skip(skip)
@@ -179,6 +182,136 @@ let Grade10SchoolService = class Grade10SchoolService {
             cutoffNV1: Number(c.cutoffNV1),
             year: c.year,
         }));
+        const bottomSchoolsRaw = await this.cutoffRepo
+            .createQueryBuilder('cutoff')
+            .leftJoinAndSelect('cutoff.school', 'school')
+            .leftJoinAndSelect('school.district', 'district')
+            .where('cutoff.year = :year', { year: latestYear })
+            .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+            .andWhere('cutoff.cutoffNV1 > 0')
+            .orderBy('cutoff.cutoffNV1', 'ASC')
+            .limit(10)
+            .getMany();
+        const bottomSchools = bottomSchoolsRaw.map((c) => ({
+            schoolId: c.school.id,
+            schoolName: c.school.name,
+            schoolCode: c.school.code,
+            districtName: c.school.district?.name || 'N/A',
+            cutoffNV1: Number(c.cutoffNV1),
+            year: c.year,
+        }));
+        const topQuotaRaw = await this.quotaRepo
+            .createQueryBuilder('quota')
+            .leftJoinAndSelect('quota.school', 'school')
+            .leftJoinAndSelect('school.district', 'district')
+            .where('quota.year = :year', { year: latestYear })
+            .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+            .orderBy('quota.quota', 'DESC')
+            .limit(10)
+            .getMany();
+        const topQuota = topQuotaRaw.map((q) => ({
+            schoolId: q.school.id,
+            schoolName: q.school.name,
+            schoolCode: q.school.code,
+            districtName: q.school.district?.name || 'N/A',
+            quota: Number(q.quota),
+            year: q.year,
+        }));
+        const topRatioRaw = await this.quotaRepo
+            .createQueryBuilder('quota')
+            .leftJoinAndSelect('quota.school', 'school')
+            .leftJoinAndSelect('school.district', 'district')
+            .where('quota.year = :year', { year: latestYear })
+            .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+            .orderBy('quota.competitionRatio', 'DESC')
+            .limit(10)
+            .getMany();
+        const topRatio = topRatioRaw.map((q) => ({
+            schoolId: q.school.id,
+            schoolName: q.school.name,
+            schoolCode: q.school.code,
+            districtName: q.school.district?.name || 'N/A',
+            ratio: Number(q.competitionRatio),
+            year: q.year,
+        }));
+        const bottomRatioRaw = await this.quotaRepo
+            .createQueryBuilder('quota')
+            .leftJoinAndSelect('quota.school', 'school')
+            .leftJoinAndSelect('school.district', 'district')
+            .where('quota.year = :year', { year: latestYear })
+            .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+            .andWhere('quota.competitionRatio > 0')
+            .orderBy('quota.competitionRatio', 'ASC')
+            .limit(10)
+            .getMany();
+        const bottomRatio = bottomRatioRaw.map((q) => ({
+            schoolId: q.school.id,
+            schoolName: q.school.name,
+            schoolCode: q.school.code,
+            districtName: q.school.district?.name || 'N/A',
+            ratio: Number(q.competitionRatio),
+            year: q.year,
+        }));
+        const diffSchoolsRaw = await this.cutoffRepo
+            .createQueryBuilder('c1')
+            .innerJoin(cutoff_entity_1.Grade10Cutoff, 'c2', 'c1.schoolId = c2.schoolId AND c2.year = :prevYear AND c2.programType = :pt', { prevYear: latestYear - 1, pt: 'REGULAR' })
+            .leftJoinAndSelect('c1.school', 'school')
+            .leftJoinAndSelect('school.district', 'district')
+            .select('school.id', 'schoolId')
+            .addSelect('school.name', 'schoolName')
+            .addSelect('school.code', 'schoolCode')
+            .addSelect('district.name', 'districtName')
+            .addSelect('c1.cutoffNV1', 'cutoffNew')
+            .addSelect('c2.cutoffNV1', 'cutoffOld')
+            .addSelect('(c1.cutoffNV1 - c2.cutoffNV1)', 'diff')
+            .where('c1.year = :year', { year: latestYear })
+            .andWhere('c1.programType = :pt', { pt: 'REGULAR' })
+            .orderBy('diff', 'DESC')
+            .limit(10)
+            .getRawMany();
+        const topIncrease = diffSchoolsRaw.map((r) => ({
+            schoolId: r.schoolId,
+            schoolName: r.schoolName,
+            schoolCode: r.schoolCode,
+            districtName: r.districtName || 'N/A',
+            cutoffNew: Number(r.cutoffNew),
+            cutoffOld: Number(r.cutoffOld),
+            diff: Number(Number(r.diff).toFixed(2)),
+        }));
+        const topRegisteredRaw = await this.quotaRepo
+            .createQueryBuilder('quota')
+            .leftJoinAndSelect('quota.school', 'school')
+            .leftJoinAndSelect('school.district', 'district')
+            .where('quota.year = :year', { year: latestYear })
+            .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+            .orderBy('quota.registeredCount', 'DESC')
+            .limit(10)
+            .getMany();
+        const topRegistered = topRegisteredRaw.map((q) => ({
+            schoolId: q.school.id,
+            schoolName: q.school.name,
+            schoolCode: q.school.code,
+            districtName: q.school.district?.name || 'N/A',
+            registeredCount: Number(q.registeredCount),
+            year: q.year,
+        }));
+        const topSpecializedRaw = await this.cutoffRepo
+            .createQueryBuilder('cutoff')
+            .leftJoinAndSelect('cutoff.school', 'school')
+            .leftJoinAndSelect('school.district', 'district')
+            .where('cutoff.year = :year', { year: latestYear })
+            .andWhere('school.schoolType = :st', { st: 'SPECIALIZED' })
+            .orderBy('cutoff.cutoffNV1', 'DESC')
+            .limit(10)
+            .getMany();
+        const topSpecialized = topSpecializedRaw.map((c) => ({
+            schoolId: c.school.id,
+            schoolName: c.school.name,
+            schoolCode: c.school.code,
+            districtName: c.school.district?.name || 'N/A',
+            cutoffNV1: Number(c.cutoffNV1),
+            year: c.year,
+        }));
         const districtStats = await this.cutoffRepo
             .createQueryBuilder('cutoff')
             .leftJoin('cutoff.school', 'school')
@@ -216,6 +349,13 @@ let Grade10SchoolService = class Grade10SchoolService {
         return {
             latestYear,
             topSchools,
+            bottomSchools,
+            topQuota,
+            topRatio,
+            bottomRatio,
+            topIncrease,
+            topRegistered,
+            topSpecialized,
             districtAverages,
             trends,
         };
@@ -286,6 +426,38 @@ let Grade10SchoolService = class Grade10SchoolService {
             }
         }
         return { created, skipped };
+    }
+    async mergeSchools(primaryId, secondaryId, mergedData) {
+        const primary = await this.schoolRepo.findOneBy({ id: primaryId });
+        const secondary = await this.schoolRepo.findOneBy({ id: secondaryId });
+        if (!primary || !secondary) {
+            throw new common_1.NotFoundException('One or both schools not found');
+        }
+        if (mergedData.cutoffs && Array.isArray(mergedData.cutoffs)) {
+            await this.cutoffRepo.delete({ schoolId: primaryId });
+            await this.cutoffRepo.delete({ schoolId: secondaryId });
+            const newCutoffs = mergedData.cutoffs.map((c) => this.cutoffRepo.create({
+                ...c,
+                schoolId: primaryId
+            }));
+            await this.cutoffRepo.save(newCutoffs);
+        }
+        if (mergedData.quotas && Array.isArray(mergedData.quotas)) {
+            await this.quotaRepo.delete({ schoolId: primaryId });
+            await this.quotaRepo.delete({ schoolId: secondaryId });
+            const newQuotas = mergedData.quotas.map((q) => this.quotaRepo.create({
+                ...q,
+                schoolId: primaryId
+            }));
+            await this.quotaRepo.save(newQuotas);
+        }
+        const basicData = { ...mergedData };
+        delete basicData.cutoffs;
+        delete basicData.quotas;
+        Object.assign(primary, basicData);
+        await this.schoolRepo.save(primary);
+        await this.schoolRepo.remove(secondary);
+        return primary;
     }
 };
 exports.Grade10SchoolService = Grade10SchoolService;

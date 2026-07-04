@@ -50,6 +50,15 @@ export class Grade10School {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
+  @Column({ name: 'is_verified', default: false })
+  isVerified: boolean;
+
+  @Column({ name: 'latitude', type: 'double precision', nullable: true })
+  latitude: number;
+
+  @Column({ name: 'longitude', type: 'double precision', nullable: true })
+  longitude: number;
+
   @OneToMany(() => Grade10Quota, (quota) => quota.school)
   quotas: Grade10Quota[];
 

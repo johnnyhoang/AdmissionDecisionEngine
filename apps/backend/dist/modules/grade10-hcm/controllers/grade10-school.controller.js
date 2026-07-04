@@ -58,6 +58,9 @@ let Grade10SchoolController = class Grade10SchoolController {
     async deleteSchool(id) {
         await this.schoolService.deleteSchool(id);
     }
+    async mergeSchools(primaryId, secondaryId, mergedData) {
+        return this.schoolService.mergeSchools(primaryId, secondaryId, mergedData);
+    }
 };
 exports.Grade10SchoolController = Grade10SchoolController;
 __decorate([
@@ -168,6 +171,17 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], Grade10SchoolController.prototype, "deleteSchool", null);
+__decorate([
+    (0, common_1.Post)('merge'),
+    (0, swagger_1.ApiOperation)({ summary: 'Merge two high schools' }),
+    (0, require_permission_decorator_1.RequirePermission)('GRADE10', 'edit_data', 'edit'),
+    __param(0, (0, common_1.Body)('primaryId')),
+    __param(1, (0, common_1.Body)('secondaryId')),
+    __param(2, (0, common_1.Body)('mergedData')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], Grade10SchoolController.prototype, "mergeSchools", null);
 exports.Grade10SchoolController = Grade10SchoolController = __decorate([
     (0, swagger_1.ApiTags)('grade10-hcm-schools'),
     (0, common_1.Controller)('api/v1/grade10-hcm/schools'),

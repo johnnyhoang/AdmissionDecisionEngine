@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetRecommendationDto = void 0;
+exports.GetComboRecommendationDto = exports.GetRecommendationDto = void 0;
 const class_validator_1 = require("class-validator");
 class GetRecommendationDto {
     math;
@@ -59,4 +59,73 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], GetRecommendationDto.prototype, "targetNV", void 0);
+class GetComboRecommendationDto {
+    minMath;
+    maxMath;
+    minLiterature;
+    maxLiterature;
+    minEnglish;
+    maxEnglish;
+    priority;
+    bonus;
+    userLat;
+    userLon;
+    dreamSchoolCode;
+    maxCommuteDistance;
+}
+exports.GetComboRecommendationDto = GetComboRecommendationDto;
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "minMath", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "maxMath", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "minLiterature", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "maxLiterature", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "minEnglish", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "maxEnglish", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "priority", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "bonus", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "userLat", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "userLon", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], GetComboRecommendationDto.prototype, "dreamSchoolCode", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], GetComboRecommendationDto.prototype, "maxCommuteDistance", void 0);
 //# sourceMappingURL=recommendation.dto.js.map

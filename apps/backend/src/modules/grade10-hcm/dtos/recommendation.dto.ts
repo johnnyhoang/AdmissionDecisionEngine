@@ -32,3 +32,44 @@ export class GetRecommendationDto {
   @IsOptional()
   targetNV?: string; // NV1, NV2, NV3
 }
+
+export class GetComboRecommendationDto {
+  @IsNumber()
+  minMath: number;
+  @IsNumber()
+  maxMath: number;
+
+  @IsNumber()
+  minLiterature: number;
+  @IsNumber()
+  maxLiterature: number;
+
+  @IsNumber()
+  minEnglish: number;
+  @IsNumber()
+  maxEnglish: number;
+
+  @IsNumber()
+  @IsOptional()
+  priority?: number;
+
+  @IsNumber()
+  @IsOptional()
+  bonus?: number;
+
+  @IsNumber()
+  @IsOptional()
+  userLat?: number;
+
+  @IsNumber()
+  @IsOptional()
+  userLon?: number;
+
+  @IsString()
+  @IsOptional()
+  dreamSchoolCode?: string;
+
+  @IsNumber()
+  @IsOptional()
+  maxCommuteDistance?: number;
+}

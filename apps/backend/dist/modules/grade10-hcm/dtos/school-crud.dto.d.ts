@@ -8,6 +8,10 @@ export declare class CreateSchoolDto {
     mapUrl?: string;
     schoolType?: string;
     isActive?: boolean;
+    isVerified?: boolean;
+    comments?: string;
+    latitude?: number;
+    longitude?: number;
 }
 export declare class UpdateSchoolDto {
     name?: string;
@@ -19,4 +23,10 @@ export declare class UpdateSchoolDto {
     mapUrl?: string;
     schoolType?: string;
     isActive?: boolean;
+    isVerified?: boolean;
+    comments?: string;
+    latitude?: number;
+    longitude?: number;
+    cutoffs?: any[];
+    quotas?: any[];
 }

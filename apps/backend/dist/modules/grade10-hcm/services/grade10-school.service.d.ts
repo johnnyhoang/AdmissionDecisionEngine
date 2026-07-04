@@ -32,6 +32,9 @@ export declare class Grade10SchoolService {
             mapUrl: string;
             schoolType: string;
             isActive: boolean;
+            isVerified: boolean;
+            latitude: number;
+            longitude: number;
             quotas: Grade10Quota[];
             cutoffs: Grade10Cutoff[];
             createdAt: Date;
@@ -55,6 +58,9 @@ export declare class Grade10SchoolService {
         mapUrl: string;
         schoolType: string;
         isActive: boolean;
+        isVerified: boolean;
+        latitude: number;
+        longitude: number;
         quotas: Grade10Quota[];
         cutoffs: Grade10Cutoff[];
         createdAt: Date;
@@ -90,6 +96,9 @@ export declare class Grade10SchoolService {
         mapUrl: string;
         schoolType: string;
         isActive: boolean;
+        isVerified: boolean;
+        latitude: number;
+        longitude: number;
         cutoffs: Grade10Cutoff[];
         createdAt: Date;
         updatedAt: Date;
@@ -107,6 +116,63 @@ export declare class Grade10SchoolService {
     getAnalytics(): Promise<{
         latestYear: any;
         topSchools: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            cutoffNV1: number;
+            year: number;
+        }[];
+        bottomSchools: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            cutoffNV1: number;
+            year: number;
+        }[];
+        topQuota: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            quota: number;
+            year: number;
+        }[];
+        topRatio: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            ratio: number;
+            year: number;
+        }[];
+        bottomRatio: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            ratio: number;
+            year: number;
+        }[];
+        topIncrease: {
+            schoolId: any;
+            schoolName: any;
+            schoolCode: any;
+            districtName: any;
+            cutoffNew: number;
+            cutoffOld: number;
+            diff: number;
+        }[];
+        topRegistered: {
+            schoolId: string;
+            schoolName: string;
+            schoolCode: string;
+            districtName: string;
+            registeredCount: number;
+            year: number;
+        }[];
+        topSpecialized: {
             schoolId: string;
             schoolName: string;
             schoolCode: string;
@@ -136,4 +202,5 @@ export declare class Grade10SchoolService {
         created: number;
         skipped: number;
     }>;
+    mergeSchools(primaryId: string, secondaryId: string, mergedData: any): Promise<Grade10School>;
 }
