@@ -375,6 +375,18 @@ export default function Grade10Container() {
               Tổng quan
             </button>
             
+            <button
+              onClick={() => setActiveTab('search')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                activeTab === 'search'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <School className="h-3.5 w-3.5" />
+              Tra cứu trường
+            </button>
+
             {hasPermission('GRADE10', 'view_recommendation', 'view') && (
               <button
                 onClick={() => setActiveTab('calculator')}
@@ -399,23 +411,9 @@ export default function Grade10Container() {
                 }`}
               >
                 <Sparkles className="h-3.5 w-3.5" />
-                Đề xuất Combo
+                Tư vấn NV
               </button>
             )}
-
-
-            
-            <button
-              onClick={() => setActiveTab('search')}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
-                activeTab === 'search'
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-              }`}
-            >
-              <School className="h-3.5 w-3.5" />
-              Tra cứu trường
-            </button>
 
             <button
               onClick={() => setActiveTab('specialized')}
@@ -1573,7 +1571,7 @@ export default function Grade10Container() {
               <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                 <Sparkles className="h-5 w-5 text-indigo-400" />
                 <div className="flex items-center gap-1.5">
-                <h2 className="text-base font-bold text-white m-0">🌈 Đề xuất Combo 3 NV</h2>
+                <h2 className="text-base font-bold text-white m-0">🌈 Tư vấn 3 Nguyện Vọng</h2>
                 <button onClick={() => setHelpModal('combo')} className="p-1 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded transition cursor-pointer" title="Xem cẩm nang chiến thuật">
                   <HelpCircle className="h-4 w-4" />
                 </button>
@@ -1677,7 +1675,7 @@ export default function Grade10Container() {
                   disabled={isComboLoading}
                   className="w-full py-3 bg-indigo-650 hover:bg-indigo-600 active:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition text-xs mt-2"
                 >
-                  {isComboLoading ? 'Đang phân tích dữ liệu...' : '🚀 Đề Xuất Combo Nguyện Vọng'}
+                  {isComboLoading ? 'Đang phân tích dữ liệu...' : '🚀 Tư Vấn Nguyện Vọng'}
                 </button>
               </div>
             </div>
@@ -1692,7 +1690,7 @@ export default function Grade10Container() {
               ) : !comboResult ? (
                 <div className="text-center py-20 bg-slate-900/20 border border-slate-800 rounded-2xl">
                   <HelpCircle className="h-12 w-12 text-slate-500 mx-auto mb-3" />
-                  <p className="text-slate-400 text-sm">Vui lòng nhập khoảng điểm và bấm "Đề Xuất Combo Nguyện Vọng".</p>
+                  <p className="text-slate-400 text-sm">Vui lòng nhập khoảng điểm và bấm "Tư Vấn Nguyện Vọng".</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
@@ -1933,7 +1931,7 @@ export default function Grade10Container() {
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4" onClick={() => setHelpModal(null)}>
           <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-5 border-b border-slate-800">
-              <h2 className="text-sm font-bold text-white m-0">📘 Cẩm Nang: Đề Xuất Combo 3 Nguyện Vọng Thông Minh</h2>
+              <h2 className="text-sm font-bold text-white m-0">📘 Cẩm Nang: Tư Vấn 3 Nguyện Vọng Thông Minh</h2>
               <button onClick={() => setHelpModal(null)} className="text-slate-400 hover:text-white p-1 rounded-lg transition cursor-pointer">✕</button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4 text-slate-300 text-xs leading-relaxed">
@@ -2055,7 +2053,7 @@ export default function Grade10Container() {
         {/* ── SECTION 2: Đề Xuất Combo 3 NV ──────────────────────────────────── */}
         {comboResult && (
           <div>
-            <h2 className="print-section-title" style={{ marginTop: 20 }}>PHẦN 2 — ĐỀ XUẤT COMBO 3 NGUYỆN VỌNG</h2>
+            <h2 className="print-section-title" style={{ marginTop: 20 }}>PHẦN 2 — TƯ VẤN 3 NGUYỆN VỌNG</h2>
 
             {/* Input scores info */}
             <div className="print-card" style={{ marginBottom: 12, background: '#eef2ff', border: '1px solid #c7d2fe' }}>
