@@ -2027,7 +2027,9 @@ export default function Grade10Container() {
           <div>
             <h2 className="print-section-title" style={{ marginTop: 20 }}>PHẦN 2 — ĐỀ XUẤT COMBO 3 NGUYỆN VỌNG</h2>
 
-            {/* TEMP-MARKER-A */}
+            {/* All 3 strategies - each one starts on its own A4 page (see
+                .print-strategy-block) and repeats the score summary at the
+                top so every printed page is readable on its own. */}
             {(['safe', 'effort', 'defense'] as const).map((strategy, si) => {
               const labels: Record<string, string> = {
                 safe: '🛡️ Tab 1: An Toàn — Phân bổ 3 NV theo điểm trung bình dự đoán',
@@ -2037,6 +2039,18 @@ export default function Grade10Container() {
               const schools = comboResult.combos?.[strategy] ?? [];
               return (
                 <div key={strategy} className={si > 0 ? 'print-strategy-block' : ''} style={{ marginBottom: 16 }}>
+                  {/* Combo Score Summary - repeated on top of every combo page */}
+                  <div className="print-card" style={{ marginBottom: 12, background: '#eef2ff', border: '1px solid #c7d2fe' }}>
+                    <strong style={{ color: '#3730a3' }}>Điểm thi dự kiến:</strong>{' '}
+                    <span style={{ fontSize: 15, fontWeight: 900, color: '#4338ca' }}>{comboResult.minScore}đ – {comboResult.maxScore}đ</span>
+                    {' '}(Trung bình xét: <strong>{comboResult.avgScore}đ</strong>)
+                    {comboResult.ssf !== undefined && comboResult.ssf !== 0 && (
+                      <span style={{ marginLeft: 12, fontSize: 10, fontWeight: 700, color: comboResult.ssf > 0 ? '#d97706' : '#059669' }}>
+                        {comboResult.ssf > 0 ? '⚠️ Cạnh tranh tăng nhẹ' : '✨ Điểm chuẩn hạ nhẹ'} ({comboResult.ssf > 0 ? `+${comboResult.ssf}` : comboResult.ssf}đ)
+                      </span>
+                    )}
+                  </div>
+
                   <div style={{ fontWeight: 900, fontSize: 12, color: '#3730a3', background: '#e0e7ff', padding: '4px 10px', borderRadius: 6, marginBottom: 8 }}>
                     {labels[strategy]}
                   </div>
