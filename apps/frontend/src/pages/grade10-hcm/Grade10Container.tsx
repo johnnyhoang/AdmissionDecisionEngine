@@ -454,18 +454,6 @@ export default function Grade10Container() {
           </button>
 
           <button
-            onClick={() => setActiveTab('analytics')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-              activeTab === 'analytics'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <TrendingUp className="h-4 w-4" />
-            Phân tích điểm chuẩn
-          </button>
-
-          <button
             onClick={() => setActiveTab('compare')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition relative ${
               activeTab === 'compare'
@@ -566,6 +554,49 @@ export default function Grade10Container() {
                 </div>
               </div>
             </div>
+            
+            {/* Historical Analytics charts merged into Dashboard */}
+            {analytics ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* 1. District statistics */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-4">
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">Điểm Chuẩn Trung Bình Theo Quận/Huyện</h3>
+                  <div className="h-80 w-full bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={analytics.districtAverages} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                        <XAxis dataKey="districtName" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+                        <YAxis domain={[12, 25]} stroke="#94a3b8" />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
+                        <Bar dataKey="avgCutoff" fill="#6366f1" radius={[4, 4, 0, 0]} name="Điểm chuẩn TB" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* 2. Quota registration trend */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-4">
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">Biến Động Tỉ Lệ Chọi và Chỉ Tiêu Tuyển Sinh</h3>
+                  <div className="h-80 w-full bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={analytics.trends} margin={{ top: 10, right: 30, left: -10, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                        <XAxis dataKey="year" stroke="#94a3b8" tickFormatter={formatSchoolYear} />
+                        <YAxis stroke="#94a3b8" />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
+                        <Legend />
+                        <Line type="monotone" dataKey="totalQuota" stroke="#10b981" name="Chỉ tiêu" strokeWidth={2} />
+                        <Line type="monotone" dataKey="totalRegistered" stroke="#f59e0b" name="Số đăng ký" strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-10 bg-slate-900 border border-slate-800 rounded-2xl text-slate-400 text-xs">
+                Không có dữ liệu phân tích. Vui lòng nạp dữ liệu để hiển thị biểu đồ.
+              </div>
+            )}
           </div>
         )}
 
@@ -983,58 +1014,6 @@ export default function Grade10Container() {
                 );
               })}
             </div>
-          </div>
-        )}
-
-        {/* Tab 4: Historical Analytics charts */}
-        {activeTab === 'analytics' && (
-          <div className="flex flex-col gap-6">
-            <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-              <h2 className="text-base font-bold text-white m-0">Biểu đồ & Phân Tích Thống Kê Tuyển Sinh Lớp 10</h2>
-              <p className="text-xs text-slate-400 m-0">Tổng quan chỉ tiêu, số đăng ký và biến động điểm chuẩn qua các năm học.</p>
-            </div>
-
-            {analytics ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* 1. District statistics */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-4">
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">Điểm Chuẩn Trung Bình Theo Quận/Huyện</h3>
-                  <div className="h-80 w-full bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={analytics.districtAverages} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis dataKey="districtName" stroke="#94a3b8" tick={{ fontSize: 9 }} />
-                        <YAxis domain={[12, 25]} stroke="#94a3b8" />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
-                        <Bar dataKey="avgCutoff" fill="#6366f1" radius={[4, 4, 0, 0]} name="Điểm chuẩn TB" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* 2. Quota registration trend */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow flex flex-col gap-4">
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">Biến Động Tỉ Lệ Chọi và Chỉ Tiêu Tuyển Sinh</h3>
-                  <div className="h-80 w-full bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={analytics.trends} margin={{ top: 10, right: 30, left: -10, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis dataKey="year" stroke="#94a3b8" tickFormatter={formatSchoolYear} />
-                        <YAxis stroke="#94a3b8" />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }} />
-                        <Legend />
-                        <Line type="monotone" dataKey="totalQuota" stroke="#10b981" name="Chỉ tiêu" strokeWidth={2} />
-                        <Line type="monotone" dataKey="totalRegistered" stroke="#f59e0b" name="Số đăng ký" strokeWidth={2} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-10 bg-slate-900 border border-slate-800 rounded-2xl text-slate-400 text-xs">
-                Không có dữ liệu phân tích. Vui lòng import dữ liệu preset lớp 10 để hiển thị biểu đồ.
-              </div>
-            )}
           </div>
         )}
 
