@@ -564,6 +564,14 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
               description:
                 'URL bản đồ Google Maps hoặc toạ độ vị trí của trường',
             },
+            latitude: {
+              type: 'NUMBER',
+              description: 'Vĩ độ tọa độ của trường nếu xác định được',
+            },
+            longitude: {
+              type: 'NUMBER',
+              description: 'Kinh độ tọa độ của trường nếu xác định được',
+            },
             cutoffs: {
               type: 'ARRAY',
               items: {
@@ -756,6 +764,14 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
         website: aiData.website || school.website || null,
         description: aiData.description || school.description || null,
         mapUrl: aiData.mapUrl || school.mapUrl || null,
+        latitude:
+          aiData.latitude !== undefined && aiData.latitude !== null
+            ? Number(aiData.latitude)
+            : school.latitude || null,
+        longitude:
+          aiData.longitude !== undefined && aiData.longitude !== null
+            ? Number(aiData.longitude)
+            : school.longitude || null,
         type: 'GRADE10',
         results,
       };
@@ -878,6 +894,14 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
           website: dto.website,
           description: dto.description,
           mapUrl: dto.mapUrl,
+          latitude:
+            dto.latitude !== undefined && dto.latitude !== null
+              ? Number(dto.latitude)
+              : undefined,
+          longitude:
+            dto.longitude !== undefined && dto.longitude !== null
+              ? Number(dto.longitude)
+              : undefined,
         });
         school = await this.grade10SchoolRepo.save(school);
       } else {
@@ -899,8 +923,22 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
           changed = true;
         }
         if (dto.mapUrl && school.mapUrl !== dto.mapUrl) {
-          school.mapUrl = dto.mapUrl;
+          school.mapUrl = dto.mapUrl ?? null;
           changed = true;
+        }
+        if (dto.latitude !== undefined && dto.latitude !== null) {
+          const nextLat = Number(dto.latitude);
+          if (!Number.isNaN(nextLat) && school.latitude !== nextLat) {
+            school.latitude = nextLat;
+            changed = true;
+          }
+        }
+        if (dto.longitude !== undefined && dto.longitude !== null) {
+          const nextLon = Number(dto.longitude);
+          if (!Number.isNaN(nextLon) && school.longitude !== nextLon) {
+            school.longitude = nextLon;
+            changed = true;
+          }
         }
         if (changed) {
           await this.grade10SchoolRepo.save(school);

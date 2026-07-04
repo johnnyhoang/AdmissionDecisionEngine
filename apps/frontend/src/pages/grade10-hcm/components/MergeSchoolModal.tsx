@@ -36,8 +36,11 @@ export default function MergeSchoolModal({ isOpen, onClose, school1, school2, on
           FIELDS.forEach(f => {
             initialData[f.key] = (school1 as any)[f.key] || '';
           });
-          // Note: cutoffs and quotas logic would need complex UI to pick. 
-          // For this POC, we will send an empty array or merge them conceptually.
+          // Note: this modal only lets the admin pick basic profile fields.
+          // Cutoffs and quotas are intentionally NOT sent here - the backend
+          // (Grade10SchoolService.mergeSchools) auto-merges them by
+          // year/programType so no history is lost when the secondary
+          // school is deleted.
           setMergedData(initialData);
         } catch (e) {
           console.error(e);

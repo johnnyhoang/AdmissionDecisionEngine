@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Calculator, Sparkles, BadgeCheck } from 'lucide-react';
-import { fetchG10SchoolDetail } from '../../../services/api';
+import { X, Save, Calculator, Sparkles, BadgeCheck, MapPin, Loader2 } from 'lucide-react';
+import { fetchG10SchoolDetail, resolveG10Location } from '../../../services/api';
 import { formatSchoolYear, getRecentSchoolYears } from '../../../utils/date';
 
 interface EditSchoolModalProps {
@@ -17,6 +17,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
   const [quotasMap, setQuotasMap] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
   const RECENT_YEARS = getRecentSchoolYears(4);
 
@@ -42,6 +43,8 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
         schoolType: data.schoolType || 'REGULAR',
         isActive: data.isActive !== false,
         isVerified: data.isVerified === true,
+        latitude: data.latitude ?? '',
+        longitude: data.longitude ?? '',
       });
 
       // Map cutoffs by year
@@ -98,6 +101,41 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
       
       return { ...prev, [year]: updated };
     });
+  };
+
+  const handleAutoGeocode = async () => {
+    if (!formData.address?.trim()) {
+      alert('Vui lòng nhập địa chỉ trước khi lấy tọa độ.');
+      return;
+    }
+    setIsGeocoding(true);
+    try {
+      const resolved = await resolveG10Location({
+        name: formData.name,
+        address: formData.address,
+        mapUrl: formData.mapUrl,
+        latitude: formData.latitude || undefined,
+        longitude: formData.longitude || undefined,
+      });
+      setFormData((prev: any) => ({
+        ...prev,
+        latitude: resolved.latitude,
+        longitude: resolved.longitude,
+        mapUrl: prev.mapUrl || resolved.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.name + ', ' + formData.address)}`,
+      }));
+      alert(`✅ Đã lấy tọa độ: ${resolved.latitude.toFixed(6)}, ${resolved.longitude.toFixed(6)}`);
+    } catch (e) {
+      alert('Lỗi kết nối khi geocode địa chỉ.');
+    } finally {
+      setIsGeocoding(false);
+    }
+  };
+
+  const handleAutoMapUrl = () => {
+    if (!formData.name) return;
+    const query = encodeURIComponent(formData.name + ', Hồ Chí Minh');
+    const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
+    setFormData((prev: any) => ({ ...prev, mapUrl: url }));
   };
 
   const handleSubmit = async () => {
@@ -182,7 +220,30 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
 
                   <div>
                     <label className="block text-xs font-medium text-slate-400 mb-1">Địa chỉ</label>
-                    <input type="text" name="address" value={formData.address} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
+                    <div className="flex gap-2">
+                      <input type="text" name="address" value={formData.address} onChange={handleBasicChange} className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" placeholder="Số nhà, tên đường, phường/xã, quận..." />
+                      <button
+                        type="button"
+                        onClick={handleAutoGeocode}
+                        disabled={isGeocoding}
+                        title="Tự động lấy vĩ độ từ địa chỉ"
+                        className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer flex items-center gap-1 shrink-0"
+                      >
+                        {isGeocoding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
+                        {isGeocoding ? 'Đang tìm...' : 'Lấy tọa độ'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Vĩ độ (Latitude)</label>
+                      <input type="number" name="latitude" value={formData.latitude} onChange={handleBasicChange} step="0.000001" className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white font-mono" placeholder="10.7769..." />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Kinh độ (Longitude)</label>
+                      <input type="number" name="longitude" value={formData.longitude} onChange={handleBasicChange} step="0.000001" className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white font-mono" placeholder="106.6956..." />
+                    </div>
                   </div>
 
                   <div>
@@ -205,8 +266,16 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Google Maps Embedded URL</label>
-                    <input type="text" name="mapUrl" value={formData.mapUrl} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
+                    <label className="block text-xs font-medium text-slate-400 mb-1 flex items-center justify-between">
+                      Google Maps URL
+                      <button type="button" onClick={handleAutoMapUrl} className="text-indigo-400 hover:text-indigo-300 text-[10px] font-bold underline cursor-pointer">
+                        Tự động tạo từ tên trường
+                      </button>
+                    </label>
+                    <input type="text" name="mapUrl" value={formData.mapUrl} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" placeholder="https://www.google.com/maps/..." />
+                    {formData.mapUrl && (
+                      <a href={formData.mapUrl} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline text-xs mt-1 inline-block">→ Mở bản đồ để xác nhận</a>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2 mt-2">

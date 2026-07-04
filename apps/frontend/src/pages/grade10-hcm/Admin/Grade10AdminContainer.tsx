@@ -392,6 +392,8 @@ export default function Grade10AdminContainer() {
             website: res.website || undefined,
             description: res.description || undefined,
             mapUrl: res.mapUrl || undefined,
+            latitude: res.latitude || undefined,
+            longitude: res.longitude || undefined,
           });
         }
 

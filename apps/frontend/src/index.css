@@ -1,9 +1,26 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+}
+
 /* Modern Typography - Outfit or Inter can be imported if needed, using system-ui for now */
 @layer base {
   html, body {
     @apply bg-slate-900 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white;
+    min-height: 100%;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 30%),
+      radial-gradient(circle at top right, rgba(236, 72, 153, 0.08), transparent 26%),
+      linear-gradient(180deg, #020617 0%, #0f172a 100%);
+    background-attachment: fixed;
   }
 }
 
@@ -43,16 +60,25 @@
 
 /* Cute Light Theme Overrides (Default) */
 .light-theme {
-  background-color: #fdf6fb !important; /* Soft pastel pinkish-white */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M12 2C11.5 2 11 2.2 10.6 2.6L10 3.2L9.4 2.6C9 2.2 8.5 2 8 2C6.9 2 6 2.9 6 4C6 4.5 6.2 5 6.6 5.4L10 8.8L13.4 5.4C13.8 5 14 4.5 14 4C14 2.9 13.1 2 12 2Z' fill='%23fbcfe8' fill-opacity='0.45'/%3E%3Cpath d='M36 26c-.5 0-1 .2-1.4.6l-.6.6-.6-.6c-.4-.4-.9-.6-1.4-.6-1.1 0-2 .9-2 2 0 .5.2 1 .6 1.4l3.4 3.4 3.4-3.4c.4-.4.6-.9.6-1.4 0-1-1-2-2-2z' fill='%23fbcfe8' fill-opacity='0.45'/%3E%3Cpath d='M24 16c.3 0 .5-.2.5-.5V14c0-.3-.2-.5-.5-.5s-.5.2-.5.5v1.5c0 .3.2.5.5.5zM24 20c.3 0 .5-.2.5-.5V18c0-.3-.2-.5-.5-.5s-.5.2-.5.5v1.5c0 .3.2.5.5.5zM26.5 17.5c0-.3-.2-.5-.5-.5h-1.5c-.3 0-.5.2-.5.5s.2.5.5.5H26c.3 0 .5-.2.5-.5zM22.5 17.5c0-.3-.2-.5-.5-.5h-1.5c-.3 0-.5.2-.5.5s.2.5.5.5H22c.3 0 .5-.2.5-.5z' fill='%23c084fc' fill-opacity='0.35'/%3E%3C/svg%3E") !important; /* Cute floating hearts & sparkles pattern */
-  background-size: 48px 48px !important;
-  color: #312e81 !important; /* Deep indigo text */
+  color-scheme: light;
+  background-color: #fff8fc !important;
+  background-image:
+    radial-gradient(circle at top left, rgba(244, 114, 182, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(168, 85, 247, 0.10), transparent 24%),
+    linear-gradient(180deg, #fffdfc 0%, #fff7fb 100%) !important;
+  color: #1e1b4b !important;
 }
 
 .light-theme .bg-slate-900,
 .light-theme .bg-slate-900\/60,
+.light-theme .bg-slate-900\/80,
+.light-theme .bg-slate-900\/70,
 .light-theme .bg-slate-900\/50,
+.light-theme .bg-slate-900\/40,
 .light-theme .bg-slate-950,
+.light-theme .bg-slate-950\/90,
+.light-theme .bg-slate-950\/80,
+.light-theme .bg-slate-950\/70,
 .light-theme .bg-slate-950\/40,
 .light-theme .bg-slate-950\/45,
 .light-theme .bg-slate-950\/60 {
@@ -63,6 +89,7 @@
 
 .light-theme .border-slate-800,
 .light-theme .border-slate-800\/80,
+.light-theme .border-slate-700,
 .light-theme .border-slate-850 {
   border-color: #f3e8ff !important;
 }
@@ -91,6 +118,10 @@
   color: #312e81 !important;
 }
 
+.light-theme .text-white {
+  color: #1e1b4b !important;
+}
+
 .light-theme h2, .light-theme h3, .light-theme h4 {
   color: #1e1b4b !important;
 }
@@ -112,13 +143,26 @@
 }
 
 .light-theme nav.bg-slate-900 {
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: rgba(255, 250, 252, 0.96) !important;
   border-bottom: 1px solid #f3e8ff !important;
-  box-shadow: 0 4px 6px -1px rgba(167, 139, 250, 0.03) !important;
+  box-shadow: 0 14px 36px -24px rgba(124, 58, 237, 0.30) !important;
+}
+
+.light-theme header.bg-slate-900,
+.light-theme header.bg-slate-900\/60,
+.light-theme header.bg-slate-900\/50,
+.light-theme footer.bg-slate-900,
+.light-theme footer.bg-slate-900\/60,
+.light-theme footer.bg-slate-900\/50 {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 244, 250, 0.92)) !important;
+  border-color: #f3e8ff !important;
+  box-shadow: 0 18px 42px -30px rgba(236, 72, 153, 0.28) !important;
 }
 
 .light-theme select,
-.light-theme input {
+.light-theme input,
+.light-theme textarea {
   background-color: #ffffff !important;
   color: #1e1b4b !important;
   border-color: #e9d5ff !important;
@@ -145,20 +189,29 @@
 
 /* Secondary Button bg-slate-800 Custom Override for Light Mode */
 .light-theme .bg-slate-800,
+.light-theme .bg-slate-700,
 .light-theme a.bg-slate-800,
-.light-theme button.bg-slate-800 {
+.light-theme a.bg-slate-700,
+.light-theme button.bg-slate-800,
+.light-theme button.bg-slate-700 {
   background-color: #f1f5f9 !important;
   border-color: #cbd5e1 !important;
   color: #334155 !important;
 }
 .light-theme .bg-slate-800:hover,
+.light-theme .bg-slate-700:hover,
 .light-theme a.bg-slate-800:hover,
-.light-theme button.bg-slate-800:hover {
+.light-theme a.bg-slate-700:hover,
+.light-theme button.bg-slate-800:hover,
+.light-theme button.bg-slate-700:hover {
   background-color: #e2e8f0 !important;
 }
 .light-theme .bg-slate-800 *,
+.light-theme .bg-slate-700 *,
 .light-theme a.bg-slate-800 *,
-.light-theme button.bg-slate-800 * {
+.light-theme a.bg-slate-700 *,
+.light-theme button.bg-slate-800 *,
+.light-theme button.bg-slate-700 * {
   color: #334155 !important;
 }
 
@@ -249,19 +302,103 @@
 }
 
 @media print {
-  nav, .no-print {
-    display: none !important;
+  /* Hide everything on the page by default using visibility (not display).
+     .print-area is nested several levels deep inside the app's normal
+     component tree (App shell > Grade10Container > ...). display:none on
+     an ancestor removes the whole subtree from rendering and can NEVER be
+     undone by a descendant's own display value - that's why the previous
+     "hide #root's direct children, then re-show .print-area" approach
+     printed a blank page. visibility:hidden doesn't have that problem:
+     descendants can set visibility:visible again regardless of depth. */
+  body * {
+    visibility: hidden !important;
   }
-  body {
+
+  .print-area,
+  .print-area * {
+    visibility: visible !important;
+  }
+
+  /* Basic page setup */
+  @page {
+    size: A4 portrait;
+    margin: 12mm 14mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #1e1b4b !important;
+    font-family: system-ui, sans-serif !important;
+    font-size: 11px !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  .print-area {
+    display: block !important;
+    /* Its (now invisible, but still layout-occupying) siblings/ancestors
+       no longer matter - pull it out of the normal flow and pin it to the
+       top-left of the page so content starts at the top and flows
+       downward across as many A4 pages as needed. */
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     background: white !important;
+    color: #1e1b4b !important;
   }
-  * {
-    color: black !important;
+
+  /* Prevent page breaks inside cards */
+  .print-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border: 1px solid #e0e7ff !important;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    margin-bottom: 8px !important;
+    background: #f8f7ff !important;
+    color: #1e1b4b !important;
   }
-  .bg-indigo-950\/25, .bg-indigo-950\/20, .bg-slate-900\/50 {
-    background: transparent !important;
-    border: 1px solid #ccc !important;
+
+  .print-section-title {
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    color: #3730a3 !important;
+    border-bottom: 2px solid #c7d2fe !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 8px !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  .print-strategy-block {
+    page-break-before: always;
+    break-before: always;
+  }
+
+  .print-strategy-block:first-child {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+
+  .print-nv-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .print-prob {
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  /* Hide screen-only interactive elements */
+  .no-print, nav, header, footer, button {
+    display: none !important;
   }
 }

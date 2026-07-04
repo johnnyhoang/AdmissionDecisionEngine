@@ -11,11 +11,13 @@ import { Grade10ActivityLog } from './entities/activity-log.entity';
 import { Grade10SchoolService } from './services/grade10-school.service';
 import { Grade10CalcService } from './services/grade10-calc.service';
 import { Grade10ImportService } from './services/grade10-import.service';
+import { Grade10LocationService } from './services/grade10-location.service';
 
 import { Grade10SchoolController } from './controllers/grade10-school.controller';
 import { Grade10CalcController } from './controllers/grade10-calc.controller';
 import { Grade10AdminController } from './controllers/grade10-admin.controller';
 import { Grade10ActivityLogController } from './controllers/grade10-activity-log.controller';
+import { Grade10LocationController } from './controllers/grade10-location.controller';
 
 @Module({
   imports: [
@@ -34,8 +36,14 @@ import { Grade10ActivityLogController } from './controllers/grade10-activity-log
     Grade10CalcController,
     Grade10AdminController,
     Grade10ActivityLogController,
+    Grade10LocationController,
   ],
-  providers: [Grade10SchoolService, Grade10CalcService, Grade10ImportService],
+  providers: [
+    Grade10SchoolService,
+    Grade10CalcService,
+    Grade10ImportService,
+    Grade10LocationService,
+  ],
   exports: [
     Grade10SchoolService,
     Grade10CalcService,

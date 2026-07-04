@@ -12,7 +12,9 @@ import {
   IsEnum,
   IsNotEmpty,
   IsArray,
+  IsNumber,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { AiAssistantService } from './ai-assistant.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AdminRoleGuard } from '../auth/admin-role.guard';
@@ -85,6 +87,16 @@ export class ImportCutoffsDto {
   @IsString()
   @IsOptional()
   mapUrl?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  latitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  longitude?: number;
 }
 
 @Controller('api/v1/ai')

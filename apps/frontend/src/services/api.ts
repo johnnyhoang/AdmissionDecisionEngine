@@ -230,6 +230,11 @@ export interface G10SchoolItem {
   latestYear?: number;
   latestQuota?: number;
   latestCompetitionRatio?: number;
+  straightDistanceKm?: number;
+  roadDistanceKm?: number;
+  roadDurationMin?: number;
+  distanceSource?: string;
+  distancePrecision?: string;
   district?: {
     id: string;
     name: string;
@@ -271,6 +276,82 @@ export interface G10RecommendationResult {
   };
   recommendations: G10RecommendationItem[];
 }
+
+export interface G10LocationResult {
+  latitude: number;
+  longitude: number;
+  formattedAddress?: string | null;
+  mapUrl?: string | null;
+  source: string;
+  precision: 'exact' | 'approximate';
+}
+
+export const resolveG10Location = async (payload: {
+  name?: string;
+  address?: string;
+  districtName?: string;
+  mapUrl?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+}): Promise<G10LocationResult> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/location/geocode`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Không thể xác định tọa độ địa lý');
+  return res.json();
+};
+
+export const fetchNearbyG10Schools = async (payload: {
+  userLat: number;
+  userLon: number;
+  limit?: number;
+  maxDistanceKm?: number;
+  search?: string;
+  districtId?: string;
+}): Promise<{ items: G10SchoolItem[]; total: number }> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/location/nearby-schools`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Không thể tải danh sách trường gần nhất');
+  return res.json();
+};
+
+export const fetchG10TravelPoints = async (payload: {
+  origin: {
+    name?: string;
+    address?: string;
+    districtName?: string;
+    mapUrl?: string;
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  points: Array<{
+    id?: string;
+    name?: string;
+    address?: string;
+    districtName?: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    mapUrl?: string | null;
+  }>;
+}): Promise<Array<G10SchoolItem & {
+  straightDistanceKm?: number;
+  roadDistanceKm?: number;
+  roadDurationMin?: number;
+  distanceSource?: string;
+}>> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/location/travel-points`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Không thể tính khoảng cách di chuyển');
+  return res.json();
+};
 
 export const fetchG10Schools = async (search = '', districtId = ''): Promise<{ items: G10SchoolItem[]; total: number }> => {
   const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`);
@@ -463,6 +544,8 @@ export const importAiCutoffs = async (payload: {
   website?: string;
   description?: string;
   mapUrl?: string;
+  latitude?: number;
+  longitude?: number;
 }): Promise<any> => {
 
   const res = await apiFetch(`${API_BASE_URL}/ai/import-cutoffs`, {

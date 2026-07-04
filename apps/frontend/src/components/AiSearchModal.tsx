@@ -190,6 +190,8 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         website: aiData.website || undefined,
         description: aiData.description || undefined,
         mapUrl: aiData.mapUrl || undefined,
+        latitude: aiData.latitude || undefined,
+        longitude: aiData.longitude || undefined,
       });
       setStep('success');
       if (onImportSuccess) onImportSuccess();

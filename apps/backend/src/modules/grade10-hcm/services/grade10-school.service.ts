@@ -8,6 +8,7 @@ import { Grade10District } from '../entities/district.entity';
 import { Grade10Quota } from '../entities/quota.entity';
 import { Grade10Cutoff } from '../entities/cutoff.entity';
 import { CreateSchoolDto, UpdateSchoolDto } from '../dtos/school-crud.dto';
+import { Grade10LocationService } from './grade10-location.service';
 
 @Injectable()
 export class Grade10SchoolService {
@@ -20,6 +21,7 @@ export class Grade10SchoolService {
     private readonly quotaRepo: Repository<Grade10Quota>,
     @InjectRepository(Grade10Cutoff)
     private readonly cutoffRepo: Repository<Grade10Cutoff>,
+    private readonly locationService: Grade10LocationService,
   ) {}
 
   async findAll(filters: {
@@ -150,15 +152,153 @@ export class Grade10SchoolService {
     };
   }
 
+  async findNearbySchools(filters: {
+    userLat: number;
+    userLon: number;
+    limit?: number;
+    maxDistanceKm?: number;
+    search?: string;
+    districtId?: string;
+  }) {
+    const limit = Math.min(Math.max(Number(filters.limit || 15), 1), 50);
+    const query = this.schoolRepo
+      .createQueryBuilder('school')
+      .leftJoinAndSelect('school.district', 'district')
+      .where('school.isActive = :isActive', { isActive: true });
+
+    if (filters.search) {
+      query.andWhere(
+        '(unaccent(school.name) ILIKE unaccent(:search) OR unaccent(school.code) ILIKE unaccent(:search))',
+        { search: `%${filters.search}%` },
+      );
+    }
+
+    if (filters.districtId) {
+      const districtIds = filters.districtId
+        .split(',')
+        .map((id) => id.trim())
+        .filter((id) => id);
+      if (districtIds.length > 0) {
+        query.andWhere('school.districtId IN (:...districtIds)', {
+          districtIds,
+        });
+      }
+    }
+
+    const schools = await query.orderBy('school.name', 'ASC').getMany();
+    if (schools.length === 0) {
+      return { items: [], total: 0 };
+    }
+
+    const travelPoints = await this.locationService.enrichTravelPoints(
+      {
+        latitude: filters.userLat,
+        longitude: filters.userLon,
+        districtName: 'Hồ Chí Minh',
+      },
+      schools.map((school) => ({
+        id: school.id,
+        name: school.name,
+        address: school.address || undefined,
+        districtName: school.district?.name,
+        latitude: school.latitude ?? null,
+        longitude: school.longitude ?? null,
+        mapUrl: school.mapUrl ?? null,
+      })),
+    );
+
+    const latestCutoffs = await this.cutoffRepo
+      .createQueryBuilder('cutoff')
+      .leftJoinAndSelect('cutoff.school', 'school')
+      .leftJoinAndSelect('school.district', 'district')
+      .where('cutoff.schoolId IN (:...schoolIds)', {
+        schoolIds: schools.map((school) => school.id),
+      })
+      .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .orderBy('cutoff.year', 'DESC')
+      .getMany();
+
+    const items = travelPoints
+      .map((point) => {
+        const school = schools.find((item) => item.id === point.id);
+        if (!school) return null;
+        const schoolCutoffs = latestCutoffs.filter(
+          (cutoff) => cutoff.schoolId === school.id,
+        );
+        const latestCutoff = schoolCutoffs[0] || null;
+        const straightDistance = point.straightDistanceKm;
+        const roadDistance = point.roadDistanceKm ?? straightDistance;
+        return {
+          ...school,
+          mapUrl: school.mapUrl || point.mapUrl,
+          latitude: school.latitude ?? point.latitude,
+          longitude: school.longitude ?? point.longitude,
+          latestCutoffNV1: latestCutoff ? Number(latestCutoff.cutoffNV1) : null,
+          latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
+          latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
+          latestYear: latestCutoff ? latestCutoff.year : null,
+          straightDistanceKm: straightDistance,
+          roadDistanceKm: roadDistance,
+          roadDurationMin: point.roadDurationMin,
+          distanceSource: point.distanceSource,
+          distancePrecision: point.precision,
+        };
+      })
+      .filter(Boolean) as any[];
+
+    const filtered = typeof filters.maxDistanceKm === 'number'
+      ? items.filter((item) => item.roadDistanceKm <= filters.maxDistanceKm!)
+      : items;
+
+    filtered.sort((a, b) => a.roadDistanceKm - b.roadDistanceKm);
+
+    return {
+      items: filtered.slice(0, limit),
+      total: filtered.length,
+    };
+  }
+
   async createSchool(dto: CreateSchoolDto) {
-    const school = this.schoolRepo.create(dto);
+    const resolvedLocation = await this.locationService.geocodeLocation({
+      name: dto.name,
+      address: dto.address,
+      mapUrl: dto.mapUrl,
+      latitude: dto.latitude,
+      longitude: dto.longitude,
+    });
+    const school = this.schoolRepo.create({
+      ...dto,
+      latitude: dto.latitude ?? resolvedLocation.latitude,
+      longitude: dto.longitude ?? resolvedLocation.longitude,
+      mapUrl: dto.mapUrl ?? resolvedLocation.mapUrl ?? null,
+    });
     return this.schoolRepo.save(school);
   }
 
   async updateSchool(id: string, dto: UpdateSchoolDto) {
-    const school = await this.schoolRepo.findOne({ where: { id } });
+    const school = await this.schoolRepo.findOne({
+      where: { id },
+      relations: { district: true },
+    });
     if (!school) throw new NotFoundException('Không tìm thấy trường THPT');
+    const resolvedLocation = await this.locationService.geocodeLocation({
+      name: dto.name || school.name,
+      address: dto.address || school.address,
+      districtName: school.districtId ? school.district?.name : undefined,
+      mapUrl: dto.mapUrl || school.mapUrl,
+      latitude: dto.latitude ?? school.latitude,
+      longitude: dto.longitude ?? school.longitude,
+    });
     Object.assign(school, dto);
+    if (dto.latitude === undefined || dto.latitude === null) {
+      school.latitude = resolvedLocation.latitude;
+    }
+    if (dto.longitude === undefined || dto.longitude === null) {
+      school.longitude = resolvedLocation.longitude;
+    }
+    if (!school.mapUrl) {
+      school.mapUrl = resolvedLocation.mapUrl ?? null;
+    }
     return this.schoolRepo.save(school);
   }
 
@@ -584,6 +724,7 @@ export class Grade10SchoolService {
 
     // Process cutoffs from mergedData
     if (mergedData.cutoffs && Array.isArray(mergedData.cutoffs)) {
+      // Explicit curated list from the UI (if ever provided) takes priority
       await this.cutoffRepo.delete({ schoolId: primaryId });
       await this.cutoffRepo.delete({ schoolId: secondaryId });
 
@@ -594,6 +735,25 @@ export class Grade10SchoolService {
         }),
       );
       await this.cutoffRepo.save(newCutoffs);
+    } else {
+      // No curated list from the UI: auto-merge so cutoff history from the
+      // secondary school isn't lost when it gets deleted below (cascade).
+      // Years/programTypes that already exist on the primary school are
+      // kept as-is (primary wins on conflict); everything else is moved over.
+      const [primaryCutoffs, secondaryCutoffs] = await Promise.all([
+        this.cutoffRepo.find({ where: { schoolId: primaryId } }),
+        this.cutoffRepo.find({ where: { schoolId: secondaryId } }),
+      ]);
+      const existingKeys = new Set(
+        primaryCutoffs.map((c) => `${c.year}_${c.programType}`),
+      );
+      const toMove = secondaryCutoffs.filter(
+        (c) => !existingKeys.has(`${c.year}_${c.programType}`),
+      );
+      for (const c of toMove) {
+        c.schoolId = primaryId;
+        await this.cutoffRepo.save(c);
+      }
     }
 
     // Process quotas from mergedData
@@ -608,6 +768,23 @@ export class Grade10SchoolService {
         }),
       );
       await this.quotaRepo.save(newQuotas);
+    } else {
+      // Same auto-merge safeguard as cutoffs above, for quotas
+      // (chỉ tiêu / số đăng ký / tỷ lệ chọi).
+      const [primaryQuotas, secondaryQuotas] = await Promise.all([
+        this.quotaRepo.find({ where: { schoolId: primaryId } }),
+        this.quotaRepo.find({ where: { schoolId: secondaryId } }),
+      ]);
+      const existingKeys = new Set(
+        primaryQuotas.map((q) => `${q.year}_${q.programType}`),
+      );
+      const toMove = secondaryQuotas.filter(
+        (q) => !existingKeys.has(`${q.year}_${q.programType}`),
+      );
+      for (const q of toMove) {
+        q.schoolId = primaryId;
+        await this.quotaRepo.save(q);
+      }
     }
 
     // Clean up basic merged data so we don't save arrays into school

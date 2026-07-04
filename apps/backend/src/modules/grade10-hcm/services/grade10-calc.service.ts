@@ -9,6 +9,7 @@ import { Grade10History } from '../entities/history.entity';
 import { Grade10ActivityLog } from '../entities/activity-log.entity';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
 import { GetRecommendationDto } from '../dtos/recommendation.dto';
+import { Grade10LocationService } from './grade10-location.service';
 
 @Injectable()
 export class Grade10CalcService {
@@ -21,6 +22,7 @@ export class Grade10CalcService {
     private readonly historyRepo: Repository<Grade10History>,
     @InjectRepository(Grade10ActivityLog)
     private readonly activityLogRepo: Repository<Grade10ActivityLog>,
+    private readonly locationService: Grade10LocationService,
   ) {}
 
   private getMacroConfigPath() {
@@ -613,6 +615,40 @@ export class Grade10CalcService {
       ...(defNV2 ? [defNV2.schoolId] : []),
     ]);
     combos.defense = [defNV1, defNV2, defNV3].filter(Boolean);
+
+    if (dto.userLat && dto.userLon) {
+      const enrichCombo = async (combo: any[]) => {
+        if (!combo.length) return combo;
+        const enriched = await this.locationService.enrichTravelPoints(
+          {
+            latitude: dto.userLat,
+            longitude: dto.userLon,
+            districtName: 'Hồ Chí Minh',
+          },
+          combo.map((school) => ({
+            id: school.schoolId,
+            name: school.schoolName,
+            districtName: school.districtName,
+            latitude: school.latitude,
+            longitude: school.longitude,
+          })),
+        );
+
+        return combo.map((school) => {
+          const match = enriched.find((item) => item.id === school.schoolId);
+          return {
+            ...school,
+            roadDistance: match?.roadDistanceKm ?? school.distance,
+            roadDuration: match?.roadDurationMin ?? null,
+            distanceSource: match?.distanceSource ?? 'haversine',
+          };
+        });
+      };
+
+      combos.safe = await enrichCombo(combos.safe);
+      combos.effort = await enrichCombo(combos.effort);
+      combos.defense = await enrichCombo(combos.defense);
+    }
 
     // 8. Generate explanations
     const explanations: any = {};

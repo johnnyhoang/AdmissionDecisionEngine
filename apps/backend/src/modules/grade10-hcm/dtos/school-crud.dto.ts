@@ -5,6 +5,7 @@ import {
   IsUUID,
   IsNumber,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateSchoolDto {
   @IsString()
@@ -50,10 +51,12 @@ export class CreateSchoolDto {
   comments?: string;
 
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   latitude?: number;
 
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   longitude?: number;
 }
@@ -104,10 +107,12 @@ export class UpdateSchoolDto {
   comments?: string;
 
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   latitude?: number;
 
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   longitude?: number;
 

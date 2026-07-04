@@ -6,6 +6,7 @@ import { Grade10District } from '../entities/district.entity';
 import { Grade10Quota } from '../entities/quota.entity';
 import { Grade10Cutoff } from '../entities/cutoff.entity';
 import { Grade10ImportLog } from '../entities/import-log.entity';
+import { Grade10LocationService } from './grade10-location.service';
 
 export interface ImportQuotaDto {
   year: number;
@@ -35,6 +36,8 @@ export interface ImportSchoolDto {
   website?: string;
   description?: string;
   mapUrl?: string;
+  latitude?: number;
+  longitude?: number;
   schoolType?: string;
   quotas?: ImportQuotaDto[];
   cutoffs?: ImportCutoffDto[];
@@ -68,6 +71,7 @@ export class Grade10ImportService {
     private readonly cutoffRepo: Repository<Grade10Cutoff>,
     @InjectRepository(Grade10ImportLog)
     private readonly logRepo: Repository<Grade10ImportLog>,
+    private readonly locationService: Grade10LocationService,
   ) {}
 
   private resolveDataDir(): string {
@@ -175,14 +179,34 @@ export class Grade10ImportService {
                 where: { code: schoolDto.code },
               });
               if (school) {
+                const resolvedLocation = await this.locationService.geocodeLocation({
+                  name: schoolDto.name,
+                  address: schoolDto.address,
+                  districtName: distDto.name,
+                  mapUrl: schoolDto.mapUrl || school.mapUrl,
+                  latitude: schoolDto.latitude ?? school.latitude,
+                  longitude: schoolDto.longitude ?? school.longitude,
+                });
                 school.name = schoolDto.name || school.name;
                 school.address = schoolDto.address || school.address;
                 school.website = schoolDto.website || school.website;
                 school.schoolType = schoolDto.schoolType || school.schoolType;
                 school.districtId = district.id;
+                school.latitude = schoolDto.latitude ?? resolvedLocation.latitude;
+                school.longitude = schoolDto.longitude ?? resolvedLocation.longitude;
+                school.mapUrl =
+                  schoolDto.mapUrl ?? school.mapUrl ?? resolvedLocation.mapUrl ?? null;
                 await this.schoolRepo.save(school);
                 schoolsUpdated++;
               } else {
+                const resolvedLocation = await this.locationService.geocodeLocation({
+                  name: schoolDto.name,
+                  address: schoolDto.address,
+                  districtName: distDto.name,
+                  mapUrl: schoolDto.mapUrl,
+                  latitude: schoolDto.latitude,
+                  longitude: schoolDto.longitude,
+                });
                 school = this.schoolRepo.create({
                   code: schoolDto.code,
                   name: schoolDto.name,
@@ -190,6 +214,9 @@ export class Grade10ImportService {
                   website: schoolDto.website,
                   schoolType: schoolDto.schoolType || 'REGULAR',
                   districtId: district.id,
+                  latitude: schoolDto.latitude ?? resolvedLocation.latitude,
+                  longitude: schoolDto.longitude ?? resolvedLocation.longitude,
+                  mapUrl: schoolDto.mapUrl ?? resolvedLocation.mapUrl ?? null,
                 });
                 school = await this.schoolRepo.save(school);
                 schoolsAdded++;

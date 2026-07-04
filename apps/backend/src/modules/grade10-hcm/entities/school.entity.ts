@@ -33,16 +33,16 @@ export class Grade10School {
   district: Grade10District;
 
   @Column({ nullable: true })
-  address: string;
+  address: string | null;
 
   @Column({ nullable: true })
-  website: string;
+  website: string | null;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description: string | null;
 
   @Column({ name: 'map_url', type: 'text', nullable: true })
-  mapUrl: string;
+  mapUrl: string | null;
 
   @Column({ name: 'school_type', default: 'REGULAR' })
   schoolType: string; // REGULAR, SPECIALIZED, etc.
@@ -54,10 +54,10 @@ export class Grade10School {
   isVerified: boolean;
 
   @Column({ name: 'latitude', type: 'double precision', nullable: true })
-  latitude: number;
+  latitude: number | null;
 
   @Column({ name: 'longitude', type: 'double precision', nullable: true })
-  longitude: number;
+  longitude: number | null;
 
   @OneToMany(() => Grade10Quota, (quota) => quota.school)
   quotas: Grade10Quota[];

@@ -10,6 +10,7 @@ import {
 import {
   fetchG10Schools, fetchG10SchoolDetail, fetchG10Districts,
   fetchG10Analytics, evaluateG10Profile, getG10ComboRecommendations,
+  fetchNearbyG10Schools, resolveG10Location,
 } from '../../services/api';
 import type { G10SchoolItem, G10RecommendationItem } from '../../services/api';
 import AiSearchModal from '../../components/AiSearchModal';
@@ -20,17 +21,20 @@ import { updateG10School } from '../../services/api';
 import { mergeG10Schools } from '../../services/api';
 import { getCurrentSchoolYear, formatSchoolYear } from '../../utils/date';
 import { useAuth } from '../../context/AuthContext';
+import { applyThemeToDocument, readStoredTheme, writeStoredTheme } from '../../utils/theme';
 
 export default function Grade10Container() {
   // ── UI States ──────────────────────────────────────────────────────────────
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('grade10-theme');
-    return (saved === 'dark' || saved === 'light') ? saved : 'light';
+    const saved = readStoredTheme();
+    return saved;
   });
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('grade10-theme', newTheme);
+    setTheme(prev => {
+      const nextTheme = prev === 'light' ? 'dark' : 'light';
+      writeStoredTheme(nextTheme);
+      return nextTheme;
+    });
   };
   const [helpModal, setHelpModal] = useState<'calculator' | 'combo' | null>(null);
   const { user, hasPermission } = useAuth();
@@ -117,6 +121,10 @@ export default function Grade10Container() {
     loadAnalytics();
   }, []);
 
+  useEffect(() => {
+    applyThemeToDocument(theme);
+  }, [theme]);
+
     const loadDistricts = async () => {
     try {
       const data = await fetchG10Districts();
@@ -176,55 +184,20 @@ export default function Grade10Container() {
   const calculateSchoolDistances = async (userLat: number, userLon: number) => {
     setIsLocating(true);
     try {
-      // 1. Calculate straight-line distance to filter top 15 closest schools
-      const tempSchools = schools
-        .filter(s => s.latitude && s.longitude)
-        .map(s => ({
-          ...s,
-          straightDistance: getHaversineDistance(userLat, userLon, s.latitude!, s.longitude!)
-        }))
-        .sort((a, b) => a.straightDistance - b.straightDistance)
-        .slice(0, 15);
-
-      if (tempSchools.length === 0) {
-        alert('Dữ liệu tọa độ của các trường đang được đồng bộ hoặc chưa sẵn sàng. Vui lòng thử lại sau.');
-        return;
-      }
-
-      // 2. Fetch OSRM driving distance for these top 15 schools
-      const coordsString = tempSchools.map(s => `${s.longitude},${s.latitude}`).join(';');
-      const url = `https://router.project-osrm.org/table/v1/driving/${userLon},${userLat};${coordsString}?sources=0`;
-      
-      const osrmRes = await fetch(url);
-      const osrmData = await osrmRes.json();
-
-      if (osrmData && osrmData.code === 'Ok' && osrmData.distances) {
-        const distances = osrmData.distances[0]; // meters from source 0 (user)
-        const durations = osrmData.durations[0]; // seconds from source 0
-
-        const finalSchools = tempSchools.map((s, idx) => {
-          const mDist = distances[idx + 1]; // index 0 is user to user (0)
-          const sDur = durations[idx + 1];
-          return {
-            ...s,
-            roadDistance: mDist ? parseFloat((mDist / 1000).toFixed(2)) : parseFloat(s.straightDistance.toFixed(2)),
-            roadDuration: sDur ? Math.round(sDur / 60) : Math.round(s.straightDistance * 2) // fallback estimate
-          };
-        }).sort((a, b) => a.roadDistance - b.roadDistance);
-
-        setDistanceSchools(finalSchools);
-      } else {
-        // Fallback to straight line
-        const finalSchools = tempSchools.map(s => ({
-          ...s,
-          roadDistance: parseFloat(s.straightDistance.toFixed(2)),
-          roadDuration: Math.round(s.straightDistance * 2)
-        }));
-        setDistanceSchools(finalSchools);
-      }
+      const res = await fetchNearbyG10Schools({
+        userLat,
+        userLon,
+        limit: 15,
+      });
+      setDistanceSchools(
+        (res.items || []).map((school: any) => ({
+          ...school,
+          roadDistance: school.roadDistanceKm ?? school.straightDistanceKm ?? 0,
+          roadDuration: school.roadDurationMin ?? Math.round((school.roadDistanceKm ?? school.straightDistanceKm ?? 0) * 3),
+        })),
+      );
     } catch (e) {
       console.error(e);
-      // Fallback to straight line on fetch failure
       const finalSchools = schools
         .filter(s => s.latitude && s.longitude)
         .map(s => {
@@ -232,7 +205,7 @@ export default function Grade10Container() {
           return {
             ...s,
             roadDistance: parseFloat(d.toFixed(2)),
-            roadDuration: Math.round(d * 2)
+            roadDuration: Math.round(d * 3),
           };
         })
         .sort((a, b) => a.roadDistance - b.roadDistance)
@@ -266,13 +239,14 @@ export default function Grade10Container() {
       
       // If address is entered but not current position, geocode it
       if (comboUserAddress && comboUserAddress !== 'Tọa độ hiện tại của bạn' && !comboGPS) {
-        const q = encodeURIComponent(comboUserAddress + ', Hồ Chí Minh');
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
-        const data = await res.json();
-        if (data && data.length > 0) {
-          lat = parseFloat(data[0].lat);
-          lon = parseFloat(data[0].lon);
-        }
+        const resolved = await resolveG10Location({
+          address: comboUserAddress,
+          districtName: 'Hồ Chí Minh',
+        });
+        lat = resolved.latitude;
+        lon = resolved.longitude;
+        setComboGPS({ lat, lon });
+        setComboUserAddress(resolved.formattedAddress || comboUserAddress);
       }
 
       const res = await getG10ComboRecommendations({
@@ -289,37 +263,6 @@ export default function Grade10Container() {
         dreamSchoolCode: dreamSchoolCode || undefined,
         maxCommuteDistance: parseFloat(maxCommuteDistance),
       });
-
-      // Calculate driving distance for combos using OSRM if coords are available
-      if (lat && lon) {
-        const fetchRoadDistance = async (comboList: any[]) => {
-          if (!comboList || comboList.length === 0) return comboList;
-          try {
-            const valid = comboList.filter(s => s.latitude && s.longitude);
-            if (valid.length === 0) return comboList;
-            const coordsString = valid.map(s => `${s.longitude},${s.latitude}`).join(';');
-            const url = `https://router.project-osrm.org/table/v1/driving/${lon},${lat};${coordsString}?sources=0`;
-            const osrmRes = await fetch(url);
-            const osrmData = await osrmRes.json();
-            if (osrmData && osrmData.code === 'Ok' && osrmData.distances) {
-              const distances = osrmData.distances[0];
-              const durations = osrmData.durations[0];
-              return comboList.map((s, idx) => ({
-                ...s,
-                roadDistance: distances[idx + 1] ? parseFloat((distances[idx + 1] / 1000).toFixed(2)) : s.distance,
-                roadDuration: durations[idx + 1] ? Math.round(durations[idx + 1] / 60) : Math.round(s.distance * 2)
-              }));
-            }
-          } catch (e) {
-            console.error(e);
-          }
-          return comboList.map(s => ({ ...s, roadDistance: s.distance, roadDuration: Math.round(s.distance * 2) }));
-        };
-
-        res.combos.safe = await fetchRoadDistance(res.combos.safe);
-        res.combos.effort = await fetchRoadDistance(res.combos.effort);
-        res.combos.defense = await fetchRoadDistance(res.combos.defense);
-      }
 
       setComboResult(res);
     } catch (e: any) {
@@ -342,6 +285,15 @@ export default function Grade10Container() {
     await mergeG10Schools(primaryId, secondaryId, mergedData);
     setSelectedMergeIds([]);
     loadSchools(debouncedSearchQuery, selectedDistrict);
+  };
+
+  const buildSchoolMapUrl = (school: any) => {
+    if (school?.mapUrl) return school.mapUrl;
+    if (school?.latitude != null && school?.longitude != null) {
+      return `https://www.google.com/maps/search/?api=1&query=${school.latitude},${school.longitude}`;
+    }
+    const query = [school?.name, school?.address].filter(Boolean).join(', ');
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   };
 
   const handleEvaluate = async () => {
@@ -392,7 +344,7 @@ export default function Grade10Container() {
   };
 
   return (
-    <div className={`flex-1 flex flex-col ${theme === 'light' ? 'light-theme' : 'dark-theme'}`}>
+    <div className="flex-1 flex flex-col">
       {/* Navigation tabs */}
       <nav className="bg-slate-900 border-b border-slate-800 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between py-2">
@@ -1313,12 +1265,12 @@ export default function Grade10Container() {
                         <MapPin className="h-7 w-7" />
                       </div>
                       <span className="font-bold text-slate-200 text-xs mt-1">Bản đồ vị trí cơ sở</span>
-                      <p className="text-[10px] text-slate-500 max-w-xs">{schoolDetail.address || 'Hồ Chí Minh, Việt Nam'}</p>
-                      <a 
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(schoolDetail.name + ' ' + (schoolDetail.address || ''))}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-2 px-4 py-1.5 bg-slate-800 hover:bg-slate-755 text-[10px] text-slate-350 font-bold rounded-lg border border-slate-700 transition"
+                        <p className="text-[10px] text-slate-500 max-w-xs">{schoolDetail.address || 'Hồ Chí Minh, Việt Nam'}</p>
+                        <a 
+                          href={buildSchoolMapUrl(schoolDetail)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 px-4 py-1.5 bg-slate-800 hover:bg-slate-755 text-[10px] text-slate-350 font-bold rounded-lg border border-slate-700 transition"
                       >
                         Mở Google Maps
                       </a>
@@ -1540,18 +1492,14 @@ export default function Grade10Container() {
                       }
                       setIsLocating(true);
                       try {
-                        const q = encodeURIComponent(userAddress + ', Hồ Chí Minh');
-                        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
-                        const data = await res.json();
-                        if (data && data.length > 0) {
-                          const lat = parseFloat(data[0].lat);
-                          const lon = parseFloat(data[0].lon);
-                          await calculateSchoolDistances(lat, lon);
-                          setIsProximityFilterActive(true);
-                          setIsDistanceModalOpen(false);
-                        } else {
-                          alert('Không tìm thấy địa chỉ này trên bản đồ. Vui lòng nhập chi tiết hơn (ví dụ: Số nhà, Tên đường, Quận).');
-                        }
+                        const resolved = await resolveG10Location({
+                          address: userAddress,
+                          districtName: 'Hồ Chí Minh',
+                        });
+                        await calculateSchoolDistances(resolved.latitude, resolved.longitude);
+                        setUserAddress(resolved.formattedAddress || userAddress);
+                        setIsProximityFilterActive(true);
+                        setIsDistanceModalOpen(false);
                       } catch (e) {
                         alert('Lỗi định vị địa chỉ: Mạng yếu hoặc bị giới hạn.');
                       } finally {
@@ -2015,6 +1963,136 @@ export default function Grade10Container() {
           loadAnalytics();
         }}
       />
+
+
+      {/* ── PRINT AREA (screen:hidden, print:visible) ───────────────────────── */}
+      <div className="print-area" style={{ display: 'none' }}>
+        {/* Page Header */}
+        <div style={{ borderBottom: '3px solid #4338ca', paddingBottom: 8, marginBottom: 16 }}>
+          <h1 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#3730a3' }}>
+            📋 Kết quả phân tích nguyện vọng lớp 10 TP.HCM
+          </h1>
+          <p style={{ margin: '4px 0 0', fontSize: 10, color: '#6b7280' }}>
+            Hệ thống AdmissionDecisionEngine • In ngày {new Date().toLocaleDateString('vi-VN')}
+          </p>
+        </div>
+
+        {/* ── SECTION 1: Đánh Giá Cá Nhân ─────────────────────────────────── */}
+        {evaluationResult && (
+          <div>
+            <h2 className="print-section-title">PHẦN 1 — ĐÁNH GIÁ CÁ NHÂN &amp; GỢI Ý TRƯỜNG PHÙ HỢP</h2>
+
+            {/* Score Summary */}
+            <div className="print-card" style={{ marginBottom: 12, background: '#eef2ff', border: '1px solid #c7d2fe' }}>
+              <strong style={{ color: '#3730a3' }}>💡 Điểm xét tuyển của bạn:</strong>{' '}
+              <span style={{ fontSize: 15, fontWeight: 900, color: '#4338ca' }}>{evaluationResult.candidateScore}đ</span>
+              {' '}— Toán: {evaluationResult.details.math} | Văn: {evaluationResult.details.literature} | Anh: {evaluationResult.details.english} | Điểm cộng: {Number(evaluationResult.details.priority) + Number(evaluationResult.details.bonus)}
+            </div>
+
+            {/* Recommendation list */}
+            {evaluationResult.recommendations?.map((rec: G10RecommendationItem, i: number) => {
+              const probColor = rec.safetyCategory === 'VERY_SAFE' || rec.safetyCategory === 'SAFE' ? '#059669'
+                : rec.safetyCategory === 'COMPETITIVE' ? '#2563eb'
+                : rec.safetyCategory === 'RISKY' ? '#d97706' : '#dc2626';
+              return (
+                <div key={i} className="print-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 9, color: '#6b7280', marginBottom: 2 }}>
+                      <span style={{ background: '#e0e7ff', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700 }}>{rec.schoolCode}</span>
+                      {rec.districtName}
+                    </div>
+                    <div style={{ fontWeight: 900, fontSize: 12, color: '#1e1b4b', marginBottom: 4 }}>{rec.schoolName}</div>
+                    <div style={{ fontSize: 10, color: '#374151', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                      <span>Điểm chuẩn NV1: <strong>{rec.cutoffNV1}đ</strong></span>
+                      <span>TB 3 năm: <strong style={{ color: '#4338ca' }}>{rec.historicalAvg}đ</strong></span>
+                      {rec.nv2Gap !== null && <span>NV2 Chênh: <strong>+{rec.nv2Gap}đ</strong></span>}
+                      {rec.nv3Gap !== null && <span>NV3 Chênh: <strong>+{rec.nv3Gap}đ</strong></span>}
+                    </div>
+                    {rec.advice && <div style={{ fontSize: 9, color: '#6b7280', marginTop: 4, fontStyle: 'italic' }}>💡 {rec.advice}</div>}
+                  </div>
+                  <div style={{ textAlign: 'center', minWidth: 60, flexShrink: 0, paddingLeft: 10, borderLeft: '1px solid #e0e7ff' }}>
+                    <div className="print-prob" style={{ color: probColor }}>{rec.probability}%</div>
+                    <div style={{ fontSize: 8, fontWeight: 700, color: probColor, textTransform: 'uppercase' }}>
+                      {rec.safetyCategory === 'VERY_SAFE' ? 'Rất an toàn' : rec.safetyCategory === 'SAFE' ? 'An toàn' : rec.safetyCategory === 'COMPETITIVE' ? 'Cạnh tranh' : rec.safetyCategory === 'RISKY' ? 'Rủi ro' : 'Rất rủi ro'}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── SECTION 2: Đề Xuất Combo 3 NV ──────────────────────────────────── */}
+        {comboResult && (
+          <div>
+            <h2 className="print-section-title" style={{ marginTop: 20 }}>PHẦN 2 — ĐỀ XUẤT COMBO 3 NGUYỆN VỌNG</h2>
+
+            {/* TEMP-MARKER-A */}
+            {(['safe', 'effort', 'defense'] as const).map((strategy, si) => {
+              const labels: Record<string, string> = {
+                safe: '🛡️ Tab 1: An Toàn — Phân bổ 3 NV theo điểm trung bình dự đoán',
+                effort: '🔥 Tab 2: Nỗ Lực (Dream NV1) — Đặt trường mơ ước lên NV1',
+                defense: '🏰 Tab 3: Phòng Thủ — Chắc chắn có suất công lập gần nhà',
+              };
+              const schools = comboResult.combos?.[strategy] ?? [];
+              return (
+                <div key={strategy} className={si > 0 ? 'print-strategy-block' : ''} style={{ marginBottom: 16 }}>
+                  <div style={{ fontWeight: 900, fontSize: 12, color: '#3730a3', background: '#e0e7ff', padding: '4px 10px', borderRadius: 6, marginBottom: 8 }}>
+                    {labels[strategy]}
+                  </div>
+                  {comboResult.explanations?.[strategy] && (
+                    <div style={{ fontSize: 9, color: '#4b5563', fontStyle: 'italic', marginBottom: 6, paddingLeft: 6, borderLeft: '3px solid #c7d2fe' }}>
+                      {comboResult.explanations[strategy]}
+                    </div>
+                  )}
+                  {schools.map((school: any, idx: number) => {
+                    const nvNum = idx + 1;
+                    const prob = nvNum === 1 ? school.probNV1 : nvNum === 2 ? school.probNV2 : school.probNV3;
+                    const cutoff = nvNum === 1 ? school.cutoffNV1 : nvNum === 2 ? school.cutoffNV2 : school.cutoffNV3;
+                    const probColor = prob >= 80 ? '#059669' : prob >= 65 ? '#2563eb' : prob >= 50 ? '#d97706' : '#dc2626';
+                    const nvColor = nvNum === 1 ? '#4338ca' : nvNum === 2 ? '#b45309' : '#065f46';
+                    return (
+                      <div key={school.schoolId} className="print-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ marginBottom: 3 }}>
+                            <span className="print-nv-badge" style={{ background: nvColor, color: 'white' }}>NGUYỆN VỌNG {nvNum}</span>
+                            <span style={{ fontSize: 9, background: '#f1f5f9', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700, color: '#374151' }}>{school.schoolCode}</span>
+                            <span style={{ fontSize: 9, color: '#6b7280' }}>{school.districtName}</span>
+                          </div>
+                          <div style={{ fontWeight: 900, fontSize: 12, color: '#1e1b4b', marginBottom: 4 }}>{school.schoolName}</div>
+                          <div style={{ fontSize: 10, color: '#374151', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                            <span>Điểm chuẩn NV{nvNum}: <strong>{cutoff ?? 'Không tuyển'}đ</strong></span>
+                            {nvNum > 1 && school[`nv${nvNum}Gap`] != null && (
+                              <span>Chênh lệch NV{nvNum}: <strong style={{ color: '#b45309' }}>+{school[`nv${nvNum}Gap`]}đ</strong></span>
+                            )}
+                            {school.distance !== null && (
+                              <span>Khoảng cách: <strong>{school.roadDistance ?? school.distance} km</strong></span>
+                            )}
+                            {school.commuteBonus > 0 && (
+                              <span style={{ color: '#059669' }}>Điểm thưởng cự ly: <strong>+{school.commuteBonus}đ</strong></span>
+                            )}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center', minWidth: 60, flexShrink: 0, paddingLeft: 10, borderLeft: '1px solid #e0e7ff' }}>
+                          <div className="print-prob" style={{ color: probColor }}>{prob}%</div>
+                          <div style={{ fontSize: 8, fontWeight: 700, color: probColor, textTransform: 'uppercase' }}>
+                            {prob >= 80 ? 'An tâm cao' : prob >= 65 ? 'An toàn' : prob >= 50 ? 'Cạnh tranh' : 'Rủi ro'}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Footer */}
+        <div style={{ marginTop: 16, paddingTop: 8, borderTop: '1px solid #e0e7ff', fontSize: 9, color: '#9ca3af', textAlign: 'center' }}>
+          Tài liệu này được tạo tự động bởi hệ thống AdmissionDecisionEngine. Chỉ mang tính chất tham khảo, không thay thế tư vấn chuyên môn.
+        </div>
+      </div>
 
     </div>
   );
