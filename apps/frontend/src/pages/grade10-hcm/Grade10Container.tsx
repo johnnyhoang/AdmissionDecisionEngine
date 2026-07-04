@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Search as SearchIcon, TrendingUp, Calculator as CalcIcon, MapPin,
   BadgeCheck, School, HelpCircle, Sparkles, ArrowUpDown,
-  BarChart2, BookOpen, Sliders, Award, RefreshCw
+  BarChart2, BookOpen, Sliders, Award, RefreshCw, Printer
 } from 'lucide-react';
 import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend
@@ -815,8 +815,17 @@ export default function Grade10Container() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <div className="bg-indigo-950/25 border border-indigo-500/10 p-3 rounded-xl text-xs text-slate-300">
-                    💡 Điểm xét tuyển của bạn: <strong className="text-indigo-400 text-sm">{evaluationResult.candidateScore}đ</strong> (Toán: {evaluationResult.details.math} | Văn: {evaluationResult.details.literature} | Anh: {evaluationResult.details.english} | Điểm cộng: {Number(evaluationResult.details.priority) + Number(evaluationResult.details.bonus)})
+                  <div className="flex justify-between items-center bg-indigo-950/25 border border-indigo-500/10 p-3 rounded-xl text-xs text-slate-300">
+                    <div>
+                      💡 Điểm xét tuyển của bạn: <strong className="text-indigo-400 text-sm">{evaluationResult.candidateScore}đ</strong> (Toán: {evaluationResult.details.math} | Văn: {evaluationResult.details.literature} | Anh: {evaluationResult.details.english} | Điểm cộng: {Number(evaluationResult.details.priority) + Number(evaluationResult.details.bonus)})
+                    </div>
+                    <button
+                      onClick={() => window.print()}
+                      className="no-print flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition text-xs font-bold border border-slate-700"
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      In PDF
+                    </button>
                   </div>
 
                   {evaluationResult.recommendations.map((rec: G10RecommendationItem, index: number) => {
@@ -997,18 +1006,7 @@ export default function Grade10Container() {
                   </button>
                 )}
 
-                {user?.role === 'ADMIN' && (
-                  <button
-                    onClick={() => {
-                      setAiPrefillSchool(undefined);
-                      setIsAiModalOpen(true);
-                    }}
-                    className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20 cursor-pointer"
-                  >
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Tìm dữ liệu trường (AI)
-                  </button>
-                )}
+
 
 
                 <button
@@ -1684,15 +1682,24 @@ export default function Grade10Container() {
                       Điểm thi dự kiến: <strong className="text-indigo-400 text-sm">{comboResult.minScore}đ - {comboResult.maxScore}đ</strong>
                       <span className="text-slate-500 ml-2">(Trung bình xét: {comboResult.avgScore}đ)</span>
                     </div>
-                    {comboResult.ssf !== undefined && comboResult.ssf !== 0 && (
-                      <div className={`px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 ${
-                        comboResult.ssf > 0
-                          ? 'bg-amber-500/10 border border-amber-500/25 text-amber-400'
-                          : 'bg-emerald-500/10 border border-emerald-500/25 text-emerald-400'
-                      }`}>
-                        {comboResult.ssf > 0 ? '⚠️ Cạnh tranh tăng nhẹ năm nay' : '✨ Điểm chuẩn dự kiến hạ nhẹ'} ({comboResult.ssf > 0 ? `+${comboResult.ssf}` : comboResult.ssf}đ)
-                      </div>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {comboResult.ssf !== undefined && comboResult.ssf !== 0 && (
+                        <div className={`px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 ${
+                          comboResult.ssf > 0
+                            ? 'bg-amber-500/10 border border-amber-500/25 text-amber-400'
+                            : 'bg-emerald-500/10 border border-emerald-500/25 text-emerald-400'
+                        }`}>
+                          {comboResult.ssf > 0 ? '⚠️ Cạnh tranh tăng nhẹ năm nay' : '✨ Điểm chuẩn hạ nhẹ'} ({comboResult.ssf > 0 ? `+${comboResult.ssf}` : comboResult.ssf}đ)
+                        </div>
+                      )}
+                      <button
+                        onClick={() => window.print()}
+                        className="no-print flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition text-xs font-bold border border-slate-700"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        In PDF
+                      </button>
+                    </div>
                   </div>
 
                   {/* Strategy Tabs */}

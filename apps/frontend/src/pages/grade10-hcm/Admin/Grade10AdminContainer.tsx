@@ -10,6 +10,7 @@ import {
   fetchGrade10SchoolNames, searchAiCutoffs, importAiCutoffs,
   fetchG10ActivityLogs, fetchG10ActivityLogStats
 } from '../../../services/api';
+import AiSearchModal from '../../../components/AiSearchModal';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -66,6 +67,7 @@ interface BatchJob {
 
 export default function Grade10AdminContainer() {
   const [adminTab, setAdminTab] = useState<'dashboard' | 'presets' | 'paste' | 'batch-ai' | 'history' | 'activity-logs'>('dashboard');
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [presets, setPresets] = useState<any[]>([]);
@@ -440,9 +442,18 @@ export default function Grade10AdminContainer() {
               <p className="text-xs text-slate-400 m-0">Quản trị Dữ liệu Tuyển sinh Lớp 10 TP.HCM</p>
             </div>
           </div>
-          <a href="/l10hcm" className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-            Cổng Thí Sinh Lớp 10
-          </a>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsAiModalOpen(true)}
+              className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-indigo-650 to-purple-650 hover:from-indigo-600 hover:to-purple-600 text-white rounded-lg transition flex items-center gap-1.5 shadow-md shadow-indigo-600/10 cursor-pointer"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-indigo-300" />
+              Tra cứu AI đơn lẻ
+            </button>
+            <a href="/l10hcm" className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
+              Cổng Thí Sinh Lớp 10
+            </a>
+          </div>
         </div>
       </header>
 
@@ -1275,6 +1286,16 @@ export default function Grade10AdminContainer() {
       <footer className="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500 mt-auto">
         <p className="m-0">© 2026 Grade 10 HCMC Admission Engine Admin.</p>
       </footer>
+
+      {/* AI Search Modal */}
+      <AiSearchModal 
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        type="GRADE10"
+        onImportSuccess={() => {
+          loadData();
+        }}
+      />
     </div>
   );
 }
