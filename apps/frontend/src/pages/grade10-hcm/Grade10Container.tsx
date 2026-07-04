@@ -125,6 +125,18 @@ export default function Grade10Container() {
     applyThemeToDocument(theme);
   }, [theme]);
 
+  useEffect(() => {
+    const handleThemeChange = (event: Event) => {
+      const nextTheme = (event as CustomEvent<'light' | 'dark'>).detail;
+      if (nextTheme === 'light' || nextTheme === 'dark') {
+        setTheme(nextTheme);
+      }
+    };
+
+    window.addEventListener('app-theme-change', handleThemeChange);
+    return () => window.removeEventListener('app-theme-change', handleThemeChange);
+  }, []);
+
     const loadDistricts = async () => {
     try {
       const data = await fetchG10Districts();

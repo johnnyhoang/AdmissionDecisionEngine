@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   Search, TrendingUp, Calculator, Sliders, MapPin, 
   School, HelpCircle, Sparkles, Layers, ArrowUpDown, MessageSquare, X, Send, Trash2, ArrowUp, ArrowDown, AlertCircle,
-  Database, UploadCloud, History, Info
+  Database, UploadCloud, History, Info, Moon, Sun
 } from 'lucide-react';
 import { 
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend 
@@ -21,6 +21,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import AdminPermissions from './pages/AdminPermissions';
 import AdminHub from './pages/AdminHub';
+import { applyThemeToDocument, readStoredTheme, writeStoredTheme } from './utils/theme';
 
 interface PreferenceItem {
   programId: string;
@@ -34,6 +35,7 @@ interface PreferenceItem {
 
 function MainApp() {
   const { user, loading: authLoading, logout, hasPermission } = useAuth();
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => readStoredTheme());
   const [activeTab, setActiveTab] = useState<'evaluate' | 'search' | 'analytics' | 'compare' | 'optimize'>('evaluate');
   const [universities, setUniversities] = useState<UniversityItem[]>([]);
   const [majors, setMajors] = useState<MajorItem[]>([]);
@@ -82,6 +84,42 @@ function MainApp() {
   const [syncingPreset, setSyncingPreset] = useState<string | null>(null);
   const [customJsonPayload, setCustomJsonPayload] = useState('');
   const [importingPayload, setImportingPayload] = useState(false);
+
+  useEffect(() => {
+    applyThemeToDocument(theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const handleThemeChange = (event: Event) => {
+      const nextTheme = (event as CustomEvent<'light' | 'dark'>).detail;
+      if (nextTheme === 'light' || nextTheme === 'dark') {
+        setTheme(nextTheme);
+      }
+    };
+
+    window.addEventListener('app-theme-change', handleThemeChange);
+    return () => window.removeEventListener('app-theme-change', handleThemeChange);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme((current) => {
+      const nextTheme = current === 'light' ? 'dark' : 'light';
+      writeStoredTheme(nextTheme);
+      return nextTheme;
+    });
+  };
+
+  const themeButton = (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      className="h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+      title={theme === 'light' ? 'Chuyển sang dark mode' : 'Chuyển sang light mode'}
+      aria-label={theme === 'light' ? 'Chuyển sang dark mode' : 'Chuyển sang light mode'}
+    >
+      {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+    </button>
+  );
 
   useEffect(() => {
     if (isAdminView) {
@@ -470,6 +508,7 @@ function MainApp() {
                 </a>
               )}
 
+              {themeButton}
               <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
                 Đăng xuất
               </button>
@@ -550,6 +589,7 @@ function MainApp() {
                 Cổng Thí Sinh
               </a>
               
+              {themeButton}
               <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
                 Đăng xuất
               </button>
@@ -919,6 +959,7 @@ function MainApp() {
               </a>
             )}
             
+            {themeButton}
             <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
               Đăng xuất
             </button>

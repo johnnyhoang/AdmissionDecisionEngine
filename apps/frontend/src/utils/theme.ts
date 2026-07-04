@@ -19,6 +19,8 @@ export const writeStoredTheme = (theme: AppTheme) => {
   } catch {
     // Ignore storage failures and keep the in-memory theme.
   }
+
+  window.dispatchEvent(new CustomEvent<AppTheme>('app-theme-change', { detail: theme }));
 };
 
 export const applyThemeToDocument = (theme: AppTheme) => {
