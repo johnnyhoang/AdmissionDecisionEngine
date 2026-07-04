@@ -21,7 +21,7 @@ import CompareDrawer from './components/CompareDrawer';
 import { updateG10School } from '../../services/api';
 import { mergeG10Schools } from '../../services/api';
 import { getCurrentSchoolYear, formatSchoolYear } from '../../utils/date';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { applyThemeToDocument, readStoredTheme, writeStoredTheme } from '../../utils/theme';
 
 export default function Grade10Container() {
@@ -1511,7 +1511,7 @@ export default function Grade10Container() {
                         setUserAddress(resolved.formattedAddress || userAddress);
                         setIsProximityFilterActive(true);
                         setIsDistanceModalOpen(false);
-                      } catch (e) {
+                      } catch {
                         alert('Lỗi định vị địa chỉ: Mạng yếu hoặc bị giới hạn.');
                       } finally {
                         setIsLocating(false);

@@ -22,50 +22,50 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
   const RECENT_YEARS = getRecentSchoolYears(4);
 
   useEffect(() => {
-    if (isOpen && schoolId) {
-      loadSchoolDetail();
-    }
+    if (!isOpen || !schoolId) return;
+
+    const loadSchoolDetail = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchG10SchoolDetail(schoolId);
+        setFormData({
+          name: data.name || '',
+          code: data.code || '',
+          districtId: data.district?.id || '',
+          address: data.address || '',
+          website: data.website || '',
+          description: data.description || '',
+          comments: data.comments || '',
+          mapUrl: data.mapUrl || '',
+          schoolType: data.schoolType || 'REGULAR',
+          isActive: data.isActive !== false,
+          isVerified: data.isVerified === true,
+          latitude: data.latitude ?? '',
+          longitude: data.longitude ?? '',
+        });
+
+        // Map cutoffs by year
+        const cMap: any = {};
+        data.cutoffs?.forEach((c: any) => {
+          cMap[c.year] = c;
+        });
+        setCutoffsMap(cMap);
+
+        // Map quotas by year
+        const qMap: any = {};
+        data.quotas?.forEach((q: any) => {
+          qMap[q.year] = q;
+        });
+        setQuotasMap(qMap);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSchoolDetail();
   }, [isOpen, schoolId]);
-
-  const loadSchoolDetail = async () => {
-    setIsLoading(true);
-    try {
-      const data = await fetchG10SchoolDetail(schoolId);
-      setFormData({
-        name: data.name || '',
-        code: data.code || '',
-        districtId: data.district?.id || '',
-        address: data.address || '',
-        website: data.website || '',
-        description: data.description || '',
-        comments: data.comments || '',
-        mapUrl: data.mapUrl || '',
-        schoolType: data.schoolType || 'REGULAR',
-        isActive: data.isActive !== false,
-        isVerified: data.isVerified === true,
-        latitude: data.latitude ?? '',
-        longitude: data.longitude ?? '',
-      });
-
-      // Map cutoffs by year
-      const cMap: any = {};
-      data.cutoffs?.forEach((c: any) => {
-        cMap[c.year] = c;
-      });
-      setCutoffsMap(cMap);
-
-      // Map quotas by year
-      const qMap: any = {};
-      data.quotas?.forEach((q: any) => {
-        qMap[q.year] = q;
-      });
-      setQuotasMap(qMap);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (!isOpen || !formData) return null;
 
@@ -124,7 +124,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
         mapUrl: prev.mapUrl || resolved.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formData.name + ', ' + formData.address)}`,
       }));
       alert(`✅ Đã lấy tọa độ: ${resolved.latitude.toFixed(6)}, ${resolved.longitude.toFixed(6)}`);
-    } catch (e) {
+    } catch {
       alert('Lỗi kết nối khi geocode địa chỉ.');
     } finally {
       setIsGeocoding(false);

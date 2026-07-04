@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Search, TrendingUp, Calculator, Sliders, MapPin, 
   School, HelpCircle, Sparkles, Layers, ArrowUpDown, MessageSquare, X, Send, Trash2, ArrowUp, ArrowDown, AlertCircle,
@@ -17,7 +17,8 @@ import './App.css';
 import Grade10Container from './pages/grade10-hcm/Grade10Container';
 import Grade10AdminContainer from './pages/grade10-hcm/Admin/Grade10AdminContainer';
 import AiSearchModal from './components/AiSearchModal';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './context/useAuth';
 import Login from './pages/Login';
 import AdminPermissions from './pages/AdminPermissions';
 import AdminHub from './pages/AdminHub';
@@ -121,21 +122,7 @@ function MainApp() {
     </button>
   );
 
-  useEffect(() => {
-    if (isAdminView) {
-      loadAdminData();
-    } else {
-      loadInitialData();
-    }
-  }, [isAdminView]);
-
-  useEffect(() => {
-    if (!isAdminView && activeTab === 'analytics') {
-      loadMajorAnalytics(selectedMajor);
-    }
-  }, [activeTab, selectedMajor, isAdminView]);
-
-  const loadAdminData = async () => {
+  const loadAdminData = useCallback(async () => {
     setAdminLoading(true);
     try {
       const stats = await fetchAdminStats();
@@ -151,7 +138,7 @@ function MainApp() {
     } finally {
       setAdminLoading(false);
     }
-  };
+  }, []);
 
   const handleSyncPreset = async (filename: string) => {
     setSyncingPreset(filename);
@@ -182,26 +169,30 @@ function MainApp() {
     }
   };
 
-  const loadInitialData = async () => {
+  // Latest handleEvaluate, readable from stable callbacks without making
+  // them re-create (and re-run load effects) on every score keystroke.
+  const handleEvaluateRef = useRef<(() => Promise<void>) | null>(null);
+
+  const loadInitialData = useCallback(async () => {
     try {
       const uRes = await fetchUniversities();
       setUniversities(uRes.items);
       const mRes = await fetchMajors();
       setMajors(mRes);
-      handleEvaluate();
+      handleEvaluateRef.current?.();
     } catch (err) {
       console.error('Lỗi tải dữ liệu khởi tạo', err);
     }
-  };
+  }, []);
 
-  const loadMajorAnalytics = async (code: string) => {
+  const loadMajorAnalytics = useCallback(async (code: string) => {
     try {
       const data = await fetchMajorAnalytics(code);
       setMajorAnalytics(data);
     } catch (err) {
       console.error('Lỗi tải phân tích ngành', err);
     }
-  };
+  }, []);
 
   const handleEvaluate = async () => {
     setLoading(true);
@@ -232,6 +223,24 @@ function MainApp() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    handleEvaluateRef.current = handleEvaluate;
+  });
+
+  useEffect(() => {
+    if (isAdminView) {
+      loadAdminData();
+    } else {
+      loadInitialData();
+    }
+  }, [isAdminView, loadAdminData, loadInitialData]);
+
+  useEffect(() => {
+    if (!isAdminView && activeTab === 'analytics') {
+      loadMajorAnalytics(selectedMajor);
+    }
+  }, [activeTab, selectedMajor, isAdminView, loadMajorAnalytics]);
 
   // handleSeed has been disabled to prevent accidental data wipes.
 
@@ -268,7 +277,7 @@ function MainApp() {
     try {
       const res = await chatWithAi(userText);
       setChatMessages(prev => [...prev, { sender: 'ai', text: res.reply }]);
-    } catch (err) {
+    } catch {
       setChatMessages(prev => [...prev, { sender: 'ai', text: 'Xin lỗi, tôi đã gặp lỗi khi kết nối với máy chủ.' }]);
     } finally {
       setChatLoading(false);
@@ -355,7 +364,7 @@ function MainApp() {
 
       const res = await optimizePreferences(profilePayload, payloadPrefs);
       setOptimizedResult(res);
-    } catch (err) {
+    } catch {
       alert('Tối ưu hóa thất bại.');
     } finally {
       setOptimizing(false);
@@ -725,7 +734,9 @@ function MainApp() {
                     try {
                       parsedScores = JSON.parse(hist.examScores || '{}');
                       parsedCert = JSON.parse(hist.certificates || '{}');
-                    } catch (e) {}
+                    } catch {
+                      // ignore malformed history JSON, keep defaults
+                    }
 
                     return (
                       <div key={hist.id} className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">

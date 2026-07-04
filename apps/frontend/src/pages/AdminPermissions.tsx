@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../context/useAuth';
 import { fetchAdminUsers, updateUserRole, updateUserPermissions } from '../services/api';
 import { Shield, User as UserIcon, Save, ChevronRight } from 'lucide-react';
 
@@ -11,27 +11,25 @@ export default function AdminPermissions() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const data = await fetchAdminUsers();
       setUsers(data);
-      if (data.length > 0 && !selectedUser) {
-        setSelectedUser(data[0]);
-      } else if (selectedUser) {
-        const updated = data.find(u => u.id === selectedUser.id);
-        if (updated) setSelectedUser(updated);
-      }
+      setSelectedUser((prev: any) => {
+        if (!prev) return data.length > 0 ? data[0] : prev;
+        return data.find(u => u.id === prev.id) ?? prev;
+      });
     } catch (e: any) {
       setError(e.message || 'Không thể tải danh sách người dùng.');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const handleRoleChange = async (newRole: string) => {
     if (!selectedUser) return;

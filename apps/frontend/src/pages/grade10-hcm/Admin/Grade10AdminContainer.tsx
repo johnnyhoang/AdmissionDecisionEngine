@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Database, History, Sliders, TrendingUp, 
   ChevronDown, ChevronUp, CheckCircle2, XCircle, Loader2, ClipboardPaste, ShieldAlert,
@@ -113,7 +113,7 @@ export default function Grade10AdminContainer() {
     finally { setLoading(false); }
   };
 
-  const loadLogs = async () => {
+  const loadLogs = useCallback(async () => {
     setLoadingLogs(true);
     try {
       const [logsRes, statsRes] = await Promise.all([
@@ -132,13 +132,13 @@ export default function Grade10AdminContainer() {
     } finally {
       setLoadingLogs(false);
     }
-  };
+  }, [logsPage, logsModuleFilter]);
 
   useEffect(() => {
     if (adminTab === 'activity-logs') {
       loadLogs();
     }
-  }, [adminTab, logsPage, logsModuleFilter]);
+  }, [adminTab, loadLogs]);
 
 
   // Load schools for batch tab on first open
@@ -148,7 +148,7 @@ export default function Grade10AdminContainer() {
         setBatchSchools(data as any[]);
       }).catch(() => {});
     }
-  }, [adminTab]);
+  }, [adminTab, batchSchools.length]);
 
   const handleSyncPreset = async (filename: string) => {
     setSyncingPreset(filename);
@@ -195,7 +195,7 @@ export default function Grade10AdminContainer() {
           if (detail?.quotas) {
             for (const q of detail.quotas) existingQuotasMap[q.year] = q;
           }
-        } catch (_) { /* school might not exist yet */ }
+        } catch { /* school might not exist yet */ }
 
         // Parse cutoff rows
         for (const cutoff of school.cutoffs || []) {
@@ -325,7 +325,11 @@ export default function Grade10AdminContainer() {
   const toggleSelectSchool = (id: string) => {
     setBatchSelected(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -635,7 +639,11 @@ export default function Grade10AdminContainer() {
                         <button
                           onClick={() => setExpandedSchools(prev => {
                             const next = new Set(prev);
-                            next.has(schoolCode) ? next.delete(schoolCode) : next.add(schoolCode);
+                            if (next.has(schoolCode)) {
+                              next.delete(schoolCode);
+                            } else {
+                              next.add(schoolCode);
+                            }
                             return next;
                           })}
                           className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-800/20 transition"
