@@ -30,7 +30,7 @@ export class Grade10Quota {
   @Column({ default: 0 })
   quota: number;
 
-  @Column({ name: 'registered_count', default: 0, nullable: true })
+  @Column({ name: 'registered_count', type: 'int', default: 0, nullable: true })
   registeredCount: number | null;
 
   @Column({
