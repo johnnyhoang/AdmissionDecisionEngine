@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Search as SearchIcon, TrendingUp, Calculator as CalcIcon, MapPin,
@@ -66,7 +66,9 @@ export default function Grade10Container() {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = searchQuery;
-  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
+  const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false);
+  const districtDropdownRef = useRef<HTMLDivElement>(null);
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [schoolDetail, setSchoolDetail] = useState<any>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
@@ -146,6 +148,18 @@ export default function Grade10Container() {
     return () => window.removeEventListener('app-theme-change', handleThemeChange);
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (districtDropdownRef.current && !districtDropdownRef.current.contains(event.target as Node)) {
+        setIsDistrictDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
     const loadDistricts = async () => {
     try {
       const data = await fetchG10Districts();
@@ -181,12 +195,29 @@ export default function Grade10Container() {
 
   const handleSearch = (val: string) => {
     setSearchQuery(val);
-    loadSchools(val, selectedDistrict);
+    loadSchools(val, selectedDistricts.join(','));
   };
 
-  const handleDistrictChange = (val: string) => {
-    setSelectedDistrict(val);
-    loadSchools(searchQuery, val);
+  const handleDistrictToggle = (distId: string) => {
+    let next: string[];
+    if (selectedDistricts.includes(distId)) {
+      next = selectedDistricts.filter(id => id !== distId);
+    } else {
+      next = [...selectedDistricts, distId];
+    }
+    setSelectedDistricts(next);
+    loadSchools(searchQuery, next.join(','));
+  };
+
+  const handleSelectAllDistricts = () => {
+    const allIds = districts.map(d => d.id);
+    setSelectedDistricts(allIds);
+    loadSchools(searchQuery, allIds.join(','));
+  };
+
+  const handleClearDistricts = () => {
+    setSelectedDistricts([]);
+    loadSchools(searchQuery, '');
   };
 
   
@@ -363,13 +394,13 @@ export default function Grade10Container() {
   const handleEditSave = async (id: string, payload: any) => {
     await updateG10School(id, payload);
     setEditingSchoolId(null);
-    loadSchools(debouncedSearchQuery, selectedDistrict);
+    loadSchools(debouncedSearchQuery, selectedDistricts.join(','));
   };
 
   const handleMergeSave = async (primaryId: string, secondaryId: string, mergedData: any) => {
     await mergeG10Schools(primaryId, secondaryId, mergedData);
     setSelectedMergeIds([]);
-    loadSchools(debouncedSearchQuery, selectedDistrict);
+    loadSchools(debouncedSearchQuery, selectedDistricts.join(','));
   };
 
   const buildSchoolMapUrl = (school: any) => {
@@ -1051,17 +1082,72 @@ export default function Grade10Container() {
                   {isProximityFilterActive ? '📍 Cự ly: Bật' : 'Tìm gần nhà'}
                 </button>
 
-                <select
-                  value={selectedDistrict}
-                  onChange={(e) => handleDistrictChange(e.target.value)}
-                  disabled={isProximityFilterActive}
-                  className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <option value="">Tất cả Quận/Huyện</option>
-                  {districts.map((d: any) => (
-                    <option key={d.id} value={d.id}>{d.name}</option>
-                  ))}
-                </select>
+                <div ref={districtDropdownRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => !isProximityFilterActive && setIsDistrictDropdownOpen(!isDistrictDropdownOpen)}
+                    disabled={isProximityFilterActive}
+                    className="w-56 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-350 flex items-center justify-between outline-none disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-700 transition select-none cursor-pointer"
+                  >
+                    <span className="truncate">
+                      {selectedDistricts.length === 0
+                        ? 'Tất cả Quận/Huyện'
+                        : selectedDistricts.length === districts.length
+                        ? 'Tất cả Quận/Huyện'
+                        : selectedDistricts
+                            .map(id => districts.find(d => d.id === id)?.name)
+                            .filter(Boolean)
+                            .join(', ')}
+                    </span>
+                    <span className="ml-1 text-slate-500">▼</span>
+                  </button>
+
+                  {isDistrictDropdownOpen && (
+                    <div className="absolute right-0 md:left-0 mt-1.5 w-64 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 p-2 text-xs text-slate-350 animate-pop-in">
+                      <div className="flex justify-between items-center px-2 py-1.5 border-b border-slate-800/80 mb-1.5">
+                        <span className="font-semibold text-slate-400">Chọn Quận/Huyện</span>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={handleSelectAllDistricts}
+                            className="text-indigo-400 hover:text-indigo-300 font-medium cursor-pointer"
+                          >
+                            Tất cả
+                          </button>
+                          <span className="text-slate-700">|</span>
+                          <button
+                            type="button"
+                            onClick={handleClearDistricts}
+                            className="text-rose-400 hover:text-rose-300 font-medium cursor-pointer"
+                          >
+                            Bỏ chọn
+                          </button>
+                        </div>
+                      </div>
+                      <div className="max-h-56 overflow-y-auto scrollbar-thin space-y-1 pr-1">
+                        {districts.map((d: any) => {
+                          const isChecked = selectedDistricts.includes(d.id);
+                          return (
+                            <label
+                              key={d.id}
+                              className="flex items-center gap-2 px-2 py-1.5 hover:bg-slate-900 rounded-lg cursor-pointer transition select-none"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => handleDistrictToggle(d.id)}
+                                className="rounded border-slate-850 text-indigo-600 bg-slate-950 focus:ring-indigo-500 h-3.5 w-3.5 cursor-pointer"
+                              />
+                              <span className={`text-xs ${isChecked ? 'text-indigo-400 font-bold' : 'text-slate-300'}`}>
+                                {d.name}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <div className="text-xs text-slate-400 whitespace-nowrap">
                   Tổng số: <span className="font-semibold text-slate-200">{isProximityFilterActive ? distanceSchools.length : schools.length}</span> trường
                 </div>
@@ -2069,7 +2155,7 @@ export default function Grade10Container() {
         type="GRADE10"
         prefillSchool={aiPrefillSchool}
         onImportSuccess={() => {
-          loadSchools(searchQuery, selectedDistrict);
+          loadSchools(searchQuery, selectedDistricts.join(','));
           loadAnalytics();
         }}
       />
