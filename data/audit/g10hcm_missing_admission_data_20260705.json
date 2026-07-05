@@ -1,0 +1,3206 @@
+{
+  "summary": [
+    {
+      "year": 2022,
+      "schools": 75,
+      "missing_quota": 57,
+      "missing_registered_nv1": 57,
+      "missing_competition_ratio": 57,
+      "missing_nv1_score": 16,
+      "missing_nv2_score": 16,
+      "missing_nv3_score": 16,
+      "schools_with_any_missing": 57
+    },
+    {
+      "year": 2023,
+      "schools": 75,
+      "missing_quota": 60,
+      "missing_registered_nv1": 61,
+      "missing_competition_ratio": 61,
+      "missing_nv1_score": 19,
+      "missing_nv2_score": 19,
+      "missing_nv3_score": 19,
+      "schools_with_any_missing": 61
+    },
+    {
+      "year": 2024,
+      "schools": 75,
+      "missing_quota": 68,
+      "missing_registered_nv1": 68,
+      "missing_competition_ratio": 68,
+      "missing_nv1_score": 26,
+      "missing_nv2_score": 26,
+      "missing_nv3_score": 26,
+      "schools_with_any_missing": 68
+    },
+    {
+      "year": 2025,
+      "schools": 75,
+      "missing_quota": 63,
+      "missing_registered_nv1": 63,
+      "missing_competition_ratio": 63,
+      "missing_nv1_score": 59,
+      "missing_nv2_score": 59,
+      "missing_nv3_score": 59,
+      "schools_with_any_missing": 64
+    },
+    {
+      "year": 2026,
+      "schools": 75,
+      "missing_quota": 73,
+      "missing_registered_nv1": 74,
+      "missing_competition_ratio": 74,
+      "missing_nv1_score": 74,
+      "missing_nv2_score": 74,
+      "missing_nv3_score": 74,
+      "schools_with_any_missing": 75
+    },
+    {
+      "year": 2027,
+      "schools": 75,
+      "missing_quota": 29,
+      "missing_registered_nv1": 29,
+      "missing_competition_ratio": 29,
+      "missing_nv1_score": 29,
+      "missing_nv2_score": 29,
+      "missing_nv3_score": 29,
+      "schools_with_any_missing": 29
+    }
+  ],
+  "recent_missing": [
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "year": 2026,
+      "missing": "điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHANH",
+      "name": "THPT Bình Chánh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHIEU",
+      "name": "THPT Bình Chiểu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_PHU",
+      "name": "THPT Bình Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BTX",
+      "name": "THPT Bùi Thị Xuân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DA_PHUOC",
+      "name": "THPT Đa Phước",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "GIA_DINH",
+      "name": "THPT Gia Định",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LMX",
+      "name": "THPT Lê Minh Xuân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LTT_Q6",
+      "name": "THPT Lê Thánh Tôn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LE_TRONG_TAN",
+      "name": "THPT Lê Trọng Tấn",
+      "year": 2026,
+      "missing": "ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_TRUONG",
+      "name": "THPT Long Trường",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "MARIE_CURIE",
+      "name": "THPT Marie Curie",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NTMK",
+      "name": "THPT Nguyễn Thị Minh Khai",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_THUONG_HIEN",
+      "name": "THPT Nguyễn Thượng Hiền",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_NHUAN",
+      "name": "THPT Phú Nhuận",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_TUC",
+      "name": "THPT Tân Túc",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TKN",
+      "name": "THPT Trần Khai Nguyên",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRAN_PHU",
+      "name": "THPT Trần Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_VUONG",
+      "name": "THPT Trưng Vương",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHANH",
+      "name": "THPT Bình Chánh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHIEU",
+      "name": "THPT Bình Chiểu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2025,
+      "missing": "điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DA_PHUOC",
+      "name": "THPT Đa Phước",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LMX",
+      "name": "THPT Lê Minh Xuân",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_TRUONG",
+      "name": "THPT Long Trường",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_TUC",
+      "name": "THPT Tân Túc",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRAN_PHU",
+      "name": "THPT Trần Phú",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    }
+  ],
+  "all_missing": [
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2027,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "year": 2026,
+      "missing": "điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHANH",
+      "name": "THPT Bình Chánh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHIEU",
+      "name": "THPT Bình Chiểu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_PHU",
+      "name": "THPT Bình Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BTX",
+      "name": "THPT Bùi Thị Xuân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DA_PHUOC",
+      "name": "THPT Đa Phước",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "GIA_DINH",
+      "name": "THPT Gia Định",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LMX",
+      "name": "THPT Lê Minh Xuân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LTT_Q6",
+      "name": "THPT Lê Thánh Tôn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LE_TRONG_TAN",
+      "name": "THPT Lê Trọng Tấn",
+      "year": 2026,
+      "missing": "ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_TRUONG",
+      "name": "THPT Long Trường",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "MARIE_CURIE",
+      "name": "THPT Marie Curie",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NTMK",
+      "name": "THPT Nguyễn Thị Minh Khai",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_THUONG_HIEN",
+      "name": "THPT Nguyễn Thượng Hiền",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_NHUAN",
+      "name": "THPT Phú Nhuận",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_TUC",
+      "name": "THPT Tân Túc",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TKN",
+      "name": "THPT Trần Khai Nguyên",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRAN_PHU",
+      "name": "THPT Trần Phú",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_VUONG",
+      "name": "THPT Trưng Vương",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2026,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHANH",
+      "name": "THPT Bình Chánh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHIEU",
+      "name": "THPT Bình Chiểu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2025,
+      "missing": "điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DA_PHUOC",
+      "name": "THPT Đa Phước",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LMX",
+      "name": "THPT Lê Minh Xuân",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_TRUONG",
+      "name": "THPT Long Trường",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAN_TUC",
+      "name": "THPT Tân Túc",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRAN_PHU",
+      "name": "THPT Trần Phú",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2025,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHANH",
+      "name": "THPT Bình Chánh",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "BINH_CHIEU",
+      "name": "THPT Bình Chiểu",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_PHU",
+      "name": "THPT Bình Phú",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "BTX",
+      "name": "THPT Bùi Thị Xuân",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "DA_PHUOC",
+      "name": "THPT Đa Phước",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LMX",
+      "name": "THPT Lê Minh Xuân",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LTT_Q6",
+      "name": "THPT Lê Thánh Tôn",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LONG_TRUONG",
+      "name": "THPT Long Trường",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_TUC",
+      "name": "THPT Tân Túc",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TKN",
+      "name": "THPT Trần Khai Nguyên",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRAN_PHU",
+      "name": "THPT Trần Phú",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2024,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHANH",
+      "name": "THPT Bình Chánh",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "BINH_PHU",
+      "name": "THPT Bình Phú",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "BTX",
+      "name": "THPT Bùi Thị Xuân",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "DA_PHUOC",
+      "name": "THPT Đa Phước",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LMX",
+      "name": "THPT Lê Minh Xuân",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LTT_Q6",
+      "name": "THPT Lê Thánh Tôn",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LE_TRONG_TAN",
+      "name": "THPT Lê Trọng Tấn",
+      "year": 2023,
+      "missing": "ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_TUC",
+      "name": "THPT Tân Túc",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TKN",
+      "name": "THPT Trần Khai Nguyên",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2023,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "BINH_CHANH",
+      "name": "THPT Bình Chánh",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "BINH_PHU",
+      "name": "THPT Bình Phú",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "BTX",
+      "name": "THPT Bùi Thị Xuân",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "DA_PHUOC",
+      "name": "THPT Đa Phước",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LMX",
+      "name": "THPT Lê Minh Xuân",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LTT_Q6",
+      "name": "THPT Lê Thánh Tôn",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAN_TUC",
+      "name": "THPT Tân Túc",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TKN",
+      "name": "THPT Trần Khai Nguyên",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi"
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "year": 2022,
+      "missing": "chỉ tiêu, ĐK NV1, tỷ lệ chọi, điểm NV1, điểm NV2, điểm NV3"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Grade10School } from '../entities/school.entity';
@@ -12,9 +12,27 @@ import { Grade10LocationService } from './grade10-location.service';
 import { deduplicateDistrictsHelper } from '../utils/district-dedup.util';
 import { deduplicateSchoolsHelper } from '../utils/school-dedup.util';
 import {
+  CURRENT_GRADE10_SCHOOL_YEAR,
   getRecentGrade10StartYear,
   toLatestGrade10Year,
 } from '../utils/school-year.util';
+
+const DATA_COMPLETENESS_START_YEAR = 2022;
+const DATA_COMPLETENESS_PROFILE_FIELDS = [
+  'address',
+  'website',
+  'description',
+  'mapUrl',
+  'latitude',
+  'longitude',
+] as const;
+const DATA_COMPLETENESS_ADMISSION_FIELDS_PER_YEAR = 6;
+
+type SchoolDataCompleteness = {
+  percent: number;
+  completedFields: number;
+  totalFields: number;
+};
 
 @Injectable()
 export class Grade10SchoolService implements OnApplicationBootstrap {
@@ -40,6 +58,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     districtId?: string;
     page?: number;
     limit?: number;
+    includeDataCompleteness?: boolean;
   }) {
     const page = Number(filters.page) || 1;
     const limit = Math.min(Number(filters.limit) || 50, 500);
@@ -87,17 +106,23 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
         .getMany();
     }
 
+    const completenessBySchoolId = filters.includeDataCompleteness
+      ? await this.calculateDataCompleteness(items)
+      : new Map<string, SchoolDataCompleteness>();
+
     const itemsWithScores = items.map((school) => {
       const schoolCutoffs = latestCutoffs.filter(
         (c) => c.schoolId === school.id,
       );
       const latestCutoff = schoolCutoffs[0] || null;
+      const dataCompleteness = completenessBySchoolId.get(school.id);
       return {
         ...school,
         latestCutoffNV1: latestCutoff ? Number(latestCutoff.cutoffNV1) : null,
         latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
         latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
         latestYear: latestCutoff ? latestCutoff.year : null,
+        ...(dataCompleteness ? { dataCompleteness } : {}),
       };
     });
 
@@ -170,6 +195,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     maxDistanceKm?: number;
     search?: string;
     districtId?: string;
+    includeDataCompleteness?: boolean;
   }) {
     const limit = Math.min(Math.max(Number(filters.limit || 15), 1), 50);
     const query = this.schoolRepo
@@ -229,6 +255,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .orderBy('cutoff.year', 'DESC')
       .getMany();
 
+    const completenessBySchoolId = filters.includeDataCompleteness
+      ? await this.calculateDataCompleteness(schools)
+      : new Map<string, SchoolDataCompleteness>();
+
     const items = travelPoints
       .map((point) => {
         const school = schools.find((item) => item.id === point.id);
@@ -237,6 +267,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
           (cutoff) => cutoff.schoolId === school.id,
         );
         const latestCutoff = schoolCutoffs[0] || null;
+        const dataCompleteness = completenessBySchoolId.get(school.id);
         const straightDistance = point.straightDistanceKm;
         const roadDistance = point.roadDistanceKm ?? straightDistance;
         return {
@@ -253,6 +284,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
           roadDurationMin: point.roadDurationMin,
           distanceSource: point.distanceSource,
           distancePrecision: point.precision,
+          ...(dataCompleteness ? { dataCompleteness } : {}),
         };
       })
       .filter(Boolean) as any[];
@@ -385,6 +417,95 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
 
   async getDistricts() {
     return this.districtRepo.find({ order: { name: 'ASC' } } as any);
+  }
+
+  private async calculateDataCompleteness(
+    schools: Grade10School[],
+  ): Promise<Map<string, SchoolDataCompleteness>> {
+    const years = this.getCompletenessYears();
+    const totalFields =
+      DATA_COMPLETENESS_PROFILE_FIELDS.length +
+      years.length * DATA_COMPLETENESS_ADMISSION_FIELDS_PER_YEAR;
+    const result = new Map<string, SchoolDataCompleteness>();
+    if (schools.length === 0) return result;
+
+    const schoolIds = schools.map((school) => school.id);
+    const [quotas, cutoffs] = await Promise.all([
+      this.quotaRepo.find({
+        where: {
+          schoolId: In(schoolIds),
+          programType: 'REGULAR',
+          year: In(years),
+        },
+      }),
+      this.cutoffRepo.find({
+        where: {
+          schoolId: In(schoolIds),
+          programType: 'REGULAR',
+          year: In(years),
+        },
+      }),
+    ]);
+
+    const quotasByKey = new Map(
+      quotas.map((quota) => [`${quota.schoolId}:${quota.year}`, quota]),
+    );
+    const cutoffsByKey = new Map(
+      cutoffs.map((cutoff) => [`${cutoff.schoolId}:${cutoff.year}`, cutoff]),
+    );
+
+    for (const school of schools) {
+      let completedFields = 0;
+      for (const field of DATA_COMPLETENESS_PROFILE_FIELDS) {
+        if (this.hasCompletenessValue((school as any)[field])) {
+          completedFields += 1;
+        }
+      }
+
+      for (const year of years) {
+        const quota = quotasByKey.get(`${school.id}:${year}`);
+        if (this.hasPositiveCompletenessNumber(quota?.quota)) completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(quota?.registeredCount)) completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(quota?.competitionRatio)) completedFields += 1;
+
+        const cutoff = cutoffsByKey.get(`${school.id}:${year}`);
+        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV1)) completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV2)) completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV3)) completedFields += 1;
+      }
+
+      result.set(school.id, {
+        percent: Math.round((completedFields / totalFields) * 100),
+        completedFields,
+        totalFields,
+      });
+    }
+
+    return result;
+  }
+
+  private getCompletenessYears(): number[] {
+    const years: number[] = [];
+    for (
+      let year = DATA_COMPLETENESS_START_YEAR;
+      year <= CURRENT_GRADE10_SCHOOL_YEAR;
+      year += 1
+    ) {
+      years.push(year);
+    }
+    return years;
+  }
+
+  private hasCompletenessValue(value: unknown): boolean {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (typeof value === 'number') return Number.isFinite(value);
+    return true;
+  }
+
+  private hasPositiveCompletenessNumber(value: unknown): boolean {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) && numericValue > 0;
   }
 
   async getAdminStats() {

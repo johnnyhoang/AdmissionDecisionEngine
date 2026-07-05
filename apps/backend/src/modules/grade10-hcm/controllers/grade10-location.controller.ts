@@ -10,6 +10,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/permissions.guard';
 import { RequirePermission } from '../../auth/require-permission.decorator';
+import { CurrentUser } from '../../auth/current-user.decorator';
 import {
   Grade10LocationService,
   LocationInput,
@@ -56,6 +57,7 @@ export class Grade10LocationController {
       search?: string;
       districtId?: string;
     },
+    @CurrentUser() user?: { role?: string },
   ) {
     return this.schoolService.findNearbySchools({
       userLat: body.userLat,
@@ -64,6 +66,7 @@ export class Grade10LocationController {
       maxDistanceKm: body.maxDistanceKm,
       search: body.search,
       districtId: body.districtId,
+      includeDataCompleteness: user?.role === 'ADMIN',
     });
   }
 

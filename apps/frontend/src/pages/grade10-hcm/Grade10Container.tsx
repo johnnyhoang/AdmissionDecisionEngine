@@ -412,6 +412,19 @@ export default function Grade10Container() {
   };
 
   const canRecommend = hasPermission('GRADE10', 'view_recommendation', 'view');
+  const getCompletenessTone = (percent?: number) => {
+    const value = percent ?? 0;
+    if (value >= 90) {
+      return 'border-emerald-400/40 bg-emerald-500/15 text-emerald-200';
+    }
+    if (value >= 70) {
+      return 'border-sky-400/40 bg-sky-500/15 text-sky-200';
+    }
+    if (value >= 45) {
+      return 'border-amber-400/50 bg-amber-500/15 text-amber-100';
+    }
+    return 'border-rose-400/50 bg-rose-500/15 text-rose-100';
+  };
 
   // Mobile bottom navigation: 4 primary destinations + "Thêm" sheet for the
   // rest — mirrors the desktop tab bar but in a mobile-app layout
@@ -1256,14 +1269,24 @@ export default function Grade10Container() {
                 const isCompared = compareList.some(item => item.id === school.id);
                 const isMergeSelected = selectedMergeIds.includes(school.id);
                 return (
-                  <div key={school.id} className={`bg-slate-900/60 border rounded-2xl p-5 shadow-lg flex flex-col justify-between gap-4 transition-all duration-200 ${
+                  <div key={school.id} className={`relative bg-slate-900/60 border rounded-2xl p-5 shadow-lg flex flex-col justify-between gap-4 transition-all duration-200 ${
                     isMergeSelected
                       ? 'border-amber-500/60 ring-1 ring-amber-500/30 bg-amber-950/10'
                       : 'border-slate-800 hover:border-slate-700'
                   }`}>
                     <div>
                       <div className="flex justify-between items-start gap-2 mb-3">
-                        <div />
+                        <div>
+                          {user?.role === 'ADMIN' && school.dataCompleteness && (
+                            <div
+                              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black shadow-sm ${getCompletenessTone(school.dataCompleteness.percent)}`}
+                              title={`${school.dataCompleteness.completedFields}/${school.dataCompleteness.totalFields} trường dữ liệu đã hoàn thiện`}
+                            >
+                              <span>Dữ liệu</span>
+                              <span>{school.dataCompleteness.percent}%</span>
+                            </div>
+                          )}
+                        </div>
                         <div className="flex gap-2">
                           {user?.role === 'ADMIN' && (
                             <button

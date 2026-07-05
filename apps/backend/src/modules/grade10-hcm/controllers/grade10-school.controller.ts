@@ -17,6 +17,7 @@ import { CreateSchoolDto, UpdateSchoolDto } from '../dtos/school-crud.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/permissions.guard';
 import { RequirePermission } from '../../auth/require-permission.decorator';
+import { CurrentUser } from '../../auth/current-user.decorator';
 
 @ApiTags('grade10-hcm-schools')
 @Controller('api/v1/grade10-hcm/schools')
@@ -32,8 +33,15 @@ export class Grade10SchoolController {
     @Query('districtId') districtId?: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
+    @CurrentUser() user?: { role?: string },
   ) {
-    return this.schoolService.findAll({ search, districtId, page, limit });
+    return this.schoolService.findAll({
+      search,
+      districtId,
+      page,
+      limit,
+      includeDataCompleteness: user?.role === 'ADMIN',
+    });
   }
 
   @Get('districts')

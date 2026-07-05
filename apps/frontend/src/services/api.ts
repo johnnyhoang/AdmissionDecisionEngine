@@ -230,6 +230,11 @@ export interface G10SchoolItem {
   latestYear?: number;
   latestQuota?: number;
   latestCompetitionRatio?: number;
+  dataCompleteness?: {
+    percent: number;
+    completedFields: number;
+    totalFields: number;
+  };
   straightDistanceKm?: number;
   roadDistanceKm?: number;
   roadDurationMin?: number;
