@@ -1,0 +1,62 @@
+{
+  "sourceName": "Sở GD&ĐT TP.HCM - dữ liệu tuyển sinh lớp 10 năm học 2026-2027",
+  "sourceUrls": {
+    "quota": "https://image.sggp.org.vn/Uploaded/2026/znazgs/2026_04_29/phu-luc-1-6276.pdf",
+    "registeredNV1": "https://image.sggp.org.vn/Uploaded/2026/znazgs/2026_05_04/congbonvlan1-2026signed-6749.pdf",
+    "cutoff": "https://filethcs.hcm.shieldix.app/data/doc/2026/thcstranquangkhaitanphu/2026_6/30/diem-chuan-ts10-2026-2027_306202613.pdf"
+  },
+  "dataYear": 2027,
+  "notes": [
+    "Batch 1 chỉ nhập các trường đang có trong database và khớp chắc chắn với nguồn tuyển sinh công lập 2026-2027.",
+    "Các trường không còn xuất hiện trong danh sách tuyển sinh công lập 2026-2027 hoặc dòng điểm chuẩn bị thiếu cột trong PDF scan chưa được nhập ở batch này.",
+    "Chỉ tiêu sử dụng cột lớp thường; tỷ lệ chọi = ĐK NV1 / chỉ tiêu lớp thường, làm tròn 2 chữ số."
+  ],
+  "records": [
+    { "code": "BTX", "name": "THPT Bùi Thị Xuân", "quota": 630, "registeredCount": 1787, "competitionRatio": 2.84, "cutoffNV1": 24.25, "cutoffNV2": 24.75, "cutoffNV3": 25.00 },
+    { "code": "TRUNG_VUONG", "name": "THPT Trưng Vương", "quota": 900, "registeredCount": 1191, "competitionRatio": 1.32, "cutoffNV1": 21.75, "cutoffNV2": 22.00, "cutoffNV3": 23.00 },
+    { "code": "MARIE_CURIE", "name": "THPT Marie Curie", "quota": 1000, "registeredCount": 1515, "competitionRatio": 1.51, "cutoffNV1": 22.25, "cutoffNV2": 22.25, "cutoffNV3": 22.75 },
+    { "code": "NTMK", "name": "THPT Nguyễn Thị Minh Khai", "quota": 810, "registeredCount": 1604, "competitionRatio": 1.98, "cutoffNV1": 24.50, "cutoffNV2": 25.00, "cutoffNV3": 25.25 },
+    { "code": "LQD", "name": "THPT Lê Quý Đôn", "quota": 560, "registeredCount": 1293, "competitionRatio": 2.31, "cutoffNV1": 23.75, "cutoffNV2": 24.75, "cutoffNV3": 25.00 },
+    { "code": "TKN", "name": "THPT Trần Khai Nguyên", "quota": 720, "registeredCount": 1455, "competitionRatio": 2.02, "cutoffNV1": 23.00, "cutoffNV2": 24.00, "cutoffNV3": 24.25 },
+    { "code": "HUNG_VUONG", "name": "THPT Hùng Vương", "quota": 1035, "registeredCount": 1720, "competitionRatio": 1.66, "cutoffNV1": 21.00, "cutoffNV2": 21.25, "cutoffNV3": 21.50 },
+    { "code": "BINH_PHU", "name": "THPT Bình Phú", "quota": 720, "registeredCount": 1473, "competitionRatio": 2.05, "cutoffNV1": 22.50, "cutoffNV2": 23.00, "cutoffNV3": 23.25 },
+    { "code": "LTT_Q6", "name": "THPT Lê Thánh Tôn", "quota": 585, "registeredCount": 1121, "competitionRatio": 1.92, "cutoffNV1": 20.00, "cutoffNV2": 20.75, "cutoffNV3": 21.50 },
+    { "code": "TAN_PHONG", "name": "THPT Tân Phong", "quota": 765, "registeredCount": 488, "competitionRatio": 0.64, "cutoffNV1": 15.75, "cutoffNV2": 16.50, "cutoffNV3": 17.00 },
+    { "code": "NGO_QUYEN_BT", "name": "THPT Ngô Quyền", "quota": 765, "registeredCount": 1426, "competitionRatio": 1.86, "cutoffNV1": 21.25, "cutoffNV2": 21.25, "cutoffNV3": 21.50 },
+    { "code": "LONG_TRUONG", "name": "THPT Long Trường", "quota": 720, "registeredCount": 266, "competitionRatio": 0.37, "cutoffNV1": 12.50, "cutoffNV2": 13.50, "cutoffNV3": 14.50 },
+    { "code": "NGUYEN_HUE_Q9", "name": "THPT Nguyễn Huệ", "quota": 675, "registeredCount": 1045, "competitionRatio": 1.55, "cutoffNV1": 18.50, "cutoffNV2": 19.50, "cutoffNV3": 19.75 },
+    { "code": "NAN_NINH", "name": "THPT Nguyễn An Ninh", "quota": 900, "registeredCount": 625, "competitionRatio": 0.69, "cutoffNV1": 16.25, "cutoffNV2": 17.25, "cutoffNV3": 17.75 },
+    { "code": "THANH_LOC", "name": "THPT Thạnh Lộc", "quota": 810, "registeredCount": 1708, "competitionRatio": 2.11, "cutoffNV1": 17.50, "cutoffNV2": 18.00, "cutoffNV3": 18.75 },
+    { "code": "GIA_DINH", "name": "THPT Gia Định", "quota": 855, "registeredCount": 1775, "competitionRatio": 2.08, "cutoffNV1": 23.50, "cutoffNV2": 23.50, "cutoffNV3": 23.75 },
+    { "code": "TVG", "name": "THPT Trần Văn Giàu", "quota": 900, "registeredCount": 856, "competitionRatio": 0.95, "cutoffNV1": 18.00, "cutoffNV2": 18.25, "cutoffNV3": 19.00 },
+    { "code": "HHT", "name": "THPT Hoàng Hoa Thám", "quota": 855, "registeredCount": 1351, "competitionRatio": 1.58, "cutoffNV1": 20.75, "cutoffNV2": 21.25, "cutoffNV3": 22.00 },
+    { "code": "NCT_GV", "name": "THPT Nguyễn Công Trứ", "quota": 855, "registeredCount": 1567, "competitionRatio": 1.83, "cutoffNV1": 22.00, "cutoffNV2": 22.25, "cutoffNV3": 22.50 },
+    { "code": "THD_Q12", "name": "THPT Trần Hưng Đạo", "quota": 990, "registeredCount": 1707, "competitionRatio": 1.72, "cutoffNV1": 22.25, "cutoffNV2": 22.25, "cutoffNV3": 22.50 },
+    { "code": "PHU_NHUAN", "name": "THPT Phú Nhuận", "quota": 855, "registeredCount": 1901, "competitionRatio": 2.22, "cutoffNV1": 24.00, "cutoffNV2": 24.75, "cutoffNV3": 25.00 },
+    { "code": "NTD", "name": "THPT Nguyễn Thị Diệu", "quota": 765, "registeredCount": 288, "competitionRatio": 0.38, "cutoffNV1": 15.75, "cutoffNV2": 16.25, "cutoffNV3": 17.25 },
+    { "code": "NGUYEN_THUONG_HIEN", "name": "THPT Nguyễn Thượng Hiền", "quota": 675, "registeredCount": 1692, "competitionRatio": 2.51, "cutoffNV1": 24.75, "cutoffNV2": 25.25, "cutoffNV3": 25.50 },
+    { "code": "NGUYEN_TRAI_TB", "name": "THPT Nguyễn Trãi", "quota": 675, "registeredCount": 419, "competitionRatio": 0.62, "cutoffNV1": 15.25, "cutoffNV2": 15.75, "cutoffNV3": 16.00 },
+    { "code": "NHT_Q8", "name": "THPT Nguyễn Hữu Thọ", "quota": 765, "registeredCount": 857, "competitionRatio": 1.12, "cutoffNV1": 18.25, "cutoffNV2": 18.50, "cutoffNV3": 19.00 },
+    { "code": "NGT_GV", "name": "THPT Ngô Gia Tự", "quota": 765, "registeredCount": 200, "competitionRatio": 0.26, "cutoffNV1": 13.25, "cutoffNV2": 14.25, "cutoffNV3": 15.00 },
+    { "code": "LMX", "name": "THPT Lê Minh Xuân", "quota": 900, "registeredCount": 939, "competitionRatio": 1.04, "cutoffNV1": 14.25, "cutoffNV2": 15.25, "cutoffNV3": 16.00 },
+    { "code": "TAN_TUC", "name": "THPT Tân Túc", "quota": 855, "registeredCount": 711, "competitionRatio": 0.83, "cutoffNV1": 12.75, "cutoffNV2": 13.75, "cutoffNV3": 14.75 },
+    { "code": "DA_PHUOC", "name": "THPT Đa Phước", "quota": 720, "registeredCount": 391, "competitionRatio": 0.54, "cutoffNV1": 10.50, "cutoffNV2": 10.50, "cutoffNV3": 10.50 },
+    { "code": "CU_CHI", "name": "THPT Củ Chi", "quota": 810, "registeredCount": 1187, "competitionRatio": 1.47, "cutoffNV1": 16.00, "cutoffNV2": 16.50, "cutoffNV3": 17.50 },
+    { "code": "TRUNG_LAP", "name": "THPT Trung Lập", "quota": 585, "registeredCount": 316, "competitionRatio": 0.54, "cutoffNV1": 10.50, "cutoffNV2": 11.50, "cutoffNV3": 11.75 },
+    { "code": "TTH_CC", "name": "THPT Tân Thông Hội", "quota": 720, "registeredCount": 1144, "competitionRatio": 1.59, "cutoffNV1": 14.75, "cutoffNV2": 15.25, "cutoffNV3": 16.00 },
+    { "code": "LONG_THOI", "name": "THPT Long Thới", "quota": 450, "registeredCount": 566, "competitionRatio": 1.26, "cutoffNV1": 13.25, "cutoffNV2": 14.00, "cutoffNV3": 14.75 },
+    { "code": "TRAN_PHU", "name": "THPT Trần Phú", "quota": 945, "registeredCount": 2004, "competitionRatio": 2.12, "cutoffNV1": 24.25, "cutoffNV2": 24.50, "cutoffNV3": 24.75 },
+    { "code": "LE_TRONG_TAN", "name": "THPT Lê Trọng Tấn", "quota": 675, "registeredCount": 1655, "competitionRatio": 2.45, "cutoffNV1": 21.75, "cutoffNV2": 22.50, "cutoffNV3": 22.75 },
+    { "code": "TAY_THANH", "name": "THPT Tây Thạnh", "quota": 1035, "registeredCount": 2146, "competitionRatio": 2.07, "cutoffNV1": 23.25, "cutoffNV2": 24.25, "cutoffNV3": 24.50 },
+    { "code": "TAN_BINH_TP", "name": "THPT Tân Bình", "quota": 855, "registeredCount": 1014, "competitionRatio": 1.19, "cutoffNV1": 21.50, "cutoffNV2": 21.75, "cutoffNV3": 22.50 },
+    { "code": "TAM_PHU", "name": "THPT Tam Phú", "quota": 765, "registeredCount": 1126, "competitionRatio": 1.47, "cutoffNV1": 20.00, "cutoffNV2": 20.50, "cutoffNV3": 21.00 },
+    { "code": "HIEP_BINH", "name": "THPT Hiệp Bình", "quota": 675, "registeredCount": 997, "competitionRatio": 1.48, "cutoffNV1": 16.75, "cutoffNV2": 17.25, "cutoffNV3": 17.50 },
+    { "code": "LINH_TRUNG", "name": "THPT Linh Trung", "quota": 990, "registeredCount": 899, "competitionRatio": 0.91, "cutoffNV1": 16.25, "cutoffNV2": 17.00, "cutoffNV3": 17.25 },
+    { "code": "BINH_CHIEU", "name": "THPT Bình Chiểu", "quota": 900, "registeredCount": 1059, "competitionRatio": 1.18, "cutoffNV1": 15.75, "cutoffNV2": 16.25, "cutoffNV3": 17.00 },
+    { "code": "NHH", "name": "THPT Nguyễn Hữu Huân", "quota": 765, "registeredCount": 1797, "competitionRatio": 2.35, "cutoffNV1": 24.25, "cutoffNV2": 24.75, "cutoffNV3": 25.00 }
+  ],
+  "skipped": [
+    "27 trường trong dữ liệu hiện tại không khớp danh sách công lập 2026-2027 của Sở hoặc có khả năng là tên cũ/ngoài phạm vi.",
+    "Một số trường có dòng điểm chuẩn OCR thiếu NV2/NV3 trong PDF scan chưa được nhập ở batch này để tránh sai dữ liệu."
+  ]
+}
