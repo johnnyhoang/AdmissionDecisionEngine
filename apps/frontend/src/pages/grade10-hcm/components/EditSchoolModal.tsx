@@ -24,7 +24,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
   const [pendingGeocode, setPendingGeocode] = useState<G10LocationResult | null>(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
 
-  const RECENT_YEARS = getRecentSchoolYears(4);
+  const RECENT_YEARS = getRecentSchoolYears();
 
   useEffect(() => {
     if (!isOpen || !schoolId) return;
@@ -346,7 +346,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
               {/* Matrix Data */}
               <div className="flex flex-col gap-4">
                 <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center gap-2">
-                  <Calculator className="w-4 h-4 text-emerald-400" /> Dữ liệu Lịch sử (4 năm gần nhất)
+                  <Calculator className="w-4 h-4 text-emerald-400" /> Dữ liệu Lịch sử (3 năm gần nhất)
                 </h3>
                 
                 <div className="overflow-x-auto">

@@ -589,7 +589,7 @@ export default function Grade10Container() {
                     Chào mừng bạn đến với mô-đun tư vấn và gợi ý nguyện vọng tuyển sinh Lớp 10 các trường THPT Công lập tại TP. Hồ Chí Minh.
                   </p>
                   <p>
-                    Hệ thống lưu trữ lịch sử điểm chuẩn, chỉ tiêu tuyển sinh, số lượng thí sinh đăng ký và tỉ lệ chọi 4 năm gần nhất giúp học sinh và phụ huynh đưa ra quyết định đăng ký nguyện vọng tối ưu nhất.
+                    Hệ thống lưu trữ lịch sử điểm chuẩn, chỉ tiêu tuyển sinh, số lượng thí sinh đăng ký và tỉ lệ chọi 3 năm gần nhất giúp học sinh và phụ huynh đưa ra quyết định đăng ký nguyện vọng tối ưu nhất.
                   </p>
                   <p className="bg-slate-950/45 p-3 border border-slate-800 rounded-xl">
                     💡 <strong>Mẹo nhỏ:</strong> Hãy nhập điểm thử của 3 môn (Toán, Văn, Anh) và điểm ưu tiên vào tab <strong>"Đánh giá NV lớp 10"</strong> để nhận đề xuất trường công lập phù hợp nhất dựa trên tỉ lệ đỗ lịch sử!
@@ -602,7 +602,7 @@ export default function Grade10Container() {
                       <div className="bg-slate-950/30 border border-slate-850 p-3 rounded-xl flex items-start gap-2.5">
                         <span className="text-indigo-400 text-lg">📊</span>
                         <div>
-                          <strong className="text-slate-200 block text-[11px] mb-0.5">Dữ liệu lớn lịch sử 4 năm</strong>
+                          <strong className="text-slate-200 block text-[11px] mb-0.5">Dữ liệu lớn lịch sử 3 năm</strong>
                           <span className="text-slate-400 text-[10px] leading-relaxed block">Lưu trữ và đối sánh trực quan chỉ tiêu, hồ sơ đăng ký, tỉ lệ chọi và điểm chuẩn của 115+ trường THPT.</span>
                         </div>
                       </div>
@@ -1508,7 +1508,7 @@ export default function Grade10Container() {
                   <div className="flex flex-col gap-1.5">
                     <h4 className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
                       <TrendingUp className="h-4 w-4 text-indigo-400" />
-                      Đồ thị biến động điểm chuẩn 4 năm gần đây
+                      Đồ thị biến động điểm chuẩn 3 năm gần đây
                     </h4>
                     <div className="h-48 w-full bg-slate-950/60 p-2 rounded-xl border border-slate-800">
                       {schoolDetail.cutoffs.length === 0 ? (

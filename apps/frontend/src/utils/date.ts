@@ -1,20 +1,19 @@
+export const CURRENT_GRADE10_SCHOOL_YEAR = 2027;
+export const RECENT_GRADE10_YEAR_COUNT = 3;
+
 export const getCurrentSchoolYear = (): number => {
-  const now = new Date();
-  const month = now.getMonth(); // 0 = Jan, 8 = Sep
-  const year = now.getFullYear();
-  
-  // School year starts from September. If month < September (8), it belongs to previous year's term.
-  return month >= 8 ? year : year - 1;
+  return CURRENT_GRADE10_SCHOOL_YEAR;
 };
 
-export const formatSchoolYear = (startYear: number | string | undefined | null): string => {
-  if (!startYear) return 'N/A';
-  const y = parseInt(startYear as string, 10);
-  if (isNaN(y)) return startYear as string;
-  return `${y}-${y + 1}`;
+export const formatSchoolYear = (endYear: number | string | undefined | null): string => {
+  if (!endYear) return 'N/A';
+  if (typeof endYear === 'string' && endYear.includes('-')) return endYear;
+  const y = parseInt(endYear as string, 10);
+  if (isNaN(y)) return endYear as string;
+  return `${y - 1}-${y}`;
 };
 
-export const getRecentSchoolYears = (count: number = 4): number[] => {
+export const getRecentSchoolYears = (count: number = RECENT_GRADE10_YEAR_COUNT): number[] => {
   const currentYear = getCurrentSchoolYear();
   const years: number[] = [];
   for (let i = 0; i < count; i++) {

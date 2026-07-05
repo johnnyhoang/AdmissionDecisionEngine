@@ -11,6 +11,10 @@ import { CreateSchoolDto, UpdateSchoolDto } from '../dtos/school-crud.dto';
 import { Grade10LocationService } from './grade10-location.service';
 import { deduplicateDistrictsHelper } from '../utils/district-dedup.util';
 import { deduplicateSchoolsHelper } from '../utils/school-dedup.util';
+import {
+  getRecentGrade10StartYear,
+  toLatestGrade10Year,
+} from '../utils/school-year.util';
 
 @Injectable()
 export class Grade10SchoolService implements OnApplicationBootstrap {
@@ -398,7 +402,8 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .select('MAX(cutoff.year)', 'maxYear')
       .getRawOne();
 
-    const latestYear = latestYearObj?.maxYear || 2025;
+    const latestYear = toLatestGrade10Year(latestYearObj?.maxYear);
+    const recentStartYear = getRecentGrade10StartYear(latestYear);
 
     const topSchoolsRaw = await this.cutoffRepo
       .createQueryBuilder('cutoff')
@@ -661,6 +666,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .addSelect('SUM(quota.quota)', 'totalQuota')
       .addSelect('SUM(quota.registeredCount)', 'totalRegistered')
       .where('quota.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('quota.year BETWEEN :startYear AND :endYear', {
+        startYear: recentStartYear,
+        endYear: latestYear,
+      })
       .groupBy('quota.year')
       .orderBy('quota.year', 'ASC')
       .getRawMany();

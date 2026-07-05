@@ -10,6 +10,10 @@ import { Grade10ActivityLog } from '../entities/activity-log.entity';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
 import { GetRecommendationDto } from '../dtos/recommendation.dto';
 import { Grade10LocationService } from './grade10-location.service';
+import {
+  getRecentGrade10StartYear,
+  toLatestGrade10Year,
+} from '../utils/school-year.util';
 
 @Injectable()
 export class Grade10CalcService {
@@ -130,7 +134,8 @@ export class Grade10CalcService {
       .select('MAX(cutoff.year)', 'maxYear')
       .getRawOne();
 
-    const latestYear = latestYearObj?.maxYear || 2025;
+    const latestYear = toLatestGrade10Year(latestYearObj?.maxYear);
+    const recentStartYear = getRecentGrade10StartYear(latestYear);
 
     // Fetch all regular cutoffs for latest year
     const query = this.cutoffRepo
@@ -148,7 +153,7 @@ export class Grade10CalcService {
 
     const cutoffs = await query.getMany();
 
-    // Fetch last 3 years of scores (for calculation formulas only — 4th year stored for display/history)
+    // Calculation formulas use exactly the 3 most recent school years.
     const schoolIds = cutoffs.map((c) => c.schoolId);
     let historicalScores: Grade10Cutoff[] = [];
     if (schoolIds.length > 0) {
@@ -156,7 +161,10 @@ export class Grade10CalcService {
         .createQueryBuilder('cutoff')
         .where('cutoff.schoolId IN (:...schoolIds)', { schoolIds })
         .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
-        .andWhere('cutoff.year >= :year', { year: latestYear - 2 }) // 3 most recent years only
+        .andWhere('cutoff.year BETWEEN :startYear AND :endYear', {
+          startYear: recentStartYear,
+          endYear: latestYear,
+        })
         .orderBy('cutoff.year', 'DESC')
         .getMany();
     }
@@ -367,7 +375,8 @@ export class Grade10CalcService {
       .createQueryBuilder('cutoff')
       .select('MAX(cutoff.year)', 'maxYear')
       .getRawOne();
-    const latestYear = latestYearObj?.maxYear || 2025;
+    const latestYear = toLatestGrade10Year(latestYearObj?.maxYear);
+    const recentStartYear = getRecentGrade10StartYear(latestYear);
 
     // 2. Fetch all schools and their latest year cutoffs
     const cutoffs = await this.cutoffRepo
@@ -378,7 +387,7 @@ export class Grade10CalcService {
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
       .getMany();
 
-    // Fetch last 3 years of scores (calculation only; 4th year kept for display/history)
+    // Calculation formulas use exactly the 3 most recent school years.
     const schoolIds = cutoffs.map((c) => c.schoolId);
     let historicalScores: Grade10Cutoff[] = [];
     if (schoolIds.length > 0) {
@@ -386,7 +395,10 @@ export class Grade10CalcService {
         .createQueryBuilder('cutoff')
         .where('cutoff.schoolId IN (:...schoolIds)', { schoolIds })
         .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
-        .andWhere('cutoff.year >= :year', { year: latestYear - 2 }) // 3 most recent years only
+        .andWhere('cutoff.year BETWEEN :startYear AND :endYear', {
+          startYear: recentStartYear,
+          endYear: latestYear,
+        })
         .orderBy('cutoff.year', 'DESC')
         .getMany();
     }
