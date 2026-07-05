@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom';
 import {
   Search as SearchIcon, TrendingUp, Calculator as CalcIcon, MapPin,
   BadgeCheck, School, HelpCircle, Sparkles, ArrowUpDown,
-  BarChart2, BookOpen, Sliders, Award, RefreshCw, Printer, GitMerge
+  BarChart2, BookOpen, Sliders, Award, RefreshCw, Printer, GitMerge,
+  Sun, Moon
 } from 'lucide-react';
 import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend
@@ -443,10 +444,26 @@ export default function Grade10Container() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Navigation tabs */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between py-2">
+      <nav className="bg-slate-900 border-b border-slate-800 px-4 py-2">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-2.5 md:gap-4">
+          
+          {/* Logo & Theme Toggle Row (Mobile only header) */}
+          <div className="flex items-center justify-between md:hidden w-full">
+            <span className="text-xs font-black text-indigo-400 tracking-wider flex items-center gap-1.5 uppercase">
+              <School className="h-4 w-4 text-indigo-400" />
+              Tuyển sinh Lớp 10
+            </span>
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center p-2 rounded-xl border transition duration-200 cursor-pointer shadow bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20 w-8 h-8 shrink-0"
+              title={theme === 'light' ? 'Giao diện Tối' : 'Giao diện Sáng'}
+            >
+              {theme === 'light' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+          </div>
+
           {/* Scrollable Tabs Wrapper */}
-          <div className="flex-1 flex flex-row flex-nowrap gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap pr-4">
+          <div className="w-full md:flex-1 flex flex-row flex-nowrap gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap pr-2">
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition ${
@@ -522,16 +539,15 @@ export default function Grade10Container() {
               <RefreshCw className="h-3.5 w-3.5" />
               Mô phỏng
             </button>
-
-
           </div>
 
-          {/* Theme Toggle Button */}
+          {/* Theme Toggle Button (Desktop only) */}
           <button
             onClick={toggleTheme}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer shadow bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20"
+            className="hidden md:flex items-center justify-center p-2 rounded-xl border transition duration-200 cursor-pointer shadow bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20 w-9 h-9 shrink-0"
+            title={theme === 'light' ? 'Giao diện Tối' : 'Giao diện Sáng'}
           >
-            {theme === 'light' ? '🌸 Đáng yêu' : '✨ Tối giản'}
+            {theme === 'light' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
         </div>
       </nav>
