@@ -167,6 +167,9 @@ export default function Grade10Container() {
     try {
       const data = await fetchG10Schools(search, distId);
       setSchools(data.items);
+      if (search === '' && distId === '') {
+        setAllSchools(data.items);
+      }
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -959,20 +962,7 @@ export default function Grade10Container() {
                             <div>TB NV1 3 năm: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span></div>
                           </div>
 
-                          {/* 4 Diffs Expandable details */}
-                          <details className="mt-2 group">
-                            <summary className="text-[10px] text-slate-400 hover:text-slate-200 cursor-pointer list-none flex items-center gap-1 font-semibold select-none">
-                              <span>📊 Xem thông số kỹ thuật (d1, d2, d3, d4)</span>
-                              <span className="transition-transform group-open:rotate-180">▼</span>
-                            </summary>
-                            
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80 mt-1.5">
-                              <div>d1 (NV1): <span className={`font-bold ${rec.d1 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d1 > 0 ? `+${rec.d1}` : rec.d1}đ</span></div>
-                              <div>d2 (TB): <span className={`font-bold ${rec.d2 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d2 > 0 ? `+${rec.d2}` : rec.d2}đ</span></div>
-                              <div>d3 (NV2): <span className={`font-bold ${rec.d3 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d3 > 0 ? `+${rec.d3}` : rec.d3}đ</span></div>
-                              <div>d4 (NV3): <span className={`font-bold ${rec.d4 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{rec.d4 > 0 ? `+${rec.d4}` : rec.d4}đ</span></div>
-                            </div>
-                          </details>
+
                           
                           {rec.advice && (
                             <div className="mt-3 bg-slate-950/40 p-2.5 border border-slate-800/80 rounded-lg text-[11px] text-slate-300 italic flex items-start gap-2">
@@ -1771,8 +1761,8 @@ export default function Grade10Container() {
                     className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
                   >
                     <option value="">-- Chọn trường mơ ước --</option>
-                    {schools.slice().sort((a,b) => a.name.localeCompare(b.name)).map(s => (
-                      <option key={s.id} value={s.code}>{s.name} ({s.code})</option>
+                    {(allSchools.length > 0 ? allSchools : schools).slice().sort((a,b) => a.name.localeCompare(b.name)).map(s => (
+                      <option key={s.id} value={s.code}>{s.name}</option>
                     ))}
                   </select>
                 </div>
@@ -1991,19 +1981,7 @@ export default function Grade10Container() {
                               )}
                             </div>
 
-                            <details className="mt-2.5 group">
-                              <summary className="text-[10px] text-slate-400 hover:text-slate-200 cursor-pointer list-none flex items-center gap-1 font-semibold select-none">
-                                <span>📊 Xem thông số kỹ thuật (d1, d2, d3, d4)</span>
-                                <span className="transition-transform group-open:rotate-180">▼</span>
-                              </summary>
-                              
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80 mt-1.5">
-                                <div>d1 (NV1): <span className={`font-bold ${school.d1 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d1 > 0 ? `+${school.d1}` : school.d1}đ</span></div>
-                                <div>d2 (TB): <span className={`font-bold ${school.d2 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d2 > 0 ? `+${school.d2}` : school.d2}đ</span></div>
-                                <div>d3 (NV2): <span className={`font-bold ${school.d3 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d3 > 0 ? `+${school.d3}` : school.d3}đ</span></div>
-                                <div>d4 (NV3): <span className={`font-bold ${school.d4 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{school.d4 > 0 ? `+${school.d4}` : school.d4}đ</span></div>
-                              </div>
-                            </details>
+
 
                             {isTooFar && (
                               <p className="text-[10px] text-amber-500 mt-2 m-0 leading-relaxed">
@@ -2221,7 +2199,7 @@ export default function Grade10Container() {
                 <span>Môn Tiếng Anh: <strong>{minEnglish} – {maxEnglish}</strong></span>
                 <span>Điểm cộng ưu tiên: <strong>{priorityScore}</strong></span>
                 {dreamSchoolCode && (
-                  <span>Trường mơ ước NV1: <strong>{schools.find((s) => s.code === dreamSchoolCode)?.name ?? dreamSchoolCode}</strong></span>
+                  <span>Trường mơ ước NV1: <strong>{(allSchools.length > 0 ? allSchools : schools).find((s) => s.code === dreamSchoolCode)?.name ?? ''}</strong></span>
                 )}
                 {comboUserAddress && <span>Địa chỉ nhà: <strong>{comboUserAddress}</strong></span>}
                 <span>Khoảng cách tối đa: <strong>{maxCommuteDistance} km</strong></span>
