@@ -54,6 +54,10 @@ export class CreateSchoolDto {
   @IsOptional()
   activities?: string;
 
+  @IsString()
+  @IsOptional()
+  regulations?: string;
+
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
@@ -113,6 +117,10 @@ export class UpdateSchoolDto {
   @IsString()
   @IsOptional()
   activities?: string;
+
+  @IsString()
+  @IsOptional()
+  regulations?: string;
 
   @IsNumber()
   @Type(() => Number)

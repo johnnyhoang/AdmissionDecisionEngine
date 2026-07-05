@@ -219,6 +219,7 @@ export interface G10SchoolItem {
   website?: string;
   description?: string;
   activities?: string;
+  regulations?: string;
   mapUrl?: string;
   schoolType: string;
   isActive: boolean;

@@ -37,6 +37,8 @@ export interface ImportSchoolDto {
   address?: string;
   website?: string;
   description?: string;
+  activities?: string;
+  regulations?: string;
   mapUrl?: string;
   latitude?: number;
   longitude?: number;
@@ -192,6 +194,9 @@ export class Grade10ImportService {
                 school.name = schoolDto.name || school.name;
                 school.address = schoolDto.address || school.address;
                 school.website = schoolDto.website || school.website;
+                school.description = schoolDto.description || school.description;
+                school.activities = schoolDto.activities || school.activities;
+                school.regulations = schoolDto.regulations || school.regulations;
                 school.schoolType = schoolDto.schoolType || school.schoolType;
                 school.districtId = district.id;
                 school.latitude = schoolDto.latitude ?? resolvedLocation.latitude;
@@ -214,6 +219,9 @@ export class Grade10ImportService {
                   name: schoolDto.name,
                   address: schoolDto.address,
                   website: schoolDto.website,
+                  description: schoolDto.description,
+                  activities: schoolDto.activities,
+                  regulations: schoolDto.regulations,
                   schoolType: schoolDto.schoolType || 'REGULAR',
                   districtId: district.id,
                   latitude: schoolDto.latitude ?? resolvedLocation.latitude,

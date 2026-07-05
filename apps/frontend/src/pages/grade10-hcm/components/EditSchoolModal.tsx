@@ -42,6 +42,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
           description: data.description || '',
           comments: data.comments || '',
           activities: data.activities || '',
+          regulations: data.regulations || '',
           mapUrl: data.mapUrl || '',
           schoolType: data.schoolType || 'REGULAR',
           isActive: data.isActive !== false,
@@ -315,6 +316,11 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                   <div>
                     <label className="block text-xs font-medium text-slate-400 mb-1">Hoạt động & Phong trào</label>
                     <textarea name="activities" value={formData.activities} onChange={handleBasicChange} rows={3} placeholder="Câu lạc bộ, văn nghệ, thể thao, hoạt động ngoại khóa..." className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white resize-y" />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Nội quy & Quy định</label>
+                    <textarea name="regulations" value={formData.regulations} onChange={handleBasicChange} rows={3} placeholder="Đồng phục, giờ giấc, quy định về điện thoại, tác phong..." className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white resize-y" />
                   </div>
 
                   <div>

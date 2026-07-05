@@ -1,0 +1,178 @@
+{
+  "sourceName": "Tổng hợp website trường, fanpage và báo chí giáo dục (Tuổi Trẻ, Mực Tím, Thanh Niên, VnExpress, Dân Trí...) — biên tập 07/2026",
+  "dataYear": 2026,
+  "districts": [
+    {
+      "code": "Q1",
+      "name": "Quận 1",
+      "schools": [
+        {
+          "code": "LHP_CHUYEN",
+          "name": "THPT chuyên Lê Hồng Phong",
+          "activities": "Trường THPT chuyên Lê Hồng Phong là một trong những trường có phong trào câu lạc bộ mạnh nhất TP.HCM với khoảng 21 CLB hoạt động bài bản, tiêu biểu như:\n• CLB học thuật – công nghệ: LHP Science Club, CLB Robot, CLB Máy bay mô hình, CLB Thiên văn\n• CLB nghệ thuật – kỹ năng: CLB Nhiếp ảnh Lumière, đội văn nghệ, đội kịch tuyên truyền, đội nhảy, đội Cheer (cổ động)\n• Hoạt động truyền thống thường niên: chương trình \"Vươn Lên\" cho khối 10, chương trình \"Đồng Khởi\" cho khối 12, Lê Hồng Phong Festival, Ngày Truyền thống, The Amazing LHP Race, chiến dịch tình nguyện Hoa Phượng Đỏ\nVề thành tích học thuật, trường nhiều năm liền dẫn đầu cả nước về học sinh giỏi quốc gia: năm học 2025–2026 đạt 153 giải HSG quốc gia (5 giải Nhất, 44 giải Nhì, 39 giải Ba, 65 giải Khuyến khích) – nhiều nhất cả nước, đồng thời đứng đầu TP.HCM với 305 giải HSG lớp 12 cấp thành phố. Học sinh trường thường xuyên đạt giải cao tại Olympic Tháng 4, các kỳ thi Olympic quốc tế, cuộc thi nghiên cứu khoa học kỹ thuật cấp thành phố và quốc tế, cùng nhiều giải thể thao cấp thành phố, quốc gia. Đây cũng là trường THPT đầu tiên tại TP.HCM đưa AI vào giảng dạy.",
+          "regulations": "Về đồng phục: học sinh mặc áo sơ mi trắng, nam quần kaki xám, nữ chân váy xám; nữ sinh mặc áo dài trắng vào thứ Hai và các buổi lễ; giờ thể dục mặc đồng phục thể thao của trường và mang giày bata.\nVề tác phong: đi giày hoặc dép có quai hậu (không dép lê), tóc gọn gàng, không nhuộm màu nổi bật; trang phục trong các hoạt động ngoại khóa cần gọn gàng, lịch sự, phù hợp môi trường học đường.\nTrường có nội quy bán trú riêng công bố trên website chính thức, trong đó có quy định không sử dụng điện thoại, máy tính bảng trong giờ nghỉ bán trú.\nNgoài ra trường áp dụng quy chế chung của Sở GD&ĐT TP.HCM về giờ giấc, hạnh kiểm và hạn chế sử dụng điện thoại trong giờ học.",
+          "sources": ["https://hoclagioi.vn/cam-nang/truong-thpt-chuyen-le-hong-phong-tphcm-id-695", "https://vietnamnet.vn/truong-o-tphcm-co-153-hoc-sinh-gioi-quoc-gia-nhieu-nhat-ca-nuoc-2483434.html", "https://www.sggp.org.vn/tphcm-truong-thpt-chuyen-le-hong-phong-dan-dau-so-luong-hoc-sinh-gioi-quoc-gia-post834288.html", "http://www.thpt-lehongphong-tphcm.edu.vn/vi/content/noi-quy-ban-tru-nam-hoc-2023-2024"]
+        },
+        {
+          "code": "NTMK",
+          "name": "THPT Nguyễn Thị Minh Khai",
+          "activities": "Trường THPT Nguyễn Thị Minh Khai (tiền thân là trường Áo Tím – Gia Long) có khoảng 10 câu lạc bộ trực thuộc Đoàn trường, chia thành hai mảng học thuật và văn nghệ:\n• Mảng văn nghệ: CLB Hát Muzika, CLB Nhảy The Grafts, CLB Nhảy cổ động The Gun, CLB Múa đương đại The Lights\n• Mảng học thuật: CLB Báo chí, CLB Tiếng Anh, CLB Khoa học, CLB Nhiếp ảnh, CLB Tiếng Pháp Bonjour Croissant (phụ trách giao lưu với Tổng Lãnh sự quán Pháp)\n• Sự kiện \"đặc sản\": nhạc hội Tuổi Hồng – đêm nhạc xuân truyền thống tổ chức từ năm 1994, đã qua gần 30 mùa, thu hút khoảng 4.000 khán giả mỗi năm, do chính học sinh tự lên ý tưởng, thiết kế sân khấu và tìm nhà tài trợ, doanh thu dùng gây quỹ từ thiện (xây nhà tình bạn); và Đêm Tri Ân dành cho khối 12\n• Ngoài ra trường có phong trào thể thao (bóng đá, cầu lông) và các chương trình biểu diễn văn nghệ sôi nổi quanh năm, được ví như môi trường \"High School Musical\" của học sinh TP.HCM.",
+          "regulations": "Về đồng phục: học sinh mặc theo đúng loại trang phục quy định cho từng ngày trong tuần; nam mặc sơ mi trắng, quần tây sẫm màu; nữ sinh mặc áo dài trong các ngày lễ, chào cờ – sắc áo tím truyền thống gắn với lịch sử trường Áo Tím Gia Long được sử dụng trong các dịp kỷ niệm; phù hiệu và bảng tên phải gắn đúng vị trí, không tẩy xóa.\nVề giày dép: giày bata trắng cho giờ thể dục, giày hoặc sandal có quai hậu cho giờ học chính khóa.\nTheo quy chế chung của Sở GD&ĐT TP.HCM, học sinh phải đi học đúng giờ, giữ tác phong gọn gàng, không nhuộm tóc màu nổi bật, không trang điểm đậm và hạn chế sử dụng điện thoại di động trong giờ học khi chưa được giáo viên cho phép.",
+          "sources": ["https://ielts-fighter.com/tin-tuc/thpt-nguyen-thi-minh-khai-hcm_mt1641797545.html", "https://tuoitre.vn/dan-sao-khung-do-bo-nhac-hoi-tuoi-hong-cua-hoc-sinh-gay-quy-xay-nha-tinh-ban-20250118161431686.htm", "https://muctim.tuoitre.vn/ly-giai-con-sot-ve-tuoi-hong-minh-khai-28-101240326140154328.htm"]
+        },
+        {
+          "code": "MARIE_CURIE",
+          "name": "THPT Marie Curie",
+          "activities": "Trường THPT Marie Curie – ngôi trường hơn 100 năm tuổi với kiến trúc Pháp cổ – nổi tiếng về hoạt động văn hóa, nghệ thuật và thể thao:\n• Các CLB tiêu biểu: CLB Truyền thông trẻ Mediarie, CLB Kỹ năng Nỏ Thần, CLB Tổ chức sự kiện Lửa Hồng cùng nhiều CLB học thuật, văn nghệ, giải trí khác\n• Đêm nhạc truyền thống tổ chức vào tháng 11 hằng năm, quy tụ nhiều ca sĩ nổi tiếng, vừa là sân chơi cho học sinh vừa gây quỹ từ thiện\n• Hội thi flashmob thường niên thu hút hơn 2.500 học sinh tham gia mỗi năm học, nhiều tiết mục lan tỏa mạnh trên mạng xã hội (chung kết thường tổ chức dịp 20/11)\n• Các sự kiện truyền thống khác: hội trại, hội xuân, lễ trưởng thành cho khối 12, chương trình acoustic giờ ra chơi\n• Học sinh được tham gia các chuyến học tập trải nghiệm ngoại khóa thực tế (như chuyến đi tìm hiểu văn hóa miền Tây tại Vĩnh Long)\nTrường còn được biết đến là \"lò đào tạo sao Việt\" với nhiều cựu học sinh là nghệ sĩ nổi tiếng, môi trường học năng động, giàu truyền thống.",
+          "regulations": "Về đồng phục: học sinh mặc đồng phục đầy đủ, đúng quy định tất cả các ngày trong tuần – áo sơ mi trắng viền tím in logo trường ở ngực trái kèm cà vạt tím, nữ mặc chân váy dài, nam mặc quần tây; phải đeo phù hiệu logo trường bên ngực trái; đồng phục giữ sạch sẽ, gọn gàng, không tự ý sửa kiểu dáng.\nĐồng phục thể dục chỉ mặc vào ngày có tiết thể dục, sinh hoạt thể thao hoặc hoạt động ngoại khóa theo quy định của trường.\nTheo quy chế chung của Sở GD&ĐT TP.HCM, học sinh đi học đúng giờ, giữ tác phong gọn gàng và hạn chế sử dụng điện thoại trong giờ học khi chưa được giáo viên cho phép.",
+          "sources": ["https://muctim.tuoitre.vn/10-dieu-truong-thpt-marie-curie-khien-hoc-sinh-thich-me-101260326140348876.htm", "https://muctim.tuoitre.vn/teen-truong-thpt-marie-curie-ron-rang-nhay-flashmob-mung-20-11-101241117190549214.htm", "https://vtv.vn/giao-duc/truong-thpt-marie-curie-tp-ho-chi-minh-ky-niem-105-ngay-thanh-lap-20231120165504289.htm"]
+        }
+      ]
+    },
+    {
+      "code": "Q3",
+      "name": "Quận 3",
+      "schools": [
+        {
+          "code": "BTX",
+          "name": "THPT Bùi Thị Xuân",
+          "activities": "Trường THPT Bùi Thị Xuân được xem là một trong những trường tiên phong đổi mới hoạt động giáo dục tại TP.HCM:\n• Hệ thống CLB đa dạng: CLB Trí tuệ nhân tạo AI-BTX, CLB Nghiên cứu khoa học, CLB Tiếng Anh – hùng biện, CLB Sắc Màu, các CLB văn nghệ – thể thao\n• Hơn 10 hoạt động giáo dục ngoài giờ chính khóa: tiếng Anh với giáo viên nước ngoài, tin học MOS, làm quen AI, võ Vovinam, nấu ăn, mỹ thuật, kỹ năng sống, giáo dục công dân toàn cầu\n• Hoạt động trải nghiệm phong phú: đọc sách tại thư viện, xem phim, yoga, thủ công; hội trại, chương trình \"Mâm cơm gia đình\", hoạt động từ thiện và các chuyến trải nghiệm trong và ngoài nước\n• Sự kiện truyền thống: lễ tri ân – trưởng thành cho khối 12 (hiệu trưởng trực tiếp tham dự cùng học sinh), các hội thi văn nghệ và talkshow kỹ năng do CLB tổ chức (như Talkshow J'OMOMENT của CLB Tiếng Anh)",
+          "regulations": "Trường nổi tiếng với cách xử lý học sinh vi phạm nội quy mang tính nhân văn được báo chí ghi nhận rộng rãi: từ tháng 4/2023, thay vì quét rác hay viết kiểm điểm, học sinh vi phạm (nhuộm tóc, sơn móng tay, không bỏ áo vào quần, mang giày cao gót, đi trễ nhiều lần...) sẽ lên thư viện đọc sách \"Hạt giống tâm hồn\" rồi viết bài cảm nhận nộp lại cho trường.\nDanh mục vi phạm nói trên cũng phản ánh nội quy tác phong của trường: không nhuộm tóc, không sơn móng tay, áo bỏ vào quần, không mang giày cao gót, đi học đúng giờ.\nVề điện thoại: trường áp dụng mô hình \"Không điện thoại trong giờ ra chơi\" để khuyến khích học sinh vận động, giao lưu; ban giám hiệu ủng hộ mạnh chủ trương cấm học sinh dùng điện thoại trong trường học của TP.HCM.",
+          "sources": ["https://tuoitre.vn/thay-quet-rac-viet-tuong-trinh-hoc-tro-truong-bui-thi-xuan-bi-phat-doc-sach-20230425182427505.htm", "https://vnexpress.net/hoc-sinh-vi-pham-noi-quy-phai-doc-sach-4598036.html", "https://nhandan.vn/truong-hoc-khong-dien-thoai-trong-gio-ra-choi-post909797.html"]
+        }
+      ]
+    },
+    {
+      "code": "Q5",
+      "name": "Quận 5",
+      "schools": [
+        {
+          "code": "TKN",
+          "name": "THPT Trần Khai Nguyên",
+          "activities": "• Trường nổi tiếng với hệ thống câu lạc bộ rất mạnh: khoảng 20-21 CLB đang hoạt động, chia thành nhóm học thuật (Văn, Toán, Lý, Hóa, Sinh, Tin, tiếng Anh, tiếng Hàn...) và nhóm sở thích - kỹ năng; mỗi CLB đều có giáo viên đồng hành, trung bình mỗi năm tổ chức khoảng 8 hoạt động chính.\n• Các CLB tiêu biểu: CLB Vật lý (ra mắt từ 2017, tổ chức các buổi thí nghiệm tĩnh điện, lửa... hấp dẫn), CLB Ong Thợ (công tác xã hội - thiện nguyện, hoạt động hơn 14 năm), CLB Bóng rổ (tổ chức giải giao hữu hằng năm), nhóm nhảy cổ động Warriors, CLB hát và nhạc cụ SAMI, CLB Văn học với cuộc thi \"Nói trước công chúng\" thu hút hàng trăm học sinh.\n• Sự kiện truyền thống: \"Ngày thứ bảy hạnh phúc/Thứ bảy cá tính\" (học sinh mặc tự do, các CLB tổ chức hoạt động ngoại khóa), Hội Xuân dịp Tết với văn nghệ - ẩm thực gây quỹ cho chiến dịch Xuân tình nguyện, lễ trưởng thành \"Khi tôi 18\" cho khối 12.\n• Thành tích phong trào: nhiều năm liền dẫn đầu cụm thi đua; đạt 4 giải Nhì, 2 giải Ba cuộc thi Khoa học Kỹ thuật cấp thành phố; xếp thứ hạng cao toàn thành ở các kỳ thi Olympic.\n• Trường có kiến trúc cổ từ thời Pháp, khuôn viên đẹp, là điểm cộng cho các hoạt động chụp ảnh, sự kiện của học sinh.",
+          "regulations": "Điểm đặc biệt được báo chí giáo dục TP.HCM nhắc đến: từ năm học 2024-2025 trường triển khai \"Thứ bảy cá tính\" - mỗi thứ Bảy học sinh và giáo viên được mặc trang phục tự do, thoải mái thể hiện cá tính (tỷ lệ học sinh ủng hộ gần 98%); các ngày còn lại mặc đồng phục theo quy định của trường.\nVề nội quy chung, trường áp dụng theo quy chế của Bộ GD&ĐT và Sở GD&ĐT TP.HCM: mặc đồng phục, đeo phù hiệu khi đến trường; tác phong gọn gàng, không nhuộm tóc màu nổi; không sử dụng điện thoại trong giờ học khi không được giáo viên cho phép (Thông tư 32/2020).",
+          "sources": ["https://muctim.tuoitre.vn/nghe-teen-khoe-ve-truong-thpt-tran-khai-nguyen-101250220183114995.htm", "https://muctim.tuoitre.vn/diem-danh-hoat-dong-noi-bat-cua-cac-cau-lac-bo-truong-thpt-tran-khai-nguyen-101250221011811706.htm", "https://giaoduc.edu.vn/tao-moi-truong-cho-hoc-sinh-the-hien-va-dinh-hinh-ca-tinh/"]
+        }
+      ]
+    },
+    {
+      "code": "Q11",
+      "name": "Quận 11",
+      "schools": [
+        {
+          "code": "HUNG_VUONG",
+          "name": "THPT Hùng Vương",
+          "activities": "• Trường có các câu lạc bộ học thuật và sở thích cho học sinh; năm học gần đây hơn 2.000 học sinh toàn trường lần đầu được tham gia hoạt động trải nghiệm ở 3 CLB: Cookies (kỹ năng/làm bánh), Âm nhạc và Văn học.\n• Hội xuân là hoạt động truyền thống lớn của trường: Hội xuân \"Sắc xuân Hùng Vương\" đón Tết Bính Ngọ 2026 bán hết hơn 5.000 vé, rộn ràng như một phiên chợ Tết với gian hàng ẩm thực, văn nghệ và trò chơi tương tác.\n• Phong trào học sinh giỏi mạnh: năm học 2024-2025, học sinh khối 12 của trường đạt kỷ lục giải thưởng với 3 giải Nhất, 3 giải Nhì và 22 giải Ba kỳ thi Học sinh giỏi cấp Thành phố.\n• Trường thường xuyên tổ chức các hoạt động văn hóa - văn nghệ - thể thao quy mô lớn như đại nhạc hội, lễ tri ân và trưởng thành cho học sinh khối 12.\n• Khuôn viên rộng khoảng 2,24 ha với các khu thể thao phục vụ bóng đá, bóng rổ, giúp phong trào thể dục thể thao phát triển.\n• Là ngôi trường lâu đời (tiền thân từ năm 1934), có bề dày truyền thống tại quận 5.",
+          "regulations": "Trường yêu cầu học sinh mặc đồng phục và đeo phù hiệu (bảng tên) từ khi đến trường cho tới khi về nhà. Nam sinh mặc áo sơ mi trắng bỏ vào quần tây; nữ sinh mặc áo dài trắng có logo trường vào ngày thứ Hai đầu tuần, các ngày còn lại mặc đồng phục thường của trường. Giờ học Thể dục, Giáo dục quốc phòng và hoạt động ngoại khóa, học sinh mặc đồng phục thể thao riêng theo quy định.\nNgoài ra, theo quy chế chung của Bộ GD&ĐT (Thông tư 32/2020) áp dụng cho các trường THPT công lập TP.HCM: học sinh không được sử dụng điện thoại di động trong giờ học nếu không phục vụ học tập và không được giáo viên cho phép; tác phong gọn gàng, không nhuộm tóc lòe loẹt, không xăm hình phản cảm.",
+          "sources": ["https://muctim.tuoitre.vn/chay-sach-hon-5000-ve-hoi-xuan-hoc-tro-ron-rang-nhu-mot-phien-cho-tet-101260211182525117.htm", "https://tuoitre.vn/le-tri-an-va-truong-thanh-tai-truong-thpt-hung-vuong-neu-em-khong-phai-la-nguoi-xuat-sac-20250614155110405.htm", "https://thpthungvuong.hcm.edu.vn/"]
+        }
+      ]
+    },
+    {
+      "code": "TPTD",
+      "name": "Thành phố Thủ Đức",
+      "schools": [
+        {
+          "code": "NHH",
+          "name": "THPT Nguyễn Hữu Huân",
+          "activities": "• Trường có hơn 30 câu lạc bộ - đội - nhóm trải rộng từ học thuật đến nghệ thuật, thể thao: CLB Báo chí, Sinh học, Hóa học, Tiếng Anh, Nhạc cụ, Nhiếp ảnh, robotics, tranh biện (debate), môi trường...\n• Hoạt động truyền thống nổi bật: cuộc thi Flashmob, Hội chợ dân gian, Hội trại truyền thống - những sân chơi giúp nhiều thế hệ học sinh khai phóng tiềm năng và rèn kỹ năng sống.\n• Hoạt động thiện nguyện, chương trình Tiếp sức mùa thi được tổ chức thường xuyên, giáo dục học sinh tinh thần sẻ chia, trách nhiệm cộng đồng.\n• Thành tích học tập thuộc tốp đầu thành phố: hằng năm có nhiều học sinh đạt giải HSG cấp Thành phố và Quốc gia; riêng năm 2024 có hơn 100 học sinh đạt danh hiệu HSG Thành phố và 1 giải Khuyến khích HSG Quốc gia môn Hóa học.\n• Tại kỳ thi Olympic truyền thống 30/4 các tỉnh phía Nam, trường đạt 28/45 huy chương gồm 5 Huy chương Vàng, 7 Huy chương Bạc, 16 Huy chương Đồng.\n• Trường duy trì tỷ lệ tốt nghiệp THPT 100% nhiều năm liền; học sinh còn đạt giải ở các cuộc thi nghiên cứu khoa học, bảo vệ môi trường và thể thao cấp thành phố.\n• Cơ sở vật chất được đầu tư gần 20 tỷ đồng: hơn 50 phòng học có điều hòa, nhà thi đấu riêng, thuận lợi cho hoạt động thể thao, văn nghệ.",
+          "regulations": "Trường công bố công khai \"Nội quy học sinh\" và \"Quy định đồng phục học sinh\" trên website chính thức (thptnguyenhuuhuan.hcm.edu.vn, mục Nội quy - Quy chế). Quy định đồng phục nêu rõ yêu cầu về đồng phục nam - nữ, áo dài, đồng phục thể dục (màu chủ đạo xanh da trời phối trắng), giày dép, phù hiệu và tóc; học sinh phải mặc đúng đồng phục và đeo phù hiệu khi đến trường.\nNgoài ra, theo quy chế chung của Bộ GD&ĐT áp dụng tại trường: học sinh không sử dụng điện thoại di động trong giờ học nếu không phục vụ học tập và chưa được giáo viên cho phép; giữ tác phong gọn gàng, nghiêm túc.",
+          "sources": ["https://thptnguyenhuuhuan.hcm.edu.vn/noi-quy-quy-che/noi-quy-hoc-sinh/ctmb/86631/433924", "https://thptnguyenhuuhuan.hcm.edu.vn/noi-quy-quy-che/quy-dinh-dong-phuc-hoc-sinh-nam-hoc-2021-2022/ctmb/86631/435698"]
+        },
+        {
+          "code": "THU_DUC",
+          "name": "THPT Thủ Đức",
+          "activities": "• Trường có nhiều câu lạc bộ đa dạng: CLB Văn học, CLB Tiếng Anh, CLB Nghiên cứu khoa học, CLB Thể dục thể thao, CLB Nhiếp ảnh, CLB Sinh học; CLB Văn nghệ quy tụ các tài năng hát - múa - biểu diễn sân khấu và CLB Kỹ năng giúp học sinh rèn giao tiếp, làm việc nhóm, tổ chức sự kiện.\n• Hoạt động thể thao phong phú: bơi lội, aerobic, võ Vovinam, bóng đá, cầu lông, bóng rổ, bóng chuyền; Hội khỏe Phù Đổng hằng năm thu hút đông đảo học sinh tham gia.\n• Hoạt động thiện nguyện được duy trì thường xuyên qua các chiến dịch \"Xuân tình nguyện\", \"Tiếp sức mùa thi\", giáo dục học sinh giá trị nhân văn và trách nhiệm cộng đồng.\n• Là một trong những trường dẫn đầu khu vực Thủ Đức về số giải Học sinh giỏi cấp Thành phố các môn văn hóa; học sinh nổi bật ở các sân chơi hiện đại như nghiên cứu STEM, cuộc thi Tin học văn phòng thế giới (MOSWC) và Olympic truyền thống 30/4.\n• Tỷ lệ tốt nghiệp THPT đạt xấp xỉ 100%; năm 2019 trường được trao tặng Huân chương Lao động hạng Ba ghi nhận chất lượng giáo dục bền vững.\n• Cơ sở vật chất phục vụ phong trào tốt: khuôn viên hơn 11.000 m², 53 phòng học có máy chiếu/TV, 3 phòng STEM, hội trường 500 chỗ, phòng truyền thống văn hóa.",
+          "regulations": "Trường công bố \"Một số quy định về đồng phục\" trên website chính thức (thptthuduc.hcm.edu.vn): đồng phục gồm áo sơ mi trắng với quần/váy xanh có logo trường thêu trên áo; quy định bao quát đồng phục nam - nữ, áo dài, trang phục thể dục, giày dép và tóc. Trường được đánh giá là có nề nếp kỷ luật nghiêm túc đi đôi với đời sống học sinh năng động.\nNgoài ra, theo quy chế chung của Bộ GD&ĐT (Thông tư 32/2020) áp dụng cho trường công lập TP.HCM: học sinh không sử dụng điện thoại trong giờ học khi không phục vụ học tập và chưa được giáo viên đồng ý; tác phong gọn gàng, đeo phù hiệu khi đến trường.",
+          "sources": ["https://thptthuduc.hcm.edu.vn/nam-hoc-2023-2024/mot-so-quy-dinh-ve-dong-phuc/ctmb/92077/483521", "https://thptthuduc.hcm.edu.vn/gioi-thieu-chung/gioi-thieu-ve-truong-thpt-thu-duc/ctmb/44269/527666"]
+        }
+      ]
+    },
+    {
+      "code": "QTB",
+      "name": "Quận Tân Bình",
+      "schools": [
+        {
+          "code": "NTH_TB",
+          "name": "THPT Nguyễn Thượng Hiền",
+          "activities": "Trường THPT Nguyễn Thượng Hiền có đời sống học đường rất sôi động với hơn 20 câu lạc bộ ở đủ các lĩnh vực:\n• CLB học thuật: CLB Tiếng Anh (EC), Đấu trường Alpha, CLB Sinh học, CLB Hóa học, CLB Công nghệ (EMP), CLB Tranh biện (Phoenix)\n• CLB thể thao: bóng rổ nam, bóng rổ nữ (Fortis), cầu lông, bơi lội, bóng chuyền, bóng đá\n• CLB nghệ thuật - truyền thông: nhiếp ảnh (Finique), nhảy hiện đại (LCD), đội cổ động cheerleading (LCT), múa (KHÓI), báo chí - truyền thông (Nắng), CLB Tham vấn tâm lý\nNgoài giờ chính khóa, trường mở các lớp ngoại khóa ngôn ngữ (tiếng Đức, Nhật, Trung, Hàn) và lớp kỹ năng như bơi lội, nữ công gia chánh, thanh nhạc, võ thuật, đàn organ, guitar. Hoạt động trại là \"đặc sản\" của trường: trại đón tân học sinh khối 10 với đội ngũ \"người dẫn đường\" đồng hành, trại truyền thống được xem là niềm tự hào của học sinh Nguyễn Thượng Hiền, cùng đêm nhạc Sao Hạ và giải bóng đá dịp hè. Về học thuật, trường nhiều năm liên tục dẫn đầu TP.HCM về điểm chuẩn tuyển sinh lớp 10 và có truyền thống mạnh ở các kỳ thi học sinh giỏi thành phố, Olympic truyền thống 30-4.",
+          "regulations": "Quy định nổi bật nhất của trường là việc cấm học sinh sử dụng điện thoại di động trong khuôn viên trường, áp dụng từ năm học 2018-2019 và được báo chí nhắc đến nhiều: học sinh được mang điện thoại đến trường nhưng không được sử dụng trong giờ học, giờ ra chơi, giờ ăn và ngủ trưa bán trú; chỉ được dùng khi giáo viên cho phép phục vụ bài học (giáo viên phải ghi rõ trên bảng để giám thị kiểm tra). Nhà trường cho biết quy định này nhằm tạo sự nghiêm túc, bình đẳng trong môi trường học đường.\nVề đồng phục: nữ sinh mặc áo dài các buổi sáng trong tuần (trừ buổi có tiết thể dục, giáo dục quốc phòng), buổi chiều mặc áo sơ mi trắng - quần tây; nam sinh mặc áo sơ mi trắng, quần tây đen; thứ tư mặc áo Đoàn thanh niên; mỗi niên khóa có màu áo thể dục riêng để phân biệt.",
+          "sources": ["https://muctim.tuoitre.vn/5-dieu-can-biet-ve-truong-thpt-nguyen-thuong-hien-101240813193234212.htm", "https://thanhnien.vn/truong-thpt-nguyen-thuong-hien-tphcm-cam-hoc-sinh-dung-dien-thoai-di-dong-nhieu-nam-qua-1852409241439584.htm", "https://thptnguyenthuonghien.hcm.edu.vn/"]
+        },
+        {
+          "code": "HHT",
+          "name": "THPT Hoàng Hoa Thám",
+          "activities": "• Đời sống học đường tại trường rất sôi động với hệ thống câu lạc bộ đa dạng: CLB học thuật, thể thao, nhiếp ảnh, kịch, hội họa, âm nhạc, kỹ năng, STEM, MC, ngoại ngữ và Tin học trẻ - mỗi CLB là không gian để học sinh khám phá bản thân và phát triển năng lực.\n• Trường có chương trình tư vấn hướng nghiệp thường niên \"Hit Your Choice\", prom tình bạn và nhiều hoạt động tình nguyện giúp học sinh phát triển toàn diện kỹ năng sống.\n• Ngoại khóa dã ngoại là hoạt động truyền thống: học sinh khối 10 và 12 đi Đà Lạt, khối 11 trải nghiệm tại Phan Thiết.\n• Thành tích học sinh giỏi năm học 2024-2025 nổi bật: 1 giải Ba học sinh giỏi Quốc gia; 29 giải cấp thành phố (1 Nhất, 2 Nhì); 50 giải Olympic (trong đó 3 giải Nhất); 10 giải Casio; 2 giải Nghiên cứu khoa học; 3 Huy chương Bạc Hội khỏe Phù Đổng toàn quốc.\n• 100% học sinh khối 12 đậu tốt nghiệp THPT và đủ điểm xét tuyển đại học, cao đẳng; trường được Chủ tịch UBND TP.HCM tặng danh hiệu \"Tập thể Lao động xuất sắc\".",
+          "regulations": "Theo quy chế chung của Sở GD&ĐT TP.HCM mà trường áp dụng: học sinh mặc đồng phục theo quy định của trường (đồng phục sơ mi, đồng phục thể dục, áo dài cho nữ trong các dịp lễ), tác phong gọn gàng, đi học đúng giờ, không sử dụng điện thoại trong giờ học khi chưa được giáo viên cho phép; các thông báo về đồng phục và quy định năm học được nhà trường đăng trên website chính thức.",
+          "sources": ["https://muctim.tuoitre.vn/check-in-truong-thpt-hoang-hoa-tham-truoc-them-ngay-hoi-tu-tin-vao-lop-10-101260325191146466.htm", "https://thpthoanghoatham.hcm.edu.vn/"]
+        }
+      ]
+    },
+    {
+      "code": "QBT",
+      "name": "Quận Bình Thạnh",
+      "schools": [
+        {
+          "code": "GIA_DINH",
+          "name": "THPT Gia Định",
+          "activities": "THPT Gia Định hiện có 17 câu lạc bộ trải đều các lĩnh vực học thuật, kỹ năng và năng khiếu: Tre Xanh (kỹ năng - tổ chức trại), Tranh biện, Âm nhạc, Thông tin - Hướng nghiệp, Kịch, Nhảy (Dance Group), Truyền thông trẻ (News Revolution), Nhiếp ảnh (Illustris), Kỹ thuật - Tin học, Sách (Book Crush), Mỹ thuật (Gallantic), Thể thao, Vật lý, Hóa học, Tin học, Anh văn (Eclub) và Sinh học (Bio Club); trong đó Tre Xanh, Dance Group, Illustris, Eclub là những CLB lâu đời và sôi nổi nhất.\nHoạt động trải nghiệm theo khối rất được học sinh mong chờ:\n• Khối 10: trại K10 tổ chức tại Thảo Cầm Viên\n• Khối 11: chuyến đi thường niên 4 ngày 3 đêm tại Đà Lạt\n• Khối 12: trại truyền thống với thi flashmob, trang trí lều trại (đã tổ chức hơn 13 lần)\nCác sự kiện văn hóa thường niên gồm Ngày hội Bánh chưng xanh, Lễ hội hóa trang, phong trào Hoa phượng đỏ. Về thành tích, trường luôn thuộc nhóm dẫn đầu TP.HCM: đạt 156 giải học sinh giỏi lớp 12 cấp thành phố năm học 2025-2026; kỳ thi học sinh giỏi quốc gia đạt nhiều giải Nhì, Ba và Khuyến khích các năm gần đây; nhiều giải Olympic truyền thống 30-4, khoa học kỹ thuật; tỉ lệ đậu tốt nghiệp THPT 100%.",
+          "regulations": "Theo quy chế chung của Bộ GD&ĐT và Sở GD&ĐT TP.HCM mà trường áp dụng: học sinh mặc đồng phục khi đến trường - đồng phục chính khóa của Gia Định là áo sơ mi trắng, quần tây cho cả nam và nữ (nữ sinh có nơ trên cổ áo), áo thể dục thay đổi màu sắc theo từng niên khóa; học sinh không được sử dụng điện thoại di động trong giờ học nếu không phục vụ học tập và không được giáo viên cho phép; từ tháng 1/2026, theo quy định của Sở GD&ĐT TP.HCM, các trường công lập toàn thành phố hạn chế học sinh sử dụng điện thoại cả trong giờ ra chơi.",
+          "sources": ["https://muctim.tuoitre.vn/5-dieu-chua-biet-ve-gia-dinh-truong-thpt-gia-dinh-101240724184939566.htm", "https://thanhnien.vn/tphcm-han-che-hoc-sinh-su-dung-dien-thoai-trong-gio-ra-choi-tu-thang-12026-185250918112105969.htm", "https://thptgiadinh.hcm.edu.vn/"]
+        },
+        {
+          "code": "PHU_NHUAN",
+          "name": "THPT Phú Nhuận",
+          "activities": "THPT Phú Nhuận tổ chức tới 27 câu lạc bộ học thuật và năng khiếu, tiêu biểu như CLB Báo chí, Sinh học, Tiếng Anh, Hóa học, Olympia, Nhạc cụ, Nhiếp ảnh, Văn nghệ, Hướng nghiệp... tạo sân chơi đa dạng cho học sinh phát triển sở thích và kỹ năng mềm. Hoạt động ngoại khóa trải rộng các lĩnh vực văn hóa - văn nghệ, thể dục thể thao, khoa học kỹ thuật với cơ sở vật chất tốt: nhà thi đấu, sân bóng đá, sân bóng rổ, sân bóng chuyền.\nTrường đặc biệt chú trọng hướng nghiệp: chuyên đề \"Khám phá thế giới nghề nghiệp\" cho khối 10 do bốn tổ bộ môn phối hợp tổ chức, gồm tọa đàm với giảng viên đại học và cựu học sinh về các ngành nghề, các vở kịch hướng nghiệp, gian hàng trải nghiệm nghề nghiệp của từng lớp và trắc nghiệm Holland giúp học sinh khám phá bản thân.\nPhú Nhuận là một trong khoảng 10 trường THPT tại TP.HCM được tuyển sinh lớp 10 chương trình tích hợp. Học sinh trường tích cực tham gia và đạt nhiều giải thưởng trong các kỳ thi học sinh giỏi cấp thành phố, các cuộc thi học thuật, nghiên cứu khoa học và hoạt động văn hóa - thể thao.",
+          "regulations": "Về đồng phục: học sinh mặc áo sơ mi trắng có phù hiệu trường, quần tây/váy màu xanh đen, đeo cà vạt cùng đồng phục chính khóa; nữ sinh mặc áo dài trắng vào sáng thứ hai dự lễ chào cờ đầu tuần và các dịp lễ lớn (khai giảng, bế giảng, ngày Nhà giáo Việt Nam); các tiết thể dục và giáo dục quốc phòng mặc đồng phục thể thao riêng của trường.\nNgoài ra, theo quy chế chung của Bộ GD&ĐT và Sở GD&ĐT TP.HCM mà trường áp dụng: học sinh không sử dụng điện thoại trong giờ học khi không phục vụ học tập và chưa được giáo viên cho phép; từ tháng 1/2026 các trường công lập toàn TP.HCM hạn chế học sinh dùng điện thoại cả trong giờ ra chơi.",
+          "sources": ["https://muctim.tuoitre.vn/tim-hieu-nghe-nghiep-thu-vi-nhu-cach-cua-teen-truong-thpt-phu-nhuan-101241014220317746.htm", "https://thptphunhuan.hcm.edu.vn/"]
+        }
+      ]
+    },
+    {
+      "code": "Q10",
+      "name": "Quận 10",
+      "schools": [
+        {
+          "code": "LQD",
+          "name": "THPT Lê Quý Đôn",
+          "activities": "Là ngôi trường trung học lâu đời nhất Việt Nam (xây dựng từ năm 1874) và là đơn vị đầu tiên của TP.HCM triển khai mô hình Trường Tiên tiến - Hội nhập quốc tế từ năm 2006, THPT Lê Quý Đôn chú trọng hoạt động trải nghiệm bên cạnh học thuật. Trường có 17 câu lạc bộ: CLB Tiếng Anh, CLB STEM, CLB Văn nghệ, CLB Nhiếp ảnh, các CLB thể thao (bóng rổ, bóng chuyền, cầu lông) cùng các nhóm tình nguyện và kỹ năng sống; thư viện trường tích hợp khu vực sinh hoạt chung dành riêng cho các CLB.\nCác hoạt động thường niên gồm hội thao, hội diễn văn nghệ, hội sách, giao lưu học thuật, thi hùng biện, học sinh thanh lịch và các chương trình trải nghiệm hướng nghiệp. Các tổ bộ môn thường tổ chức ngoại khóa gắn với thực tiễn, ví dụ chuyến học tập \"Đọc vị Trái Đất\" của bộ môn Địa lí tại Bảo tàng Địa chất TP.HCM. Trường cũng nổi tiếng với lễ tri ân - trưởng thành giàu cảm xúc cho học sinh khối 12 và là một trong những trường đầu tiên ở TP.HCM tổ chức prom độc lập (đêm \"The Adolescence Night\"). Về thành tích, năm học 2024-2025 học sinh trường đạt 1 giải Nhất, 7 giải Nhì, 29 giải Ba kỳ thi học sinh giỏi cấp thành phố.",
+          "regulations": "Trường công bố nội quy học sinh trên website chính thức, các điểm chính:\n• Chuyên cần: đi học đầy đủ, đúng giờ, không trốn tiết; khi nghỉ học phụ huynh phải đến xin phép chậm nhất một ngày và có giấy tờ đúng quy định\n• Tác phong: nam sinh tóc cắt ngắn gọn gàng, không phủ cổ áo, không che tai, che mắt; nữ sinh không trang điểm, không sơn móng tay/chân, không xăm hình, không đeo nhiều khuyên tai\n• Thiết bị điện tử: không mang điện thoại, máy nghe nhạc và thiết bị điện tử vào lớp học\n• Nghiêm cấm nói tục, uống rượu bia, hút thuốc, sử dụng chất kích thích, gây gổ đánh nhau\n• Học sinh phải kính trọng Quốc kỳ, thuộc Quốc ca, tham gia đầy đủ các buổi chào cờ và hoạt động do trường tổ chức.",
+          "sources": ["https://thpt-lequydon-hcm.edu.vn/Tin-tuc/239/Noi-Quy-Hoc-Sinh.html", "https://hoclagioi.vn/cam-nang/truong-thpt-le-quy-don-tp-hcm-id-690"]
+        }
+      ]
+    },
+    {
+      "code": "QGV",
+      "name": "Quận Gò Vấp",
+      "schools": [
+        {
+          "code": "NCT_GV",
+          "name": "THPT Nguyễn Công Trứ",
+          "activities": "• Trường có khoảng 15 câu lạc bộ ở nhiều lĩnh vực: âm nhạc, thể thao, kịch, truyền thông, khoa học, học thuật và văn hóa Nhật; trong đó CLB NCT Guitar là CLB lâu đời nhất với hơn 40 thành viên. Các CLB sinh hoạt định kỳ vào thứ Bảy hằng tuần.\n• Sự kiện truyền thống nổi bật là đêm nhạc hội xuân \"Xuân Ngất Ngưởng\" thu hút hàng nghìn học sinh, lễ hội ẩm thực \"Gánh hàng rong\", cuộc thi tài năng NCT's Got Talent và hội trại chào đón học sinh khối 10.\n• Trường tổ chức Ngày hội ngôn ngữ (khám phá văn hóa Anh) phối hợp với trường đại học, cùng nhiều hoạt động giao lưu quốc tế, cuộc thi học thuật, văn nghệ - thể thao.\n• Đội tuyển học sinh giỏi cấp thành phố và đội tuyển Olympic Tháng 4 nhiều năm liền đạt giải cao, thuộc nhóm dẫn đầu khối trường không chuyên; trường nhiều lần đại diện quận và thành phố dự thi, đạt giải cao ở các sân chơi Robotics, tranh biện tiếng Anh, nghiên cứu khoa học kỹ thuật.\n• Về thành tích tập thể: trường nhận Cờ thi đua xuất sắc của UBND TP.HCM (2012-2013), Huân chương Lao động hạng Ba (2014) và liên tục giữ danh hiệu \"Tập thể Lao động Xuất sắc\" trong giai đoạn 2015-2024.",
+          "regulations": "Theo quy chế chung của Sở GD&ĐT TP.HCM và Điều lệ trường THPT (Thông tư 32/2020/TT-BGDĐT) mà trường áp dụng: học sinh mặc đồng phục đúng quy định của trường khi đến lớp (nữ mặc áo dài trong các buổi lễ), tác phong gọn gàng, không nhuộm tóc màu nổi bật; đi học đúng giờ; không sử dụng điện thoại di động trong giờ học khi chưa được giáo viên cho phép; thực hiện nghiêm túc quy định về kiểm tra, đánh giá và xếp loại rèn luyện (hạnh kiểm).",
+          "sources": ["https://giaoduc.edu.vn/truong-thpt-nguyen-cong-tru-hanh-trinh-vuon-len-tu-chat-luong-den-uy-tin/", "https://muctim.tuoitre.vn/cau-lac-bo-choi-nhac-bang-ca-trai-tim-cua-truong-thpt-nguyen-cong-tru-101241111102739539.htm", "https://thptnguyencongtru.hcm.edu.vn/"]
+        }
+      ]
+    },
+    {
+      "code": "QTP",
+      "name": "Quận Tân Phú",
+      "schools": [
+        {
+          "code": "TAY_THANH",
+          "name": "THPT Tây Thạnh",
+          "activities": "• Trường tổ chức nhiều câu lạc bộ tài năng cho học sinh, nổi bật có CLB Mỹ thuật (từng tổ chức workshop \"Làm thiệp - Gửi yêu thương\" dịp 20/11), cùng các lớp kỹ năng sống theo sở thích và chương trình tiếng Anh giao tiếp với người nước ngoài.\n• Hội Xuân là sự kiện truyền thống lớn với hàng chục gian hàng ẩm thực, trò chơi dân gian (Hội Xuân 2026 có 68 gian hàng); trường còn có hội trại \"Xuân tình nguyện\" với nhiều trò chơi dân gian được thiết kế lại thu hút học sinh tham gia.\n• Chương trình \"Sân khấu học đường\" quy tụ 18 lớp khối 10 thi diễn các giai điệu quê hương; nhiều hoạt động văn nghệ, thể dục thể thao cấp trường được tổ chức hằng năm.\n• Về học sinh giỏi: học sinh trường từng đạt giải Nhất cuộc thi Hùng biện tiếng Anh 2025-2026; tỉ lệ học sinh khá giỏi tăng đều qua các năm, từng đạt 12 giải học sinh giỏi cấp thành phố trong một năm học (2 giải Nhất, 3 giải Nhì, 7 giải Ba).\n• Trường có nhà thi đấu đa năng và hồ bơi; phong trào thể thao mạnh, nhiều năm liền đạt giải Nhì, giải Ba bóng chuyền do Công đoàn ngành giáo dục tổ chức.",
+          "regulations": "Nội quy học sinh của trường quy định về giờ giấc học tập (học từ thứ Hai đến thứ Bảy), tác phong, trang phục, ứng xử và kỷ luật; học sinh phải giữ gìn vệ sinh và bảo vệ tài sản chung.\nTrường ban hành quy định trang phục riêng theo từng năm học (đồng phục thường, đồng phục thể dục, áo dài); điểm khác biệt là học sinh không phải thêu phù hiệu lên áo mà thay bằng đeo thẻ học sinh khi vào trường.\nCác quy định còn lại áp dụng theo quy chế chung của Sở GD&ĐT TP.HCM: không sử dụng điện thoại trong giờ học khi chưa được giáo viên cho phép, tác phong gọn gàng, đầu tóc phù hợp lứa tuổi học sinh.",
+          "sources": ["https://giaoduc.edu.vn/truong-thpt-tay-thanh-q-tan-phu-tung-buoc-khang-dinh-minh/", "https://thpttaythanh.hcm.edu.vn/"]
+        },
+        {
+          "code": "TRAN_PHU",
+          "name": "THPT Trần Phú",
+          "activities": "• Trường có nhiều câu lạc bộ học thuật như CLB Tiếng Anh, Toán, Vật lý và các CLB thể thao (bóng đá, cầu lông, bóng rổ), cùng hàng loạt CLB văn nghệ, nhiếp ảnh tạo sân chơi phát triển kỹ năng giao tiếp, tư duy và thể chất cho học sinh.\n• Hoạt động ngoại khóa phong phú: tiết học trải nghiệm, tham quan dã ngoại, sinh hoạt đội nhóm, văn nghệ, thi đấu thể dục thể thao.\n• Các chương trình truyền thống nổi bật gồm Trại Đoàn 26/3, Trại Xuân, Trại Trưởng thành và Lễ Trưởng thành - Tri ân dành cho học sinh khối 12.\n• Công tác bồi dưỡng học sinh giỏi rất thành công, được xếp trong top 10 của thành phố; tỷ lệ tốt nghiệp THPT luôn đạt 100%, tỷ lệ đậu đại học trên 97% với nhiều thủ khoa.\n• Điểm chuẩn tuyển sinh lớp 10 của trường liên tục nằm trong nhóm 10 trường cao nhất TP.HCM suốt 16 năm (2010-2025), phản ánh chất lượng và sức hút của môi trường học tập tại đây.",
+          "regulations": "Trường ban hành văn bản \"Nội quy học sinh Trường THPT Trần Phú\" và công bố trên website chính thức (mục Công tác chủ nhiệm lớp).\nNội quy bao gồm các quy định về: đồng phục khi đến trường, tác phong (đầu tóc, giày dép), giờ giấc - chuyên cần, việc sử dụng điện thoại di động trong trường, chuẩn mực ứng xử, các hành vi bị cấm và việc đánh giá xếp loại rèn luyện (hạnh kiểm).\nChi tiết cụ thể theo văn bản nội quy do trường phát hành từng năm học, phụ huynh và học sinh có thể tải về từ website của trường.",
+          "sources": ["https://thpttranphu.hcm.edu.vn/cong-tac-chu-nhiem-lop/noi-quy-hoc-sinh-truong-thpt-tran-phu/ctmb/91797/470555", "https://vi.wikipedia.org/wiki/Tr%C6%B0%E1%BB%9Dng_Trung_h%E1%BB%8Dc_ph%E1%BB%95_th%C3%B4ng_Tr%E1%BA%A7n_Ph%C3%BA,_Th%C3%A0nh_ph%E1%BB%91_H%E1%BB%93_Ch%C3%AD_Minh"]
+        }
+      ]
+    }
+  ]
+}

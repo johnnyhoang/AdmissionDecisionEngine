@@ -1535,7 +1535,13 @@ export default function Grade10Container() {
                       {schoolDetail.activities && (
                         <div className="space-y-1 mt-1">
                           <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">🎭 Hoạt động & Phong trào</span>
-                          <p className="text-slate-400 leading-relaxed font-normal">{schoolDetail.activities}</p>
+                          <p className="text-slate-400 leading-relaxed font-normal whitespace-pre-line">{schoolDetail.activities}</p>
+                        </div>
+                      )}
+                      {schoolDetail.regulations && (
+                        <div className="space-y-1 mt-1">
+                          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">📏 Nội quy & Quy định</span>
+                          <p className="text-slate-400 leading-relaxed font-normal whitespace-pre-line">{schoolDetail.regulations}</p>
                         </div>
                       )}
                     </div>
@@ -2290,7 +2296,14 @@ export default function Grade10Container() {
             {schoolDetail.activities && (
               <div className="print-card" style={{ marginBottom: 12 }}>
                 <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 4, fontSize: 10 }}>🎭 Hoạt động & Phong trào</div>
-                <div style={{ fontSize: 10, color: '#374151', lineHeight: 1.6 }}>{schoolDetail.activities}</div>
+                <div style={{ fontSize: 10, color: '#374151', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{schoolDetail.activities}</div>
+              </div>
+            )}
+
+            {schoolDetail.regulations && (
+              <div className="print-card" style={{ marginBottom: 12 }}>
+                <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 4, fontSize: 10 }}>📏 Nội quy & Quy định</div>
+                <div style={{ fontSize: 10, color: '#374151', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{schoolDetail.regulations}</div>
               </div>
             )}
 

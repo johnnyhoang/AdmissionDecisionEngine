@@ -47,6 +47,9 @@ export class Grade10School {
   @Column({ type: 'text', nullable: true })
   activities: string | null;
 
+  @Column({ type: 'text', nullable: true })
+  regulations: string | null;
+
   @Column({ name: 'map_url', type: 'text', nullable: true })
   mapUrl: string | null;
 
