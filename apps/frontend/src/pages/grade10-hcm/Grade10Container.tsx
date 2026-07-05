@@ -625,6 +625,41 @@ export default function Grade10Container() {
                   <p className="bg-slate-950/45 p-3 border border-slate-800 rounded-xl">
                     💡 <strong>Mẹo nhỏ:</strong> Hãy nhập điểm thử của 3 môn (Toán, Văn, Anh) và điểm ưu tiên vào tab <strong>"Đánh giá NV lớp 10"</strong> để nhận đề xuất trường công lập phù hợp nhất dựa trên tỉ lệ đỗ lịch sử!
                   </p>
+
+                  {/* Selling Points grid */}
+                  <div className="mt-4 border-t border-slate-800/80 pt-4">
+                    <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider mb-3">🌟 Các tính năng nổi bật của Hệ thống</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                      <div className="bg-slate-950/30 border border-slate-850 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-indigo-400 text-lg">📊</span>
+                        <div>
+                          <strong className="text-slate-200 block text-[11px] mb-0.5">Dữ liệu lớn lịch sử 4 năm</strong>
+                          <span className="text-slate-400 text-[10px] leading-relaxed block">Lưu trữ và đối sánh trực quan chỉ tiêu, hồ sơ đăng ký, tỉ lệ chọi và điểm chuẩn của 115+ trường THPT.</span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-950/30 border border-slate-850 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-emerald-400 text-lg">🧠</span>
+                        <div>
+                          <strong className="text-slate-200 block text-[11px] mb-0.5">Giải thuật Đánh giá Xác suất</strong>
+                          <span className="text-slate-400 text-[10px] leading-relaxed block">Áp dụng mô hình toán học tích lũy và hàm mũ để dự báo khả năng đỗ thực tế của học sinh theo từng nguyện vọng.</span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-950/30 border border-slate-850 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-amber-400 text-lg">🛡️</span>
+                        <div>
+                          <strong className="text-slate-200 block text-[11px] mb-0.5">Mô phỏng 3 NV tối ưu</strong>
+                          <span className="text-slate-400 text-[10px] leading-relaxed block">Tự động đề xuất tổ hợp 3 Nguyện vọng thông minh theo 3 hướng: An Toàn, Nỗ Lực (Mơ ước) và Phòng Thủ vững chắc.</span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-950/30 border border-slate-850 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-rose-400 text-lg">📍</span>
+                        <div>
+                          <strong className="text-slate-200 block text-[11px] mb-0.5">Tích hợp Cự ly di chuyển</strong>
+                          <span className="text-slate-400 text-[10px] leading-relaxed block">Tự động tìm kiếm trường gần bạn nhất bằng GPS, tính khoảng cách thực tế và cộng điểm thưởng cự ly thông minh.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1075,7 +1110,7 @@ export default function Grade10Container() {
                   className={`px-3 py-2 rounded-lg text-xs font-bold border transition duration-200 flex items-center gap-1.5 cursor-pointer ${
                     isProximityFilterActive
                       ? 'bg-rose-600/10 border-rose-500/20 text-rose-400 hover:bg-rose-600/20'
-                      : 'bg-indigo-650/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-650/20'
+                      : 'bg-indigo-600/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20'
                   }`}
                 >
                   <MapPin className="h-3.5 w-3.5" />
@@ -1342,7 +1377,7 @@ export default function Grade10Container() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   {user?.role === 'ADMIN' && (
-                    <span className="text-xs font-bold px-2 py-0.5 bg-indigo-650/15 border border-indigo-500/30 text-indigo-400 rounded-md">
+                    <span className="text-xs font-bold px-2 py-0.5 bg-indigo-600/15 border border-indigo-500/30 text-indigo-400 rounded-md">
                       {schoolDetail.code}
                     </span>
                   )}
@@ -1868,7 +1903,7 @@ export default function Grade10Container() {
                 <button
                   onClick={handleGetCombo}
                   disabled={isComboLoading}
-                  className="w-full py-3 bg-indigo-650 hover:bg-indigo-600 active:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition text-xs mt-2"
+                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition text-xs mt-2 cursor-pointer"
                 >
                   {isComboLoading ? 'Đang phân tích dữ liệu...' : '🚀 Tư Vấn Nguyện Vọng'}
                 </button>
@@ -1919,33 +1954,33 @@ export default function Grade10Container() {
                   <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
                     <button
                       onClick={() => setSelectedStrategy('safe')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition cursor-pointer ${
                         selectedStrategy === 'safe'
-                          ? 'bg-indigo-650 text-white shadow-md'
+                          ? 'bg-indigo-600 text-white shadow-md'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      🛡️ Tab 1: An Toàn
+                      🛡️ Phương Án An Toàn
                     </button>
                     <button
                       onClick={() => setSelectedStrategy('effort')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition cursor-pointer ${
                         selectedStrategy === 'effort'
-                          ? 'bg-indigo-650 text-white shadow-md'
+                          ? 'bg-indigo-600 text-white shadow-md'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      🔥 Tab 2: Nỗ Lực (Dream NV1)
+                      🔥 Phương Án Nỗ Lực
                     </button>
                     <button
                       onClick={() => setSelectedStrategy('defense')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition cursor-pointer ${
                         selectedStrategy === 'defense'
-                          ? 'bg-indigo-650 text-white shadow-md'
+                          ? 'bg-indigo-600 text-white shadow-md'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      🏰 Tab 3: Phòng Thủ (Chắc chắn)
+                      🏰 Phương Án Phòng Thủ
                     </button>
                   </div>
 
@@ -2000,7 +2035,7 @@ export default function Grade10Container() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                               <span className={`text-[11px] font-black px-2 py-0.5 rounded border ${
-                                nvNum === 1 ? 'bg-indigo-650/15 border-indigo-500/30 text-indigo-400' :
+                                nvNum === 1 ? 'bg-indigo-600/15 border-indigo-500/30 text-indigo-400' :
                                 nvNum === 2 ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
                               }`}>
                                 NGUYỆN VỌNG {nvNum}
@@ -2123,9 +2158,9 @@ export default function Grade10Container() {
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
                 <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🛡️ 1. Ba chiến thuật phân bổ Nguyện vọng</h3>
                 <ul className="list-disc list-inside m-0 pl-1 space-y-1">
-                  <li><strong>Tab 1 — An Toàn</strong>: 3 trường bám sát phổ điểm, NV1&gt;NV2&gt;NV3 giảm dần. Luôn có trường dự phòng gần nhà.</li>
-                  <li><strong>Tab 2 — Nỗ Lực</strong>: Trường mơ ước lên NV1 bất kể tỉ lệ chọi. NV2 cạnh tranh vừa, NV3 siêu an toàn làm tấm khiên.</li>
-                  <li><strong>Tab 3 — Phòng Thủ</strong>: Hạ chỉ tiêu ngay từ NV1, đảm bảo 100% có suất công lập gần nhà.</li>
+                  <li><strong>Chiến thuật An Toàn</strong>: 3 trường bám sát phổ điểm, NV1&gt;NV2&gt;NV3 giảm dần. Luôn có trường dự phòng gần nhà.</li>
+                  <li><strong>Chiến thuật Nỗ Lực</strong>: Trường mơ ước lên NV1 bất kể tỉ lệ chọi. NV2 cạnh tranh vừa, NV3 siêu an toàn làm tấm khiên.</li>
+                  <li><strong>Chiến thuật Phòng Thủ</strong>: Hạ chỉ tiêu ngay từ NV1, đảm bảo 100% có suất công lập gần nhà.</li>
                 </ul>
               </section>
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
@@ -2265,9 +2300,9 @@ export default function Grade10Container() {
                 top so every printed page is readable on its own. */}
             {(['safe', 'effort', 'defense'] as const).map((strategy, si) => {
               const labels: Record<string, string> = {
-                safe: '🛡️ Tab 1: An Toàn — Phân bổ 3 NV theo điểm trung bình dự đoán',
-                effort: '🔥 Tab 2: Nỗ Lực (Dream NV1) — Đặt trường mơ ước lên NV1',
-                defense: '🏰 Tab 3: Phòng Thủ — Chắc chắn có suất công lập gần nhà',
+                safe: '🛡️ Phương Án An Toàn — Phân bổ 3 NV theo điểm chuẩn trung bình dự đoán',
+                effort: '🔥 Phương Án Nỗ Lực — Đặt trường mơ ước lên NV1 làm mục tiêu chính',
+                defense: '🏰 Phương Án Phòng Thủ — Chắc chắn có suất công lập gần nhà làm điểm tựa',
               };
               const schools = comboResult.combos?.[strategy] ?? [];
               return (

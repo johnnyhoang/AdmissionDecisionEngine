@@ -240,7 +240,6 @@ body.light-theme nav.bg-slate-900 {
 }
 
 .light-theme header .bg-indigo-600,
-.light-theme header .bg-indigo-650,
 .light-theme header .bg-indigo-800,
 .light-theme header .bg-indigo-800\/60 {
   box-shadow: none !important;
@@ -377,7 +376,7 @@ body.light-theme nav.bg-slate-900 {
   border-bottom: 1px solid #e9d5ff !important;
 }
 
-.light-theme .bg-indigo-650\/15 {
+.light-theme .bg-indigo-600\/15 {
   background-color: #eef2ff !important;
   color: #4f46e5 !important;
   border-color: #c7d2fe !important;

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import * as fs from 'fs';
@@ -9,9 +9,10 @@ import { Grade10Quota } from '../entities/quota.entity';
 import { Grade10Cutoff } from '../entities/cutoff.entity';
 import { CreateSchoolDto, UpdateSchoolDto } from '../dtos/school-crud.dto';
 import { Grade10LocationService } from './grade10-location.service';
+import { deduplicateDistrictsHelper } from '../utils/district-dedup.util';
 
 @Injectable()
-export class Grade10SchoolService {
+export class Grade10SchoolService implements OnApplicationBootstrap {
   constructor(
     @InjectRepository(Grade10School)
     private readonly schoolRepo: Repository<Grade10School>,
@@ -23,6 +24,10 @@ export class Grade10SchoolService {
     private readonly cutoffRepo: Repository<Grade10Cutoff>,
     private readonly locationService: Grade10LocationService,
   ) {}
+
+  async onApplicationBootstrap() {
+    await deduplicateDistrictsHelper(this.schoolRepo, this.districtRepo);
+  }
 
   async findAll(filters: {
     search?: string;

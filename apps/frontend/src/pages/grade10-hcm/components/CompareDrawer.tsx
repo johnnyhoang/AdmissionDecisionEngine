@@ -96,9 +96,6 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                   <div className="flex flex-col gap-1.5 mt-2">
-                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 bg-indigo-650/15 border border-indigo-500/20 text-indigo-400 rounded w-max">
-                      {school.code}
-                    </span>
                     <h4 className="text-xs font-bold text-white line-clamp-2 leading-snug">{school.name}</h4>
                   </div>
                   <div className="text-[10px] text-slate-400 mt-2 flex items-center gap-1">
@@ -323,7 +320,7 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
       <div className="p-5 border-t border-slate-800 bg-slate-950/40 flex justify-end">
         <button
           onClick={onClose}
-          className="px-5 py-2 bg-indigo-650 hover:bg-indigo-600 text-white text-xs font-bold rounded-lg transition cursor-pointer"
+          className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition cursor-pointer"
         >
           Đóng so sánh
         </button>
