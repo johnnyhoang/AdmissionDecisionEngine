@@ -37,8 +37,8 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     page?: number;
     limit?: number;
   }) {
-    const page = filters.page || 1;
-    const limit = filters.limit || 50;
+    const page = Number(filters.page) || 1;
+    const limit = Math.min(Number(filters.limit) || 50, 500);
     const skip = (page - 1) * limit;
 
     const query = this.schoolRepo

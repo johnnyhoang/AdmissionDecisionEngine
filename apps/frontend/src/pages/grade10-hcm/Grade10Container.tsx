@@ -9,14 +9,15 @@ import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from 'recharts';
 import {
-  fetchG10Schools, fetchG10SchoolDetail, fetchG10Districts,
+  fetchG10Schools, fetchG10AllSchools, fetchG10SchoolDetail, fetchG10Districts,
   fetchG10Analytics, evaluateG10Profile, getG10ComboRecommendations,
-  fetchNearbyG10Schools, resolveG10Location, reverseG10Location,
+  fetchNearbyG10Schools,
 } from '../../services/api';
-import type { G10SchoolItem, G10RecommendationItem, G10LocationResult } from '../../services/api';
+import type { G10SchoolItem, G10RecommendationItem } from '../../services/api';
 import AiSearchModal from '../../components/AiSearchModal';
-import AddressConfirmModal from './components/AddressConfirmModal';
-import MapPickerModal from './components/MapPickerModal';
+import HomeLocationModal from './components/HomeLocationModal';
+import type { HomeLocationPick } from './components/HomeLocationModal';
+import SchoolGroupedDropdown from './components/SchoolGroupedDropdown';
 import MergeSchoolModal from './components/MergeSchoolModal';
 import EditSchoolModal from './components/EditSchoolModal';
 import CompareDrawer from './components/CompareDrawer';
@@ -87,18 +88,9 @@ export default function Grade10Container() {
   const [isLocating, setIsLocating] = useState(false);
   const [distanceSchools, setDistanceSchools] = useState<any[]>([]);
   const [isProximityFilterActive, setIsProximityFilterActive] = useState(false);
-  const [isDistanceModalOpen, setIsDistanceModalOpen] = useState(false);
-
-  // Address normalization confirmation — resolved address waiting for the
-  // user to confirm before the follow-up action (distance filter / combo) runs
-  const [addressConfirm, setAddressConfirm] = useState<{
-    context: 'proximity' | 'combo';
-    original: string;
-    resolved: G10LocationResult;
-  } | null>(null);
-
-  // Map picker — pick coordinates directly on the map instead of typing an address
-  const [mapPickerContext, setMapPickerContext] = useState<'proximity' | 'combo' | null>(null);
+  // Unified home-location modal (type address / GPS / map) — the context
+  // decides what happens after the user confirms a location
+  const [homeLocationContext, setHomeLocationContext] = useState<'proximity' | 'combo' | null>(null);
 
   // ── Combo recommendation states ────────────────────────────────────────────
   const [minMath, setMinMath] = useState('7.5');
@@ -132,6 +124,8 @@ export default function Grade10Container() {
     loadDistricts();
     loadSchools();
     loadAnalytics();
+    // Full list (limit 500) for dropdown selectors like "Trường Mơ ước"
+    fetchG10AllSchools().then(setAllSchools).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -188,9 +182,6 @@ export default function Grade10Container() {
     try {
       const data = await fetchG10Schools(search, distId);
       setSchools(data.items);
-      if (search === '' && distId === '') {
-        setAllSchools(data.items);
-      }
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -286,20 +277,6 @@ export default function Grade10Container() {
   };
 
   
-  const handleComboGPS = () => {
-    if (!navigator.geolocation) {
-      alert('Trình duyệt không hỗ trợ GPS');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setComboGPS({ lat: position.coords.latitude, lon: position.coords.longitude });
-        setComboUserAddress('Tọa độ hiện tại của bạn');
-      },
-      () => alert('Không thể lấy vị trí hiện tại')
-    );
-  };
-
   const runComboRequest = async (lat?: number, lon?: number) => {
     setIsComboLoading(true);
     try {
@@ -327,42 +304,15 @@ export default function Grade10Container() {
   };
 
   const handleGetCombo = async () => {
-    // Address typed but not yet geocoded — normalize it and let the user
-    // confirm before running the recommendation
-    if (comboUserAddress && comboUserAddress !== 'Tọa độ hiện tại của bạn' && !comboGPS) {
-      setIsComboLoading(true);
-      try {
-        const resolved = await resolveG10Location({
-          address: comboUserAddress,
-          districtName: 'Hồ Chí Minh',
-        });
-        setAddressConfirm({ context: 'combo', original: comboUserAddress, resolved });
-      } catch (e: any) {
-        alert('Không thể định vị địa chỉ: ' + e.message);
-      } finally {
-        setIsComboLoading(false);
-      }
-      return;
-    }
-
+    // The home location (if any) was already normalized and confirmed
+    // inside HomeLocationModal — just run with the stored coordinates
     await runComboRequest(comboGPS?.lat, comboGPS?.lon);
   };
 
-  const handleMapPick = async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
-    const context = mapPickerContext;
-    if (!context) return;
-
-    // Reverse-geocode so the picked point gets a readable address label;
-    // the pin itself was already visually confirmed by the user on the map
-    let label = `Vị trí trên bản đồ (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
-    try {
-      const rev = await reverseG10Location({ latitude, longitude });
-      if (rev.formattedAddress) label = rev.formattedAddress;
-    } catch {
-      // keep coordinate label
-    }
-
-    setMapPickerContext(null);
+  // Called when the user finishes the flow inside HomeLocationModal
+  const handleHomeLocationConfirm = async ({ latitude, longitude, label }: HomeLocationPick) => {
+    const context = homeLocationContext;
+    setHomeLocationContext(null);
 
     if (context === 'proximity') {
       setUserAddress(label);
@@ -370,35 +320,12 @@ export default function Grade10Container() {
       try {
         await calculateSchoolDistances(latitude, longitude);
         setIsProximityFilterActive(true);
-        setIsDistanceModalOpen(false);
       } finally {
         setIsLocating(false);
       }
-    } else {
+    } else if (context === 'combo') {
       setComboGPS({ lat: latitude, lon: longitude });
       setComboUserAddress(label);
-    }
-  };
-
-  const handleAddressConfirm = async () => {
-    if (!addressConfirm) return;
-    const { context, original, resolved } = addressConfirm;
-    setAddressConfirm(null);
-
-    if (context === 'proximity') {
-      setUserAddress(resolved.formattedAddress || original);
-      setIsLocating(true);
-      try {
-        await calculateSchoolDistances(resolved.latitude, resolved.longitude);
-        setIsProximityFilterActive(true);
-        setIsDistanceModalOpen(false);
-      } finally {
-        setIsLocating(false);
-      }
-    } else {
-      setComboGPS({ lat: resolved.latitude, lon: resolved.longitude });
-      setComboUserAddress(resolved.formattedAddress || original);
-      await runComboRequest(resolved.latitude, resolved.longitude);
     }
   };
 
@@ -1165,7 +1092,7 @@ export default function Grade10Container() {
 
 
                 <button
-                  onClick={() => setIsDistanceModalOpen(true)}
+                  onClick={() => setHomeLocationContext('proximity')}
                   className={`px-3 py-2 rounded-lg text-xs font-bold border transition duration-200 flex items-center gap-1.5 cursor-pointer ${
                     isProximityFilterActive
                       ? 'bg-rose-600/10 border-rose-500/20 text-rose-400 hover:bg-rose-600/20'
@@ -1173,7 +1100,7 @@ export default function Grade10Container() {
                   }`}
                 >
                   <MapPin className="h-3.5 w-3.5" />
-                  {isProximityFilterActive ? '📍 Cự ly: Bật' : 'Tìm gần nhà'}
+                  {isLocating ? 'Đang tính cự ly...' : isProximityFilterActive ? '📍 Cự ly: Bật' : 'Tìm gần nhà'}
                 </button>
 
                 <div ref={districtDropdownRef} className="relative">
@@ -1718,122 +1645,13 @@ export default function Grade10Container() {
         onClear={() => setCompareList([])}
         theme={theme}
       />
-      <AddressConfirmModal
-        isOpen={!!addressConfirm}
-        originalAddress={addressConfirm?.original ?? ''}
-        resolved={addressConfirm?.resolved ?? null}
-        onConfirm={handleAddressConfirm}
-        onCancel={() => setAddressConfirm(null)}
+      {/* Unified home-location modal (address / GPS / map — all in one flow) */}
+      <HomeLocationModal
+        isOpen={!!homeLocationContext}
+        title={homeLocationContext === 'proximity' ? 'Tìm trường gần bạn' : 'Vị trí nhà của bạn'}
+        onClose={() => setHomeLocationContext(null)}
+        onConfirm={handleHomeLocationConfirm}
       />
-      <MapPickerModal
-        isOpen={!!mapPickerContext}
-        title="Chọn vị trí nhà của bạn"
-        onClose={() => setMapPickerContext(null)}
-        onPick={handleMapPick}
-      />
-      {/* Distance Input Modal */}
-      {isDistanceModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setIsDistanceModalOpen(false)}></div>
-          <div className="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md flex flex-col shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between p-5 border-b border-slate-800">
-              <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-indigo-400" />
-                Tìm trường gần bạn
-              </h2>
-              <button 
-                onClick={() => setIsDistanceModalOpen(false)} 
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="p-5 flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Địa chỉ nhà của bạn</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Ví dụ: 227 Nguyễn Văn Cừ, Quận 5..."
-                    value={userAddress}
-                    onChange={(e) => setUserAddress(e.target.value)}
-                    className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none transition"
-                  />
-                  <button
-                    onClick={async () => {
-                      if (!userAddress.trim()) {
-                        alert('Vui lòng nhập địa chỉ nhà.');
-                        return;
-                      }
-                      setIsLocating(true);
-                      try {
-                        const resolved = await resolveG10Location({
-                          address: userAddress,
-                          districtName: 'Hồ Chí Minh',
-                        });
-                        // Wait for the user to confirm the normalized address
-                        // before calculating distances (handleAddressConfirm)
-                        setAddressConfirm({ context: 'proximity', original: userAddress, resolved });
-                      } catch {
-                        alert('Lỗi định vị địa chỉ: Mạng yếu hoặc bị giới hạn.');
-                      } finally {
-                        setIsLocating(false);
-                      }
-                    }}
-                    disabled={isLocating}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
-                  >
-                    {isLocating ? 'Đang tìm...' : 'Tìm'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-slate-800"></div>
-                <span className="flex-shrink mx-3 text-[9px] text-slate-500 font-bold uppercase">Hoặc</span>
-                <div className="flex-grow border-t border-slate-800"></div>
-              </div>
-
-              <button
-                onClick={() => {
-                  if (!navigator.geolocation) {
-                    alert('Trình duyệt của bạn không hỗ trợ định vị GPS.');
-                    return;
-                  }
-                  setIsLocating(true);
-                  navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                      const { latitude, longitude } = position.coords;
-                      setUserAddress('Vị trí GPS hiện tại');
-                      await calculateSchoolDistances(latitude, longitude);
-                      setIsProximityFilterActive(true);
-                      setIsDistanceModalOpen(false);
-                    },
-                    (_err) => {
-                      alert('Không thể xác định vị trí GPS của bạn. Vui lòng nhập địa chỉ thủ công.');
-                      setIsLocating(false);
-                    }
-                  );
-                }}
-                disabled={isLocating}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
-              >
-                <MapPin className="w-4 h-4 text-indigo-400" />
-                {isLocating ? 'Đang định vị...' : 'Sử dụng GPS hiện tại'}
-              </button>
-
-              <button
-                onClick={() => setMapPickerContext('proximity')}
-                disabled={isLocating}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer"
-              >
-                🗺️ Chọn vị trí trên bản đồ
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
         {/* Tab: Combo Recommendation */}
         {activeTab === 'combo' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -1904,48 +1722,43 @@ export default function Grade10Container() {
                   </div>
                 </div>
 
-                {/* Dream school selector */}
+                {/* Dream school selector — grouped by district with search */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1">Trường Mơ ước NV1</label>
-                  <select
+                  <SchoolGroupedDropdown
+                    schools={allSchools.length > 0 ? allSchools : schools}
                     value={dreamSchoolCode}
-                    onChange={(e) => setDreamSchoolCode(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none cursor-pointer"
-                  >
-                    <option value="">-- Chọn trường mơ ước --</option>
-                    {(allSchools.length > 0 ? allSchools : schools).slice().sort((a,b) => a.name.localeCompare(b.name)).map(s => (
-                      <option key={s.id} value={s.code}>{s.name}</option>
-                    ))}
-                  </select>
+                    onChange={setDreamSchoolCode}
+                    placeholder="-- Chọn trường mơ ước --"
+                  />
                 </div>
 
-                {/* Location */}
+                {/* Location — one button, the modal owns the whole flow */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (Tính khoảng cách)</label>
                   <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Số nhà, tên đường, quận..."
-                      value={comboUserAddress}
-                      onChange={(e) => { setComboUserAddress(e.target.value); setComboGPS(null); }}
-                      className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
-                    />
                     <button
                       type="button"
-                      onClick={handleComboGPS}
-                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs cursor-pointer"
-                      title="Sử dụng GPS thiết bị"
+                      onClick={() => setHomeLocationContext('combo')}
+                      className={`flex-1 flex items-center gap-1.5 bg-slate-950 border border-slate-800 hover:border-indigo-500 rounded-lg px-3 py-2 text-xs text-left transition cursor-pointer ${
+                        comboGPS ? 'text-slate-200' : 'text-slate-500'
+                      }`}
                     >
-                      GPS
+                      <MapPin className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                      <span className="truncate">
+                        {comboGPS ? comboUserAddress || 'Đã đặt vị trí nhà' : 'Đặt vị trí nhà của bạn...'}
+                      </span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setMapPickerContext('combo')}
-                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs cursor-pointer"
-                      title="Chọn vị trí trên bản đồ"
-                    >
-                      🗺️
-                    </button>
+                    {comboGPS && (
+                      <button
+                        type="button"
+                        onClick={() => { setComboGPS(null); setComboUserAddress(''); }}
+                        className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-400 hover:text-white rounded-lg text-xs cursor-pointer"
+                        title="Xóa vị trí"
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
                 </div>
 

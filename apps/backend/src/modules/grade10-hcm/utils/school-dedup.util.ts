@@ -19,24 +19,24 @@ export function cleanCoreSchoolName(name: string): { type: string; coreName: str
     .replace(/^(Trường\s+)?(Trung\s*học\s*Phổ\s*thông|Trung\s*học\s*Cơ\s*sở|THPT|THCS|PTTH|Trường)\s+/gi, '')
     .trim();
 
-  // Remove suffixes like (Q1), (Q.12), (TB), - Q1, - Q. Tân Bình, - TB, - Cơ sở 2, etc.
+  // Step 1: Remove well-known ASCII district qualifiers in parentheses/after dash
   clean = clean
-    .replace(/\s*[\(\-–—]\s*(Q\d+|Q\.\s*\d+|Q\.\s*[a-zđăâêôơư]+\s*[a-zđăâêôơư]*|Quận\s*[a-zđăâêôơư\d]+|TB|cơ sở \d+|phân hiệu \d+)\s*[\)]?/gi, '')
-    .replace(/\s+(Q\d+|Q\.\d+|Q\.\s*[a-zđăâêôơư]+|Quận\s+\d+|TB)$/gi, '')
-    .replace(/\s*[\(\-–—]\s*([a-zđăâêôơư\d\s]+)\s*[\)]?$/gi, (match, p1) => {
-      const normP1 = p1.toLowerCase().trim();
-      if (normP1.length < 12 && (
-        normP1.includes('quan') || 
-        normP1.includes('huyen') || 
-        /^[a-z0-9\s]+$/i.test(normP1) ||
-        normP1 === 'tb' ||
-        normP1.startsWith('q')
-      )) {
-        return '';
-      }
-      return match;
-    })
+    .replace(/\s*[\(\-–—]\s*(Q\d+|Q\.\s*\d+|Quận\s*\d+|TB|cơ sở \d+|phân hiệu \d+)\s*[\)]?/gi, '')
+    .replace(/\s+(Q\d+|Q\.\d+|Quận\s+\d+|TB)$/gi, '')
     .trim();
+
+  // Step 2: Unconditionally remove any trailing parenthesized block up to 35 chars.
+  // HCM school names never have legitimate parenthetical parts — only district
+  // disambiguation suffixes like (Tân Bình), (Tân Phú), (Q.3), (Bình Chánh).
+  clean = clean.replace(/\s*[\(\[].{1,35}[\)\]]\s*$/g, '').trim();
+
+  // Step 3: Remove trailing "- SomeText" or "– SomeText" when the text is short
+  // (≤ 20 chars) and doesn't contain keywords that are part of a real school name.
+  clean = clean.replace(/\s*[–—-]\s*(.{1,20})\s*$/, (match, p1) => {
+    const stripped = p1.trim();
+    if (/\b(trường|lớp|chuyên|chất lượng|cao|quốc|tế)\b/i.test(stripped)) return match;
+    return '';
+  }).trim();
 
   // Capitalize words
   const coreName = clean

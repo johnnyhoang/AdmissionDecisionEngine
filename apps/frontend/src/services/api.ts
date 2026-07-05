@@ -375,6 +375,17 @@ export const fetchG10Schools = async (search = '', districtId = ''): Promise<{ i
   return res.json();
 };
 
+/** Load ALL schools (no pagination) for use in dropdown selectors. */
+export const fetchG10AllSchools = async (): Promise<G10SchoolItem[]> => {
+  const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`);
+  url.searchParams.append('limit', '500');
+  url.searchParams.append('page', '1');
+  const res = await apiFetch(url.toString());
+  if (!res.ok) throw new Error('Không thể tải danh sách trường THPT');
+  const data = await res.json();
+  return data.items ?? data;
+};
+
 export const fetchG10SchoolDetail = async (id: string): Promise<any> => {
   const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/schools/${id}`);
   if (!res.ok) throw new Error('Không thể tải chi tiết trường THPT');
