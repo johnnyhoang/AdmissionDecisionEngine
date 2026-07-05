@@ -1,0 +1,1056 @@
+{
+  "accepted": [
+    {
+      "code": "GIA_DINH",
+      "name": "THPT Gia Định",
+      "district": "Bình Thạnh",
+      "lat": 10.8041266,
+      "lon": 106.6929673,
+      "display_name": "Trường Trung học phổ thông Hoàng Hoa Thám, 6, Hoàng Hoa Thám, Khu phố 4, Phường Gia Định, Thủ Đức, Thành phố Hồ Chí Minh, 72317, Việt Nam",
+      "query": "THPT Gia Định, Bình Thạnh, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NGO_QUYEN_BT",
+      "name": "THPT Ngô Quyền",
+      "district": "Bình Thạnh",
+      "lat": 10.712923,
+      "lon": 106.7363409,
+      "display_name": "Trường Trung học phổ thông Ngô Quyền, 1360, Hẻm 1360 Đường Huỳnh Tấn Phát, Phường Tân Mỹ, Nhà Bè, Thành phố Hồ Chí Minh, 72915, Việt Nam",
+      "query": "Trường THPT Ngô Quyền, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "CAN_GIO",
+      "name": "THPT Cần Giờ",
+      "district": "Cần Giờ",
+      "lat": 10.4035997,
+      "lon": 106.9495169,
+      "display_name": "Trường Trung học phổ thông Cần Thạnh, Đào Cử, Xã Cần Giờ, Thành phố Hồ Chí Minh, Việt Nam",
+      "query": "THPT Cần Giờ, Cần Giờ, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "CAN_THANH",
+      "name": "THPT Cần Thạnh",
+      "district": "Cần Giờ",
+      "lat": 10.4035997,
+      "lon": 106.9495169,
+      "display_name": "Trường Trung học phổ thông Cần Thạnh, Đào Cử, Xã Cần Giờ, Thành phố Hồ Chí Minh, Việt Nam",
+      "query": "THPT Cần Thạnh, Cần Giờ, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "CU_CHI",
+      "name": "THPT Củ Chi",
+      "district": "Củ Chi",
+      "lat": 10.9717491,
+      "lon": 106.4902226,
+      "display_name": "Trường Trung học phổ thông Củ Chi, Tỉnh lộ 8, Xã Tân An Hội, Thành phố Hồ Chí Minh, 75500, Việt Nam",
+      "query": "THPT Củ Chi, Củ Chi, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "PHD_CC",
+      "name": "THPT Phú Hoà Đông",
+      "district": "Củ Chi",
+      "lat": 11.0232064,
+      "lon": 106.5668013,
+      "display_name": "Trường Trung học phổ thông Phú Hoà, Đường Huỳnh Thị Bẳng, Ấp Phú Lợi, Xã Phú Hòa Đông, Thành phố Hồ Chí Minh, Việt Nam",
+      "query": "Trường THPT Phú Hoà Đông, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TTH_CC",
+      "name": "THPT Tân Thông Hội",
+      "district": "Củ Chi",
+      "lat": 10.9569577,
+      "lon": 106.5275334,
+      "display_name": "Trường Trung học phổ thông Tân Thông Hội, Suối Lội, Xã Củ Chi, Thành phố Hồ Chí Minh, 71608, Việt Nam",
+      "query": "THPT Tân Thông Hội, Củ Chi, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TRUNG_LAP",
+      "name": "THPT Trung Lập",
+      "district": "Củ Chi",
+      "lat": 11.0494866,
+      "lon": 106.4527541,
+      "display_name": "Trường Trung học phổ thông Trung Lập, Trung Lập, Xã Thái Mỹ, Thành phố Hồ Chí Minh, Việt Nam",
+      "query": "Trường THPT Trung Lập, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NGT_GV",
+      "name": "THPT Ngô Gia Tự",
+      "district": "Gò Vấp",
+      "lat": 10.7345197,
+      "lon": 106.6378023,
+      "display_name": "Trường Trung học phổ thông Ngô Gia Tự, 360E, Đường Bình Đông, Phường Phú Định, Thủ Đức, Thành phố Hồ Chí Minh, 71910, Việt Nam",
+      "query": "Trường THPT Ngô Gia Tự, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NCT_GV",
+      "name": "THPT Nguyễn Công Trứ",
+      "district": "Gò Vấp",
+      "lat": 10.8389899,
+      "lon": 106.65325,
+      "display_name": "Trường Trung học phổ thông Nguyễn Công Trứ, Hẻm 872/26 Quang Trung, Khu phố 16, Phường Thông Tây Hội, Thuận An, Thành phố Hồ Chí Minh, 71427, Việt Nam",
+      "query": "Trường THPT Nguyễn Công Trứ, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TTH",
+      "name": "THPT Thông Tây Hội",
+      "district": "Gò Vấp",
+      "lat": 10.8389899,
+      "lon": 106.65325,
+      "display_name": "Trường Trung học phổ thông Nguyễn Công Trứ, Hẻm 872/26 Quang Trung, Khu phố 16, Phường Thông Tây Hội, Thuận An, Thành phố Hồ Chí Minh, 71427, Việt Nam",
+      "query": "Trường THPT Thông Tây Hội, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "DONG_THANH",
+      "name": "THPT Đông Thạnh",
+      "district": "Hóc Môn",
+      "lat": 10.8898992,
+      "lon": 106.6009978,
+      "display_name": "Trường Trung học phổ thông Lý Thường Kiệt, Trần Thị Bốc, Xã Đông Thạnh, Thành phố Hồ Chí Minh, 71717, Việt Nam",
+      "query": "THPT Đông Thạnh, Hóc Môn, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "HOC_MON",
+      "name": "THPT Hóc Môn",
+      "district": "Hóc Môn",
+      "lat": 10.8971684,
+      "lon": 106.5875339,
+      "display_name": "Trường Trung học phổ thông Hồ Thị Bi, Tân Hiệp 28, Xã Hóc Môn, Thành phố Hồ Chí Minh, 71717, Việt Nam",
+      "query": "THPT Hóc Môn, Hóc Môn, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TRUNG_CHANH",
+      "name": "THPT Trung Chánh",
+      "district": "Hóc Môn",
+      "lat": 10.7775829,
+      "lon": 106.5132815,
+      "display_name": "Trường Trung học phổ thông Năng Khiếu Thể dục thể thao Bình Chánh, Đường kênh 3, Ấp 10, Xã Bình Lợi, Thành phố Hồ Chí Minh, Việt Nam",
+      "query": "Trường THPT Trung Chánh, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LONG_THOI",
+      "name": "THPT Long Thới",
+      "district": "Nhà Bè",
+      "lat": 10.656406,
+      "lon": 106.7276232,
+      "display_name": "Trường Trung học phổ thông Long Thới, 280, Ngô Quang Thắm, Ấp Long Đức, Xã Hiệp Phước, Thành phố Hồ Chí Minh, Việt Nam",
+      "query": "THPT Long Thới, Nhà Bè, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NHA_BE",
+      "name": "THPT Nhà Bè",
+      "district": "Nhà Bè",
+      "lat": 10.7230854,
+      "lon": 106.7238566,
+      "display_name": "Trường Trung học phổ thông Nam Sài Gòn, Lô P3, Nguyễn Lương Bằng, Phường Tân Mỹ, Nhà Bè, Thành phố Hồ Chí Minh, 72915, Việt Nam",
+      "query": "THPT Nhà Bè, Nhà Bè, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NTD",
+      "name": "THPT Nguyễn Thị Diệu",
+      "district": "Phú Nhuận",
+      "lat": 10.7892921,
+      "lon": 106.6888629,
+      "display_name": "Trường Trung học phổ thông Nguyễn Thị Diệu, 12, Trần Quốc Toản, Khu phố 10, Phường Xuân Hòa, Thủ Đức, Thành phố Hồ Chí Minh, 72200, Việt Nam",
+      "query": "Trường THPT Nguyễn Thị Diệu, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "PHU_NHUAN",
+      "name": "THPT Phú Nhuận",
+      "district": "Phú Nhuận",
+      "lat": 10.7941518,
+      "lon": 106.6700135,
+      "display_name": "Trường Trung học phổ thông Hàn Thuyên, Đặng Văn Ngữ, Khu phố 6, Phường Phú Nhuận, Thủ Đức, Thành phố Hồ Chí Minh, 72217, Việt Nam",
+      "query": "THPT Phú Nhuận, Phú Nhuận, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LHP_CHUYEN",
+      "name": "THPT Chuyên Lê Hồng Phong",
+      "district": "Quận 1",
+      "lat": 10.7637813,
+      "lon": 106.6814719,
+      "display_name": "Trường Trung học phổ thông chuyên Lê Hồng Phong, 235, Nguyễn Văn Cừ, Khu phố 5, Phường Cầu Ông Lãnh, Thủ Đức, Thành phố Hồ Chí Minh, 72760, Việt Nam",
+      "query": "Trường THPT Chuyên Lê Hồng Phong, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NTMK",
+      "name": "THPT Nguyễn Thị Minh Khai",
+      "district": "Quận 1",
+      "lat": 10.7789672,
+      "lon": 106.6872408,
+      "display_name": "Trường Trung học phố thông Nguyễn Thị Minh Khai, 275, Điện Biên Phủ, Khu phố 6, Phường Xuân Hòa, Thủ Đức, Thành phố Hồ Chí Minh, 70000, Việt Nam",
+      "query": "Trường THPT Nguyễn Thị Minh Khai, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 4,
+        "total": 4,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TRUNG_VUONG",
+      "name": "THPT Trưng Vương",
+      "district": "Quận 1",
+      "lat": 10.7853513,
+      "lon": 106.7064593,
+      "display_name": "Trường Trung học phổ thông Trưng Vương, 3A, Nguyễn Bỉnh Khiêm, Khu phố 1, Phường Sài Gòn, Thủ Đức, Thành phố Hồ Chí Minh, 71006, Việt Nam",
+      "query": "Trường THPT Trưng Vương, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LQD",
+      "name": "THPT Lê Quý Đôn",
+      "district": "Quận 10",
+      "lat": 10.7796757,
+      "lon": 106.6940826,
+      "display_name": "Trường Trung học phổ thông Lê Quý Đôn, 10, Nguyễn Thị Minh Khai, Khu phố 4, Phường Xuân Hòa, Thủ Đức, Thành phố Hồ Chí Minh, 71009, Việt Nam",
+      "query": "Trường THPT Lê Quý Đôn, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NAN_NINH",
+      "name": "THPT Nguyễn An Ninh",
+      "district": "Quận 10",
+      "lat": 10.7616065,
+      "lon": 106.6740691,
+      "display_name": "Trường Trung học phổ thông Nguyễn An Ninh, 93, Hẻm 46 Nguyễn Chí Thanh, Khu phố 5, Phường Vườn Lài, Thủ Đức, Thành phố Hồ Chí Minh, 72712, Việt Nam",
+      "query": "Trường THPT Nguyễn An Ninh, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "BAN_CO",
+      "name": "THPT Bàn Cờ",
+      "district": "Quận 11",
+      "lat": 10.829357,
+      "lon": 106.6733562,
+      "display_name": "Trường Trung học cơ sở - Trung học phổ thông Bán Trú Nội Trú Hồng Hà - Cơ Sở 4, Quang Trung, Phường Gò Vấp, Thủ Đức, Thành phố Hồ Chí Minh, 70048, Việt Nam",
+      "query": "Trường THPT Bàn Cờ, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "HUNG_VUONG",
+      "name": "THPT Hùng Vương",
+      "district": "Quận 11",
+      "lat": 10.7562744,
+      "lon": 106.6638299,
+      "display_name": "Trường Trung học phổ thông Hùng Vương, 124, Đường Hồng Bàng, Khu phố 11, Phường Chợ Lớn, Thủ Đức, Thành phố Hồ Chí Minh, 72415, Việt Nam",
+      "query": "Trường THPT Hùng Vương, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "PHU_LAM",
+      "name": "THPT Phú Lâm",
+      "district": "Quận 11",
+      "lat": 10.7557279,
+      "lon": 106.6307126,
+      "display_name": "Trường Trung học phổ thông Phú Lâm, 24, Đường số 3, Phường Phú Lâm, Thủ Đức, Thành phố Hồ Chí Minh, 72015, Việt Nam",
+      "query": "Trường THPT Phú Lâm, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "AN_DONG_Q12",
+      "name": "THPT An Đông",
+      "district": "Quận 12",
+      "lat": 10.824936,
+      "lon": 106.6249762,
+      "display_name": "Trường Tiểu Học Trung học cơ sở&Trung học phổ thông Tuệ Đức - Cơ sở Tân Thới Nhất 17, Quận 12, 8, Tân Thới Nhất 17, Khu phố 3, Phường Đông Hưng Thuận, Thủ Đức, Thành phố Hồ Chí Minh, 71500, Việt Nam",
+      "query": "THPT An Đông, Quận 12, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "THANH_LOC",
+      "name": "THPT Thạnh Lộc",
+      "district": "Quận 12",
+      "lat": 10.8758615,
+      "lon": 106.6817301,
+      "display_name": "Trường Trung học phổ thông Thạnh Lộc, 116, Nguyễn Thị Sáu, Khu phố 58, Phường An Phú Đông, Thuận An, Thành phố Hồ Chí Minh, 71515, Việt Nam",
+      "query": "Trường THPT Thạnh Lộc, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "THD_Q12",
+      "name": "THPT Trần Hưng Đạo",
+      "district": "Quận 12",
+      "lat": 10.8457843,
+      "lon": 106.6828455,
+      "display_name": "Trường Trung học phổ thông Trần Hưng Đạo, Hẻm 185 Đường số 28, Khu phố 38, Phường An Nhơn, Thuận An, Thành phố Hồ Chí Minh, 70000, Việt Nam",
+      "query": "Trường THPT Trần Hưng Đạo, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "BTX",
+      "name": "THPT Bùi Thị Xuân",
+      "district": "Quận 3",
+      "lat": 10.76911,
+      "lon": 106.688169,
+      "display_name": "Trường Trung học phổ thông Bùi Thị Xuân, 73, Đường Lương Hữu Khánh, Khu phố 27, Phường Bến Thành, Thủ Đức, Thành phố Hồ Chí Minh, 70200, Việt Nam",
+      "query": "Trường THPT Bùi Thị Xuân, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "MARIE_CURIE",
+      "name": "THPT Marie Curie",
+      "district": "Quận 3",
+      "lat": 10.782426,
+      "lon": 106.6907823,
+      "display_name": "Trường Trung học phổ thông Marie Curie, 159, Nam Kỳ Khởi Nghĩa, Khu phố 4, Phường Xuân Hòa, Thủ Đức, Thành phố Hồ Chí Minh, 70001, Việt Nam",
+      "query": "Trường THPT Marie Curie, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TQT_Q3",
+      "name": "THPT Trần Quốc Tuấn",
+      "district": "Quận 3",
+      "lat": 10.7613518,
+      "lon": 106.6472553,
+      "display_name": "Trường Trung học phổ thông Trần Quốc Tuấn, 236/10, Đường Thái Phiên, Khu phố 23, Phường Bình Thới, Thủ Đức, Thành phố Hồ Chí Minh, 72015, Việt Nam",
+      "query": "Trường THPT Trần Quốc Tuấn, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "PBC_Q5",
+      "name": "THPT Phan Bội Châu",
+      "district": "Quận 5",
+      "lat": 10.7507647,
+      "lon": 106.6409969,
+      "display_name": "Trường Trung học cơ sở&Trung học phổ thông Phan Bội Châu Thành phố Hồ Chí Minh, Đường Nguyễn Đình Chi, Khu phố 18, Phường Bình Tây, Thủ Đức, Thành phố Hồ Chí Minh, 71910, Việt Nam",
+      "query": "Trường THPT Phan Bội Châu, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TKN",
+      "name": "THPT Trần Khai Nguyên",
+      "district": "Quận 5",
+      "lat": 10.7587191,
+      "lon": 106.6692364,
+      "display_name": "Trường Trung học Phổ thông Trần Khai Nguyên, Nguyễn Tri Phương, Khu phố 29, Phường An Đông, Thủ Đức, Thành phố Hồ Chí Minh, 72712, Việt Nam",
+      "query": "Trường THPT Trần Khai Nguyên, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "BINH_PHU",
+      "name": "THPT Bình Phú",
+      "district": "Quận 6",
+      "lat": 10.7353921,
+      "lon": 106.6275257,
+      "display_name": "Trường Trung học phổ thông Bình Phú, 102, Đường Số 44, Khu phố 20, Phường Bình Phú, Thủ Đức, Thành phố Hồ Chí Minh, 71910, Việt Nam",
+      "query": "THPT Bình Phú, Quận 6, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LTT_Q6",
+      "name": "THPT Lê Thánh Tôn",
+      "district": "Quận 6",
+      "lat": 10.7453001,
+      "lon": 106.7106832,
+      "display_name": "Trường Trung học phổ thông Lê Thánh Tôn, 124, Đường số 17, Khu phố 27, Phường Tân Hưng, Thủ Đức, Thành phố Hồ Chí Minh, 72911, Việt Nam",
+      "query": "Trường THPT Lê Thánh Tôn, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NHAN_VIET",
+      "name": "THPT Nhân Việt",
+      "district": "Quận 7",
+      "lat": 10.7782285,
+      "lon": 106.6370702,
+      "display_name": "Trường Trung học phổ thông Nhân Việt, 41, Hẻm 118 Huỳnh Thiện Lộc, Khu phố 20, Phường Tân Phú, Thủ Đức, Thành phố Hồ Chí Minh, 72012, Việt Nam",
+      "query": "Trường THPT Nhân Việt, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "PHU_MY",
+      "name": "THPT Phú Mỹ",
+      "district": "Quận 7",
+      "lat": 10.5959144,
+      "lon": 107.0617363,
+      "display_name": "Trường Trung học phổ thông Phú Mỹ, Trường Chinh, Ngọc Hà, Vạn Hạnh, Phường Phú Mỹ, Thành phố Hồ Chí Minh, 78706, Việt Nam",
+      "query": "Trường THPT Phú Mỹ, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TAN_PHONG",
+      "name": "THPT Tân Phong",
+      "district": "Quận 7",
+      "lat": 10.7267658,
+      "lon": 106.6928185,
+      "display_name": "Trường Trung học phổ thông Tân Phong, 19F, Đường Số 16, Khu phố 50, Phường Tân Hưng, Thủ Đức, Thành phố Hồ Chí Minh, 72910, Việt Nam",
+      "query": "Trường THPT Tân Phong, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "BINH_DONG",
+      "name": "THPT Bình Đông",
+      "district": "Quận 8",
+      "lat": 10.7335583,
+      "lon": 106.6604586,
+      "display_name": "Trường Trung học phổ thông Tạ Quang Bửu, 909, Tạ Quang Bửu, Phường Bình Đông, Thủ Đức, Thành phố Hồ Chí Minh, 72400, Việt Nam",
+      "query": "THPT Bình Đông, Quận 8, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NHT_Q8",
+      "name": "THPT Nguyễn Hữu Thọ",
+      "district": "Quận 8",
+      "lat": 10.7673003,
+      "lon": 106.7047184,
+      "display_name": "Trường Trung học phổ thông Nguyễn Hữu Thọ, 2, Bến Vân Đồn, Phường Xóm Chiếu, Thủ Đức, Thành phố Hồ Chí Minh, 72806, Việt Nam",
+      "query": "Trường THPT Nguyễn Hữu Thọ, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "HIEP_PHU",
+      "name": "THPT Hiệp Phú",
+      "district": "Quận 9",
+      "lat": 10.9998844,
+      "lon": 106.6470737,
+      "display_name": "Trường THPT Nguyễn Đình Chiểu, Đại lộ Bình Dương, Khu phố Hiệp Thành 6, Phường Phú Lợi, Thành phố Hồ Chí Minh, 75106, Việt Nam",
+      "query": "Trường THPT Hiệp Phú, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LONG_TRUONG",
+      "name": "THPT Long Trường",
+      "district": "Quận 9",
+      "lat": 10.817111,
+      "lon": 106.8087493,
+      "display_name": "Trường Trung học phổ thông Long Trường, 309, Hẻm 297 Võ Văn Hát, Phường Long Trường, Thủ Đức, Thành phố Hồ Chí Minh, 71350, Việt Nam",
+      "query": "Trường THPT Long Trường, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NGUYEN_HUE_Q9",
+      "name": "THPT Nguyễn Huệ",
+      "district": "Quận 9",
+      "lat": 10.8449428,
+      "lon": 106.8186124,
+      "display_name": "Trường Trung học phổ thông Nguyễn Huệ, Đường số 13, Phường Long Bình, Thủ Đức, Thành phố Hồ Chí Minh, 71216, Việt Nam",
+      "query": "Trường THPT Nguyễn Huệ, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TRUONG_THANH",
+      "name": "THPT Trường Thạnh",
+      "district": "Quận 9",
+      "lat": 10.7690277,
+      "lon": 106.6424884,
+      "display_name": "Trường Trung học phổ thông Trần Quang Khải, 343D, Đường Lạc Long Quân, Khu phố 9, Phường Hòa Bình, Thủ Đức, Thành phố Hồ Chí Minh, 72015, Việt Nam",
+      "query": "THPT Trường Thạnh, Quận 9, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "HHT",
+      "name": "THPT Hoàng Hoa Thám",
+      "district": "Tân Bình",
+      "lat": 10.8047521,
+      "lon": 106.6916658,
+      "display_name": "Trường THPT Hoàng Hoa Thám, Hoàng Hoa Thám, Khu phố 4, Phường Gia Định, Thủ Đức, Thành phố Hồ Chí Minh, 72317, Việt Nam",
+      "query": "Trường THPT Hoàng Hoa Thám, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NGUYEN_THUONG_HIEN",
+      "name": "THPT Nguyễn Thượng Hiền",
+      "district": "Tân Bình",
+      "lat": 10.7932827,
+      "lon": 106.6548169,
+      "display_name": "Trường Trung học phổ thông Nguyễn Thượng Hiền, 649, Hoàng Văn Thụ, Khu phố 5, Phường Tân Sơn Nhất, Thủ Đức, Thành phố Hồ Chí Minh, 72106, Việt Nam",
+      "query": "THPT Nguyễn Thượng Hiền, Tân Bình, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NGUYEN_TRAI_TB",
+      "name": "THPT Nguyễn Trãi",
+      "district": "Tân Bình",
+      "lat": 10.7596227,
+      "lon": 106.712077,
+      "display_name": "Trường Trung học phổ thông Nguyễn Trãi, 364, Nguyễn Tất Thành, Phường Xóm Chiếu, Thủ Đức, Thành phố Hồ Chí Minh, 72800, Việt Nam",
+      "query": "Trường THPT Nguyễn Trãi, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TVG",
+      "name": "THPT Trần Văn Giàu",
+      "district": "Tân Bình",
+      "lat": 10.831001,
+      "lon": 106.6989174,
+      "display_name": "Trường Trung học phổ thông Trần Văn Giàu, 40, Hẻm 203 Đặng Thùy Trâm, Khu phố 48, Phường Bình Lợi Trung, Thủ Đức, Thành phố Hồ Chí Minh, 70000, Việt Nam",
+      "query": "Trường THPT Trần Văn Giàu, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LE_TRONG_TAN",
+      "name": "THPT Lê Trọng Tấn",
+      "district": "Tân Phú",
+      "lat": 10.8069392,
+      "lon": 106.6178579,
+      "display_name": "Trường Trung học phổ thông Lê Trọng Tấn, 5, Đường D2, Khu phố 6, Phường Tân Sơn Nhì, Thuận An, Thành phố Hồ Chí Minh, 72008, Việt Nam",
+      "query": "Trường THPT Lê Trọng Tấn, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TAN_BINH_TP",
+      "name": "THPT Tân Bình",
+      "district": "Tân Phú",
+      "lat": 10.7731711,
+      "lon": 106.6236816,
+      "display_name": "Trường Trung học phổ thông Quốc Văn Sài Gòn, 300, Hòa Bình, Khu phố 36, Phường Tân Phú, Thủ Đức, Thành phố Hồ Chí Minh, 72015, Việt Nam",
+      "query": "THPT Tân Bình, Tân Phú, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TAY_THANH",
+      "name": "THPT Tây Thạnh",
+      "district": "Tân Phú",
+      "lat": 10.8140439,
+      "lon": 106.6222121,
+      "display_name": "Trường Trung học phổ thông Tây Thạnh, 27, Đường C2, Khu phố 8, Phường Tây Thạnh, Thuận An, Thành phố Hồ Chí Minh, 72008, Việt Nam",
+      "query": "Trường THPT Tây Thạnh, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TRAN_PHU",
+      "name": "THPT Trần Phú",
+      "district": "Tân Phú",
+      "lat": 10.6395984,
+      "lon": 107.1232004,
+      "display_name": "Trường Trung học phổ thông Hắc Dịch, Trần Phú, Phường Tân Thành, Thành phố Hồ Chí Minh, Việt Nam",
+      "query": "THPT Trần Phú, Tân Phú, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "BINH_CHIEU",
+      "name": "THPT Bình Chiểu",
+      "district": "TP Thủ Đức",
+      "lat": 10.8761158,
+      "lon": 106.7414875,
+      "display_name": "Trường Trung học phổ thông Bình Chiểu, Đường số 5, Khu phố 18, Phường Tam Bình, Thủ Đức, Thành phố Hồ Chí Minh, 75350, Việt Nam",
+      "query": "THPT Bình Chiểu, TP Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "HIEP_BINH",
+      "name": "THPT Hiệp Bình",
+      "district": "TP Thủ Đức",
+      "lat": 10.8478872,
+      "lon": 106.7222709,
+      "display_name": "Trường Trung học phổ thông Hiệp Bình, Đường Số 2, Khu phố 10, Phường Hiệp Bình, Thủ Đức, Thành phố Hồ Chí Minh, 70000, Việt Nam",
+      "query": "THPT Hiệp Bình, TP Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LINH_TRUNG",
+      "name": "THPT Linh Trung",
+      "district": "TP Thủ Đức",
+      "lat": 10.8620078,
+      "lon": 106.7842229,
+      "display_name": "Trường Trung học phổ thông Linh Trung, 5, Đường số 16, Khu phố 12, Phường Linh Xuân, Thủ Đức, Thành phố Hồ Chí Minh, 00084, Việt Nam",
+      "query": "THPT Linh Trung, TP Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 1,
+        "total": 1,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "LONG_BINH",
+      "name": "THPT Long Bình",
+      "district": "TP Thủ Đức",
+      "lat": 10.8449428,
+      "lon": 106.8186124,
+      "display_name": "Trường Trung học phổ thông Nguyễn Huệ, Đường số 13, Phường Long Bình, Thủ Đức, Thành phố Hồ Chí Minh, 71216, Việt Nam",
+      "query": "THPT Long Bình, TP Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "NHH",
+      "name": "THPT Nguyễn Hữu Huân",
+      "district": "TP Thủ Đức",
+      "lat": 10.8485575,
+      "lon": 106.7679983,
+      "display_name": "Trường Trung học phổ thông Nguyễn Hữu Huân, 11, Đoàn Kết, Khu phố 14, Phường Thủ Đức, Thủ Đức, Thành phố Hồ Chí Minh, 71306, Việt Nam",
+      "query": "THPT Nguyễn Hữu Huân, TP Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 3,
+        "total": 3,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "TAM_PHU",
+      "name": "THPT Tam Phú",
+      "district": "TP Thủ Đức",
+      "lat": 10.8647743,
+      "lon": 106.7461185,
+      "display_name": "Trường Trung học phổ thông Tam Phú, Phú Châu, Khu phố 30, Phường Tam Bình, Thủ Đức, Thành phố Hồ Chí Minh, 75350, Việt Nam",
+      "query": "THPT Tam Phú, TP Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    },
+    {
+      "code": "THU_DUC",
+      "name": "THPT Thủ Đức",
+      "district": "TP Thủ Đức",
+      "lat": 10.7637813,
+      "lon": 106.6814719,
+      "display_name": "Trường Trung học phổ thông chuyên Lê Hồng Phong, 235, Nguyễn Văn Cừ, Khu phố 21, Phường Chợ Quán, Thủ Đức, Thành phố Hồ Chí Minh, 72406, Việt Nam",
+      "query": "THPT Thủ Đức, TP Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam",
+      "meta": {
+        "hit": 2,
+        "total": 2,
+        "hasSchool": true,
+        "inSouth": true,
+        "ok": true
+      }
+    }
+  ],
+  "rejected": [
+    {
+      "code": "NGT",
+      "name": "THPT Nguyễn Gia Thiều",
+      "district": "Bình Thạnh",
+      "best": {
+        "lat": "10.9172645",
+        "lon": "106.7111190",
+        "display_name": "Trường Trung học phổ thông Nguyễn Trãi, Nguyễn Văn Tiết, Khu phố Bình Hòa, Phường Lái Thiêu, Thuận An, Thành phố Hồ Chí Minh, 75206, Việt Nam",
+        "meta": {
+          "hit": 2,
+          "total": 3,
+          "hasSchool": true,
+          "inSouth": true,
+          "ok": false
+        },
+        "query": "THPT Nguyễn Gia Thiều, Bình Thạnh, Thành phố Hồ Chí Minh, Việt Nam"
+      }
+    },
+    {
+      "code": "PVC",
+      "name": "THPT Phạm Văn Cội",
+      "district": "Củ Chi",
+      "best": null
+    },
+    {
+      "code": "TAN_PHU_TRUNG",
+      "name": "THPT Tân Phú Trung",
+      "district": "Hóc Môn",
+      "best": null
+    },
+    {
+      "code": "PDP",
+      "name": "THPT Phan Đình Phùng",
+      "district": "Phú Nhuận",
+      "best": null
+    },
+    {
+      "code": "LTHG",
+      "name": "THPT Lê Thị Hồng Gấm",
+      "district": "Quận 12",
+      "best": null
+    },
+    {
+      "code": "KHANH_HOI_A",
+      "name": "THPT Khánh Hội A",
+      "district": "Quận 4",
+      "best": null
+    },
+    {
+      "code": "TON_DUC_THANG",
+      "name": "THPT Tôn Đức Thắng",
+      "district": "Quận 4",
+      "best": null
+    },
+    {
+      "code": "NK_DHQG",
+      "name": "THPT Chuyên Năng Khiếu ĐHQG",
+      "district": "Quận 5",
+      "best": null
+    },
+    {
+      "code": "LVT_Q8",
+      "name": "THPT Lê Văn Thiêm",
+      "district": "Quận 8",
+      "best": null
+    },
+    {
+      "code": "VVN",
+      "name": "THPT Võ Văn Ngân",
+      "district": "TP Thủ Đức",
+      "best": null
+    },
+    {
+      "code": "TPHCM",
+      "name": "THPT TPHCM",
+      "district": null,
+      "best": {
+        "lat": "10.7637813",
+        "lon": "106.6814719",
+        "display_name": "Trường Trung học phổ thông chuyên Lê Hồng Phong, 235, Nguyễn Văn Cừ, Khu phố 21, Phường Chợ Quán, Thủ Đức, Thành phố Hồ Chí Minh, 72760, Việt Nam",
+        "meta": {
+          "hit": 0,
+          "total": 0,
+          "hasSchool": true,
+          "inSouth": true,
+          "ok": false
+        },
+        "query": "THPT TPHCM, , Thành phố Hồ Chí Minh, Việt Nam"
+      }
+    }
+  ]
+}
