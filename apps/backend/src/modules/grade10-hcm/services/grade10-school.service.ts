@@ -10,6 +10,7 @@ import { Grade10Cutoff } from '../entities/cutoff.entity';
 import { CreateSchoolDto, UpdateSchoolDto } from '../dtos/school-crud.dto';
 import { Grade10LocationService } from './grade10-location.service';
 import { deduplicateDistrictsHelper } from '../utils/district-dedup.util';
+import { deduplicateSchoolsHelper } from '../utils/school-dedup.util';
 
 @Injectable()
 export class Grade10SchoolService implements OnApplicationBootstrap {
@@ -27,6 +28,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     await deduplicateDistrictsHelper(this.schoolRepo, this.districtRepo);
+    await deduplicateSchoolsHelper(this.schoolRepo, this.quotaRepo, this.cutoffRepo);
   }
 
   async findAll(filters: {

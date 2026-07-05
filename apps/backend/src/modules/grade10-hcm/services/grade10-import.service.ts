@@ -8,6 +8,7 @@ import { Grade10Cutoff } from '../entities/cutoff.entity';
 import { Grade10ImportLog } from '../entities/import-log.entity';
 import { Grade10LocationService } from './grade10-location.service';
 import { deduplicateDistrictsHelper } from '../utils/district-dedup.util';
+import { deduplicateSchoolsHelper } from '../utils/school-dedup.util';
 
 export interface ImportQuotaDto {
   year: number;
@@ -319,6 +320,7 @@ export class Grade10ImportService {
 
     // Auto deduplicate districts and merge relationships immediately after import
     await deduplicateDistrictsHelper(this.schoolRepo, this.districtRepo);
+    await deduplicateSchoolsHelper(this.schoolRepo, this.quotaRepo, this.cutoffRepo);
 
     return {
       schoolsAdded,
