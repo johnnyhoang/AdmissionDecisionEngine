@@ -18,6 +18,7 @@ import AiSearchModal from '../../components/AiSearchModal';
 import HomeLocationModal from './components/HomeLocationModal';
 import type { HomeLocationPick } from './components/HomeLocationModal';
 import SchoolGroupedDropdown from './components/SchoolGroupedDropdown';
+import BottomNav from '../../components/layout/BottomNav';
 import MergeSchoolModal from './components/MergeSchoolModal';
 import EditSchoolModal from './components/EditSchoolModal';
 import CompareDrawer from './components/CompareDrawer';
@@ -410,10 +411,29 @@ export default function Grade10Container() {
     }
   };
 
+  const canRecommend = hasPermission('GRADE10', 'view_recommendation', 'view');
+
+  // Mobile bottom navigation: 4 primary destinations + "Thêm" sheet for the
+  // rest — mirrors the desktop tab bar but in a mobile-app layout
+  const bottomNavItems = [
+    { id: 'dashboard', label: 'Tổng quan', icon: <BarChart2 className="h-5 w-5" /> },
+    { id: 'search', label: 'Tra cứu', icon: <School className="h-5 w-5" /> },
+    ...(canRecommend
+      ? [
+          { id: 'calculator', label: 'Đánh giá', icon: <CalcIcon className="h-5 w-5" /> },
+          { id: 'combo', label: 'Tư vấn', icon: <Sparkles className="h-5 w-5" /> },
+        ]
+      : []),
+  ];
+  const bottomNavMoreItems = [
+    { id: 'specialized', label: 'Lớp Chuyên', icon: <Award className="h-4 w-4" />, description: 'Tư vấn NV chuyên & tích hợp (sắp ra mắt)' },
+    { id: 'adjust', label: 'Mô phỏng', icon: <RefreshCw className="h-4 w-4" />, description: 'Mô phỏng đợt điều chỉnh NV (sắp ra mắt)' },
+  ];
+
   return (
     <div className="flex-1 flex flex-col">
-      {/* Navigation tabs */}
-      <nav className="bg-slate-900 border-b border-slate-800 px-4 py-2">
+      {/* Navigation tabs (desktop) — mobile uses the fixed BottomNav instead */}
+      <nav className="hidden md:block bg-slate-900 border-b border-slate-800 px-4 py-2">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Scrollable Tabs Wrapper */}
           <div className="w-full flex flex-row flex-nowrap gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap pr-2">
@@ -496,11 +516,19 @@ export default function Grade10Container() {
         </div>
       </nav>
 
-      {/* Floating Compare Badge */}
+      {/* Mobile bottom navigation */}
+      <BottomNav
+        items={bottomNavItems}
+        moreItems={bottomNavMoreItems}
+        activeId={activeTab}
+        onSelect={(id) => setActiveTab(id as typeof activeTab)}
+      />
+
+      {/* Floating Compare Badge — sits above the mobile bottom nav */}
       {compareList.length > 0 && (
         <button
           onClick={() => setIsCompareOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-xl shadow-indigo-600/40 text-xs font-extrabold cursor-pointer transition-all duration-200 animate-pop-in border border-indigo-400/30"
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-xl shadow-indigo-600/40 text-xs font-extrabold cursor-pointer transition-all duration-200 animate-pop-in border border-indigo-400/30"
         >
           <ArrowUpDown className="h-3.5 w-3.5" />
           Xem so sánh
@@ -510,8 +538,8 @@ export default function Grade10Container() {
         </button>
       )}
 
-      {/* Main Content Area */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
+      {/* Main Content Area — extra bottom padding on mobile clears the fixed BottomNav */}
+      <div className="flex-1 max-w-7xl w-full mx-auto p-4 pb-28 md:p-6 flex flex-col gap-6">
         
         {/* Tab 1: Dashboard */}
         {activeTab === 'dashboard' && (
@@ -877,10 +905,10 @@ export default function Grade10Container() {
 
             {/* Recommendations Results Panel */}
             <section className="lg:col-span-8 flex flex-col gap-4">
-              <div className="flex justify-between items-center bg-slate-900/40 p-4 border border-slate-800 rounded-xl">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-slate-900/40 p-4 border border-slate-800 rounded-xl">
                 <div>
                   <div className="flex items-center gap-1.5">
-                  <h2 className="text-base font-bold text-white m-0">KẾT QUẢ GỢI Ý TRƯỜNG PHÙ HỢP</h2>
+                  <h2 className="text-sm md:text-base font-bold text-white m-0">KẾT QUẢ GỢI Ý TRƯỜNG PHÙ HỢP</h2>
                   <button onClick={() => setHelpModal('calculator')} className="p-1 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded transition cursor-pointer" title="Xem hướng dẫn giải thuật">
                     <HelpCircle className="h-4 w-4" />
                   </button>
@@ -910,7 +938,7 @@ export default function Grade10Container() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <div className="flex justify-between items-center bg-indigo-950/25 border border-indigo-500/10 p-3 rounded-xl text-xs text-slate-300">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 bg-indigo-950/25 border border-indigo-500/10 p-3 rounded-xl text-xs text-slate-300">
                     <div>
                       💡 Điểm xét tuyển của bạn: <strong className="text-indigo-400 text-sm">{evaluationResult.candidateScore}đ</strong> (Toán: {evaluationResult.details.math} | Văn: {evaluationResult.details.literature} | Anh: {evaluationResult.details.english} | Điểm cộng: {Number(evaluationResult.details.priority) + Number(evaluationResult.details.bonus)})
                     </div>
@@ -1065,8 +1093,8 @@ export default function Grade10Container() {
         {/* Tab 3: Search Schools */}
         {activeTab === 'search' && (
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-slate-900 border border-slate-800 p-4 rounded-xl">
-              <div className="relative w-full md:max-w-md">
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-between lg:items-center bg-slate-900 border border-slate-800 p-3 md:p-4 rounded-xl">
+              <div className="relative w-full lg:max-w-md">
                 <SearchIcon className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
                 <input 
                   type="text"
@@ -1078,7 +1106,7 @@ export default function Grade10Container() {
                 />
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 md:gap-3">
                 {user?.role === 'ADMIN' && selectedMergeIds.length === 2 && (
                   <button
                     onClick={() => setIsMergeModalOpen(true)}
@@ -1103,12 +1131,12 @@ export default function Grade10Container() {
                   {isLocating ? 'Đang tính cự ly...' : isProximityFilterActive ? '📍 Cự ly: Bật' : 'Tìm gần nhà'}
                 </button>
 
-                <div ref={districtDropdownRef} className="relative">
+                <div ref={districtDropdownRef} className="relative flex-1 sm:flex-none min-w-0">
                   <button
                     type="button"
                     onClick={() => !isProximityFilterActive && setIsDistrictDropdownOpen(!isDistrictDropdownOpen)}
                     disabled={isProximityFilterActive}
-                    className="w-56 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-350 flex items-center justify-between outline-none disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-700 transition select-none cursor-pointer"
+                    className="w-full sm:w-56 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-350 flex items-center justify-between outline-none disabled:opacity-50 disabled:cursor-not-allowed hover:border-slate-700 transition select-none cursor-pointer"
                   >
                     <span className="truncate">
                       {selectedDistricts.length === 0
@@ -1176,10 +1204,10 @@ export default function Grade10Container() {
             </div>
 
             {isProximityFilterActive && (
-              <div className="flex items-center justify-between bg-indigo-950/20 border border-indigo-500/20 p-3 rounded-xl text-xs text-indigo-300 font-semibold shadow-md">
-                <span className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-indigo-400 animate-bounce" />
-                  Lọc theo cự ly gần nhà: <strong className="text-white">{userAddress || 'GPS'}</strong> (Hiển thị 15 trường gần nhất)
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-indigo-950/20 border border-indigo-500/20 p-3 rounded-xl text-xs text-indigo-300 font-semibold shadow-md">
+                <span className="flex items-center gap-2 min-w-0">
+                  <MapPin className="h-4 w-4 text-indigo-400 animate-bounce shrink-0" />
+                  <span className="truncate">Lọc theo cự ly gần nhà: <strong className="text-white">{userAddress || 'GPS'}</strong> (15 trường gần nhất)</span>
                 </span>
                 <button
                   onClick={() => {
@@ -1195,7 +1223,7 @@ export default function Grade10Container() {
             )}
 
             {user?.role === 'ADMIN' && selectedMergeIds.length > 0 && (
-              <div className="flex items-center justify-between bg-amber-950/20 border border-amber-500/30 p-3 rounded-xl text-xs font-semibold shadow-md">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-amber-950/20 border border-amber-500/30 p-3 rounded-xl text-xs font-semibold shadow-md">
                 <span className="flex items-center gap-2 text-amber-300">
                   <GitMerge className="h-4 w-4 text-amber-400" />
                   {selectedMergeIds.length === 1
@@ -1341,10 +1369,10 @@ export default function Grade10Container() {
 
       </div>
 
-      {/* School Detail Modal */}
+      {/* School Detail Modal — bottom sheet on mobile, centered dialog on desktop */}
       {selectedSchoolId && schoolDetail && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative flex flex-col gap-4 max-h-[90vh]">
+        <div className="fixed inset-0 bg-black/80 flex items-end md:items-center justify-center p-0 md:p-4 z-[70]">
+          <div className="bg-slate-900 border border-slate-800 rounded-t-2xl md:rounded-2xl max-w-3xl w-full p-4 md:p-6 shadow-2xl relative flex flex-col gap-4 max-h-[92dvh] md:max-h-[90vh]">
             <button
               onClick={() => setSelectedSchoolId(null)}
               className="absolute right-4 top-4 text-slate-400 hover:text-white text-lg font-bold"
@@ -1353,13 +1381,13 @@ export default function Grade10Container() {
             </button>
 
             {/* Header */}
-            <div className="border-b border-slate-800 pb-3 flex justify-between items-end">
-              <div>
+            <div className="border-b border-slate-800 pb-3 flex justify-between items-end gap-3 pr-8">
+              <div className="min-w-0">
                 <div className="flex items-center gap-2 mb-1">
 
                   <span className="text-xs text-slate-400">{schoolDetail.district?.name || 'Chưa rõ quận'}</span>
                 </div>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <h2 className="text-base md:text-lg font-bold text-white flex items-center gap-2">
                   <School className="h-5 w-5 text-indigo-400 shrink-0" />
                   {schoolDetail.name}
                 </h2>
@@ -1378,38 +1406,25 @@ export default function Grade10Container() {
               )}
             </div>
 
-            {/* Tabs Selector */}
+            {/* Tabs Selector — equal-width segments so all 3 are always visible on mobile */}
             <div className="flex border-b border-slate-800">
-              <button
-                onClick={() => setActiveDetailTab('info')}
-                className={`px-4 py-2 text-xs font-bold border-b-2 transition ${
-                  activeDetailTab === 'info'
-                    ? 'border-indigo-500 text-indigo-400'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Tổng quan & Bản đồ
-              </button>
-              <button
-                onClick={() => setActiveDetailTab('cutoff')}
-                className={`px-4 py-2 text-xs font-bold border-b-2 transition ${
-                  activeDetailTab === 'cutoff'
-                    ? 'border-indigo-500 text-indigo-400'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Lịch sử Điểm chuẩn (3 NV)
-              </button>
-              <button
-                onClick={() => setActiveDetailTab('quota')}
-                className={`px-4 py-2 text-xs font-bold border-b-2 transition ${
-                  activeDetailTab === 'quota'
-                    ? 'border-indigo-500 text-indigo-400'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Chỉ tiêu & Tỷ lệ chọi
-              </button>
+              {([
+                ['info', 'Tổng quan'],
+                ['cutoff', 'Điểm chuẩn'],
+                ['quota', 'Chỉ tiêu & Chọi'],
+              ] as const).map(([tab, label]) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveDetailTab(tab)}
+                  className={`flex-1 md:flex-none px-2 md:px-4 py-2.5 text-[11px] md:text-xs font-bold border-b-2 transition cursor-pointer ${
+                    activeDetailTab === tab
+                      ? 'border-indigo-500 text-indigo-400'
+                      : 'border-transparent text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
 
             {/* Tab Contents */}
@@ -1652,9 +1667,10 @@ export default function Grade10Container() {
         onClose={() => setHomeLocationContext(null)}
         onConfirm={handleHomeLocationConfirm}
       />
-        {/* Tab: Combo Recommendation */}
+        {/* Tab: Combo Recommendation — rendered outside the main container in the
+            DOM, so it carries the same container/padding classes itself */}
         {activeTab === 'combo' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="max-w-7xl w-full mx-auto p-4 pb-28 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             {/* Input Config Panel */}
             <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
@@ -1787,12 +1803,12 @@ export default function Grade10Container() {
               ) : (
                 <div className="flex flex-col gap-4">
                   {/* Summary of score */}
-                  <div className="bg-indigo-950/20 border border-indigo-500/10 p-4 rounded-2xl text-xs text-slate-350 flex justify-between items-center">
+                  <div className="bg-indigo-950/20 border border-indigo-500/10 p-4 rounded-2xl text-xs text-slate-350 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <div>
                       Điểm thi dự kiến: <strong className="text-indigo-400 text-sm">{comboResult.minScore}đ - {comboResult.maxScore}đ</strong>
                       <span className="text-slate-500 ml-2">(Trung bình xét: {comboResult.avgScore}đ)</span>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3">
                       {comboResult.ssf !== undefined && comboResult.ssf !== 0 && (
                         <div className={`px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 ${
                           comboResult.ssf > 0
@@ -1822,7 +1838,7 @@ export default function Grade10Container() {
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      🛡️ Phương Án An Toàn
+                      🛡️ <span className="hidden sm:inline">Phương Án </span>An Toàn
                     </button>
                     <button
                       onClick={() => setSelectedStrategy('effort')}
@@ -1832,7 +1848,7 @@ export default function Grade10Container() {
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      🔥 Phương Án Nỗ Lực
+                      🔥 <span className="hidden sm:inline">Phương Án </span>Nỗ Lực
                     </button>
                     <button
                       onClick={() => setSelectedStrategy('defense')}
@@ -1842,7 +1858,7 @@ export default function Grade10Container() {
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      🏰 Phương Án Phòng Thủ
+                      🏰 <span className="hidden sm:inline">Phương Án </span>Phòng Thủ
                     </button>
                   </div>
 

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { 
-  Search, TrendingUp, Calculator, Sliders, MapPin, 
+import {
+  Search, TrendingUp, Calculator, Sliders, MapPin,
   School, HelpCircle, Sparkles, Layers, ArrowUpDown, MessageSquare, X, Send, Trash2, ArrowUp, ArrowDown, AlertCircle,
-  Database, UploadCloud, History, Info, Moon, Sun
+  Database, UploadCloud, History, Info
 } from 'lucide-react';
 import { 
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend 
@@ -23,7 +23,10 @@ import BuildInfo from './components/BuildInfo';
 import Login from './pages/Login';
 import AdminPermissions from './pages/AdminPermissions';
 import AdminHub from './pages/AdminHub';
-import { applyThemeToDocument, readStoredTheme, writeStoredTheme } from './utils/theme';
+import AppHeader from './components/layout/AppHeader';
+import type { HeaderLink } from './components/layout/AppHeader';
+import BottomNav from './components/layout/BottomNav';
+import { applyThemeToDocument, readStoredTheme } from './utils/theme';
 
 interface PreferenceItem {
   programId: string;
@@ -36,7 +39,7 @@ interface PreferenceItem {
 }
 
 function MainApp() {
-  const { user, loading: authLoading, logout, hasPermission } = useAuth();
+  const { user, loading: authLoading, hasPermission } = useAuth();
   const [theme, setTheme] = useState<'light' | 'dark'>(() => readStoredTheme());
   const [activeTab, setActiveTab] = useState<'evaluate' | 'search' | 'analytics' | 'compare' | 'optimize'>('evaluate');
   const [universities, setUniversities] = useState<UniversityItem[]>([]);
@@ -102,26 +105,6 @@ function MainApp() {
     window.addEventListener('app-theme-change', handleThemeChange);
     return () => window.removeEventListener('app-theme-change', handleThemeChange);
   }, []);
-
-  const toggleTheme = () => {
-    setTheme((current) => {
-      const nextTheme = current === 'light' ? 'dark' : 'light';
-      writeStoredTheme(nextTheme);
-      return nextTheme;
-    });
-  };
-
-  const themeButton = (
-    <button
-      type="button"
-      onClick={toggleTheme}
-      className="h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition"
-      title={theme === 'light' ? 'Chuyển sang dark mode' : 'Chuyển sang light mode'}
-      aria-label={theme === 'light' ? 'Chuyển sang dark mode' : 'Chuyển sang light mode'}
-    >
-      {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-    </button>
-  );
 
   const loadAdminData = useCallback(async () => {
     setAdminLoading(true);
@@ -473,58 +456,20 @@ function MainApp() {
         </div>
       );
     }
+    const grade10HeaderLinks: HeaderLink[] = [
+      ...(user.role === 'ADMIN' ? [{ label: 'Phân Quyền', href: '/admin/permissions' }] : []),
+      ...(hasPermission('GRADE10', 'edit_data', 'view') ? [{ label: 'Admin Lớp 10', href: '/admin/l10hcm' }] : []),
+      ...(hasPermission('UNIVERSITY', 'view_universities', 'view') ? [{ label: '🎓 Cổng Đại Học', href: '/', tone: 'indigo' as const }] : []),
+    ];
+
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-        <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
-                <Sparkles className="h-6 w-6 animate-pulse" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold tracking-tight text-white m-0">HCMC Grade 10 Admission Platform</h1>
-                <p className="text-xs text-slate-400 m-0">Hệ thống Đánh giá & Gợi ý Nguyện vọng Lớp 10 Công lập TP.HCM</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="text-right">
-                  <div className="text-xs font-bold text-white">{user.name}</div>
-                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{user.role}</div>
-                </div>
-                {user.avatar ? (
-                  <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full border border-slate-850 object-cover" />
-                ) : (
-                  <div className="h-8 w-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 font-bold">
-                    {user.name[0].toUpperCase()}
-                  </div>
-                )}
-              </div>
-              
-              {user.role === 'ADMIN' && (
-                <a href="/admin/permissions" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-                  Phân Quyền
-                </a>
-              )}
-              {hasPermission('GRADE10', 'edit_data', 'view') && (
-                <a href="/admin/l10hcm" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-                  Admin Lớp 10
-                </a>
-              )}
-              {hasPermission('UNIVERSITY', 'view_universities', 'view') && (
-                <a href="/" className="text-xs font-semibold px-3 py-1.5 bg-indigo-800/60 hover:bg-indigo-700/60 border border-indigo-700/50 text-indigo-300 rounded-lg transition">
-                  🎓 Cổng Đại Học
-                </a>
-              )}
-
-              {themeButton}
-              <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
-                Đăng xuất
-              </button>
-            </div>
-          </div>
-        </header>
+        <AppHeader
+          icon={<Sparkles className="h-5 w-5 md:h-6 md:w-6 animate-pulse" />}
+          title="HCMC Grade 10 Admission Platform"
+          subtitle="Hệ thống Đánh giá & Gợi ý Nguyện vọng Lớp 10 Công lập TP.HCM"
+          links={grade10HeaderLinks}
+        />
 
         <Grade10Container />
 
@@ -550,63 +495,20 @@ function MainApp() {
         </div>
       );
     }
+    const adminHeaderLinks: HeaderLink[] = [
+      ...(user.role === 'ADMIN' ? [{ label: 'Phân Quyền', href: '/admin/permissions' }] : []),
+      { label: `📥 Đồng bộ & Nhập (${importPresets.length})`, onClick: () => setAdminTab('imports'), tone: 'indigo' as const },
+      { label: 'Cổng Thí Sinh', href: '/' },
+    ];
+
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-        {/* Header */}
-        <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
-                <Sliders className="h-6 w-6" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold tracking-tight text-white m-0">VNU-Admission Admin Portal</h1>
-                <p className="text-xs text-slate-400 m-0">Hệ Thống Thống Kê & Quản Trị Dữ Liệu Tuyển Sinh</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="text-right">
-                  <div className="text-xs font-bold text-white">{user.name}</div>
-                  <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{user.role}</div>
-                </div>
-                {user.avatar ? (
-                  <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full border border-slate-850 object-cover" />
-                ) : (
-                  <div className="h-8 w-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 font-bold">
-                    {user.name[0].toUpperCase()}
-                  </div>
-                )}
-              </div>
-              
-              {user.role === 'ADMIN' && (
-                <a href="/admin/permissions" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-                  Phân Quyền
-                </a>
-              )}
-              
-              <button 
-                onClick={() => setAdminTab('imports')}
-                className="px-3 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-lg transition cursor-pointer"
-              >
-                📥 Đồng bộ & Nhập ({importPresets.length})
-              </button>
-              
-              <a 
-                href="/"
-                className="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border border-slate-700 text-slate-300 rounded-lg transition"
-              >
-                Cổng Thí Sinh
-              </a>
-              
-              {themeButton}
-              <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
-                Đăng xuất
-              </button>
-            </div>
-          </div>
-        </header>
+        <AppHeader
+          icon={<Sliders className="h-5 w-5 md:h-6 md:w-6" />}
+          title="VNU-Admission Admin Portal"
+          subtitle="Hệ Thống Thống Kê & Quản Trị Dữ Liệu Tuyển Sinh"
+          links={adminHeaderLinks}
+        />
 
         {/* Admin Navigation */}
         <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
@@ -922,66 +824,43 @@ function MainApp() {
     );
   }
 
+  const universityHeaderLinks: HeaderLink[] = [
+    ...(user.role === 'ADMIN' ? [
+      { label: 'Phân Quyền', href: '/admin/permissions' },
+      { label: '🛡️ Admin Hub', href: '/admin' },
+    ] : []),
+    ...(hasPermission('UNIVERSITY', 'edit_data', 'view') ? [{ label: 'Admin Đại Học', href: '/admin/university' }] : []),
+    ...(hasPermission('GRADE10', 'view_dashboard', 'view') ? [{ label: '🏫 Cổng Lớp 10', href: '/l10hcm', tone: 'emerald' as const }] : []),
+  ];
+
+  // Mobile bottom navigation mirrors the desktop tab bar (permission-gated)
+  const universityBottomNavItems = [
+    ...(hasPermission('UNIVERSITY', 'view_recommendation', 'view')
+      ? [{ id: 'evaluate', label: 'Đánh giá', icon: <Calculator className="h-5 w-5" /> }]
+      : []),
+    ...(hasPermission('UNIVERSITY', 'view_universities', 'view')
+      ? [
+          { id: 'search', label: 'Tra cứu', icon: <School className="h-5 w-5" /> },
+          { id: 'analytics', label: 'Phân tích', icon: <TrendingUp className="h-5 w-5" /> },
+          { id: 'compare', label: 'So sánh', icon: <ArrowUpDown className="h-5 w-5" />, badge: compareList.length },
+        ]
+      : []),
+    ...(hasPermission('UNIVERSITY', 'view_optimization', 'view')
+      ? [{ id: 'optimize', label: 'Tối ưu', icon: <Layers className="h-5 w-5" />, badge: preferenceList.length }]
+      : []),
+  ];
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
-              <Sparkles className="h-6 w-6 animate-pulse" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white m-0">VNU-Admission Platform</h1>
-              <p className="text-xs text-slate-400 m-0">Hệ Thống Đánh Giá Cơ Hội & Gợi Ý Nguyện Vọng Đại Học Thông Minh</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="text-right">
-                <div className="text-xs font-bold text-white">{user.name}</div>
-                <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{user.role}</div>
-              </div>
-              {user.avatar ? (
-                <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full border border-slate-850 object-cover" />
-              ) : (
-                <div className="h-8 w-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 font-bold">
-                  {user.name[0].toUpperCase()}
-                </div>
-              )}
-            </div>
-            
-            {user.role === 'ADMIN' && (
-              <a href="/admin/permissions" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-                Phân Quyền
-              </a>
-            )}
-            {user.role === 'ADMIN' && (
-              <a href="/admin" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-                🛡️ Admin Hub
-              </a>
-            )}
-            {hasPermission('UNIVERSITY', 'edit_data', 'view') && (
-              <a href="/admin/university" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-                Admin Đại Học
-              </a>
-            )}
-            {hasPermission('GRADE10', 'view_dashboard', 'view') && (
-              <a href="/l10hcm" className="text-xs font-semibold px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-300 rounded-lg transition">
-                🏫 Cổng Lớp 10
-              </a>
-            )}
-            
-            {themeButton}
-            <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
-              Đăng xuất
-            </button>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        icon={<Sparkles className="h-5 w-5 md:h-6 md:w-6 animate-pulse" />}
+        title="VNU-Admission Platform"
+        subtitle="Hệ Thống Đánh Giá Cơ Hội & Gợi Ý Nguyện Vọng Đại Học Thông Minh"
+        links={universityHeaderLinks}
+      />
 
-      <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
+      {/* Desktop tab bar — mobile uses the fixed BottomNav instead */}
+      <nav className="hidden md:block bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
         <div className="max-w-7xl mx-auto flex flex-row flex-nowrap gap-2 py-2 whitespace-nowrap">
           {hasPermission('UNIVERSITY', 'view_recommendation', 'view') && (
             <button
@@ -1060,9 +939,16 @@ function MainApp() {
         </div>
       </nav>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
-        
+      {/* Mobile bottom navigation */}
+      <BottomNav
+        items={universityBottomNavItems}
+        activeId={activeTab}
+        onSelect={(id) => setActiveTab(id as typeof activeTab)}
+      />
+
+      {/* Main Content Area — extra bottom padding on mobile clears the fixed BottomNav */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 pb-28 md:p-6">
+
         {/* Tab 1: Evaluate Opportunity */}
         {activeTab === 'evaluate' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -1194,12 +1080,12 @@ function MainApp() {
 
             {/* Recommendation Results Panel */}
             <section className="lg:col-span-8 flex flex-col gap-4">
-              <div className="flex justify-between items-center bg-slate-900/40 p-4 border border-slate-800 rounded-xl">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-slate-900/40 p-4 border border-slate-800 rounded-xl">
                 <div>
-                  <h2 className="text-base font-bold text-white m-0">KẾT QUẢ GỢI Ý NGUYỆN VỌNG</h2>
+                  <h2 className="text-sm md:text-base font-bold text-white m-0">KẾT QUẢ GỢI Ý NGUYỆN VỌNG</h2>
                   <p className="text-xs text-slate-400 m-0">Danh sách các ngành được sắp xếp tối ưu theo cơ hội trúng tuyển</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded">AN TOÀN</span>
                   <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded">THÍCH HỢP</span>
                   <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded">THỬ THÁCH</span>
@@ -1311,7 +1197,7 @@ function MainApp() {
                   className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 outline-none transition"
                 />
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 md:gap-3">
                 {user?.role === 'ADMIN' && (
                   <button
                     onClick={() => setIsAiModalOpen(true)}
@@ -1652,10 +1538,10 @@ function MainApp() {
 
       </main>
 
-      {/* Floating AI Assistant Chatbox */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      {/* Floating AI Assistant Chatbox — sits above the mobile bottom nav */}
+      <div className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end">
         {chatOpen && (
-          <div className="bg-slate-900 border border-slate-800 w-80 md:w-96 h-[450px] rounded-2xl shadow-2xl flex flex-col justify-between mb-3 overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
+          <div className="bg-slate-900 border border-slate-800 w-[calc(100vw-2rem)] max-w-96 md:w-96 h-[60dvh] max-h-[450px] rounded-2xl shadow-2xl flex flex-col justify-between mb-3 overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
             {/* Chat header */}
             <div className="bg-slate-850 p-4 border-b border-slate-800 flex justify-between items-center">
               <div className="flex items-center gap-2">

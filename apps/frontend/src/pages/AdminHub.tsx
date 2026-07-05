@@ -1,9 +1,10 @@
 import { Shield, GraduationCap, School, Users, ChevronRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
 import BuildInfo from '../components/BuildInfo';
+import AppHeader from '../components/layout/AppHeader';
 
 export default function AdminHub() {
-  const { user, hasPermission, logout } = useAuth();
+  const { user, hasPermission } = useAuth();
 
   const cards = [
     {
@@ -53,45 +54,15 @@ export default function AdminHub() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-indigo-600 to-violet-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
-              <Shield className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white m-0">Admin Control Panel</h1>
-              <p className="text-xs text-slate-400 m-0">Cổng quản trị hệ thống Admission Decision Engine</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              {user?.avatar ? (
-                <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full border border-slate-700 object-cover" />
-              ) : (
-                <div className="h-8 w-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 font-bold text-sm">
-                  {user?.name?.[0]?.toUpperCase()}
-                </div>
-              )}
-              <div className="text-right hidden sm:block">
-                <div className="text-xs font-bold text-white">{user?.name}</div>
-                <div className="text-[10px] text-indigo-400 font-semibold uppercase tracking-wider">{user?.role}</div>
-              </div>
-            </div>
-
-            <a href="/" className="text-xs font-semibold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-              🎓 Cổng Đại Học
-            </a>
-            <a href="/l10hcm" className="text-xs font-semibold px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-300 rounded-lg transition">
-              🏫 Cổng Lớp 10
-            </a>
-            <button onClick={logout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">
-              Đăng xuất
-            </button>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        icon={<Shield className="h-5 w-5 md:h-6 md:w-6" />}
+        title="Admin Control Panel"
+        subtitle="Cổng quản trị hệ thống Admission Decision Engine"
+        links={[
+          { label: '🎓 Cổng Đại Học', href: '/' },
+          { label: '🏫 Cổng Lớp 10', href: '/l10hcm', tone: 'emerald' },
+        ]}
+      />
 
       {/* Hero */}
       <div className="border-b border-slate-800/60 bg-gradient-to-b from-slate-900 to-slate-950 py-12 px-4">

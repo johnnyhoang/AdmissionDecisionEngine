@@ -12,6 +12,7 @@ import {
   fetchG10ActivityLogs, fetchG10ActivityLogStats
 } from '../../../services/api';
 import AiSearchModal from '../../../components/AiSearchModal';
+import AppHeader from '../../../components/layout/AppHeader';
 import { formatSchoolYear } from '../../../utils/date';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -439,31 +440,15 @@ export default function Grade10AdminContainer() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
-              <Sliders className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white m-0">Grade 10 HCMC Admin Portal</h1>
-              <p className="text-xs text-slate-400 m-0">Quản trị Dữ liệu Tuyển sinh Lớp 10 TP.HCM</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsAiModalOpen(true)}
-              className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-indigo-650 to-purple-650 hover:from-indigo-600 hover:to-purple-600 text-white rounded-lg transition flex items-center gap-1.5 shadow-md shadow-indigo-600/10 cursor-pointer"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-indigo-300" />
-              Tra cứu AI đơn lẻ
-            </button>
-            <a href="/l10hcm" className="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-              Cổng Thí Sinh Lớp 10
-            </a>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        icon={<Sliders className="h-5 w-5 md:h-6 md:w-6" />}
+        title="Grade 10 HCMC Admin Portal"
+        subtitle="Quản trị Dữ liệu Tuyển sinh Lớp 10 TP.HCM"
+        links={[
+          { label: '✨ Tra cứu AI đơn lẻ', onClick: () => setIsAiModalOpen(true), tone: 'indigo' },
+          { label: 'Cổng Thí Sinh Lớp 10', href: '/l10hcm' },
+        ]}
+      />
 
       {/* Navigation */}
       <nav className="bg-slate-900 border-b border-slate-800 px-4 overflow-x-auto scrollbar-none">
