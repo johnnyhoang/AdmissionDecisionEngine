@@ -1,5 +1,6 @@
 import { Shield, GraduationCap, School, Users, ChevronRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
+import BuildInfo from '../components/BuildInfo';
 
 export default function AdminHub() {
   const { user, hasPermission, logout } = useAuth();
@@ -164,6 +165,7 @@ export default function AdminHub() {
 
       <footer className="border-t border-slate-800 bg-slate-900/60 py-5 text-center text-xs text-slate-500">
         © 2026 Admission Decision Engine · Admin Control Panel
+        <BuildInfo />
       </footer>
     </div>
   );

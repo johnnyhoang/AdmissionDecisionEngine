@@ -19,6 +19,7 @@ import Grade10AdminContainer from './pages/grade10-hcm/Admin/Grade10AdminContain
 import AiSearchModal from './components/AiSearchModal';
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/useAuth';
+import BuildInfo from './components/BuildInfo';
 import Login from './pages/Login';
 import AdminPermissions from './pages/AdminPermissions';
 import AdminHub from './pages/AdminHub';
@@ -530,6 +531,7 @@ function MainApp() {
         <footer className="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500 mt-auto">
           <p className="m-0">© 2026 HCMC Grade 10 Admission Recommendation Platform.</p>
           <p className="m-0 mt-1">Dữ liệu tham khảo công thức tính điểm và điểm chuẩn chính thức từ Sở GD&ĐT TP.HCM.</p>
+          <BuildInfo />
         </footer>
       </div>
     );
@@ -914,6 +916,7 @@ function MainApp() {
 
         <footer className="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500 mt-auto">
           <p className="m-0">© 2026 Admission Recommendation Engine Admin. Phát triển cho Kỳ thi Đại học Việt Nam.</p>
+          <BuildInfo />
         </footer>
       </div>
     );
@@ -1724,6 +1727,7 @@ function MainApp() {
       <footer className="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500 mt-auto">
         <p className="m-0">© 2026 Admission Recommendation Engine. Phát triển cho Kỳ thi Đại học Việt Nam.</p>
         <p className="m-0 mt-1">Cơ sở dữ liệu tích hợp chính thức từ VNU-HCM và MOET Việt Nam.</p>
+        <BuildInfo />
       </footer>
       {/* AI Search Modal */}
       <AiSearchModal 

@@ -55,6 +55,7 @@ export default function Grade10Container() {
 
   // ── School / Search states ─────────────────────────────────────────────────
   const [schools, setSchools] = useState<G10SchoolItem[]>([]);
+  const [allSchools, setAllSchools] = useState<G10SchoolItem[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [analytics, setAnalytics] = useState<any>(null);
   const [leaderboardType, setLeaderboardType] = useState<

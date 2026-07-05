@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import BuildInfo from '../../../components/BuildInfo';
 import { 
   Database, History, Sliders, TrendingUp, 
   ChevronDown, ChevronUp, CheckCircle2, XCircle, Loader2, ClipboardPaste, ShieldAlert,
@@ -1296,6 +1297,7 @@ export default function Grade10AdminContainer() {
 
       <footer className="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500 mt-auto">
         <p className="m-0">© 2026 Grade 10 HCMC Admission Engine Admin.</p>
+        <BuildInfo />
       </footer>
 
       {/* AI Search Modal */}
