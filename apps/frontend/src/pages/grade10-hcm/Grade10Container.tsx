@@ -435,18 +435,14 @@ export default function Grade10Container() {
   };
 
   const canRecommend = hasPermission('GRADE10', 'view_recommendation', 'view');
+  // Tones live in index.css (g10-completeness--*) so both themes get
+  // enough contrast — Tailwind pastel text on tinted bg was unreadable
   const getCompletenessTone = (percent?: number) => {
     const value = percent ?? 0;
-    if (value >= 90) {
-      return 'border-emerald-400/40 bg-emerald-500/15 text-emerald-200';
-    }
-    if (value >= 70) {
-      return 'border-sky-400/40 bg-sky-500/15 text-sky-200';
-    }
-    if (value >= 45) {
-      return 'border-amber-400/50 bg-amber-500/15 text-amber-100';
-    }
-    return 'border-rose-400/50 bg-rose-500/15 text-rose-100';
+    if (value >= 90) return 'g10-completeness--high';
+    if (value >= 70) return 'g10-completeness--mid';
+    if (value >= 45) return 'g10-completeness--warn';
+    return 'g10-completeness--low';
   };
 
   // Mobile bottom navigation: 4 primary destinations + "Thêm" sheet for the

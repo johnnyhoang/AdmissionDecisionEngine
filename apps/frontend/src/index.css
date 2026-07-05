@@ -414,6 +414,17 @@ body.light-theme nav.bg-slate-900 {
   }
 }
 
+/* Admin data-completeness badge — readable in both themes */
+.g10-completeness--high { background: rgba(16, 185, 129, 0.22); border-color: rgba(52, 211, 153, 0.55); color: #6ee7b7; }
+.g10-completeness--mid  { background: rgba(14, 165, 233, 0.22); border-color: rgba(56, 189, 248, 0.55); color: #7dd3fc; }
+.g10-completeness--warn { background: rgba(245, 158, 11, 0.22); border-color: rgba(251, 191, 36, 0.60); color: #fcd34d; }
+.g10-completeness--low  { background: rgba(244, 63, 94, 0.22); border-color: rgba(251, 113, 133, 0.60); color: #fda4af; }
+
+.light-theme .g10-completeness--high { background: #d1fae5 !important; border-color: #34d399 !important; color: #047857 !important; }
+.light-theme .g10-completeness--mid  { background: #e0f2fe !important; border-color: #38bdf8 !important; color: #0369a1 !important; }
+.light-theme .g10-completeness--warn { background: #fef3c7 !important; border-color: #f59e0b !important; color: #b45309 !important; }
+.light-theme .g10-completeness--low  { background: #ffe4e6 !important; border-color: #fb7185 !important; color: #be123c !important; }
+
 .grade10-expert-analysis {
   background:
     linear-gradient(135deg, rgba(79, 70, 229, 0.22), rgba(30, 41, 59, 0.55)) !important;
