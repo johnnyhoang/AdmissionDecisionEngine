@@ -82,7 +82,8 @@ export default function Grade10Container() {
     districtName?: string;
     districtCode?: string;
   } | undefined>(undefined);
-  const [activeDetailTab, setActiveDetailTab] = useState<'info' | 'cutoff' | 'quota'>('info');
+  // What the print button should render into the print area
+  const [printTarget, setPrintTarget] = useState<'results' | 'school' | 'compare'>('results');
 
   // ── Distance Finder states ─────────────────────────────────────────────────
   const [userAddress, setUserAddress] = useState('');
@@ -201,9 +202,23 @@ export default function Grade10Container() {
     }
   };
 
+  // Debounced search — reload the list 350ms after the user stops typing
+  // instead of firing one API call per keystroke
+  const isFirstSearchRun = useRef(true);
+  useEffect(() => {
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      loadSchools(searchQuery, selectedDistricts.join(','));
+    }, 350);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
+
   const handleSearch = (val: string) => {
     setSearchQuery(val);
-    loadSchools(val, selectedDistricts.join(','));
   };
 
   const handleDistrictToggle = (distId: string) => {
@@ -308,10 +323,28 @@ export default function Grade10Container() {
     }
   };
 
+  // Render the chosen content into the print area, then open the print
+  // dialog once React has committed the swap
+  const printDocument = (target: 'results' | 'school' | 'compare') => {
+    setPrintTarget(target);
+    setTimeout(() => window.print(), 150);
+  };
+
+  // Rough bounding box of Ho Chi Minh City — the home location must fall
+  // inside it before distance-based recommendations make sense
+  const isWithinHCM = (lat: number, lon: number) =>
+    lat >= 10.3 && lat <= 11.25 && lon >= 106.2 && lon <= 107.1;
+
   const handleGetCombo = async () => {
-    if (comboSelectionMode === 'distance' && !comboGPS) {
-      alert('Vui lòng đặt vị trí nhà để hệ thống tính khoảng cách thực tế đến trường.');
-      return;
+    if (comboSelectionMode === 'distance') {
+      if (!comboGPS) {
+        alert('Vui lòng đặt vị trí nhà (địa chỉ, GPS hoặc ghim trên bản đồ) để hệ thống tính khoảng cách đến trường.');
+        return;
+      }
+      if (!isWithinHCM(comboGPS.lat, comboGPS.lon)) {
+        alert('Vị trí nhà của bạn nằm ngoài phạm vi TP.HCM. Vui lòng đặt lại vị trí trong TP.HCM để được tư vấn theo khoảng cách.');
+        return;
+      }
     }
     if (comboSelectionMode === 'district' && comboDistrictIds.length === 0) {
       alert('Vui lòng chọn ít nhất một quận/huyện mong muốn.');
@@ -975,7 +1008,7 @@ export default function Grade10Container() {
                       💡 Điểm xét tuyển của bạn: <strong className="text-indigo-400 text-sm">{evaluationResult.candidateScore}đ</strong> (Toán: {evaluationResult.details.math} | Văn: {evaluationResult.details.literature} | Anh: {evaluationResult.details.english} | Điểm cộng: {Number(evaluationResult.details.priority) + Number(evaluationResult.details.bonus)})
                     </div>
                     <button
-                      onClick={() => window.print()}
+                      onClick={() => printDocument('results')}
                       className="no-print flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition text-xs font-bold border border-slate-700"
                     >
                       <Printer className="w-3.5 h-3.5" />
@@ -1130,7 +1163,7 @@ export default function Grade10Container() {
                 <SearchIcon className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
                 <input 
                   type="text"
-                  placeholder={isProximityFilterActive ? "🔒 Lọc cự ly đang kích hoạt (bị khóa)..." : "Tìm trường theo tên hoặc mã trường (e.g. Bùi Thị Xuân)..."}
+                  placeholder={isProximityFilterActive ? "🔒 Lọc cự ly đang kích hoạt (bị khóa)..." : "Tìm trường theo tên (VD: Bùi Thị Xuân)..."}
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   disabled={isProximityFilterActive}
@@ -1453,44 +1486,33 @@ export default function Grade10Container() {
                   {schoolDetail.name}
                 </h2>
               </div>
-              {user?.role === 'ADMIN' && (
+              <div className="flex items-center gap-2 mb-1 shrink-0">
                 <button
-                  onClick={() => {
-                    setSelectedSchoolId(null);
-                    setEditingSchoolId(schoolDetail.id);
-                  }}
-                  className="mb-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition shadow cursor-pointer"
+                  onClick={() => printDocument('school')}
+                  className="no-print px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center gap-1 transition border border-slate-700 cursor-pointer"
                 >
-                  <Sliders className="h-3.5 w-3.5" />
-                  Sửa toàn diện
+                  <Printer className="h-3.5 w-3.5" />
+                  In PDF
                 </button>
-              )}
+                {user?.role === 'ADMIN' && (
+                  <button
+                    onClick={() => {
+                      setSelectedSchoolId(null);
+                      setEditingSchoolId(schoolDetail.id);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition shadow cursor-pointer"
+                  >
+                    <Sliders className="h-3.5 w-3.5" />
+                    Sửa toàn diện
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* Tabs Selector — equal-width segments so all 3 are always visible on mobile */}
-            <div className="flex border-b border-slate-800">
-              {([
-                ['info', 'Tổng quan'],
-                ['cutoff', 'Điểm chuẩn'],
-                ['quota', 'Chỉ tiêu & Chọi'],
-              ] as const).map(([tab, label]) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveDetailTab(tab)}
-                  className={`flex-1 md:flex-none px-2 md:px-4 py-2.5 text-[11px] md:text-xs font-bold border-b-2 transition cursor-pointer ${
-                    activeDetailTab === tab
-                      ? 'border-indigo-500 text-indigo-400'
-                      : 'border-transparent text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Tab Contents */}
-            <div className="overflow-y-auto pr-1 flex-1 min-h-0 text-xs text-slate-350">
-              {activeDetailTab === 'info' && (
+            {/* Continuous content — no tabs, everything scrolls top-to-bottom */}
+            <div className="overflow-y-auto pr-1 flex-1 min-h-0 text-xs text-slate-350 flex flex-col gap-6">
+              <section>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider mb-3 pb-2 border-b border-slate-800">🏫 Tổng quan</h3>
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-3">
@@ -1510,6 +1532,12 @@ export default function Grade10Container() {
                           {schoolDetail.description || 'Chưa có thông tin giới thiệu chi tiết cho trường THPT này.'}
                         </p>
                       </div>
+                      {schoolDetail.activities && (
+                        <div className="space-y-1 mt-1">
+                          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">🎭 Hoạt động & Phong trào</span>
+                          <p className="text-slate-400 leading-relaxed font-normal">{schoolDetail.activities}</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Position Map Card */}
@@ -1561,9 +1589,10 @@ export default function Grade10Container() {
                     </div>
                   )}
                 </div>
-              )}
+              </section>
 
-              {activeDetailTab === 'cutoff' && (
+              <section>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider mb-3 pb-2 border-b border-slate-800">📈 Điểm chuẩn</h3>
                 <div className="flex flex-col gap-5">
                   {/* Multi-line Cutoff Chart */}
                   <div className="flex flex-col gap-1.5">
@@ -1618,9 +1647,10 @@ export default function Grade10Container() {
                     </div>
                   </div>
                 </div>
-              )}
+              </section>
 
-              {activeDetailTab === 'quota' && (
+              <section>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider mb-3 pb-2 border-b border-slate-800">🎯 Chỉ tiêu & Tỷ lệ chọi</h3>
                 <div className="flex flex-col gap-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Quota vs Registered candidates */}
@@ -1694,12 +1724,12 @@ export default function Grade10Container() {
                     </div>
                   </div>
                 </div>
-              )}
+              </section>
             </div>
           </div>
         </div>
       )}
-      <MergeSchoolModal 
+      <MergeSchoolModal
         isOpen={isMergeModalOpen} 
         onClose={() => setIsMergeModalOpen(false)} 
         school1={schools.find(s => s.id === selectedMergeIds[0]) || null}
@@ -1719,6 +1749,7 @@ export default function Grade10Container() {
         compareList={compareList}
         onRemove={toggleCompare}
         onClear={() => setCompareList([])}
+        onPrint={() => printDocument('compare')}
         theme={theme}
       />
       {/* Unified home-location modal (address / GPS / map — all in one flow) */}
@@ -1869,7 +1900,7 @@ export default function Grade10Container() {
                     )}
                   </div>
                   <p className="text-[10px] text-slate-500 mt-1.5 mb-0">
-                    Hệ thống dùng Google Distance Matrix nếu có key, fallback OSRM; không dùng khoảng cách thẳng để chọn trường.
+                    Khoảng cách được tính theo quãng đường đi thực tế, không phải đường chim bay.
                   </p>
                 </div>
                 ) : (
@@ -1941,7 +1972,7 @@ export default function Grade10Container() {
                       <span className="ml-0 mt-1 block text-[10px] text-slate-500 sm:ml-2 sm:inline">
                         {comboResult.selectionMode === 'district'
                           ? `Chỉ xét ${comboResult.filterSummary?.selectedDistrictCount || 0} quận/huyện đã chọn`
-                          : `Xét theo đường đi thực tế (${comboResult.filterSummary?.distanceSource || 'routing'})`}
+                          : 'Xét theo quãng đường đi thực tế từ nhà bạn'}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 md:gap-3">
@@ -1955,7 +1986,7 @@ export default function Grade10Container() {
                         </div>
                       )}
                       <button
-                        onClick={() => window.print()}
+                        onClick={() => printDocument('results')}
                         className="no-print flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition text-xs font-bold border border-slate-700"
                       >
                         <Printer className="w-3.5 h-3.5" />
@@ -1964,8 +1995,8 @@ export default function Grade10Container() {
                     </div>
                   </div>
 
-                  {/* Strategy Tabs */}
-                  <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+                  {/* Strategy Tabs — desktop only; mobile stacks all three sections */}
+                  <div className="hidden md:flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
                     <button
                       onClick={() => setSelectedStrategy('safe')}
                       className={`flex-1 py-2 text-xs font-bold rounded-lg transition cursor-pointer ${
@@ -1998,19 +2029,6 @@ export default function Grade10Container() {
                     </button>
                   </div>
 
-                  {/* Strategy Info Note */}
-                  <div className="bg-slate-950/45 p-3.5 border border-slate-850 rounded-xl text-xs text-slate-300">
-                    {selectedStrategy === 'safe' && (
-                      <p className="m-0">💡 <strong>Chiến lược An Toàn:</strong> Tự động phân bổ 3 NV theo thứ tự điểm chuẩn giảm dần quanh điểm trung bình dự đoán của bạn. Không bắt buộc có trường mơ ước.</p>
-                    )}
-                    {selectedStrategy === 'effort' && (
-                      <p className="m-0">💡 <strong>Chiến lược Nỗ Lực:</strong> Bạn đang rất quyết tâm, nỗ lực vượt lên chính mình! Đưa trường Mơ ước lên NV1 bất kể tỉ lệ chọi, sau đó lùi NV2 cạnh tranh và NV3 thủ vững chắc.</p>
-                    )}
-                    {selectedStrategy === 'defense' && (
-                      <p className="m-0">💡 <strong>Chiến lược Phòng Thủ:</strong> Bạn không tự tin và thời gian sắp cạn, cần chắc cú! Hạ chỉ tiêu xuống trường an toàn ngay từ NV1, lùi sâu NV2/NV3 để đảm bảo 100% có vé vào trường công lập.</p>
-                    )}
-                  </div>
-
                   {/* Auto-relaxed warning */}
                   {comboResult.selectionMode === 'distance' && comboResult.adjusted && (
                     <div className="bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-xl text-xs text-amber-500 font-semibold leading-relaxed">
@@ -2018,18 +2036,36 @@ export default function Grade10Container() {
                     </div>
                   )}
 
-                  {/* Dynamic Explanation Card */}
-                  {comboResult.explanations && comboResult.explanations[selectedStrategy] && (
-                    <div className="grade10-expert-analysis bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-2xl text-xs text-indigo-200 leading-relaxed shadow-lg flex flex-col gap-2">
-                      <span className="grade10-expert-analysis-title font-bold uppercase tracking-wider text-[10px] text-indigo-400">💡 Phân tích chiến thuật của chuyên gia AI:</span>
-                      <p className="m-0">{comboResult.explanations[selectedStrategy]}</p>
-                    </div>
-                  )}
+                  {/* Strategy sections — desktop shows the tab-selected one,
+                      mobile stacks all three from top to bottom */}
+                  {([
+                    { key: 'safe', icon: '🛡️', title: 'Phương Án An Toàn', desc: <>💡 <strong>Chiến lược An Toàn:</strong> Tự động phân bổ 3 NV theo thứ tự điểm chuẩn giảm dần quanh điểm trung bình dự đoán của bạn. Không bắt buộc có trường mơ ước.</> },
+                    { key: 'effort', icon: '🔥', title: 'Phương Án Nỗ Lực', desc: <>💡 <strong>Chiến lược Nỗ Lực:</strong> Bạn đang rất quyết tâm, nỗ lực vượt lên chính mình! Đưa trường Mơ ước lên NV1 bất kể tỉ lệ chọi, sau đó lùi NV2 cạnh tranh và NV3 thủ vững chắc.</> },
+                    { key: 'defense', icon: '🏰', title: 'Phương Án Phòng Thủ', desc: <>💡 <strong>Chiến lược Phòng Thủ:</strong> Bạn không tự tin và thời gian sắp cạn, cần chắc cú! Hạ chỉ tiêu xuống trường an toàn ngay từ NV1, lùi sâu NV2/NV3 để đảm bảo 100% có vé vào trường công lập.</> },
+                  ] as const).map(({ key: strategy, icon, title, desc }) => (
+                    <div key={strategy} className={`flex-col gap-4 ${selectedStrategy === strategy ? 'flex' : 'flex md:hidden'}`}>
+                      {/* Mobile-only section header */}
+                      <div className="md:hidden flex items-center gap-2 mt-1">
+                        <span className="text-sm font-black text-white shrink-0">{icon} {title}</span>
+                        <div className="flex-1 border-t border-slate-800"></div>
+                      </div>
 
+                      {/* Strategy Info Note */}
+                      <div className="bg-slate-950/45 p-3.5 border border-slate-850 rounded-xl text-xs text-slate-300">
+                        <p className="m-0">{desc}</p>
+                      </div>
 
-                  {/* Recommended 3-NV Combo List */}
-                  <div className="flex flex-col gap-3">
-                    {comboResult.combos[selectedStrategy]?.map((school: any, idx: number) => {
+                      {/* Dynamic Explanation Card */}
+                      {comboResult.explanations && comboResult.explanations[strategy] && (
+                        <div className="grade10-expert-analysis bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-2xl text-xs text-indigo-200 leading-relaxed shadow-lg flex flex-col gap-2">
+                          <span className="grade10-expert-analysis-title font-bold uppercase tracking-wider text-[10px] text-indigo-400">💡 Phân tích chiến thuật của chuyên gia AI:</span>
+                          <p className="m-0">{comboResult.explanations[strategy]}</p>
+                        </div>
+                      )}
+
+                      {/* Recommended 3-NV Combo List */}
+                      <div className="flex flex-col gap-3">
+                    {comboResult.combos[strategy]?.map((school: any, idx: number) => {
                       const nvNum = idx + 1;
                       const prob = nvNum === 1 ? school.probNV1 : nvNum === 2 ? school.probNV2 : school.probNV3;
                       const cutoff = nvNum === 1 ? school.cutoffNV1 : nvNum === 2 ? school.cutoffNV2 : school.cutoffNV3;
@@ -2118,7 +2154,9 @@ export default function Grade10Container() {
                         </div>
                       );
                     })}
-                  </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -2135,24 +2173,24 @@ export default function Grade10Container() {
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4 text-slate-300 text-xs leading-relaxed">
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
-                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">📊 1. Giải thuật SSF — Dịch chuyển điểm chuẩn vĩ mô</h3>
-                <p className="m-0">Điểm chuẩn biến động mỗi năm theo 3 nhân tố: <strong>tổng thí sinh</strong>, <strong>chỉ tiêu công lập</strong>, <strong>độ khó đề</strong>. SSF tự tính độ dịch chuyển để dự báo an toàn nhất cho năm hiện tại — tránh nộp trường bằng điểm chuẩn năm cũ nhưng vẫn trượt vì điểm chuẩn năm mới tăng.</p>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">📊 1. Vì sao không thể chỉ nhìn điểm chuẩn năm ngoái?</h3>
+                <p className="m-0">Điểm chuẩn <strong>mỗi năm mỗi khác</strong>: năm nào đông thí sinh hơn, đề dễ hơn, hoặc trường tuyển ít hơn thì điểm chuẩn sẽ nhích lên. Hệ thống nhìn vào các yếu tố đó để <strong>dự đoán điểm chuẩn của năm nay</strong>, giúp con tránh trường hợp "điểm bằng năm ngoái mà vẫn trượt" vì năm nay điểm chuẩn tăng.</p>
               </section>
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
-                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🧮 2. Công thức Xác suất đỗ (Hàm mũ bão hòa)</h3>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🎯 2. Con số "Xác suất đỗ" nên hiểu thế nào?</h3>
                 <ul className="list-disc list-inside m-0 pl-1 space-y-1">
-                  <li><strong>Bằng điểm chuẩn = 50% cơ hội</strong> — Nằm đúng ranh giới đỗ/trượt.</li>
-                  <li><strong>Trần 88%</strong> — Dù điểm cao hơn nhiều, xác suất tối đa cũng chỉ 88% để nhắc nhở rủi ro phòng thi thực tế.</li>
-                  <li>Công thức: nếu điểm dưới chuẩn → <code>50×e^(diff)</code>; nếu trên chuẩn → <code>50+38×(1−e^(−0.5×diff))</code></li>
+                  <li>Điểm của con <strong>vừa bằng</strong> điểm chuẩn dự đoán → cơ hội khoảng <strong>50/50</strong>, như đứng đúng ranh giới đỗ/trượt.</li>
+                  <li>Điểm <strong>cao hơn</strong> điểm chuẩn → cơ hội tăng dần, nhưng tối đa hệ thống chỉ hiện <strong>88%</strong> — vì đi thi luôn có rủi ro (sức khỏe, tâm lý phòng thi), không bao giờ chắc chắn 100%.</li>
+                  <li>Điểm <strong>thấp hơn</strong> điểm chuẩn → cơ hội giảm rất nhanh, nên cân nhắc kỹ.</li>
                 </ul>
               </section>
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
-                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">📉 3. Ý nghĩa 4 chỉ số Diffs (d1→d4)</h3>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🧭 3. Đọc kết quả và chọn trường thế nào cho khôn ngoan?</h3>
                 <ul className="list-disc list-inside m-0 pl-1 space-y-1">
-                  <li><strong>d1</strong>: Điểm bạn trừ điểm chuẩn NV1 năm gần nhất (có điều chỉnh SSF)</li>
-                  <li><strong>d2</strong>: So với trung bình 3 năm gần nhất (loại bỏ đột biến)</li>
-                  <li><strong>d3</strong>: Mức an toàn khi nộp ở Nguyện vọng 2</li>
-                  <li><strong>d4</strong>: Mức an toàn khi nộp ở Nguyện vọng 3</li>
+                  <li><strong className="text-emerald-400">Xanh lá (An toàn)</strong>: điểm của con dư khá nhiều so với điểm chuẩn — yên tâm đăng ký.</li>
+                  <li><strong className="text-blue-400">Xanh dương (Cạnh tranh)</strong>: điểm ở mức vừa đủ — có thể đặt ở NV1 nếu thật sự thích trường này.</li>
+                  <li><strong className="text-amber-400">Vàng / <span className="text-rose-400">Đỏ</span> (Rủi ro)</strong>: điểm đang thấp hơn điểm chuẩn — chỉ nên liều ở NV1, tuyệt đối không đặt ở NV2, NV3.</li>
+                  <li>Nguyên tắc vàng: <strong>NV1 chọn trường mơ ước vừa tầm, NV2 chọn trường chắc ăn hơn, NV3 phải là trường chắc chắn đỗ.</strong></li>
                 </ul>
               </section>
             </div>
@@ -2173,24 +2211,20 @@ export default function Grade10Container() {
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4 text-slate-300 text-xs leading-relaxed">
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
-                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🛡️ 1. Ba chiến thuật phân bổ Nguyện vọng</h3>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🛡️ 1. Ba phương án — chọn theo tính cách và hoàn cảnh của con</h3>
                 <ul className="list-disc list-inside m-0 pl-1 space-y-1">
-                  <li><strong>Chiến thuật An Toàn</strong>: 3 trường bám sát phổ điểm, NV1&gt;NV2&gt;NV3 giảm dần. Luôn có trường dự phòng gần nhà.</li>
-                  <li><strong>Chiến thuật Nỗ Lực</strong>: Trường mơ ước lên NV1 bất kể tỉ lệ chọi. NV2 cạnh tranh vừa, NV3 siêu an toàn làm tấm khiên.</li>
-                  <li><strong>Chiến thuật Phòng Thủ</strong>: Hạ chỉ tiêu ngay từ NV1, đảm bảo 100% có suất công lập gần nhà.</li>
+                  <li><strong>An Toàn</strong> 🛡️: cả 3 nguyện vọng đều bám sát sức học hiện tại — NV1 cao nhất, NV2 và NV3 thấp dần để luôn có đường lui. Phù hợp với đa số học sinh.</li>
+                  <li><strong>Nỗ Lực</strong> 🔥: dành cho con đang quyết tâm bứt phá — NV1 là trường mơ ước (dù khó), NV2 vừa sức, NV3 thật chắc chắn để làm lưới an toàn.</li>
+                  <li><strong>Phòng Thủ</strong> 🏰: dành cho gia đình muốn chắc chắn 100% con có chỗ học công lập — cả NV1 cũng đã chọn trường dễ đỗ, NV2 và NV3 càng chắc hơn nữa.</li>
                 </ul>
               </section>
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
-                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">📍 2. Điểm thưởng Cự ly đi học (Commute Bonus)</h3>
-                <ul className="list-disc list-inside m-0 pl-1 space-y-1">
-                  <li>Cách nhà &lt;⅓ cự ly tối đa → cộng thưởng <strong>+1.5 điểm ảo</strong></li>
-                  <li>Cách nhà ⅓→⅔ cự ly → cộng thưởng <strong>+0.75 điểm ảo</strong></li>
-                  <li>Điểm thưởng giúp ưu tiên trường gần nhà chất lượng tốt lên đầu danh sách.</li>
-                </ul>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">📍 2. Vì sao trường gần nhà được ưu tiên?</h3>
+                <p className="m-0">Ba năm cấp 3, mỗi ngày đi học 2 lượt — trường gần nhà giúp con <strong>đỡ vất vả, an toàn hơn và có thêm thời gian nghỉ ngơi, học tập</strong>. Vì vậy khi hai trường có chất lượng tương đương, hệ thống sẽ xếp trường gần nhà lên trên.</p>
               </section>
               <section className="bg-slate-950/30 p-4 border border-slate-800 rounded-xl space-y-2">
-                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🚗 3. Tự động nới lỏng khoảng cách</h3>
-                <p className="m-0">Nếu cự ly quá ngắn không đủ 12 trường ứng viên, hệ thống tự nới rộng và hiện cảnh báo rõ ràng để bạn điều chỉnh lại.</p>
+                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider m-0">🚗 3. Khi quanh nhà không đủ trường phù hợp thì sao?</h3>
+                <p className="m-0">Nếu trong bán kính bạn chọn không tìm đủ trường tốt để xếp 3 nguyện vọng, hệ thống sẽ <strong>tự động mở rộng phạm vi tìm kiếm</strong> và hiển thị thông báo rõ ràng để bạn biết và cân nhắc lại quãng đường đi học.</p>
               </section>
             </div>
             <div className="p-4 border-t border-slate-800 text-center">
@@ -2222,15 +2256,133 @@ export default function Grade10Container() {
         {/* Page Header */}
         <div style={{ borderBottom: '3px solid #4338ca', paddingBottom: 8, marginBottom: 16 }}>
           <h1 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#3730a3' }}>
-            📋 Kết quả phân tích nguyện vọng lớp 10 TP.HCM
+            {printTarget === 'school'
+              ? '🏫 Hồ sơ trường THPT'
+              : printTarget === 'compare'
+              ? '📊 So sánh trường THPT'
+              : '📋 Kết quả phân tích nguyện vọng lớp 10 TP.HCM'}
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 10, color: '#6b7280' }}>
             Hệ thống AdmissionDecisionEngine • In ngày {new Date().toLocaleDateString('vi-VN')}
           </p>
         </div>
 
+        {/* ── SCHOOL PROFILE ─────────────────────────────────────────────── */}
+        {printTarget === 'school' && schoolDetail && (
+          <div>
+            <h2 className="print-section-title">{schoolDetail.name}</h2>
+
+            <div className="print-card" style={{ marginBottom: 12, background: '#eef2ff', border: '1px solid #c7d2fe' }}>
+              <div style={{ fontSize: 10, color: '#374151', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <span>📍 Quận/Huyện: <strong>{schoolDetail.district?.name || 'TP.HCM'}</strong></span>
+                <span>🏫 Địa chỉ: <strong>{schoolDetail.address || 'Chưa cập nhật'}</strong></span>
+                {schoolDetail.website && <span>🌐 Website: <strong>{schoolDetail.website}</strong></span>}
+              </div>
+            </div>
+
+            {schoolDetail.description && (
+              <div className="print-card" style={{ marginBottom: 12 }}>
+                <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 4, fontSize: 10 }}>📝 Giới thiệu chung</div>
+                <div style={{ fontSize: 10, color: '#374151', lineHeight: 1.6 }}>{schoolDetail.description}</div>
+              </div>
+            )}
+
+            {schoolDetail.activities && (
+              <div className="print-card" style={{ marginBottom: 12 }}>
+                <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 4, fontSize: 10 }}>🎭 Hoạt động & Phong trào</div>
+                <div style={{ fontSize: 10, color: '#374151', lineHeight: 1.6 }}>{schoolDetail.activities}</div>
+              </div>
+            )}
+
+            {schoolDetail.cutoffs?.length > 0 && (
+              <div className="print-card" style={{ marginBottom: 12 }}>
+                <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 6, fontSize: 10 }}>📈 Điểm chuẩn qua các năm</div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr style={{ background: '#eef2ff', color: '#3730a3' }}>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe', textAlign: 'left' }}>Năm học</th>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe' }}>Nguyện vọng 1</th>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe' }}>Nguyện vọng 2</th>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe' }}>Nguyện vọng 3</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {schoolDetail.cutoffs.map((item: any, idx: number) => (
+                      <tr key={idx}>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', fontWeight: 700 }}>{formatSchoolYear(item.year)}</td>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', textAlign: 'center', fontWeight: 700, color: '#4338ca' }}>{item.cutoffNV1 ? `${item.cutoffNV1}đ` : '—'}</td>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', textAlign: 'center' }}>{item.cutoffNV2 ? `${item.cutoffNV2}đ` : '—'}</td>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', textAlign: 'center' }}>{item.cutoffNV3 ? `${item.cutoffNV3}đ` : '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {schoolDetail.quotas?.length > 0 && (
+              <div className="print-card">
+                <div style={{ fontWeight: 900, color: '#3730a3', marginBottom: 6, fontSize: 10 }}>🎯 Chỉ tiêu & Tỷ lệ chọi</div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr style={{ background: '#eef2ff', color: '#3730a3' }}>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe', textAlign: 'left' }}>Năm học</th>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe' }}>Chỉ tiêu</th>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe' }}>Số đăng ký NV1</th>
+                      <th style={{ padding: 6, border: '1px solid #c7d2fe' }}>Tỷ lệ chọi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {schoolDetail.quotas.map((item: any, idx: number) => (
+                      <tr key={idx}>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', fontWeight: 700 }}>{formatSchoolYear(item.year)}</td>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', textAlign: 'center' }}>{item.quota || '—'}</td>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', textAlign: 'center' }}>{item.registeredCount ? item.registeredCount.toLocaleString() : '—'}</td>
+                        <td style={{ padding: 6, border: '1px solid #e0e7ff', textAlign: 'center', fontWeight: 700, color: '#dc2626' }}>{item.competitionRatio || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── COMPARE SCHOOLS ────────────────────────────────────────────── */}
+        {printTarget === 'compare' && compareList.length > 0 && (
+          <div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+              <thead>
+                <tr style={{ background: '#eef2ff', color: '#3730a3' }}>
+                  <th style={{ padding: 6, border: '1px solid #c7d2fe', textAlign: 'left', width: 120 }}>Tiêu chí</th>
+                  {compareList.map((school) => (
+                    <th key={school.id} style={{ padding: 6, border: '1px solid #c7d2fe', textAlign: 'left' }}>{school.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {([
+                  ['Quận/Huyện', (s: G10SchoolItem) => s.district?.name || 'TP.HCM'],
+                  ['Địa chỉ', (s: G10SchoolItem) => s.address || 'Chưa cập nhật'],
+                  [`Điểm NV1 (${formatSchoolYear(compareList[0]?.latestYear)})`, (s: G10SchoolItem) => s.latestCutoffNV1 ? `${s.latestCutoffNV1}đ` : '—'],
+                  ['Điểm NV2', (s: G10SchoolItem) => s.latestCutoffNV2 ? `${s.latestCutoffNV2}đ` : '—'],
+                  ['Điểm NV3', (s: G10SchoolItem) => s.latestCutoffNV3 ? `${s.latestCutoffNV3}đ` : '—'],
+                  ['Website', (s: G10SchoolItem) => s.website || '—'],
+                ] as [string, (s: G10SchoolItem) => string][]).map(([label, getValue]) => (
+                  <tr key={label}>
+                    <td style={{ padding: 6, border: '1px solid #e0e7ff', fontWeight: 700, color: '#3730a3' }}>{label}</td>
+                    {compareList.map((school) => (
+                      <td key={school.id} style={{ padding: 6, border: '1px solid #e0e7ff' }}>{getValue(school)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         {/* ── SECTION 1: Đánh Giá Cá Nhân ─────────────────────────────────── */}
-        {evaluationResult && (
+        {printTarget === 'results' && evaluationResult && (
           <div>
             <h2 className="print-section-title">PHẦN 1 — ĐÁNH GIÁ CÁ NHÂN &amp; GỢI Ý TRƯỜNG PHÙ HỢP</h2>
 
@@ -2290,7 +2442,7 @@ export default function Grade10Container() {
         )}
 
         {/* ── SECTION 2: Đề Xuất Combo 3 NV ──────────────────────────────────── */}
-        {comboResult && (
+        {printTarget === 'results' && comboResult && (
           <div>
             <h2 className="print-section-title" style={{ marginTop: 20 }}>PHẦN 2 — TƯ VẤN 3 NGUYỆN VỌNG</h2>
 

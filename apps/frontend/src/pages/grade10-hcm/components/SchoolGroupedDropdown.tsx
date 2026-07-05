@@ -45,7 +45,6 @@ export default function SchoolGroupedDropdown({
       ? schools.filter(
           (s) =>
             s.name.toLowerCase().includes(q) ||
-            s.code.toLowerCase().includes(q) ||
             (s.district?.name || '').toLowerCase().includes(q),
         )
       : schools;
@@ -100,7 +99,7 @@ export default function SchoolGroupedDropdown({
                 ref={searchInputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Tìm theo tên trường, mã, quận..."
+                placeholder="Tìm theo tên trường hoặc quận..."
                 className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 outline-none"
               />
             </div>
@@ -121,14 +120,18 @@ export default function SchoolGroupedDropdown({
                       key={school.id}
                       type="button"
                       onClick={() => { onChange(school.code); setIsOpen(false); }}
-                      className={`w-full text-left px-3 py-2 text-xs transition cursor-pointer ${
+                      className={`w-full flex items-center justify-between gap-2 text-left px-3 py-2 text-xs transition cursor-pointer ${
                         school.code === value
                           ? 'bg-indigo-600/20 text-indigo-300 font-bold'
                           : 'text-slate-300 hover:bg-slate-800'
                       }`}
                     >
-                      {school.name}
-                      <span className="text-slate-500 ml-1.5 text-[10px] font-mono">{school.code}</span>
+                      <span className="truncate">{school.name}</span>
+                      {school.latestCutoffNV1 != null && (
+                        <span className="shrink-0 text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded px-1.5 py-0.5">
+                          NV1: {school.latestCutoffNV1}đ
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

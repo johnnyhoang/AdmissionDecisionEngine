@@ -1,4 +1,4 @@
-import { X, BadgeCheck, School, Trash2, HelpCircle , TrendingDown } from 'lucide-react';
+import { X, BadgeCheck, School, Trash2, HelpCircle, TrendingDown, Printer } from 'lucide-react';
 import type { G10SchoolItem } from '../../../services/api';
 import { formatSchoolYear, getCurrentSchoolYear } from '../../../utils/date';
 
@@ -8,10 +8,11 @@ interface CompareDrawerProps {
   compareList: G10SchoolItem[];
   onRemove: (school: G10SchoolItem) => void;
   onClear: () => void;
+  onPrint?: () => void;
   theme: 'light' | 'dark';
 }
 
-export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, onClear, theme }: CompareDrawerProps) {
+export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, onClear, onPrint, theme }: CompareDrawerProps) {
   if (!isOpen) return null;
 
   // Helper to find min/max values for highlighting
@@ -48,6 +49,15 @@ export default function CompareDrawer({ isOpen, onClose, compareList, onRemove, 
           <p className="text-xs text-slate-400 mt-1">So sánh trực quan chỉ số điểm chuẩn & chỉ tiêu tuyển sinh.</p>
         </div>
         <div className="flex items-center gap-3">
+          {compareList.length > 0 && onPrint && (
+            <button
+              onClick={onPrint}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition text-xs font-bold border border-slate-700 cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              In PDF
+            </button>
+          )}
           {compareList.length > 0 && (
             <button
               onClick={onClear}

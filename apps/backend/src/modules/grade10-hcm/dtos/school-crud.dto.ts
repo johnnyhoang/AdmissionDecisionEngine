@@ -50,6 +50,10 @@ export class CreateSchoolDto {
   @IsOptional()
   comments?: string;
 
+  @IsString()
+  @IsOptional()
+  activities?: string;
+
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
@@ -105,6 +109,10 @@ export class UpdateSchoolDto {
   @IsString()
   @IsOptional()
   comments?: string;
+
+  @IsString()
+  @IsOptional()
+  activities?: string;
 
   @IsNumber()
   @Type(() => Number)

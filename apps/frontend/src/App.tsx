@@ -1191,7 +1191,7 @@ function MainApp() {
                 <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
                 <input 
                   type="text"
-                  placeholder="Tìm trường theo tên hoặc mã trường (e.g. UIT, QST)..."
+                  placeholder="Tìm trường đại học theo tên..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 outline-none transition"

@@ -41,6 +41,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
           website: data.website || '',
           description: data.description || '',
           comments: data.comments || '',
+          activities: data.activities || '',
           mapUrl: data.mapUrl || '',
           schoolType: data.schoolType || 'REGULAR',
           isActive: data.isActive !== false,
@@ -205,26 +206,25 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4">
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose}></div>
-      <div className="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-6xl max-h-[90vh] flex flex-col shadow-2xl">
-        <div className="flex items-center justify-between p-6 border-b border-slate-800">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            Chỉnh sửa toàn diện thông tin trường
-            <span className="text-sm font-normal px-2 py-1 bg-indigo-500/20 text-indigo-300 rounded ml-2">{formData.code}</span>
+      <div className="relative bg-slate-900 border border-slate-700 rounded-t-2xl md:rounded-2xl w-full max-w-6xl max-h-[94dvh] md:max-h-[90vh] flex flex-col shadow-2xl">
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-slate-800">
+          <h2 className="text-base md:text-xl font-bold text-white flex items-center gap-2 min-w-0">
+            <span className="truncate">Chỉnh sửa thông tin: {formData.name}</span>
           </h2>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition">
+          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-6 md:gap-8">
           {isLoading ? (
             <div className="flex items-center justify-center py-20 text-slate-400">Đang tải dữ liệu...</div>
           ) : (
             <>
               {/* Basic Info */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-4">
                   <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex justify-between items-center">
                     Thông tin cơ bản
@@ -238,17 +238,11 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                     )}
                   </h3>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Tên trường *</label>
-                      <input type="text" name="name" value={formData.name} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Mã trường *</label>
-                      <input type="text" name="code" value={formData.code} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
-                    </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Tên trường *</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-medium text-slate-400 mb-1">Loại trường</label>
@@ -319,6 +313,11 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                   </div>
 
                   <div>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Hoạt động & Phong trào</label>
+                    <textarea name="activities" value={formData.activities} onChange={handleBasicChange} rows={3} placeholder="Câu lạc bộ, văn nghệ, thể thao, hoạt động ngoại khóa..." className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white resize-y" />
+                  </div>
+
+                  <div>
                     <label className="block text-xs font-medium text-slate-400 mb-1 flex items-center justify-between">
                       Google Maps URL
                       <button type="button" onClick={handleAutoMapUrl} className="text-indigo-400 hover:text-indigo-300 text-[10px] font-bold underline cursor-pointer">
@@ -348,8 +347,57 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                 <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center gap-2">
                   <Calculator className="w-4 h-4 text-emerald-400" /> Dữ liệu Lịch sử (3 năm gần nhất)
                 </h3>
-                
-                <div className="overflow-x-auto">
+
+                {/* Mobile: one card per school year — the wide table is unusable on phones */}
+                <div className="flex flex-col gap-3 md:hidden">
+                  {RECENT_YEARS.map(year => {
+                    const q = quotasMap[year] || {};
+                    const c = cutoffsMap[year] || {};
+                    return (
+                      <div key={year} className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 flex flex-col gap-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black text-white">Năm học {formatSchoolYear(year)}</span>
+                          <span className="text-[10px] font-bold text-emerald-400">Tỉ lệ chọi: {q.competitionRatio || '—'}</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(['cutoffNV1', 'cutoffNV2', 'cutoffNV3'] as const).map((field, i) => (
+                            <div key={field}>
+                              <label className="block text-[10px] text-indigo-300 font-bold mb-1">Điểm NV{i + 1}</label>
+                              <input
+                                type="number" step="0.25" inputMode="decimal"
+                                value={c[field] ?? ''}
+                                onChange={(e) => handleCutoffChange(year, field, e.target.value)}
+                                className="w-full bg-slate-950 border border-indigo-900/50 rounded px-2 py-1.5 text-sm text-indigo-300 font-medium outline-none focus:border-indigo-500"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-[10px] text-slate-400 font-bold mb-1">Chỉ tiêu</label>
+                            <input
+                              type="number" inputMode="numeric"
+                              value={q.quota || ''}
+                              onChange={(e) => handleQuotaChange(year, 'quota', e.target.value)}
+                              className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-slate-400 font-bold mb-1">Số đăng ký</label>
+                            <input
+                              type="number" inputMode="numeric"
+                              value={q.registeredCount || ''}
+                              onChange={(e) => handleQuotaChange(year, 'registeredCount', e.target.value)}
+                              className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm outline-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="overflow-x-auto hidden md:block">
                   <table className="w-full text-left text-sm text-slate-300 whitespace-nowrap border-collapse">
                     <thead className="bg-slate-800/50 text-xs uppercase text-slate-400">
                       <tr>
