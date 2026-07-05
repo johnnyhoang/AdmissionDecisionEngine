@@ -4,6 +4,7 @@ import {
   ArrowRight, Save, Search, X
 } from 'lucide-react';
 import { searchAiCutoffs, importAiCutoffs, fetchGrade10SchoolNames } from '../services/api';
+import { formatSchoolYear } from '../utils/date';
 
 interface SchoolSuggestion {
   id: string;
@@ -487,7 +488,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
                       }`}>
                         <td className="p-3 font-bold text-white">
                           <div className="flex flex-col gap-1 items-start">
-                            <span>{item.year}</span>
+                            <span>{formatSchoolYear(item.year)}</span>
                             {isConflicting && (
                               <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold uppercase tracking-wider">
                                 ⚡ Khác biệt

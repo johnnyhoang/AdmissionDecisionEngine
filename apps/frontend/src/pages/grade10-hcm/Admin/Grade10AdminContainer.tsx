@@ -11,6 +11,7 @@ import {
   fetchG10ActivityLogs, fetchG10ActivityLogStats
 } from '../../../services/api';
 import AiSearchModal from '../../../components/AiSearchModal';
+import { formatSchoolYear } from '../../../utils/date';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -720,7 +721,7 @@ export default function Grade10AdminContainer() {
                                     <tr key={`cutoff-${row.year}`} className={`transition ${
                                       row.decision === 'OVERWRITE' ? 'bg-indigo-500/5' : ''
                                     } hover:bg-slate-800/20`}>
-                                      <td className="px-4 py-2.5 font-bold text-white">{row.year}</td>
+                                      <td className="px-4 py-2.5 font-bold text-white">{formatSchoolYear(row.year)}</td>
                                       {/* DB values */}
                                       <td className={`px-4 py-2.5 text-center font-semibold ${
                                         row.existingCutoff && row.existingCutoff.nv1 !== row.newCutoff.nv1
@@ -802,7 +803,7 @@ export default function Grade10AdminContainer() {
                                       <tr key={`quota-${row.year}`} className={`transition ${
                                         row.decision === 'OVERWRITE' ? 'bg-blue-500/5' : ''
                                       } hover:bg-slate-800/20`}>
-                                        <td className="px-4 py-2.5 font-bold text-white">{row.year}</td>
+                                        <td className="px-4 py-2.5 font-bold text-white">{formatSchoolYear(row.year)}</td>
                                         {/* DB values */}
                                         <td className={`px-4 py-2.5 text-center font-semibold ${hasChange ? 'text-amber-400' : 'text-slate-500'}`}>
                                           {row.existingQuota?.quota ?? <span className="text-slate-700">—</span>}

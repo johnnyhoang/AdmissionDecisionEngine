@@ -896,9 +896,11 @@ export default function Grade10Container() {
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <span className="text-xs font-semibold px-2 py-0.5 bg-slate-800 text-slate-300 rounded border border-slate-700">
-                              {rec.schoolCode}
-                            </span>
+                            {user?.role === 'ADMIN' && (
+                              <span className="text-xs font-semibold px-2 py-0.5 bg-slate-800 text-slate-300 rounded border border-slate-700">
+                                {rec.schoolCode}
+                              </span>
+                            )}
                             <span className="text-xs text-slate-400 font-medium">
                               {rec.districtName}
                             </span>
@@ -933,8 +935,10 @@ export default function Grade10Container() {
                             )}
                           </div>
 
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-[11px] text-slate-400 mb-2">
-                            <div>Điểm chuẩn NV1: <span className="font-semibold text-slate-300">{rec.cutoffNV1}đ</span></div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] text-slate-400 mb-2 font-medium">
+                            <div>NV1: <span className="font-bold text-slate-200">{rec.cutoffNV1 ? `${rec.cutoffNV1}đ` : '—'}</span></div>
+                            <div>NV2: <span className="font-semibold text-slate-350">{rec.cutoffNV2 ? `${rec.cutoffNV2}đ` : '—'}</span></div>
+                            <div>NV3: <span className="font-semibold text-slate-350">{rec.cutoffNV3 ? `${rec.cutoffNV3}đ` : '—'}</span></div>
                             <div>TB NV1 3 năm: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span></div>
                           </div>
 
@@ -1149,9 +1153,13 @@ export default function Grade10Container() {
                   }`}>
                     <div>
                       <div className="flex justify-between items-start gap-2 mb-3">
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 rounded-md">
-                          {school.code}
-                        </span>
+                        {user?.role === 'ADMIN' ? (
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 rounded-md">
+                            {school.code}
+                          </span>
+                        ) : (
+                          <div />
+                        )}
                         <div className="flex gap-2">
                           {user?.role === 'ADMIN' && (
                             <button
@@ -1203,8 +1211,8 @@ export default function Grade10Container() {
                         <span className="font-semibold text-slate-200">{school.latestCutoffNV2 || 'N/A'}đ</span>
                       </div>
                       <div className="flex justify-between text-[11px]">
-                        <span className="text-slate-400">Quận/Huyện:</span>
-                        <span className="font-semibold text-slate-200">{school.district?.name || 'N/A'}</span>
+                        <span className="text-slate-400">Điểm NV3 {formatSchoolYear(getCurrentSchoolYear())}:</span>
+                        <span className="font-semibold text-slate-200">{school.latestCutoffNV3 || 'N/A'}đ</span>
                       </div>
                       {isProximityFilterActive && school.roadDistance !== undefined && (
                         <div className="flex justify-between text-[10px] bg-indigo-950/20 border border-indigo-900/30 p-2 rounded-lg mt-1 text-indigo-300 font-semibold">
@@ -1272,9 +1280,11 @@ export default function Grade10Container() {
             <div className="border-b border-slate-800 pb-3 flex justify-between items-end">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-bold px-2 py-0.5 bg-indigo-650/15 border border-indigo-500/30 text-indigo-400 rounded-md">
-                    {schoolDetail.code}
-                  </span>
+                  {user?.role === 'ADMIN' && (
+                    <span className="text-xs font-bold px-2 py-0.5 bg-indigo-650/15 border border-indigo-500/30 text-indigo-400 rounded-md">
+                      {schoolDetail.code}
+                    </span>
+                  )}
                   <span className="text-xs text-slate-400">{schoolDetail.district?.name || 'Chưa rõ quận'}</span>
                 </div>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1389,15 +1399,15 @@ export default function Grade10Container() {
                   {schoolDetail.cutoffs.length > 0 && (
                     <div className="grid grid-cols-3 gap-3 bg-slate-950/40 border border-slate-800/80 p-3 rounded-xl mt-2 text-center">
                       <div>
-                        <span className="text-[10px] text-slate-500 block mb-0.5">Điểm NV1 gần nhất ({schoolDetail.cutoffs[0]?.year})</span>
+                        <span className="text-[10px] text-slate-500 block mb-0.5">Điểm NV1 gần nhất ({formatSchoolYear(schoolDetail.cutoffs[0]?.year)})</span>
                         <strong className="text-base text-indigo-400">{schoolDetail.cutoffs[0]?.cutoffNV1}đ</strong>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 block mb-0.5">Chỉ tiêu tuyển ({schoolDetail.quotas[0]?.year || 'N/A'})</span>
+                        <span className="text-[10px] text-slate-500 block mb-0.5">Chỉ tiêu tuyển ({formatSchoolYear(schoolDetail.quotas[0]?.year)})</span>
                         <strong className="text-base text-blue-400">{schoolDetail.quotas[0]?.quota || 'N/A'}</strong>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 block mb-0.5">Tỷ lệ chọi ({schoolDetail.quotas[0]?.year || 'N/A'})</span>
+                        <span className="text-[10px] text-slate-500 block mb-0.5">Tỷ lệ chọi ({formatSchoolYear(schoolDetail.quotas[0]?.year)})</span>
                         <strong className="text-base text-rose-400">1 chọi {schoolDetail.quotas[0]?.competitionRatio || 'N/A'}</strong>
                       </div>
                     </div>
@@ -1420,7 +1430,7 @@ export default function Grade10Container() {
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={[...schoolDetail.cutoffs].reverse()}>
                             <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
-                            <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                            <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} tickFormatter={formatSchoolYear} />
                             <YAxis domain={['auto', 'auto']} stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
                             <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b', fontSize: 10 } : { backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
                             <Legend wrapperStyle={{ fontSize: 9 }} />
@@ -1449,7 +1459,7 @@ export default function Grade10Container() {
                         <tbody className="divide-y divide-slate-800 text-slate-350 bg-slate-900/20">
                           {schoolDetail.cutoffs.map((item: any, idx: number) => (
                             <tr key={idx} className="hover:bg-slate-850/10">
-                              <td className="p-2.5 font-bold text-white">{item.year}</td>
+                              <td className="p-2.5 font-bold text-white">{formatSchoolYear(item.year)}</td>
                               <td className="p-2.5 font-semibold text-indigo-400">{item.cutoffNV1 ? `${item.cutoffNV1}đ` : '—'}</td>
                               <td className="p-2.5 text-emerald-400">{item.cutoffNV2 ? `${item.cutoffNV2}đ` : '—'}</td>
                               <td className="p-2.5 text-amber-400">{item.cutoffNV3 ? `${item.cutoffNV3}đ` : '—'}</td>
@@ -1475,7 +1485,7 @@ export default function Grade10Container() {
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={[...schoolDetail.quotas].reverse()}>
                               <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
-                              <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                              <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} tickFormatter={formatSchoolYear} />
                               <YAxis stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
                               <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b', fontSize: 10 } : { backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
                               <Legend wrapperStyle={{ fontSize: 9 }} />
@@ -1497,7 +1507,7 @@ export default function Grade10Container() {
                           <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={[...schoolDetail.quotas].reverse()}>
                               <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#f3e8ff' : '#1e293b'} />
-                              <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
+                              <XAxis dataKey="year" stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} tickFormatter={formatSchoolYear} />
                               <YAxis stroke={theme === 'light' ? '#6b7280' : '#94a3b8'} tick={{ fontSize: 9 }} />
                               <Tooltip contentStyle={theme === 'light' ? { backgroundColor: '#ffffff', borderColor: '#e9d5ff', color: '#1e1b4b', fontSize: 10 } : { backgroundColor: '#0f172a', borderColor: '#1e293b', fontSize: 10 }} />
                               <Legend wrapperStyle={{ fontSize: 9 }} />
@@ -1525,7 +1535,7 @@ export default function Grade10Container() {
                         <tbody className="divide-y divide-slate-800 text-slate-350 bg-slate-900/20">
                           {schoolDetail.quotas.map((item: any, idx: number) => (
                             <tr key={idx} className="hover:bg-slate-850/10">
-                              <td className="p-2.5 font-bold text-white">{item.year}</td>
+                              <td className="p-2.5 font-bold text-white">{formatSchoolYear(item.year)}</td>
                               <td className="p-2.5 text-blue-400 font-semibold">{item.quota || '—'}</td>
                               <td className="p-2.5 text-pink-400">{item.registeredCount ? item.registeredCount.toLocaleString() : '—'}</td>
                               <td className="p-2.5 text-rose-400 font-bold">{item.competitionRatio ? `${item.competitionRatio}` : '—'}</td>
@@ -1934,9 +1944,11 @@ export default function Grade10Container() {
                               }`}>
                                 NGUYỆN VỌNG {nvNum}
                               </span>
-                              <span className="text-xs text-slate-400 font-bold px-2 py-0.5 bg-slate-800 rounded">
-                                {school.schoolCode}
-                              </span>
+                              {user?.role === 'ADMIN' && (
+                                <span className="text-xs text-slate-400 font-bold px-2 py-0.5 bg-slate-800 rounded">
+                                  {school.schoolCode}
+                                </span>
+                              )}
                               <span className="text-xs text-slate-500">
                                 {school.districtName}
                               </span>
@@ -2150,12 +2162,16 @@ export default function Grade10Container() {
                 <div key={i} className="print-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 9, color: '#6b7280', marginBottom: 2 }}>
-                      <span style={{ background: '#e0e7ff', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700 }}>{rec.schoolCode}</span>
+                      {user?.role === 'ADMIN' && (
+                        <span style={{ background: '#e0e7ff', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700 }}>{rec.schoolCode}</span>
+                      )}
                       {rec.districtName}
                     </div>
                     <div style={{ fontWeight: 900, fontSize: 12, color: '#1e1b4b', marginBottom: 4 }}>{rec.schoolName}</div>
-                    <div style={{ fontSize: 10, color: '#374151', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                    <div style={{ fontSize: 10, color: '#374151', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                       <span>Điểm chuẩn NV1: <strong>{rec.cutoffNV1}đ</strong></span>
+                      <span>NV2: <strong>{rec.cutoffNV2 ? `${rec.cutoffNV2}đ` : '—'}</strong></span>
+                      <span>NV3: <strong>{rec.cutoffNV3 ? `${rec.cutoffNV3}đ` : '—'}</strong></span>
                       <span>TB 3 năm: <strong style={{ color: '#4338ca' }}>{rec.historicalAvg}đ</strong></span>
                       {rec.nv2Gap !== null && <span>NV2 Chênh: <strong>+{rec.nv2Gap}đ</strong></span>}
                       {rec.nv3Gap !== null && <span>NV3 Chênh: <strong>+{rec.nv3Gap}đ</strong></span>}
@@ -2238,7 +2254,9 @@ export default function Grade10Container() {
                         <div style={{ flex: 1 }}>
                           <div style={{ marginBottom: 3 }}>
                             <span className="print-nv-badge" style={{ background: nvColor, color: 'white' }}>NGUYỆN VỌNG {nvNum}</span>
-                            <span style={{ fontSize: 9, background: '#f1f5f9', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700, color: '#374151' }}>{school.schoolCode}</span>
+                            {user?.role === 'ADMIN' && (
+                              <span style={{ fontSize: 9, background: '#f1f5f9', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700, color: '#374151' }}>{school.schoolCode}</span>
+                            )}
                             <span style={{ fontSize: 9, color: '#6b7280' }}>{school.districtName}</span>
                           </div>
                           <div style={{ fontWeight: 900, fontSize: 12, color: '#1e1b4b', marginBottom: 4 }}>{school.schoolName}</div>
