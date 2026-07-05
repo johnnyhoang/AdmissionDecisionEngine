@@ -1,0 +1,24 @@
+{
+  "sourceName": "Sở GD&ĐT TP.HCM - dữ liệu tuyển sinh lớp 10 năm học 2026-2027, batch 2",
+  "sourceUrls": {
+    "quota": "https://image.sggp.org.vn/Uploaded/2026/znazgs/2026_04_29/phu-luc-1-6276.pdf",
+    "registeredNV1": "https://image.sggp.org.vn/Uploaded/2026/znazgs/2026_05_04/congbonvlan1-2026signed-6749.pdf",
+    "cutoffOfficial": "https://filethcs.hcm.shieldix.app/data/doc/2026/thcstranquangkhaitanphu/2026_6/30/diem-chuan-ts10-2026-2027_306202613.pdf",
+    "cutoffCrossCheck": [
+      "https://thuvienphapluat.vn/phap-luat/diem-chuan-vao-lop-10-thpt-can-thanh-tphcm-nam-2026-chi-tiet-diem-chuan-vao-lop-10-thpt-can-thanh-918846-277505.html",
+      "https://dienmaycholon.com/kinh-nghiem-mua-sam/diem-chuan-lop-10-thanh-pho-ho-chi-minh",
+      "https://hnteducation.github.io/DiemChuan_TS10-2627.html"
+    ]
+  },
+  "dataYear": 2027,
+  "notes": [
+    "Batch 2 bổ sung các trường còn thiếu sau batch 1 nhưng đã cross-check được đủ chỉ tiêu, ĐK NV1 và NV1/NV2/NV3.",
+    "Trường PHD_CC trong DB đang là THPT Phú Hoà Đông; nguồn 2026-2027 ghi tên là THPT Phú Hòa tại xã Phú Hòa Đông."
+  ],
+  "records": [
+    { "code": "BINH_CHANH", "name": "THPT Bình Chánh", "sourceName": "THPT Bình Chánh", "quota": 900, "registeredCount": 1085, "competitionRatio": 1.21, "cutoffNV1": 14.25, "cutoffNV2": 14.50, "cutoffNV3": 15.50 },
+    { "code": "CAN_THANH", "name": "THPT Cần Thạnh", "sourceName": "THPT Cần Thạnh", "quota": 320, "registeredCount": 289, "competitionRatio": 0.90, "cutoffNV1": 9.00, "cutoffNV2": 9.00, "cutoffNV3": 9.00 },
+    { "code": "THU_DUC", "name": "THPT Thủ Đức", "sourceName": "THPT Thủ Đức", "quota": 900, "registeredCount": 2312, "competitionRatio": 2.57, "cutoffNV1": 22.75, "cutoffNV2": 23.50, "cutoffNV3": 24.50 },
+    { "code": "PHD_CC", "name": "THPT Phú Hoà Đông", "sourceName": "THPT Phú Hòa", "quota": 720, "registeredCount": 849, "competitionRatio": 1.18, "cutoffNV1": 13.50, "cutoffNV2": 14.25, "cutoffNV3": 14.50 }
+  ]
+}
