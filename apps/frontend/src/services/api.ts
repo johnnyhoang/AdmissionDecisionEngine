@@ -456,7 +456,7 @@ export const updateG10MacroConfig = async (payload: any): Promise<any> => {
   return res.json();
 };
 
-export const evaluateG10Profile = async (payload: { math: number; literature: number; english: number; priority?: number; bonus?: number; preferredDistrict?: string; targetNV?: string }): Promise<G10RecommendationResult> => {
+export const evaluateG10Profile = async (payload: { math: number; literature: number; english: number; priority?: number; bonus?: number; preferredDistricts?: string[]; targetNV?: string }): Promise<G10RecommendationResult> => {
   const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/recommendation`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, Min, Max } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsArray, Min, Max } from 'class-validator';
 
 export class GetRecommendationDto {
   @IsNumber()
@@ -24,9 +24,10 @@ export class GetRecommendationDto {
   @IsOptional()
   bonus?: number;
 
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  preferredDistrict?: string;
+  preferredDistricts?: string[];
 
   @IsString()
   @IsOptional()

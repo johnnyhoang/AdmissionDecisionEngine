@@ -69,6 +69,8 @@ export default function Grade10Container() {
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
   const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false);
   const districtDropdownRef = useRef<HTMLDivElement>(null);
+  const [isEvalDistrictDropdownOpen, setIsEvalDistrictDropdownOpen] = useState(false);
+  const evalDistrictDropdownRef = useRef<HTMLDivElement>(null);
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [schoolDetail, setSchoolDetail] = useState<any>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
@@ -119,7 +121,7 @@ export default function Grade10Container() {
   const [englishScore, setEnglishScore] = useState('8.5');
   const [priorityScore, setPriorityScore] = useState('0');
   const [bonusScore, setBonusScore] = useState('0');
-  const [preferredDistrict, setPreferredDistrict] = useState('');
+  const [preferredDistricts, setPreferredDistricts] = useState<string[]>([]);
   const [targetNV, setTargetNV] = useState('NV1');
   const [evaluationResult, setEvaluationResult] = useState<any>(null);
 
@@ -157,6 +159,18 @@ export default function Grade10Container() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutsideEval(event: MouseEvent) {
+      if (evalDistrictDropdownRef.current && !evalDistrictDropdownRef.current.contains(event.target as Node)) {
+        setIsEvalDistrictDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutsideEval);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideEval);
     };
   }, []);
 
@@ -431,7 +445,7 @@ export default function Grade10Container() {
         english: parseFloat(englishScore) || 0,
         priority: parseFloat(priorityScore) || 0,
         bonus: parseFloat(bonusScore) || 0,
-        preferredDistrict: preferredDistrict || undefined,
+        preferredDistricts: preferredDistricts.length > 0 ? preferredDistricts : undefined,
         targetNV,
       });
       setEvaluationResult(res);
@@ -863,16 +877,65 @@ export default function Grade10Container() {
 
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-400 mb-1">Quận Ưu Tiên</label>
-                  <select 
-                    value={preferredDistrict}
-                    onChange={(e) => setPreferredDistrict(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-2 py-1.5 text-xs text-slate-200 outline-none cursor-pointer"
-                  >
-                    <option value="">Tất cả Quận/Huyện</option>
-                    {districts.map((d: any) => (
-                      <option key={d.id} value={d.id}>{d.name}</option>
-                    ))}
-                  </select>
+                  <div ref={evalDistrictDropdownRef} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsEvalDistrictDropdownOpen(!isEvalDistrictDropdownOpen)}
+                      className="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-indigo-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 flex items-center justify-between outline-none transition cursor-pointer select-none"
+                    >
+                      <span className="truncate">
+                        {preferredDistricts.length === 0
+                          ? 'Tất cả Quận/Huyện'
+                          : preferredDistricts.length === districts.length
+                          ? 'Tất cả Quận/Huyện'
+                          : preferredDistricts.length === 1
+                          ? districts.find((d: any) => d.id === preferredDistricts[0])?.name
+                          : `${preferredDistricts.length} quận được chọn`}
+                      </span>
+                      <span className="ml-1 text-slate-500">▼</span>
+                    </button>
+                    {isEvalDistrictDropdownOpen && (
+                      <div className="absolute left-0 mt-1.5 w-full min-w-[220px] bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 p-2 text-xs text-slate-350 animate-pop-in">
+                        <div className="flex justify-between items-center px-2 py-1.5 border-b border-slate-800/80 mb-1.5">
+                          <span className="font-semibold text-slate-400">Chọn Quận/Huyện</span>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setPreferredDistricts([])}
+                              className="text-rose-400 hover:text-rose-300 font-medium cursor-pointer"
+                            >
+                              Bỏ chọn
+                            </button>
+                          </div>
+                        </div>
+                        <div className="max-h-48 overflow-y-auto scrollbar-thin space-y-1 pr-1">
+                          {districts.map((d: any) => {
+                            const isChecked = preferredDistricts.includes(d.id);
+                            return (
+                              <label
+                                key={d.id}
+                                className="flex items-center gap-2 px-2 py-1.5 hover:bg-slate-900 rounded-lg cursor-pointer transition select-none"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => {
+                                    setPreferredDistricts(prev =>
+                                      isChecked ? prev.filter(id => id !== d.id) : [...prev, d.id]
+                                    );
+                                  }}
+                                  className="rounded border-slate-850 text-indigo-600 bg-slate-950 focus:ring-indigo-500 h-3.5 w-3.5 cursor-pointer"
+                                />
+                                <span className={`text-xs ${isChecked ? 'text-indigo-400 font-bold' : 'text-slate-300'}`}>
+                                  {d.name}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -2209,8 +2272,8 @@ export default function Grade10Container() {
                 <span>Điểm ưu tiên: <strong>{evaluationResult.details.priority}</strong></span>
                 <span>Điểm khuyến khích: <strong>{evaluationResult.details.bonus}</strong></span>
                 <span>Nguyện vọng xét: <strong>{targetNV}</strong></span>
-                {preferredDistrict && (
-                  <span>Quận ưu tiên: <strong>{districts.find((d: any) => String(d.id) === String(preferredDistrict))?.name ?? ''}</strong></span>
+                {preferredDistricts.length > 0 && (
+                  <span>Quận ưu tiên: <strong>{preferredDistricts.map(id => districts.find((d: any) => String(d.id) === String(id))?.name).filter(Boolean).join(', ')}</strong></span>
                 )}
               </div>
               <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid #c7d2fe' }}>

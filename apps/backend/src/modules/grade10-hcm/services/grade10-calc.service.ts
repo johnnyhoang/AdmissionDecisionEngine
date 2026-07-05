@@ -119,7 +119,7 @@ export class Grade10CalcService {
           priorityScore: dto.priority || 0,
           bonusScore: dto.bonus || 0,
           totalScore,
-          preferredDistrict: dto.preferredDistrict || undefined,
+          preferredDistrict: dto.preferredDistricts?.join(',') || undefined,
         }),
       )
       .catch((err) => console.error('Failed to save search history', err));
@@ -140,9 +140,9 @@ export class Grade10CalcService {
       .where('cutoff.year = :year', { year: latestYear })
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' });
 
-    if (dto.preferredDistrict) {
-      query.andWhere('school.districtId = :distId', {
-        distId: dto.preferredDistrict,
+    if (dto.preferredDistricts && dto.preferredDistricts.length > 0) {
+      query.andWhere('school.districtId IN (:...distIds)', {
+        distIds: dto.preferredDistricts,
       });
     }
 
@@ -310,7 +310,7 @@ export class Grade10CalcService {
             english: dto.english,
             priority: dto.priority ?? 0,
             bonus: dto.bonus ?? 0,
-            preferredDistrict: dto.preferredDistrict ?? null,
+            preferredDistricts: dto.preferredDistricts ?? null,
             targetNV: dto.targetNV,
           },
           resultSummary: { totalScore, shiftedScore, ssf, topSchools },
