@@ -403,6 +403,48 @@ body.light-theme nav.bg-slate-900 {
   background-image: linear-gradient(90deg, #4f46e5, #0f766e) !important;
 }
 
+/* Grade 10 mobile readability: lift body copy one step, keep bold titles intact. */
+@media (max-width: 640px) {
+  .grade10-module
+    :where(.text-\[10px\], .text-\[11px\], .text-xs):not(
+      :where(.font-bold, .font-black, .font-extrabold)
+    ) {
+    font-size: 0.8125rem !important;
+    line-height: 1.35rem !important;
+  }
+}
+
+.grade10-expert-analysis {
+  background:
+    linear-gradient(135deg, rgba(49, 46, 129, 0.72), rgba(30, 41, 59, 0.92)) !important;
+  border-color: rgba(129, 140, 248, 0.42) !important;
+  color: #eef2ff !important;
+}
+
+.grade10-expert-analysis-title {
+  color: #c7d2fe !important;
+}
+
+.grade10-expert-analysis p {
+  color: #f8fafc !important;
+  font-weight: 600;
+}
+
+.light-theme .grade10-expert-analysis {
+  background:
+    linear-gradient(135deg, #eef2ff 0%, #fff7ed 100%) !important;
+  border-color: #c7d2fe !important;
+  color: #312e81 !important;
+}
+
+.light-theme .grade10-expert-analysis-title {
+  color: #4338ca !important;
+}
+
+.light-theme .grade10-expert-analysis p {
+  color: #1e1b4b !important;
+}
+
 @media print {
   /* .print-area is rendered via a React portal as a direct child of <body>,
      so everything else on the page (the whole #root app shell, toasts, other

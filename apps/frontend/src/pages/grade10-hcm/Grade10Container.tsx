@@ -431,7 +431,7 @@ export default function Grade10Container() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="grade10-module flex-1 flex flex-col">
       {/* Navigation tabs (desktop) — mobile uses the fixed BottomNav instead */}
       <nav className="hidden md:block bg-slate-900 border-b border-slate-800 px-4 py-2">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -1884,8 +1884,8 @@ export default function Grade10Container() {
 
                   {/* Dynamic Explanation Card */}
                   {comboResult.explanations && comboResult.explanations[selectedStrategy] && (
-                    <div className="bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-2xl text-xs text-indigo-200 leading-relaxed shadow-lg flex flex-col gap-2">
-                      <span className="font-bold uppercase tracking-wider text-[10px] text-indigo-400">Phân tích chiến thuật của chuyên gia AI:</span>
+                    <div className="grade10-expert-analysis bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-2xl text-xs text-indigo-200 leading-relaxed shadow-lg flex flex-col gap-2">
+                      <span className="grade10-expert-analysis-title font-bold uppercase tracking-wider text-[10px] text-indigo-400">Phân tích chiến thuật của chuyên gia AI:</span>
                       <p className="m-0 italic">{comboResult.explanations[selectedStrategy]}</p>
                     </div>
                   )}
