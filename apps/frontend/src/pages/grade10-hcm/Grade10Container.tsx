@@ -950,11 +950,7 @@ export default function Grade10Container() {
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            {user?.role === 'ADMIN' && (
-                              <span className="text-xs font-semibold px-2 py-0.5 bg-slate-800 text-slate-300 rounded border border-slate-700">
-                                {rec.schoolCode}
-                              </span>
-                            )}
+
                             <span className="text-xs text-slate-400 font-medium">
                               {rec.districtName}
                             </span>
@@ -1249,13 +1245,7 @@ export default function Grade10Container() {
                   }`}>
                     <div>
                       <div className="flex justify-between items-start gap-2 mb-3">
-                        {user?.role === 'ADMIN' ? (
-                          <span className="text-[10px] font-extrabold px-2 py-0.5 bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 rounded-md">
-                            {school.code}
-                          </span>
-                        ) : (
-                          <div />
-                        )}
+                        <div />
                         <div className="flex gap-2">
                           {user?.role === 'ADMIN' && (
                             <button
@@ -1376,11 +1366,7 @@ export default function Grade10Container() {
             <div className="border-b border-slate-800 pb-3 flex justify-between items-end">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  {user?.role === 'ADMIN' && (
-                    <span className="text-xs font-bold px-2 py-0.5 bg-indigo-600/15 border border-indigo-500/30 text-indigo-400 rounded-md">
-                      {schoolDetail.code}
-                    </span>
-                  )}
+
                   <span className="text-xs text-slate-400">{schoolDetail.district?.name || 'Chưa rõ quận'}</span>
                 </div>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -2040,11 +2026,7 @@ export default function Grade10Container() {
                               }`}>
                                 NGUYỆN VỌNG {nvNum}
                               </span>
-                              {user?.role === 'ADMIN' && (
-                                <span className="text-xs text-slate-400 font-bold px-2 py-0.5 bg-slate-800 rounded">
-                                  {school.schoolCode}
-                                </span>
-                              )}
+
                               <span className="text-xs text-slate-500">
                                 {school.districtName}
                               </span>
@@ -2246,9 +2228,7 @@ export default function Grade10Container() {
                 <div key={i} className="print-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 9, color: '#6b7280', marginBottom: 2 }}>
-                      {user?.role === 'ADMIN' && (
-                        <span style={{ background: '#e0e7ff', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700 }}>{rec.schoolCode}</span>
-                      )}
+
                       {rec.districtName}
                     </div>
                     <div style={{ fontWeight: 900, fontSize: 12, color: '#1e1b4b', marginBottom: 4 }}>{rec.schoolName}</div>
@@ -2338,9 +2318,7 @@ export default function Grade10Container() {
                         <div style={{ flex: 1 }}>
                           <div style={{ marginBottom: 3 }}>
                             <span className="print-nv-badge" style={{ background: nvColor, color: 'white' }}>NGUYỆN VỌNG {nvNum}</span>
-                            {user?.role === 'ADMIN' && (
-                              <span style={{ fontSize: 9, background: '#f1f5f9', padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 700, color: '#374151' }}>{school.schoolCode}</span>
-                            )}
+
                             <span style={{ fontSize: 9, color: '#6b7280' }}>{school.districtName}</span>
                           </div>
                           <div style={{ fontWeight: 900, fontSize: 12, color: '#1e1b4b', marginBottom: 4 }}>{school.schoolName}</div>
