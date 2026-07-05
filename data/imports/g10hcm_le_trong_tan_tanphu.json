@@ -1,0 +1,30 @@
+{
+  "sourceName": "THPT Lê Trọng Tấn - chỉ tiêu, đăng ký NV1 và điểm chuẩn lớp 10",
+  "sourceUrl": "User-provided admission data, 2026-07-05",
+  "dataYear": 2026,
+  "districts": [
+    {
+      "code": "QTP",
+      "name": "Quận Tân Phú",
+      "schools": [
+        {
+          "code": "LE_TRONG_TAN",
+          "name": "THPT Lê Trọng Tấn",
+          "schoolType": "REGULAR",
+          "quotas": [
+            { "year": 2026, "quota": 650, "registeredCount": null, "competitionRatio": null, "programType": "REGULAR" },
+            { "year": 2025, "quota": 630, "registeredCount": 781, "competitionRatio": 1.24, "programType": "REGULAR" },
+            { "year": 2024, "quota": 675, "registeredCount": 937, "competitionRatio": 1.39, "programType": "REGULAR" },
+            { "year": 2023, "quota": 675, "registeredCount": null, "competitionRatio": null, "programType": "REGULAR" }
+          ],
+          "cutoffs": [
+            { "year": 2026, "cutoffNV1": 18.50, "cutoffNV2": 19.25, "cutoffNV3": 20.00, "programType": "REGULAR", "dataSource": "User-provided admission data, 2026-07-05" },
+            { "year": 2025, "cutoffNV1": 19.50, "cutoffNV2": 19.75, "cutoffNV3": 20.00, "programType": "REGULAR", "dataSource": "User-provided admission data, 2026-07-05" },
+            { "year": 2024, "cutoffNV1": 20.25, "cutoffNV2": 20.50, "cutoffNV3": 20.75, "programType": "REGULAR", "dataSource": "User-provided admission data, 2026-07-05" },
+            { "year": 2023, "cutoffNV1": 18.50, "cutoffNV2": 18.75, "cutoffNV3": 19.00, "programType": "REGULAR", "dataSource": "User-provided admission data, 2026-07-05" }
+          ]
+        }
+      ]
+    }
+  ]
+}

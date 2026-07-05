@@ -13,8 +13,8 @@ import { deduplicateSchoolsHelper } from '../utils/school-dedup.util';
 export interface ImportQuotaDto {
   year: number;
   quota: number;
-  registeredCount?: number;
-  competitionRatio?: number;
+  registeredCount?: number | null;
+  competitionRatio?: number | null;
   programType?: string;
 }
 
@@ -240,18 +240,26 @@ export class Grade10ImportService {
                       schoolId: school.id,
                       year: qDto.year,
                       quota: qDto.quota,
-                      registeredCount: qDto.registeredCount || 0,
-                      competitionRatio: qDto.competitionRatio || 0,
+                      registeredCount:
+                        qDto.registeredCount === undefined
+                          ? 0
+                          : qDto.registeredCount,
+                      competitionRatio:
+                        qDto.competitionRatio === undefined
+                          ? 0
+                          : qDto.competitionRatio,
                       programType: pt,
                     });
                     await this.quotaRepo.save(quota);
                     quotasAdded++;
                   } else {
                     quota.quota = qDto.quota;
-                    quota.registeredCount =
-                      qDto.registeredCount || quota.registeredCount;
-                    quota.competitionRatio =
-                      qDto.competitionRatio || quota.competitionRatio;
+                    if (qDto.registeredCount !== undefined) {
+                      quota.registeredCount = qDto.registeredCount;
+                    }
+                    if (qDto.competitionRatio !== undefined) {
+                      quota.competitionRatio = qDto.competitionRatio;
+                    }
                     await this.quotaRepo.save(quota);
                   }
                 }

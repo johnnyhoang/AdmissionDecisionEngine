@@ -31,7 +31,7 @@ export class Grade10Quota {
   quota: number;
 
   @Column({ name: 'registered_count', default: 0, nullable: true })
-  registeredCount: number;
+  registeredCount: number | null;
 
   @Column({
     name: 'competition_ratio',
@@ -41,7 +41,7 @@ export class Grade10Quota {
     default: 0.0,
     nullable: true,
   })
-  competitionRatio: number;
+  competitionRatio: number | null;
 
   @Column({ name: 'program_type', default: 'REGULAR' })
   programType: string;
