@@ -760,44 +760,44 @@ export default function Grade10Container() {
                 <h2 className="text-base font-bold text-white m-0">Điểm Thi Thử Lớp 9</h2>
               </div>
 
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">Môn Toán</label>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1 text-center">Môn Toán</label>
                   <input 
                     type="number" step="0.25" max="10" min="0"
                     value={mathScore}
                     onChange={(e) => setMathScore(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition" 
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg p-1.5 text-center text-xs text-slate-200 outline-none transition" 
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">Môn Ngữ Văn</label>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1 text-center">Môn Văn</label>
                   <input 
                     type="number" step="0.25" max="10" min="0"
                     value={literatureScore}
                     onChange={(e) => setLiteratureScore(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition" 
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg p-1.5 text-center text-xs text-slate-200 outline-none transition" 
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">Môn Tiếng Anh</label>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1 text-center">Môn Anh</label>
                   <input 
                     type="number" step="0.25" max="10" min="0"
                     value={englishScore}
                     onChange={(e) => setEnglishScore(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition" 
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg p-1.5 text-center text-xs text-slate-200 outline-none transition" 
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 border-t border-slate-800 pt-3">
+              <div className="grid grid-cols-2 gap-2.5 border-t border-slate-800 pt-3">
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-400 mb-1">Điểm Ưu Tiên (0-2đ)</label>
                   <input 
                     type="number" step="0.5" max="2" min="0"
                     value={priorityScore}
                     onChange={(e) => setPriorityScore(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none" 
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none" 
                   />
                 </div>
 
@@ -807,18 +807,18 @@ export default function Grade10Container() {
                     type="number" step="0.5" max="2" min="0"
                     value={bonusScore}
                     onChange={(e) => setBonusScore(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none" 
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none" 
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 border-t border-slate-800 pt-3">
+              <div className="grid grid-cols-2 gap-2.5 border-t border-slate-800 pt-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">Nguyện Vọng Xét</label>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">Nguyện Vọng Xét</label>
                   <select 
                     value={targetNV}
                     onChange={(e) => setTargetNV(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-2 py-1.5 text-xs text-slate-200 outline-none cursor-pointer"
                   >
                     <option value="NV1">Nguyện vọng 1</option>
                     <option value="NV2">Nguyện vọng 2</option>
@@ -827,11 +827,11 @@ export default function Grade10Container() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">Quận Ưu Tiên</label>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">Quận Ưu Tiên</label>
                   <select 
                     value={preferredDistrict}
                     onChange={(e) => setPreferredDistrict(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-2 py-1.5 text-xs text-slate-200 outline-none cursor-pointer"
                   >
                     <option value="">Tất cả Quận/Huyện</option>
                     {districts.map((d: any) => (
@@ -1771,37 +1771,51 @@ export default function Grade10Container() {
                 <div className="flex flex-col gap-3">
                   <h4 className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Khoảng điểm dự đoán</h4>
                   
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1">Toán (Min - Max)</label>
-                      <div className="flex gap-1 items-center">
-                        <input type="number" step="0.25" value={minMath} onChange={e => setMinMath(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
-                        <span className="text-slate-500 text-xs">-</span>
-                        <input type="number" step="0.25" value={maxMath} onChange={e => setMaxMath(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                      <label className="block text-[10px] text-slate-400 mb-1 text-center font-semibold">Toán (Min-Max)</label>
+                      <div className="flex gap-0.5 items-center">
+                        <input type="number" step="0.25" value={minMath} onChange={e => setMinMath(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
+                        <span className="text-slate-500 text-[10px]">-</span>
+                        <input type="number" step="0.25" value={maxMath} onChange={e => setMaxMath(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1">Văn (Min - Max)</label>
-                      <div className="flex gap-1 items-center">
-                        <input type="number" step="0.25" value={minLiterature} onChange={e => setMinLiterature(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
-                        <span className="text-slate-500 text-xs">-</span>
-                        <input type="number" step="0.25" value={maxLiterature} onChange={e => setMaxLiterature(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                      <label className="block text-[10px] text-slate-400 mb-1 text-center font-semibold">Văn (Min-Max)</label>
+                      <div className="flex gap-0.5 items-center">
+                        <input type="number" step="0.25" value={minLiterature} onChange={e => setMinLiterature(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
+                        <span className="text-slate-500 text-[10px]">-</span>
+                        <input type="number" step="0.25" value={maxLiterature} onChange={e => setMaxLiterature(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-slate-400 mb-1 text-center font-semibold">Anh (Min-Max)</label>
+                      <div className="flex gap-0.5 items-center">
+                        <input type="number" step="0.25" value={minEnglish} onChange={e => setMinEnglish(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
+                        <span className="text-slate-500 text-[10px]">-</span>
+                        <input type="number" step="0.25" value={maxEnglish} onChange={e => setMaxEnglish(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3 border-t border-slate-800 pt-3">
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1">Anh (Min - Max)</label>
-                      <div className="flex gap-1 items-center">
-                        <input type="number" step="0.25" value={minEnglish} onChange={e => setMinEnglish(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
-                        <span className="text-slate-500 text-xs">-</span>
-                        <input type="number" step="0.25" value={maxEnglish} onChange={e => setMaxEnglish(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
-                      </div>
+                      <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Điểm cộng ưu tiên</label>
+                      <input type="number" step="0.5" value={priorityScore} onChange={e => setPriorityScore(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
                     </div>
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1">Điểm cộng ưu tiên</label>
-                      <input type="number" step="0.5" value={priorityScore} onChange={e => setPriorityScore(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
+                      <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Cự ly tối đa (km)</label>
+                      <div className="flex gap-1 items-center">
+                        <input
+                          type="number"
+                          min="1"
+                          max="50"
+                          value={maxCommuteDistance}
+                          onChange={(e) => setMaxCommuteDistance(e.target.value)}
+                          className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg p-2 text-xs text-slate-200 outline-none"
+                        />
+                        <span className="text-[10px] text-slate-500 font-bold">km</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1812,7 +1826,7 @@ export default function Grade10Container() {
                   <select
                     value={dreamSchoolCode}
                     onChange={(e) => setDreamSchoolCode(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none cursor-pointer"
                   >
                     <option value="">-- Chọn trường mơ ước --</option>
                     {(allSchools.length > 0 ? allSchools : schools).slice().sort((a,b) => a.name.localeCompare(b.name)).map(s => (
@@ -1823,7 +1837,7 @@ export default function Grade10Container() {
 
                 {/* Location */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (Để tính khoảng cách)</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (Tính khoảng cách)</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -1833,35 +1847,21 @@ export default function Grade10Container() {
                       className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
                     />
                     <button
+                      type="button"
                       onClick={handleComboGPS}
-                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs"
+                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs cursor-pointer"
                       title="Sử dụng GPS thiết bị"
                     >
                       GPS
                     </button>
                     <button
+                      type="button"
                       onClick={() => setMapPickerContext('combo')}
-                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs"
+                      className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-300 rounded-lg text-xs cursor-pointer"
                       title="Chọn vị trí trên bản đồ"
                     >
                       🗺️
                     </button>
-                  </div>
-                </div>
-
-                {/* Max commute distance input */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Khoảng cách đi học tối đa (km)</label>
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="number"
-                      min="1"
-                      max="50"
-                      value={maxCommuteDistance}
-                      onChange={(e) => setMaxCommuteDistance(e.target.value)}
-                      className="w-24 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none"
-                    />
-                    <span className="text-xs text-slate-500">km</span>
                   </div>
                 </div>
 
