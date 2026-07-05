@@ -35,6 +35,14 @@ export class Grade10LocationController {
     return this.locationService.geocodeLocation(body);
   }
 
+  @Post('search')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Search possible locations for an address query' })
+  @RequirePermission('GRADE10', 'view_dashboard', 'view')
+  async search(@Body() body: { query: string; limit?: number }) {
+    return this.locationService.searchLocations(body.query || '', body.limit);
+  }
+
   @Post('reverse-geocode')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Resolve coordinates back to a human-readable address' })

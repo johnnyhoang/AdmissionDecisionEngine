@@ -229,7 +229,9 @@ export interface G10SchoolItem {
   latestCutoffNV3?: number;
   latestYear?: number;
   latestQuota?: number;
+  latestRegisteredCount?: number;
   latestCompetitionRatio?: number;
+  latestQuotaYear?: number;
   dataCompleteness?: {
     percent: number;
     completedFields: number;
@@ -318,6 +320,19 @@ export const reverseG10Location = async (payload: {
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Không thể xác định địa chỉ từ tọa độ');
+  return res.json();
+};
+
+export const searchG10Locations = async (payload: {
+  query: string;
+  limit?: number;
+}): Promise<G10LocationResult[]> => {
+  const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/location/search`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Không thể tìm địa chỉ phù hợp');
   return res.json();
 };
 
@@ -445,6 +460,8 @@ export const getG10ComboRecommendations = async (payload: {
   userLon?: number;
   dreamSchoolCode?: string;
   maxCommuteDistance?: number;
+  selectionMode?: 'distance' | 'district';
+  preferredDistricts?: string[];
 }): Promise<any> => {
   const res = await apiFetch(`${API_BASE_URL}/grade10-hcm/recommendation/combo`, {
     method: 'POST',

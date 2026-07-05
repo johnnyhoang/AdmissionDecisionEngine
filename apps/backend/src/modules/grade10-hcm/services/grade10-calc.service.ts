@@ -366,6 +366,7 @@ export class Grade10CalcService {
       Number(dto.priority || 0) +
       Number(dto.bonus || 0);
     const avgScore = (minScore + maxScore) / 2;
+    const selectionMode = dto.selectionMode === 'district' ? 'district' : 'distance';
 
     const config = this.getMacroConfig();
     const ssf = config.ssf || 0;
@@ -385,6 +386,12 @@ export class Grade10CalcService {
       .leftJoinAndSelect('school.district', 'district')
       .where('cutoff.year = :year', { year: latestYear })
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .andWhere(
+        selectionMode === 'district' && dto.preferredDistricts?.length
+          ? 'school.districtId IN (:...distIds)'
+          : '1=1',
+        { distIds: dto.preferredDistricts || [] },
+      )
       .getMany();
 
     // Calculation formulas use exactly the 3 most recent school years.
@@ -403,26 +410,6 @@ export class Grade10CalcService {
         .getMany();
     }
 
-    // Helper for Haversine distance
-    const getDistance = (
-      lat1: number,
-      lon1: number,
-      lat2: number,
-      lon2: number,
-    ) => {
-      const R = 6371;
-      const dLat = ((lat2 - lat1) * Math.PI) / 180;
-      const dLon = ((lon2 - lon1) * Math.PI) / 180;
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos((lat1 * Math.PI) / 180) *
-          Math.cos((lat2 * Math.PI) / 180) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c;
-    };
-
     const getStrictProb = (wDiff: number) => {
       if (wDiff < 0) {
         return Math.max(1, Math.round(50 * Math.exp(1.0 * wDiff)));
@@ -431,22 +418,42 @@ export class Grade10CalcService {
       }
     };
 
-    // 4. Commute filter and auto relax if too tight
+    const routeBySchoolId = new Map<string, any>();
+    if (selectionMode === 'distance' && dto.userLat && dto.userLon) {
+      const travelPoints = await this.locationService.enrichTravelPoints(
+        {
+          latitude: dto.userLat,
+          longitude: dto.userLon,
+          districtName: 'Hồ Chí Minh',
+        },
+        cutoffs.map((cutoff) => ({
+          id: cutoff.school.id,
+          name: cutoff.school.name,
+          address: cutoff.school.address,
+          districtName: cutoff.school.district?.name,
+          latitude: cutoff.school.latitude,
+          longitude: cutoff.school.longitude,
+          mapUrl: cutoff.school.mapUrl,
+        })),
+      );
+      for (const point of travelPoints) {
+        if (point.id) routeBySchoolId.set(point.id, point);
+      }
+    }
+
+    // 4. Commute filter and auto relax if too tight. Use road distance when
+    // available, not Haversine, because admission decisions need commute reality.
     let rawMaxDist = Number(dto.maxCommuteDistance) || 12;
     let filteredCutoffs = cutoffs;
     let adjusted = false;
 
-    if (dto.userLat && dto.userLon) {
+    if (selectionMode === 'distance' && dto.userLat && dto.userLon) {
       // Keep relaxing distance until we have at least 12 candidate schools or reach 80km
       while (rawMaxDist < 80) {
         const temp = cutoffs.filter((c) => {
-          if (!c.school.latitude || !c.school.longitude) return false;
-          const d = getDistance(
-            dto.userLat,
-            dto.userLon,
-            c.school.latitude,
-            c.school.longitude,
-          );
+          const routed = routeBySchoolId.get(c.school.id);
+          const d = routed?.roadDistanceKm ?? routed?.straightDistanceKm;
+          if (typeof d !== 'number') return false;
           return d <= rawMaxDist;
         });
 
@@ -465,6 +472,7 @@ export class Grade10CalcService {
         (h) => h.schoolId === c.schoolId,
       );
       const cutoffVal = Number(c.cutoffNV1);
+      const routed = routeBySchoolId.get(c.school.id);
 
       // Historical average — skip missing/zero data years
       const historicalNV1s = schoolHist
@@ -478,22 +486,23 @@ export class Grade10CalcService {
 
       // Distance (if user coords provided)
       let distance = null;
+      let roadDistance = null;
+      let roadDuration = null;
+      let distanceSource = null;
       let commuteBonus = 0;
       if (
+        selectionMode === 'distance' &&
         dto.userLat &&
         dto.userLon &&
-        c.school.latitude &&
-        c.school.longitude
+        routed
       ) {
-        distance = getDistance(
-          dto.userLat,
-          dto.userLon,
-          c.school.latitude,
-          c.school.longitude,
-        );
+        distance = routed.straightDistanceKm ?? null;
+        roadDistance = routed.roadDistanceKm ?? routed.straightDistanceKm ?? null;
+        roadDuration = routed.roadDurationMin ?? null;
+        distanceSource = routed.distanceSource ?? null;
 
         // Compute distance bonus points (cộng điểm di chuyển ảo)
-        const ratio = distance / rawMaxDist;
+        const ratio = roadDistance != null ? roadDistance / rawMaxDist : 1;
         if (ratio < 1 / 3) {
           commuteBonus = 1.5;
         } else if (ratio <= 2 / 3) {
@@ -532,6 +541,8 @@ export class Grade10CalcService {
         schoolCode: c.school.code,
         schoolType: c.school.schoolType,
         districtName: c.school.district?.name || 'N/A',
+        address: c.school.address,
+        mapUrl: c.school.mapUrl,
         latitude: c.school.latitude,
         longitude: c.school.longitude,
         cutoffNV1: cutoffVal,
@@ -545,6 +556,9 @@ export class Grade10CalcService {
         probNV2,
         probNV3,
         distance: distance ? parseFloat(distance.toFixed(2)) : null,
+        roadDistance: roadDistance != null ? Number(roadDistance.toFixed(2)) : null,
+        roadDuration,
+        distanceSource,
         commuteBonus,
         nv2Gap,
         nv3Gap,
@@ -628,40 +642,6 @@ export class Grade10CalcService {
     ]);
     combos.defense = [defNV1, defNV2, defNV3].filter(Boolean);
 
-    if (dto.userLat && dto.userLon) {
-      const enrichCombo = async (combo: any[]) => {
-        if (!combo.length) return combo;
-        const enriched = await this.locationService.enrichTravelPoints(
-          {
-            latitude: dto.userLat,
-            longitude: dto.userLon,
-            districtName: 'Hồ Chí Minh',
-          },
-          combo.map((school) => ({
-            id: school.schoolId,
-            name: school.schoolName,
-            districtName: school.districtName,
-            latitude: school.latitude,
-            longitude: school.longitude,
-          })),
-        );
-
-        return combo.map((school) => {
-          const match = enriched.find((item) => item.id === school.schoolId);
-          return {
-            ...school,
-            roadDistance: match?.roadDistanceKm ?? school.distance,
-            roadDuration: match?.roadDurationMin ?? null,
-            distanceSource: match?.distanceSource ?? 'haversine',
-          };
-        });
-      };
-
-      combos.safe = await enrichCombo(combos.safe);
-      combos.effort = await enrichCombo(combos.effort);
-      combos.defense = await enrichCombo(combos.defense);
-    }
-
     // 8. Generate explanations
     const explanations: any = {};
 
@@ -669,7 +649,7 @@ export class Grade10CalcService {
       if (!s) return '';
       const prob = nv === 1 ? s.probNV1 : nv === 2 ? s.probNV2 : s.probNV3;
       const distStr =
-        s.distance !== null ? ' (cách nhà ' + s.distance + 'km)' : '';
+        s.roadDistance !== null ? ' (cách nhà ' + s.roadDistance + 'km)' : '';
       const bonusStr =
         s.commuteBonus > 0
           ? ' (được cộng ưu tiên ' + s.commuteBonus + 'đ di chuyển)'
@@ -755,6 +735,8 @@ export class Grade10CalcService {
             priority: dto.priority ?? 0,
             bonus: dto.bonus ?? 0,
             dreamSchoolCode: dto.dreamSchoolCode ?? null,
+            selectionMode,
+            preferredDistricts: dto.preferredDistricts ?? null,
             maxCommuteDistance: dto.maxCommuteDistance,
             userLat: dto.userLat ?? null,
             userLon: dto.userLon ?? null,
@@ -762,6 +744,7 @@ export class Grade10CalcService {
           resultSummary: {
             avgScore,
             ssf,
+            selectionMode,
             adjusted,
             maxCommuteDistance: parseFloat(rawMaxDist.toFixed(1)),
             safe: combos.safe.map((s: any) => ({
@@ -792,6 +775,18 @@ export class Grade10CalcService {
       ssf,
       macroConfig: config,
       maxCommuteDistance: parseFloat(rawMaxDist.toFixed(1)),
+      selectionMode,
+      filterSummary: {
+        mode: selectionMode,
+        candidateCount: filteredCutoffs.length,
+        selectedDistrictCount: dto.preferredDistricts?.length || 0,
+        distanceSource:
+          selectionMode === 'distance' && dto.userLat && dto.userLon
+            ? this.locationService.hasGoogleRouting()
+              ? 'google'
+              : 'osrm'
+            : null,
+      },
       adjusted,
     };
   }

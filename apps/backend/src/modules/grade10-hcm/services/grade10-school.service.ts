@@ -34,6 +34,13 @@ type SchoolDataCompleteness = {
   totalFields: number;
 };
 
+type LatestQuotaSummary = {
+  latestQuota: number | null;
+  latestRegisteredCount: number | null;
+  latestCompetitionRatio: number | null;
+  latestQuotaYear: number | null;
+};
+
 @Injectable()
 export class Grade10SchoolService implements OnApplicationBootstrap {
   constructor(
@@ -97,6 +104,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     // Map default average score for NV1 based on latest NV1 cutoff
     const schoolIds = items.map((i) => i.id);
     let latestCutoffs: Grade10Cutoff[] = [];
+    let latestQuotaBySchoolId = new Map<string, LatestQuotaSummary>();
     if (schoolIds.length > 0) {
       latestCutoffs = await this.cutoffRepo
         .createQueryBuilder('cutoff')
@@ -104,6 +112,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
         .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
         .orderBy('cutoff.year', 'DESC')
         .getMany();
+      latestQuotaBySchoolId = await this.getLatestQuotaSummaries(schoolIds);
     }
 
     const completenessBySchoolId = filters.includeDataCompleteness
@@ -115,6 +124,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
         (c) => c.schoolId === school.id,
       );
       const latestCutoff = schoolCutoffs[0] || null;
+      const latestQuota = latestQuotaBySchoolId.get(school.id);
       const dataCompleteness = completenessBySchoolId.get(school.id);
       return {
         ...school,
@@ -122,6 +132,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
         latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
         latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
         latestYear: latestCutoff ? latestCutoff.year : null,
+        latestQuota: latestQuota?.latestQuota ?? null,
+        latestRegisteredCount: latestQuota?.latestRegisteredCount ?? null,
+        latestCompetitionRatio: latestQuota?.latestCompetitionRatio ?? null,
+        latestQuotaYear: latestQuota?.latestQuotaYear ?? null,
         ...(dataCompleteness ? { dataCompleteness } : {}),
       };
     });
@@ -254,6 +268,9 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
       .orderBy('cutoff.year', 'DESC')
       .getMany();
+    const latestQuotaBySchoolId = await this.getLatestQuotaSummaries(
+      schools.map((school) => school.id),
+    );
 
     const completenessBySchoolId = filters.includeDataCompleteness
       ? await this.calculateDataCompleteness(schools)
@@ -267,6 +284,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
           (cutoff) => cutoff.schoolId === school.id,
         );
         const latestCutoff = schoolCutoffs[0] || null;
+        const latestQuota = latestQuotaBySchoolId.get(school.id);
         const dataCompleteness = completenessBySchoolId.get(school.id);
         const straightDistance = point.straightDistanceKm;
         const roadDistance = point.roadDistanceKm ?? straightDistance;
@@ -279,6 +297,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
           latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
           latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
           latestYear: latestCutoff ? latestCutoff.year : null,
+          latestQuota: latestQuota?.latestQuota ?? null,
+          latestRegisteredCount: latestQuota?.latestRegisteredCount ?? null,
+          latestCompetitionRatio: latestQuota?.latestCompetitionRatio ?? null,
+          latestQuotaYear: latestQuota?.latestQuotaYear ?? null,
           straightDistanceKm: straightDistance,
           roadDistanceKm: roadDistance,
           roadDurationMin: point.roadDurationMin,
@@ -494,6 +516,39 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       years.push(year);
     }
     return years;
+  }
+
+  private async getLatestQuotaSummaries(schoolIds: string[]) {
+    const result = new Map<string, LatestQuotaSummary>();
+    if (schoolIds.length === 0) return result;
+
+    const quotas = await this.quotaRepo
+      .createQueryBuilder('quota')
+      .where('quota.schoolId IN (:...schoolIds)', { schoolIds })
+      .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+      .orderBy('quota.year', 'DESC')
+      .getMany();
+
+    for (const quota of quotas) {
+      if (result.has(quota.schoolId)) continue;
+
+      const quotaCount = Number(quota.quota) || null;
+      const registeredCount = Number(quota.registeredCount) || null;
+      const ratio =
+        Number(quota.competitionRatio) ||
+        (quotaCount && registeredCount
+          ? Number((registeredCount / quotaCount).toFixed(2))
+          : null);
+
+      result.set(quota.schoolId, {
+        latestQuota: quotaCount,
+        latestRegisteredCount: registeredCount,
+        latestCompetitionRatio: ratio,
+        latestQuotaYear: quota.year,
+      });
+    }
+
+    return result;
   }
 
   private hasCompletenessValue(value: unknown): boolean {

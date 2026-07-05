@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin, Check, Pencil, ExternalLink, Loader2, Search } from 'lucide-react';
-import { resolveG10Location, reverseG10Location } from '../../../services/api';
+import { resolveG10Location, reverseG10Location, searchG10Locations } from '../../../services/api';
 import type { G10LocationResult } from '../../../services/api';
 
 export interface HomeLocationPick {
@@ -38,6 +38,7 @@ export default function HomeLocationModal({ isOpen, title, onClose, onConfirm }:
   const [address, setAddress] = useState('');
   const [original, setOriginal] = useState('');
   const [resolved, setResolved] = useState<G10LocationResult | null>(null);
+  const [suggestions, setSuggestions] = useState<G10LocationResult[]>([]);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -52,6 +53,7 @@ export default function HomeLocationModal({ isOpen, title, onClose, onConfirm }:
       setAddress('');
       setOriginal('');
       setResolved(null);
+      setSuggestions([]);
       setError('');
       setIsBusy(false);
       setPicked(null);
@@ -107,7 +109,13 @@ export default function HomeLocationModal({ isOpen, title, onClose, onConfirm }:
     }
     setIsBusy(true);
     setError('');
+    setSuggestions([]);
     try {
+      const results = await searchG10Locations({ query: address, limit: 5 });
+      if (results.length > 0) {
+        setSuggestions(results);
+        return;
+      }
       const result = await resolveG10Location({ address, districtName: 'Hồ Chí Minh' });
       goConfirm(address, result);
     } catch {
@@ -115,6 +123,10 @@ export default function HomeLocationModal({ isOpen, title, onClose, onConfirm }:
     } finally {
       setIsBusy(false);
     }
+  };
+
+  const handleSelectSuggestion = (result: G10LocationResult) => {
+    goConfirm(address, result);
   };
 
   const handleGPS = () => {
@@ -206,9 +218,12 @@ export default function HomeLocationModal({ isOpen, title, onClose, onConfirm }:
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Ví dụ: 227 Nguyễn Văn Cừ, Quận 5..."
+                  placeholder="Ví dụ: RS7, HCM hoặc 239 Hòa Bình, Hiệp Tân..."
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                    setSuggestions([]);
+                  }}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleResolveAddress(); }}
                   className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none transition"
                 />
@@ -218,10 +233,36 @@ export default function HomeLocationModal({ isOpen, title, onClose, onConfirm }:
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
                 >
                   {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
-                  Kiểm tra
+                  Tìm
                 </button>
               </div>
+              <p className="text-[10px] text-slate-500 m-0">
+                Nhập cụm ngắn cũng được. Hệ thống sẽ trả vài vị trí để bạn chọn đúng nhà.
+              </p>
             </div>
+
+            {suggestions.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">
+                  Chọn địa chỉ đúng nhất
+                </div>
+                {suggestions.map((suggestion, index) => (
+                  <button
+                    key={`${suggestion.latitude}-${suggestion.longitude}-${index}`}
+                    type="button"
+                    onClick={() => handleSelectSuggestion(suggestion)}
+                    className="w-full rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-2 text-left text-xs text-slate-200 hover:border-indigo-500/50 hover:bg-indigo-950/20 transition"
+                  >
+                    <span className="block font-semibold">
+                      {suggestion.formattedAddress || `${suggestion.latitude}, ${suggestion.longitude}`}
+                    </span>
+                    <span className="mt-1 block text-[10px] text-slate-500">
+                      {suggestion.source === 'google' ? 'Google Maps' : 'OpenStreetMap'} · {suggestion.latitude.toFixed(5)}, {suggestion.longitude.toFixed(5)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="relative flex py-1 items-center">
               <div className="flex-grow border-t border-slate-800"></div>

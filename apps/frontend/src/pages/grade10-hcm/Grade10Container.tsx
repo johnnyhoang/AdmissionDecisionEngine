@@ -107,6 +107,8 @@ export default function Grade10Container() {
   const [comboResult, setComboResult] = useState<any>(null);
   const [selectedStrategy, setSelectedStrategy] = useState<'safe' | 'effort' | 'defense'>('safe');
   const [maxCommuteDistance, setMaxCommuteDistance] = useState('10');
+  const [comboSelectionMode, setComboSelectionMode] = useState<'distance' | 'district'>('distance');
+  const [comboDistrictIds, setComboDistrictIds] = useState<string[]>([]);
 
   // ── Calculator form states ─────────────────────────────────────────────────
   const [mathScore, setMathScore] = useState('8.5');
@@ -294,6 +296,8 @@ export default function Grade10Container() {
         userLon: lon,
         dreamSchoolCode: dreamSchoolCode || undefined,
         maxCommuteDistance: parseFloat(maxCommuteDistance),
+        selectionMode: comboSelectionMode,
+        preferredDistricts: comboSelectionMode === 'district' ? comboDistrictIds : undefined,
       });
 
       setComboResult(res);
@@ -305,9 +309,28 @@ export default function Grade10Container() {
   };
 
   const handleGetCombo = async () => {
+    if (comboSelectionMode === 'distance' && !comboGPS) {
+      alert('Vui lòng đặt vị trí nhà để hệ thống tính khoảng cách thực tế đến trường.');
+      return;
+    }
+    if (comboSelectionMode === 'district' && comboDistrictIds.length === 0) {
+      alert('Vui lòng chọn ít nhất một quận/huyện mong muốn.');
+      return;
+    }
     // The home location (if any) was already normalized and confirmed
     // inside HomeLocationModal — just run with the stored coordinates
-    await runComboRequest(comboGPS?.lat, comboGPS?.lon);
+    await runComboRequest(
+      comboSelectionMode === 'distance' ? comboGPS?.lat : undefined,
+      comboSelectionMode === 'distance' ? comboGPS?.lon : undefined,
+    );
+  };
+
+  const toggleComboDistrict = (districtId: string) => {
+    setComboDistrictIds((current) =>
+      current.includes(districtId)
+        ? current.filter((id) => id !== districtId)
+        : [...current, districtId],
+    );
   };
 
   // Called when the user finishes the flow inside HomeLocationModal
@@ -1264,30 +1287,35 @@ export default function Grade10Container() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(isProximityFilterActive ? distanceSchools : schools).map((school) => {
                 const isCompared = compareList.some(item => item.id === school.id);
                 const isMergeSelected = selectedMergeIds.includes(school.id);
+                const cardDistance = school.roadDistance ?? school.distance;
+                const latestAdmissionYear = school.latestYear || getCurrentSchoolYear();
+                const latestQuotaYear = school.latestQuotaYear || latestAdmissionYear;
                 return (
-                  <div key={school.id} className={`relative bg-slate-900/60 border rounded-2xl p-5 shadow-lg flex flex-col justify-between gap-4 transition-all duration-200 ${
+                  <div key={school.id} className={`relative bg-slate-900/60 border rounded-xl p-3.5 shadow-md flex flex-col justify-between gap-3 transition-all duration-200 ${
                     isMergeSelected
                       ? 'border-amber-500/60 ring-1 ring-amber-500/30 bg-amber-950/10'
                       : 'border-slate-800 hover:border-slate-700'
                   }`}>
                     <div>
-                      <div className="flex justify-between items-start gap-2 mb-3">
-                        <div>
+                      <div className="flex justify-between items-start gap-2 mb-2">
+                        <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+                          <span className="rounded-full bg-slate-800/80 border border-slate-700 px-2 py-0.5 text-[10px] font-bold text-slate-300 truncate max-w-[130px]">
+                            {school.district?.name || 'TP.HCM'}
+                          </span>
                           {user?.role === 'ADMIN' && school.dataCompleteness && (
                             <div
-                              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black shadow-sm ${getCompletenessTone(school.dataCompleteness.percent)}`}
+                              className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-black shadow-sm ${getCompletenessTone(school.dataCompleteness.percent)}`}
                               title={`${school.dataCompleteness.completedFields}/${school.dataCompleteness.totalFields} trường dữ liệu đã hoàn thiện`}
                             >
-                              <span>Dữ liệu</span>
                               <span>{school.dataCompleteness.percent}%</span>
                             </div>
                           )}
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1.5 shrink-0">
                           {user?.role === 'ADMIN' && (
                             <button
                               onClick={(e) => {
@@ -1298,7 +1326,7 @@ export default function Grade10Container() {
                                   return [...prev, school.id];
                                 });
                               }}
-                              className={`text-[10px] px-2 py-0.5 rounded transition border flex items-center gap-1 ${
+                              className={`text-[10px] px-1.5 py-0.5 rounded transition border flex items-center gap-1 ${
                                 isMergeSelected
                                   ? 'bg-amber-500 border-amber-400 text-white'
                                   : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-amber-500/50 hover:text-amber-400'
@@ -1311,7 +1339,7 @@ export default function Grade10Container() {
                           )}
                           <button
                             onClick={() => toggleCompare(school)}
-                            className={`text-[10px] px-2 py-0.5 rounded transition border ${
+                            className={`text-[10px] px-1.5 py-0.5 rounded transition border ${
                               isCompared 
                                 ? 'bg-rose-600 border-rose-500 text-white' 
                                 : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
@@ -1321,38 +1349,52 @@ export default function Grade10Container() {
                           </button>
                         </div>
                       </div>
-                      <h3 className="text-sm font-bold text-white mb-2 hover:text-indigo-400 cursor-pointer flex items-center gap-1.5" onClick={() => openSchoolDetail(school.id)}>{school.name} {school.isVerified && <span title="Trường đã xác thực"><BadgeCheck className="w-4 h-4 text-blue-500 shrink-0" /></span>}</h3>
-                      <p className="text-xs text-slate-400 flex items-start gap-1 leading-normal">
-                        <MapPin className="h-3.5 w-3.5 text-slate-500 shrink-0 mt-0.5" />
-                        <span className="line-clamp-2">{school.address || 'Hồ Chí Minh'}</span>
+                      <h3 className="text-[13px] font-black text-white mb-1.5 hover:text-indigo-400 cursor-pointer flex items-center gap-1.5 leading-tight" onClick={() => openSchoolDetail(school.id)}>
+                        <span className="line-clamp-2">{school.name}</span>
+                        {school.isVerified && <span title="Trường đã xác thực"><BadgeCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" /></span>}
+                      </h3>
+                      <p className="text-[11px] text-slate-400 flex items-start gap-1 leading-normal">
+                        <MapPin className="h-3 w-3 text-slate-500 shrink-0 mt-0.5" />
+                        <span className="line-clamp-1">{school.address || 'Hồ Chí Minh'}</span>
                       </p>
                     </div>
 
-                    <div className="border-t border-slate-800 pt-4 flex flex-col gap-1.5">
-                      <div className="flex justify-between text-[11px]">
-                        <span className="text-slate-400">Điểm NV1 {formatSchoolYear(getCurrentSchoolYear())}:</span>
-                        <span className="font-bold text-indigo-400">{school.latestCutoffNV1 || 'N/A'}đ</span>
+                    <div className="border-t border-slate-800 pt-3 flex flex-col gap-2">
+                      <div className="grid grid-cols-3 gap-1.5">
+                        <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1.5">
+                          <div className="text-[9px] text-slate-500">NV1 {formatSchoolYear(latestAdmissionYear)}</div>
+                          <div className="text-sm font-black text-indigo-400">{school.latestCutoffNV1 || '—'}đ</div>
+                        </div>
+                        <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1.5">
+                          <div className="text-[9px] text-slate-500">Chỉ tiêu {formatSchoolYear(latestQuotaYear)}</div>
+                          <div className="text-sm font-black text-slate-100">{school.latestQuota?.toLocaleString() || '—'}</div>
+                        </div>
+                        <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1.5">
+                          <div className="text-[9px] text-slate-500">Tỷ lệ chọi</div>
+                          <div className="text-sm font-black text-rose-400">{school.latestCompetitionRatio ? `1:${school.latestCompetitionRatio}` : '—'}</div>
+                        </div>
                       </div>
-                      <div className="flex justify-between text-[11px]">
-                        <span className="text-slate-400">Điểm NV2 {formatSchoolYear(getCurrentSchoolYear())}:</span>
-                        <span className="font-semibold text-slate-200">{school.latestCutoffNV2 || 'N/A'}đ</span>
+
+                      <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px] text-slate-400">
+                        <span>NV2 <strong className="text-slate-200">{school.latestCutoffNV2 || '—'}đ</strong></span>
+                        <span>NV3 <strong className="text-slate-200">{school.latestCutoffNV3 || '—'}đ</strong></span>
+                        {school.latestRegisteredCount ? (
+                          <span>ĐK NV1 <strong className="text-slate-200">{school.latestRegisteredCount.toLocaleString()}</strong></span>
+                        ) : null}
                       </div>
-                      <div className="flex justify-between text-[11px]">
-                        <span className="text-slate-400">Điểm NV3 {formatSchoolYear(getCurrentSchoolYear())}:</span>
-                        <span className="font-semibold text-slate-200">{school.latestCutoffNV3 || 'N/A'}đ</span>
-                      </div>
-                      {isProximityFilterActive && school.roadDistance !== undefined && (
-                        <div className="flex justify-between text-[10px] bg-indigo-950/20 border border-indigo-900/30 p-2 rounded-lg mt-1 text-indigo-300 font-semibold">
+
+                      {isProximityFilterActive && typeof cardDistance === 'number' && (
+                        <div className="flex justify-between text-[10px] bg-indigo-950/20 border border-indigo-900/30 px-2 py-1.5 rounded-lg text-indigo-300 font-semibold">
                           <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-indigo-400" /> Cự ly:
+                            <MapPin className="h-3 w-3 text-indigo-400" /> Đường đi
                           </span>
                           <span className="font-extrabold text-indigo-200">
-                            {school.roadDistance} km (~{school.roadDuration} phút)
+                            {cardDistance} km{school.roadDuration ? ` (~${school.roadDuration} phút)` : ''}
                           </span>
                         </div>
                       )}
                       {user?.role === 'ADMIN' && (
-                        <div className="flex gap-2 mt-1.5">
+                        <div className="flex gap-2 mt-0.5">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1744,6 +1786,7 @@ export default function Grade10Container() {
                       <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Điểm cộng ưu tiên</label>
                       <input type="number" step="0.5" value={priorityScore} onChange={e => setPriorityScore(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
                     </div>
+                    {comboSelectionMode === 'distance' && (
                     <div>
                       <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Cự ly tối đa (km)</label>
                       <div className="flex gap-1 items-center">
@@ -1758,6 +1801,7 @@ export default function Grade10Container() {
                         <span className="text-[10px] text-slate-500 font-bold">km</span>
                       </div>
                     </div>
+                    )}
                   </div>
                 </div>
 
@@ -1772,9 +1816,38 @@ export default function Grade10Container() {
                   />
                 </div>
 
-                {/* Location — one button, the modal owns the whole flow */}
+                {/* Candidate scope */}
+                <div className="flex flex-col gap-3">
+                  <label className="block text-xs font-semibold text-slate-400">Phạm vi xét trường</label>
+                  <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-950/60 border border-slate-800 p-1">
+                    <button
+                      type="button"
+                      onClick={() => setComboSelectionMode('distance')}
+                      className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${
+                        comboSelectionMode === 'distance'
+                          ? 'bg-indigo-600 text-white shadow'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Theo khoảng cách
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setComboSelectionMode('district')}
+                      className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${
+                        comboSelectionMode === 'district'
+                          ? 'bg-emerald-600 text-white shadow'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Theo quận mong muốn
+                    </button>
+                  </div>
+                </div>
+
+                {comboSelectionMode === 'distance' ? (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (Tính khoảng cách)</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (tính đường đi thực tế)</label>
                   <div className="flex gap-2">
                     <button
                       type="button"
@@ -1799,7 +1872,46 @@ export default function Grade10Container() {
                       </button>
                     )}
                   </div>
+                  <p className="text-[10px] text-slate-500 mt-1.5 mb-0">
+                    Hệ thống dùng Google Distance Matrix nếu có key, fallback OSRM; không dùng khoảng cách thẳng để chọn trường.
+                  </p>
                 </div>
+                ) : (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <label className="block text-xs font-semibold text-slate-400">Chọn quận/huyện muốn xét</label>
+                    <button
+                      type="button"
+                      onClick={() => setComboDistrictIds([])}
+                      className="text-[10px] font-bold text-slate-500 hover:text-slate-200"
+                    >
+                      Xóa chọn
+                    </button>
+                  </div>
+                  <div className="max-h-40 overflow-y-auto grid grid-cols-2 gap-2 rounded-xl border border-slate-800 bg-slate-950/40 p-2">
+                    {districts.map((district: any) => {
+                      const checked = comboDistrictIds.includes(district.id);
+                      return (
+                        <button
+                          key={district.id}
+                          type="button"
+                          onClick={() => toggleComboDistrict(district.id)}
+                          className={`rounded-lg border px-2 py-1.5 text-left text-[10px] font-bold transition ${
+                            checked
+                              ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200'
+                              : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-600'
+                          }`}
+                        >
+                          {checked ? '✓ ' : ''}{district.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[10px] text-slate-500 m-0">
+                    Khi chọn quận, hệ thống chỉ xét các trường thuộc các quận này và bỏ hoàn toàn điểm thưởng khoảng cách.
+                  </p>
+                </div>
+                )}
 
                 <button
                   onClick={handleGetCombo}
@@ -1830,6 +1942,11 @@ export default function Grade10Container() {
                     <div>
                       Điểm thi dự kiến: <strong className="text-indigo-400 text-sm">{comboResult.minScore}đ - {comboResult.maxScore}đ</strong>
                       <span className="text-slate-500 ml-2">(Trung bình xét: {comboResult.avgScore}đ)</span>
+                      <span className="ml-0 mt-1 block text-[10px] text-slate-500 sm:ml-2 sm:inline">
+                        {comboResult.selectionMode === 'district'
+                          ? `Chỉ xét ${comboResult.filterSummary?.selectedDistrictCount || 0} quận/huyện đã chọn`
+                          : `Xét theo đường đi thực tế (${comboResult.filterSummary?.distanceSource || 'routing'})`}
+                      </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 md:gap-3">
                       {comboResult.ssf !== undefined && comboResult.ssf !== 0 && (
@@ -1899,7 +2016,7 @@ export default function Grade10Container() {
                   </div>
 
                   {/* Auto-relaxed warning */}
-                  {comboResult.adjusted && (
+                  {comboResult.selectionMode === 'distance' && comboResult.adjusted && (
                     <div className="bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-xl text-xs text-amber-500 font-semibold leading-relaxed">
                       ⚠️ <strong>Lưu ý:</strong> Do trong vòng {maxCommuteDistance} km không tìm đủ trường phù hợp để xếp combo, chúng tôi đã tự động nới rộng giới hạn khoảng cách lên <strong>{comboResult.maxCommuteDistance} km</strong>.
                     </div>
@@ -1908,8 +2025,8 @@ export default function Grade10Container() {
                   {/* Dynamic Explanation Card */}
                   {comboResult.explanations && comboResult.explanations[selectedStrategy] && (
                     <div className="grade10-expert-analysis bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-2xl text-xs text-indigo-200 leading-relaxed shadow-lg flex flex-col gap-2">
-                      <span className="grade10-expert-analysis-title font-bold uppercase tracking-wider text-[10px] text-indigo-400">Phân tích chiến thuật của chuyên gia AI:</span>
-                      <p className="m-0 italic">{comboResult.explanations[selectedStrategy]}</p>
+                      <span className="grade10-expert-analysis-title font-bold uppercase tracking-wider text-[10px] text-indigo-400">💡 Phân tích chiến thuật của chuyên gia AI:</span>
+                      <p className="m-0">{comboResult.explanations[selectedStrategy]}</p>
                     </div>
                   )}
 
@@ -1929,40 +2046,47 @@ export default function Grade10Container() {
                         <div
                           key={school.schoolId}
                           onClick={() => openSchoolDetail(school.schoolId)}
-                          className={`bg-slate-900/60 border hover:border-indigo-500/40 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer transition ${
+                          className={`bg-slate-900/60 border hover:border-indigo-500/40 rounded-xl p-3.5 flex items-start justify-between gap-3 cursor-pointer transition ${
                             isTooFar ? 'border-amber-500/10' : 'border-slate-800'
                           }`}
                         >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                               <span className={`text-[11px] font-black px-2 py-0.5 rounded border ${
                                 nvNum === 1 ? 'bg-indigo-600/15 border-indigo-500/30 text-indigo-400' :
                                 nvNum === 2 ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
                               }`}>
-                                NGUYỆN VỌNG {nvNum}
+                                NV{nvNum}
                               </span>
 
-                              <span className="text-xs text-slate-500">
+                              <span className="text-[10px] text-slate-500">
                                 {school.districtName}
                               </span>
                             </div>
 
-                            <h3 className="text-base font-extrabold text-white mb-2">{school.schoolName}</h3>
+                            <h3 className="text-sm font-extrabold text-white mb-2 truncate">{school.schoolName}</h3>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] text-slate-400">
-                              <div>Điểm chuẩn NV{nvNum}: <span className="font-semibold text-slate-200">{cutoff || 'Không tuyển'}đ</span></div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 text-[10px] text-slate-400">
+                              <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1">
+                                <span className="block">Điểm NV{nvNum}</span>
+                                <span className="font-bold text-slate-100">{cutoff || 'Không tuyển'}đ</span>
+                              </div>
                               {nvNum > 1 && school[`nv${nvNum}Gap`] !== null && (
-                                <div>Chênh lệch NV{nvNum}: <span className="font-semibold text-amber-500">+{school[`nv${nvNum}Gap`]}đ</span></div>
+                                <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1">
+                                  <span className="block">Lệch NV{nvNum}</span>
+                                  <span className="font-bold text-amber-400">+{school[`nv${nvNum}Gap`]}đ</span>
+                                </div>
                               )}
-                              {school.distance !== null && (
-                                <div className={`flex items-center gap-1 ${isTooFar ? 'text-amber-500 font-medium' : ''}`}>
-                                  <span>Khoảng cách:</span>
-                                  <span>{school.roadDistance || school.distance} km {isTooFar && '⚠️'}</span>
+                              {school.roadDistance !== null && school.roadDistance !== undefined && (
+                                <div className={`rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1 ${isTooFar ? 'text-amber-400 font-medium' : ''}`}>
+                                  <span className="block">Đường đi</span>
+                                  <span className="font-bold">{school.roadDistance} km{school.roadDuration ? ` · ${school.roadDuration}p` : ''}</span>
                                 </div>
                               )}
                               {school.commuteBonus > 0 && (
-                                <div className="text-emerald-400 font-semibold">
-                                  Điểm thưởng cự ly: +{school.commuteBonus}đ
+                                <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 text-emerald-300">
+                                  <span className="block">Cự ly bonus</span>
+                                  <span className="font-bold">+{school.commuteBonus}đ</span>
                                 </div>
                               )}
                             </div>
@@ -1977,8 +2101,8 @@ export default function Grade10Container() {
                           </div>
 
                           {/* Pass probability for this NV */}
-                          <div className="md:w-36 shrink-0 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-4">
-                            <div className="text-xs text-slate-400 mb-0.5">Xác suất đỗ NV{nvNum}</div>
+                          <div className="w-20 shrink-0 flex flex-col items-center justify-center rounded-xl border border-slate-800 bg-slate-950/45 px-2 py-2">
+                            <div className="text-[9px] text-slate-500 mb-0.5">Đỗ NV{nvNum}</div>
                             <div className={`text-2xl font-black ${
                               probColor === 'emerald' ? 'text-emerald-400' :
                               probColor === 'blue' ? 'text-blue-400' :

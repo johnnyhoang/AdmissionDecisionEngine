@@ -73,4 +73,13 @@ export class GetComboRecommendationDto {
   @IsNumber()
   @IsOptional()
   maxCommuteDistance?: number;
+
+  @IsString()
+  @IsOptional()
+  selectionMode?: 'distance' | 'district';
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  preferredDistricts?: string[];
 }

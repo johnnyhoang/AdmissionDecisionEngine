@@ -88,6 +88,10 @@ export class Grade10LocationService {
     return 'https://maps.googleapis.com/maps/api';
   }
 
+  hasGoogleRouting(): boolean {
+    return Boolean(this.googleMapsApiKey);
+  }
+
   private buildQuery(parts: Array<string | undefined | null>) {
     return parts.filter((part) => part && part.trim()).join(', ');
   }
@@ -267,6 +271,29 @@ export class Grade10LocationService {
     return resolved;
   }
 
+  async searchLocations(query: string, limit = 5): Promise<GeoPoint[]> {
+    const cleanQuery = query.trim();
+    if (!cleanQuery) return [];
+
+    const normalizedQuery = this.buildQuery([
+      cleanQuery,
+      cleanQuery.toLowerCase().includes('hcm') ||
+      cleanQuery.toLowerCase().includes('hồ chí minh')
+        ? null
+        : 'Hồ Chí Minh',
+      'Việt Nam',
+    ]);
+    const maxResults = Math.min(Math.max(Number(limit) || 5, 1), 8);
+
+    const googleResults = await this.searchGoogleGeocode(
+      normalizedQuery,
+      maxResults,
+    );
+    if (googleResults.length > 0) return googleResults;
+
+    return this.searchNominatimGeocode(normalizedQuery, maxResults);
+  }
+
   private async tryGoogleGeocode(query: string): Promise<GeoPoint | null> {
     if (!this.googleMapsApiKey) return null;
 
@@ -295,6 +322,44 @@ export class Grade10LocationService {
     }
   }
 
+  private async searchGoogleGeocode(
+    query: string,
+    limit: number,
+  ): Promise<GeoPoint[]> {
+    if (!this.googleMapsApiKey) return [];
+
+    try {
+      const url = new URL(`${this.googleMapsBase}/geocode/json`);
+      url.searchParams.set('address', query);
+      url.searchParams.set('components', 'country:VN');
+      url.searchParams.set('key', this.googleMapsApiKey);
+      const data = await this.fetchJson(url.toString());
+      const results = Array.isArray(data?.results) ? data.results : [];
+
+      return results
+        .slice(0, limit)
+        .map((result: any) => {
+          const latitude = Number(result?.geometry?.location?.lat);
+          const longitude = Number(result?.geometry?.location?.lng);
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+            return null;
+          }
+
+          return {
+            latitude,
+            longitude,
+            formattedAddress: result.formatted_address || query,
+            mapUrl: this.buildMapsUrl(`${latitude},${longitude}`),
+            source: 'google' as const,
+            precision: 'exact' as const,
+          };
+        })
+        .filter(Boolean) as GeoPoint[];
+    } catch {
+      return [];
+    }
+  }
+
   private async tryNominatimGeocode(query: string): Promise<GeoPoint | null> {
     try {
       const url = new URL('https://nominatim.openstreetmap.org/search');
@@ -319,6 +384,43 @@ export class Grade10LocationService {
       };
     } catch {
       return null;
+    }
+  }
+
+  private async searchNominatimGeocode(
+    query: string,
+    limit: number,
+  ): Promise<GeoPoint[]> {
+    try {
+      const url = new URL('https://nominatim.openstreetmap.org/search');
+      url.searchParams.set('q', query);
+      url.searchParams.set('format', 'json');
+      url.searchParams.set('countrycodes', 'vn');
+      url.searchParams.set('limit', String(limit));
+      url.searchParams.set('addressdetails', '1');
+      const data = await this.fetchJson(url.toString());
+      const results = Array.isArray(data) ? data : [];
+
+      return results
+        .map((result: any) => {
+          const latitude = Number(result.lat);
+          const longitude = Number(result.lon);
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+            return null;
+          }
+
+          return {
+            latitude,
+            longitude,
+            formattedAddress: result.display_name || query,
+            mapUrl: this.buildMapsUrl(`${latitude},${longitude}`),
+            source: 'nominatim' as const,
+            precision: 'exact' as const,
+          };
+        })
+        .filter(Boolean) as GeoPoint[];
+    } catch {
+      return [];
     }
   }
 
