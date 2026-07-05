@@ -59,7 +59,7 @@ export default function AdminHub() {
         title="Admin Control Panel"
         subtitle="Cổng quản trị hệ thống Admission Decision Engine"
         links={[
-          { label: '🎓 Cổng Đại Học', href: '/' },
+          { label: '🎓 Cổng Đại Học', href: '/university' },
           { label: '🏫 Cổng Lớp 10', href: '/l10hcm', tone: 'emerald' },
         ]}
       />

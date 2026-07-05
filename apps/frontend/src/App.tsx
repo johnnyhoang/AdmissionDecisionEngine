@@ -451,7 +451,7 @@ function MainApp() {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-rose-500">Access Denied</h1>
             <p className="text-xs text-slate-400 mt-2">Bạn không có quyền truy cập dữ liệu Lớp 10.</p>
-            <a href="/" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Về Trang Chủ Đại Học</a>
+            <a href="/university" className="mt-4 inline-block px-4 py-2 bg-indigo-600 rounded-lg text-xs font-bold text-white">Về Trang Chủ Đại Học</a>
           </div>
         </div>
       );
@@ -459,7 +459,7 @@ function MainApp() {
     const grade10HeaderLinks: HeaderLink[] = [
       ...(user.role === 'ADMIN' ? [{ label: 'Phân Quyền', href: '/admin/permissions' }] : []),
       ...(hasPermission('GRADE10', 'edit_data', 'view') ? [{ label: 'Admin Lớp 10', href: '/admin/l10hcm' }] : []),
-      ...(hasPermission('UNIVERSITY', 'view_universities', 'view') ? [{ label: '🎓 Cổng Đại Học', href: '/', tone: 'indigo' as const }] : []),
+      ...(hasPermission('UNIVERSITY', 'view_universities', 'view') ? [{ label: '🎓 Cổng Đại Học', href: '/university', tone: 'indigo' as const }] : []),
     ];
 
     return (
@@ -498,7 +498,7 @@ function MainApp() {
     const adminHeaderLinks: HeaderLink[] = [
       ...(user.role === 'ADMIN' ? [{ label: 'Phân Quyền', href: '/admin/permissions' }] : []),
       { label: `📥 Đồng bộ & Nhập (${importPresets.length})`, onClick: () => setAdminTab('imports'), tone: 'indigo' as const },
-      { label: 'Cổng Thí Sinh', href: '/' },
+      { label: 'Cổng Thí Sinh', href: '/university' },
     ];
 
     return (
