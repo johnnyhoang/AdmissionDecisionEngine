@@ -3,7 +3,11 @@ import { Grade10School } from '../entities/school.entity';
 import { Grade10Quota } from '../entities/quota.entity';
 import { Grade10Cutoff } from '../entities/cutoff.entity';
 
-export function cleanCoreSchoolName(name: string): { type: string; coreName: string; fullName: string } {
+export function cleanCoreSchoolName(name: string): {
+  type: string;
+  coreName: string;
+  fullName: string;
+} {
   let type = 'THPT'; // default
   let clean = name.trim();
 
@@ -16,12 +20,18 @@ export function cleanCoreSchoolName(name: string): { type: string; coreName: str
 
   // Remove prefixes
   clean = clean
-    .replace(/^(Trường\s+)?(Trung\s*học\s*Phổ\s*thông|Trung\s*học\s*Cơ\s*sở|THPT|THCS|PTTH|Trường)\s+/gi, '')
+    .replace(
+      /^(Trường\s+)?(Trung\s*học\s*Phổ\s*thông|Trung\s*học\s*Cơ\s*sở|THPT|THCS|PTTH|Trường)\s+/gi,
+      '',
+    )
     .trim();
 
   // Step 1: Remove well-known ASCII district qualifiers in parentheses/after dash
   clean = clean
-    .replace(/\s*[\(\-–—]\s*(Q\d+|Q\.\s*\d+|Quận\s*\d+|TB|cơ sở \d+|phân hiệu \d+)\s*[\)]?/gi, '')
+    .replace(
+      /\s*[\(\-–—]\s*(Q\d+|Q\.\s*\d+|Quận\s*\d+|TB|cơ sở \d+|phân hiệu \d+)\s*[\)]?/gi,
+      '',
+    )
     .replace(/\s+(Q\d+|Q\.\d+|Quận\s+\d+|TB)$/gi, '')
     .trim();
 
@@ -32,16 +42,19 @@ export function cleanCoreSchoolName(name: string): { type: string; coreName: str
 
   // Step 3: Remove trailing "- SomeText" or "– SomeText" when the text is short
   // (≤ 20 chars) and doesn't contain keywords that are part of a real school name.
-  clean = clean.replace(/\s*[–—-]\s*(.{1,20})\s*$/, (match, p1) => {
-    const stripped = p1.trim();
-    if (/\b(trường|lớp|chuyên|chất lượng|cao|quốc|tế)\b/i.test(stripped)) return match;
-    return '';
-  }).trim();
+  clean = clean
+    .replace(/\s*[–—-]\s*(.{1,20})\s*$/, (match, p1) => {
+      const stripped = p1.trim();
+      if (/\b(trường|lớp|chuyên|chất lượng|cao|quốc|tế)\b/i.test(stripped))
+        return match;
+      return '';
+    })
+    .trim();
 
   // Capitalize words
   const coreName = clean
     .split(/\s+/)
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 
   const fullName = `${type} ${coreName}`;
@@ -51,12 +64,12 @@ export function cleanCoreSchoolName(name: string): { type: string; coreName: str
 export async function deduplicateSchoolsHelper(
   schoolRepo: Repository<Grade10School>,
   quotaRepo: Repository<Grade10Quota>,
-  cutoffRepo: Repository<Grade10Cutoff>
+  cutoffRepo: Repository<Grade10Cutoff>,
 ) {
   console.log('Running Grade 10 HCM School Deduplication & Merge...');
   try {
     const schools = await schoolRepo.find();
-    
+
     // Group schools by normalized name
     const groups: Record<string, Grade10School[]> = {};
     for (const school of schools) {
@@ -68,7 +81,10 @@ export async function deduplicateSchoolsHelper(
     }
 
     // Helper to merge cutoff scores (taking max of valid <= 30)
-    const mergeScore = (s1: number | null, s2: number | null): number | null => {
+    const mergeScore = (
+      s1: number | null,
+      s2: number | null,
+    ): number | null => {
       const v1 = s1 !== null && s1 !== undefined ? Number(s1) : null;
       const v2 = s2 !== null && s2 !== undefined ? Number(s2) : null;
       const isV1Valid = v1 !== null && v1 <= 30 && v1 > 0;
@@ -93,7 +109,9 @@ export async function deduplicateSchoolsHelper(
         // Even if there is only 1 school in the group, we want to normalize its name to the standard fullName format
         const school = group[0];
         if (school && school.name !== fullName) {
-          console.log(`Normalizing name of school ${school.name} -> ${fullName}`);
+          console.log(
+            `Normalizing name of school ${school.name} -> ${fullName}`,
+          );
           school.name = fullName;
           await schoolRepo.save(school);
         }
@@ -110,8 +128,10 @@ export async function deduplicateSchoolsHelper(
       const keepSchool = group[0];
       const duplicates = group.slice(1);
 
-      console.log(`Merging duplicates for school ${keepSchool.name} (keeping ID: ${keepSchool.id})...`);
-      
+      console.log(
+        `Merging duplicates for school ${keepSchool.name} (keeping ID: ${keepSchool.id})...`,
+      );
+
       // Update keepSchool's name to the normalized name
       if (keepSchool.name !== fullName) {
         keepSchool.name = fullName;
@@ -119,19 +139,30 @@ export async function deduplicateSchoolsHelper(
       }
 
       for (const dup of duplicates) {
-        console.log(`- Merging duplicate school: ${dup.name} (ID: ${dup.id}) into ${keepSchool.name}...`);
+        console.log(
+          `- Merging duplicate school: ${dup.name} (ID: ${dup.id}) into ${keepSchool.name}...`,
+        );
 
         // 1. Merge Quotas
         const dupQuotas = await quotaRepo.find({ where: { schoolId: dup.id } });
         for (const qDup of dupQuotas) {
           const qKeep = await quotaRepo.findOne({
-            where: { schoolId: keepSchool.id, year: qDup.year, programType: qDup.programType }
+            where: {
+              schoolId: keepSchool.id,
+              year: qDup.year,
+              programType: qDup.programType,
+            },
           });
           if (qKeep) {
             qKeep.quota = Math.max(qKeep.quota || 0, qDup.quota || 0);
-            qKeep.registeredCount = Math.max(qKeep.registeredCount || 0, qDup.registeredCount || 0);
+            qKeep.registeredCount = Math.max(
+              qKeep.registeredCount || 0,
+              qDup.registeredCount || 0,
+            );
             if (qKeep.quota > 0) {
-              qKeep.competitionRatio = Number((qKeep.registeredCount / qKeep.quota).toFixed(2));
+              qKeep.competitionRatio = Number(
+                (qKeep.registeredCount / qKeep.quota).toFixed(2),
+              );
             }
             await quotaRepo.save(qKeep);
             await quotaRepo.remove(qDup);
@@ -142,17 +173,29 @@ export async function deduplicateSchoolsHelper(
         }
 
         // 2. Merge Cutoffs
-        const dupCutoffs = await cutoffRepo.find({ where: { schoolId: dup.id } });
+        const dupCutoffs = await cutoffRepo.find({
+          where: { schoolId: dup.id },
+        });
         for (const cDup of dupCutoffs) {
           const cKeep = await cutoffRepo.findOne({
-            where: { schoolId: keepSchool.id, year: cDup.year, programType: cDup.programType }
+            where: {
+              schoolId: keepSchool.id,
+              year: cDup.year,
+              programType: cDup.programType,
+            },
           });
           if (cKeep) {
-            cKeep.cutoffNV1 = mergeScore(cKeep.cutoffNV1, cDup.cutoffNV1) || sanitizeScore(cKeep.cutoffNV1) || sanitizeScore(cDup.cutoffNV1) || 0;
+            cKeep.cutoffNV1 =
+              mergeScore(cKeep.cutoffNV1, cDup.cutoffNV1) ||
+              sanitizeScore(cKeep.cutoffNV1) ||
+              sanitizeScore(cDup.cutoffNV1) ||
+              0;
             cKeep.cutoffNV2 = mergeScore(cKeep.cutoffNV2, cDup.cutoffNV2);
             cKeep.cutoffNV3 = mergeScore(cKeep.cutoffNV3, cDup.cutoffNV3);
-            cKeep.lowestScore = mergeScore(cKeep.lowestScore, cDup.lowestScore) || 0;
-            cKeep.highestScore = mergeScore(cKeep.highestScore, cDup.highestScore) || 0;
+            cKeep.lowestScore =
+              mergeScore(cKeep.lowestScore, cDup.lowestScore) || 0;
+            cKeep.highestScore =
+              mergeScore(cKeep.highestScore, cDup.highestScore) || 0;
             await cutoffRepo.save(cKeep);
             await cutoffRepo.remove(cDup);
           } else {

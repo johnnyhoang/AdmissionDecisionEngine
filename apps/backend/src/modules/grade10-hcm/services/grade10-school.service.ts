@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, OnApplicationBootstrap } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  OnApplicationBootstrap,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import * as fs from 'fs';
@@ -22,6 +26,9 @@ const DATA_COMPLETENESS_PROFILE_FIELDS = [
   'address',
   'website',
   'description',
+  'comments',
+  'activities',
+  'regulations',
   'mapUrl',
   'latitude',
   'longitude',
@@ -57,7 +64,11 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     await deduplicateDistrictsHelper(this.schoolRepo, this.districtRepo);
-    await deduplicateSchoolsHelper(this.schoolRepo, this.quotaRepo, this.cutoffRepo);
+    await deduplicateSchoolsHelper(
+      this.schoolRepo,
+      this.quotaRepo,
+      this.cutoffRepo,
+    );
   }
 
   async findAll(filters: {
@@ -311,9 +322,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       })
       .filter(Boolean) as any[];
 
-    const filtered = typeof filters.maxDistanceKm === 'number'
-      ? items.filter((item) => item.roadDistanceKm <= filters.maxDistanceKm!)
-      : items;
+    const filtered =
+      typeof filters.maxDistanceKm === 'number'
+        ? items.filter((item) => item.roadDistanceKm <= filters.maxDistanceKm!)
+        : items;
 
     filtered.sort((a, b) => a.roadDistanceKm - b.roadDistanceKm);
 
@@ -337,7 +349,8 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       longitude: dto.longitude ?? resolvedLocation.longitude,
       mapUrl: dto.mapUrl ?? resolvedLocation.mapUrl ?? null,
     });
-    return this.schoolRepo.save(school);
+    const saved = await this.schoolRepo.save(school);
+    return this.buildSchoolDetailPayload(saved.id);
   }
 
   async updateSchool(id: string, dto: UpdateSchoolDto) {
@@ -373,16 +386,20 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       for (const cutoff of cutoffs) {
         const year = Number(cutoff?.year);
         const nv1 = cutoff?.cutoffNV1;
-        if (!year || (nv1 === null || nv1 === undefined || nv1 === '')) continue;
+        if (!year || nv1 === null || nv1 === undefined || nv1 === '') continue;
         const programType = cutoff.programType || 'REGULAR';
         const values = {
           cutoffNV1: Number(nv1),
           cutoffNV2:
-            cutoff.cutoffNV2 !== null && cutoff.cutoffNV2 !== undefined && cutoff.cutoffNV2 !== ''
+            cutoff.cutoffNV2 !== null &&
+            cutoff.cutoffNV2 !== undefined &&
+            cutoff.cutoffNV2 !== ''
               ? Number(cutoff.cutoffNV2)
               : null,
           cutoffNV3:
-            cutoff.cutoffNV3 !== null && cutoff.cutoffNV3 !== undefined && cutoff.cutoffNV3 !== ''
+            cutoff.cutoffNV3 !== null &&
+            cutoff.cutoffNV3 !== undefined &&
+            cutoff.cutoffNV3 !== ''
               ? Number(cutoff.cutoffNV3)
               : null,
         };
@@ -394,7 +411,12 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
           await this.cutoffRepo.save(existing);
         } else {
           await this.cutoffRepo.save(
-            this.cutoffRepo.create({ schoolId: id, year, programType, ...values }),
+            this.cutoffRepo.create({
+              schoolId: id,
+              year,
+              programType,
+              ...values,
+            }),
           );
         }
       }
@@ -423,13 +445,18 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
           await this.quotaRepo.save(existing);
         } else {
           await this.quotaRepo.save(
-            this.quotaRepo.create({ schoolId: id, year, programType, ...values }),
+            this.quotaRepo.create({
+              schoolId: id,
+              year,
+              programType,
+              ...values,
+            }),
           );
         }
       }
     }
 
-    return saved;
+    return this.buildSchoolDetailPayload(saved.id);
   }
 
   async deleteSchool(id: string) {
@@ -486,14 +513,20 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
 
       for (const year of years) {
         const quota = quotasByKey.get(`${school.id}:${year}`);
-        if (this.hasPositiveCompletenessNumber(quota?.quota)) completedFields += 1;
-        if (this.hasPositiveCompletenessNumber(quota?.registeredCount)) completedFields += 1;
-        if (this.hasPositiveCompletenessNumber(quota?.competitionRatio)) completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(quota?.quota))
+          completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(quota?.registeredCount))
+          completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(quota?.competitionRatio))
+          completedFields += 1;
 
         const cutoff = cutoffsByKey.get(`${school.id}:${year}`);
-        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV1)) completedFields += 1;
-        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV2)) completedFields += 1;
-        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV3)) completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV1))
+          completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV2))
+          completedFields += 1;
+        if (this.hasPositiveCompletenessNumber(cutoff?.cutoffNV3))
+          completedFields += 1;
       }
 
       result.set(school.id, {
@@ -549,6 +582,47 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     }
 
     return result;
+  }
+
+  private async buildSchoolDetailPayload(id: string) {
+    const school = await this.schoolRepo.findOne({
+      where: { id },
+      relations: { district: true },
+    });
+    if (!school) {
+      throw new NotFoundException('Không tìm thấy trường THPT');
+    }
+
+    const [cutoffs, quotas, completeness] = await Promise.all([
+      this.cutoffRepo.find({
+        where: { schoolId: id },
+        order: { year: 'DESC' },
+      }),
+      this.quotaRepo.find({
+        where: { schoolId: id },
+        order: { year: 'DESC' },
+      }),
+      this.calculateDataCompleteness([school]),
+    ]);
+
+    const latestCutoff = cutoffs[0] || null;
+    const latestQuota = (await this.getLatestQuotaSummaries([id])).get(id);
+    const dataCompleteness = completeness.get(id);
+
+    return {
+      ...school,
+      cutoffScores: cutoffs,
+      quotaHistory: quotas,
+      latestCutoffNV1: latestCutoff ? Number(latestCutoff.cutoffNV1) : null,
+      latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
+      latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
+      latestYear: latestCutoff ? latestCutoff.year : null,
+      latestQuota: latestQuota?.latestQuota ?? null,
+      latestRegisteredCount: latestQuota?.latestRegisteredCount ?? null,
+      latestCompetitionRatio: latestQuota?.latestCompetitionRatio ?? null,
+      latestQuotaYear: latestQuota?.latestQuotaYear ?? null,
+      ...(dataCompleteness ? { dataCompleteness } : {}),
+    };
   }
 
   private hasCompletenessValue(value: unknown): boolean {

@@ -29,7 +29,9 @@ export class Grade10LocationController {
 
   @Post('geocode')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Resolve an address or school location to coordinates' })
+  @ApiOperation({
+    summary: 'Resolve an address or school location to coordinates',
+  })
   @RequirePermission('GRADE10', 'view_dashboard', 'view')
   async geocode(@Body() body: LocationInput) {
     return this.locationService.geocodeLocation(body);
@@ -45,7 +47,9 @@ export class Grade10LocationController {
 
   @Post('reverse-geocode')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Resolve coordinates back to a human-readable address' })
+  @ApiOperation({
+    summary: 'Resolve coordinates back to a human-readable address',
+  })
   @RequirePermission('GRADE10', 'view_dashboard', 'view')
   async reverseGeocode(@Body() body: { latitude: number; longitude: number }) {
     return this.locationService.reverseGeocode(body.latitude, body.longitude);
@@ -53,7 +57,9 @@ export class Grade10LocationController {
 
   @Post('nearby-schools')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Find nearby Grade 10 schools and return route-aware distance' })
+  @ApiOperation({
+    summary: 'Find nearby Grade 10 schools and return route-aware distance',
+  })
   @RequirePermission('GRADE10', 'view_dashboard', 'view')
   async nearbySchools(
     @Body()
@@ -80,7 +86,9 @@ export class Grade10LocationController {
 
   @Post('travel-points')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Resolve a batch of destination points and return road distance' })
+  @ApiOperation({
+    summary: 'Resolve a batch of destination points and return road distance',
+  })
   @RequirePermission('GRADE10', 'view_recommendation', 'view')
   async travelPoints(
     @Body()

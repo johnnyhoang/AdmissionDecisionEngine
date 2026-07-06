@@ -366,7 +366,8 @@ export class Grade10CalcService {
       Number(dto.priority || 0) +
       Number(dto.bonus || 0);
     const avgScore = (minScore + maxScore) / 2;
-    const selectionMode = dto.selectionMode === 'district' ? 'district' : 'distance';
+    const selectionMode =
+      dto.selectionMode === 'district' ? 'district' : 'distance';
 
     const config = this.getMacroConfig();
     const ssf = config.ssf || 0;
@@ -497,7 +498,8 @@ export class Grade10CalcService {
         routed
       ) {
         distance = routed.straightDistanceKm ?? null;
-        roadDistance = routed.roadDistanceKm ?? routed.straightDistanceKm ?? null;
+        roadDistance =
+          routed.roadDistanceKm ?? routed.straightDistanceKm ?? null;
         roadDuration = routed.roadDurationMin ?? null;
         distanceSource = routed.distanceSource ?? null;
 
@@ -556,7 +558,8 @@ export class Grade10CalcService {
         probNV2,
         probNV3,
         distance: distance ? parseFloat(distance.toFixed(2)) : null,
-        roadDistance: roadDistance != null ? Number(roadDistance.toFixed(2)) : null,
+        roadDistance:
+          roadDistance != null ? Number(roadDistance.toFixed(2)) : null,
         roadDuration,
         distanceSource,
         commuteBonus,

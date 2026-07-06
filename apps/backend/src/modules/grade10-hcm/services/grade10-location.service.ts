@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-type GeoSource = 'google' | 'nominatim' | 'map-url' | 'district-center' | 'fallback';
+type GeoSource =
+  'google' | 'nominatim' | 'map-url' | 'district-center' | 'fallback';
 
 export interface GeoPoint {
   latitude: number;
@@ -69,7 +70,10 @@ const DISTRICT_COORDS: Record<string, { lat: number; lng: number }> = {
 @Injectable()
 export class Grade10LocationService {
   private readonly geocodeCache = new Map<string, GeoPoint | null>();
-  private readonly routeCache = new Map<string, { distanceKm: number; durationMin: number } | null>();
+  private readonly routeCache = new Map<
+    string,
+    { distanceKm: number; durationMin: number } | null
+  >();
 
   private get googleMapsApiKey(): string {
     return (
@@ -124,12 +128,7 @@ export class Grade10LocationService {
     return null;
   }
 
-  private haversineKm(
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number,
-  ) {
+  private haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
     const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -153,7 +152,10 @@ export class Grade10LocationService {
       key?.toLowerCase().includes(name.toLowerCase()),
     );
     if (compactKey) {
-      return { ...DISTRICT_COORDS[compactKey], source: 'district-center' as const };
+      return {
+        ...DISTRICT_COORDS[compactKey],
+        source: 'district-center' as const,
+      };
     }
 
     return { lat: 10.7769, lng: 106.7009, source: 'fallback' as const };
@@ -206,9 +208,7 @@ export class Grade10LocationService {
         ]),
         mapUrl:
           input.mapUrl ||
-          this.buildMapsUrl(
-            `${input.latitude},${input.longitude}`,
-          ),
+          this.buildMapsUrl(`${input.latitude},${input.longitude}`),
         source: 'map-url',
         precision: 'exact',
       };
@@ -227,7 +227,9 @@ export class Grade10LocationService {
           input.districtName,
           'Hồ Chí Minh',
         ]),
-        mapUrl: input.mapUrl || this.buildMapsUrl(`${parsed.latitude},${parsed.longitude}`),
+        mapUrl:
+          input.mapUrl ||
+          this.buildMapsUrl(`${parsed.latitude},${parsed.longitude}`),
         source: 'map-url',
         precision: 'exact',
       };
@@ -257,12 +259,16 @@ export class Grade10LocationService {
       }
     }
 
-    const fallbackPoint = this.districtFallback(input.districtName || input.address);
+    const fallbackPoint = this.districtFallback(
+      input.districtName || input.address,
+    );
     const resolved: GeoPoint = {
       latitude: fallbackPoint.lat,
       longitude: fallbackPoint.lng,
       formattedAddress: query || input.name || input.address || null,
-      mapUrl: this.buildMapsUrl(query || `${fallbackPoint.lat},${fallbackPoint.lng}`),
+      mapUrl: this.buildMapsUrl(
+        query || `${fallbackPoint.lat},${fallbackPoint.lng}`,
+      ),
       source: fallbackPoint.source,
       precision: 'approximate',
     };
@@ -556,8 +562,7 @@ export class Grade10LocationService {
   ) {
     const cleanDestinations = destinations.filter(
       (item) =>
-        typeof item.latitude === 'number' &&
-        typeof item.longitude === 'number',
+        typeof item.latitude === 'number' && typeof item.longitude === 'number',
     );
 
     if (cleanDestinations.length === 0) return [];
@@ -652,7 +657,10 @@ export class Grade10LocationService {
           straightDistanceKm: Number(straightDistanceKm.toFixed(2)),
           roadDistanceKm: null as number | null,
           roadDurationMin: null as number | null,
-          distanceSource: resolved.source === 'district-center' ? 'district-center' : 'haversine',
+          distanceSource:
+            resolved.source === 'district-center'
+              ? 'district-center'
+              : 'haversine',
         } satisfies TravelResult;
       }),
     );
@@ -683,7 +691,10 @@ export class Grade10LocationService {
     })) as TravelResult[];
 
     const routeMap = new Map(
-      routeResults.map((point) => [`${point.latitude},${point.longitude}`, point]),
+      routeResults.map((point) => [
+        `${point.latitude},${point.longitude}`,
+        point,
+      ]),
     );
 
     return resolvedPoints.map((point) => {

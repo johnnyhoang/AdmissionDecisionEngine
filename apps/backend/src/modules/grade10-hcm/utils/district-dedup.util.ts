@@ -4,12 +4,12 @@ import { Grade10District } from '../entities/district.entity';
 
 export async function deduplicateDistrictsHelper(
   schoolRepo: Repository<Grade10School>,
-  districtRepo: Repository<Grade10District>
+  districtRepo: Repository<Grade10District>,
 ) {
   console.log('Running Grade 10 HCM District Deduplication & Merge...');
   try {
     const districts = await districtRepo.find();
-    
+
     // Helper to normalize district name
     const normalize = (name: string): string => {
       if (!name) return '';
@@ -41,18 +41,24 @@ export async function deduplicateDistrictsHelper(
       const keepDistrict = group[0];
       const duplicates = group.slice(1);
 
-      console.log(`Merging duplicates for ${keepDistrict.name} (keeping ID: ${keepDistrict.id})...`);
+      console.log(
+        `Merging duplicates for ${keepDistrict.name} (keeping ID: ${keepDistrict.id})...`,
+      );
 
       for (const dup of duplicates) {
-        console.log(`- Merging ${dup.name} (ID: ${dup.id}) into ${keepDistrict.name}...`);
-        
+        console.log(
+          `- Merging ${dup.name} (ID: ${dup.id}) into ${keepDistrict.name}...`,
+        );
+
         // Re-link schools
         const schoolsToUpdate = await schoolRepo.find({
           where: { districtId: dup.id },
         });
-        
+
         if (schoolsToUpdate.length > 0) {
-          console.log(`  Updating ${schoolsToUpdate.length} schools linked to ${dup.name}...`);
+          console.log(
+            `  Updating ${schoolsToUpdate.length} schools linked to ${dup.name}...`,
+          );
           for (const school of schoolsToUpdate) {
             school.districtId = keepDistrict.id;
             await schoolRepo.save(school);
