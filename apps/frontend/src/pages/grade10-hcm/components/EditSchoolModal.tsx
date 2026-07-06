@@ -12,9 +12,10 @@ interface EditSchoolModalProps {
   schoolId: string;
   onSave: (id: string, data: any) => Promise<void>;
   onAiPrefill?: (schoolName: string, schoolCode: string) => void;
+  districts?: any[];
 }
 
-export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onAiPrefill }: EditSchoolModalProps) {
+export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onAiPrefill, districts = [] }: EditSchoolModalProps) {
   const [formData, setFormData] = useState<any>(null);
   const [cutoffsMap, setCutoffsMap] = useState<any>({});
   const [quotasMap, setQuotasMap] = useState<any>({});
@@ -23,6 +24,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [pendingGeocode, setPendingGeocode] = useState<G10LocationResult | null>(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
+  const [yearsList, setYearsList] = useState<number[]>([]);
 
   const RECENT_YEARS = getRecentSchoolYears();
 
@@ -76,6 +78,17 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
           };
         });
         setQuotasMap(qMap);
+
+        // Build unique years list
+        const initialYearsSet = new Set<number>([
+          ...RECENT_YEARS,
+          ...cutoffList.map((c: any) => Number(c.year)),
+          ...quotaList.map((q: any) => Number(q.year))
+        ]);
+        const sortedYears = Array.from(initialYearsSet)
+          .filter(y => !isNaN(y) && y > 2000)
+          .sort((a, b) => b - a);
+        setYearsList(sortedYears);
       } catch (e) {
         console.error(e);
       } finally {
@@ -185,6 +198,43 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
     setFormData((prev: any) => ({ ...prev, mapUrl: url }));
   };
 
+  const handleAddYear = () => {
+    const input = prompt('Nhập năm học cần bổ sung (Ví dụ: 2024, 2023):');
+    if (!input) return;
+    const year = parseInt(input.trim(), 10);
+    if (isNaN(year) || year < 2000 || year > 2100) {
+      alert('Năm học không hợp lệ. Vui lòng nhập năm từ 2000 đến 2100.');
+      return;
+    }
+
+    if (yearsList.includes(year)) {
+      const confirmOverwrite = window.confirm(
+        `Năm học ${year} đã tồn tại trong danh sách. Bạn có muốn ghi đè/nhập lại điểm mới cho năm này không?`
+      );
+      if (confirmOverwrite) {
+        setCutoffsMap((prev: any) => ({
+          ...prev,
+          [year]: { year, programType: 'REGULAR', cutoffNV1: null, cutoffNV2: null, cutoffNV3: null }
+        }));
+        setQuotasMap((prev: any) => ({
+          ...prev,
+          [year]: { year, programType: 'REGULAR', quota: 0, registeredCount: 0, competitionRatio: 0 }
+        }));
+      }
+      return;
+    }
+
+    setYearsList(prev => [...prev, year].sort((a, b) => b - a));
+    setCutoffsMap((prev: any) => ({
+      ...prev,
+      [year]: { year, programType: 'REGULAR', cutoffNV1: null, cutoffNV2: null, cutoffNV3: null }
+    }));
+    setQuotasMap((prev: any) => ({
+      ...prev,
+      [year]: { year, programType: 'REGULAR', quota: 0, registeredCount: 0, competitionRatio: 0 }
+    }));
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
@@ -253,8 +303,18 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">ID Quận/Huyện</label>
-                      <input type="text" name="districtId" value={formData.districtId} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Quận/Huyện</label>
+                      <select 
+                        name="districtId" 
+                        value={formData.districtId} 
+                        onChange={handleBasicChange} 
+                        className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white"
+                      >
+                        <option value="">-- Chọn Quận/Huyện --</option>
+                        {districts.map((d: any) => (
+                          <option key={d.id} value={d.id}>{d.name}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
@@ -350,13 +410,22 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
 
               {/* Matrix Data */}
               <div className="flex flex-col gap-4">
-                <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center gap-2">
-                  <Calculator className="w-4 h-4 text-emerald-400" /> Dữ liệu Lịch sử (3 năm gần nhất)
+                <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2">
+                    <Calculator className="w-4 h-4 text-emerald-400" /> Dữ liệu Lịch sử
+                  </span>
+                  <button 
+                    type="button" 
+                    onClick={handleAddYear} 
+                    className="px-2.5 py-1 bg-indigo-650 hover:bg-indigo-600 text-white rounded text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                  >
+                    + Thêm năm học
+                  </button>
                 </h3>
 
                 {/* Mobile: one card per school year — the wide table is unusable on phones */}
                 <div className="flex flex-col gap-3 md:hidden">
-                  {RECENT_YEARS.map(year => {
+                  {yearsList.map(year => {
                     const q = quotasMap[year] || {};
                     const c = cutoffsMap[year] || {};
                     return (
@@ -417,7 +486,7 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                       </tr>
                     </thead>
                     <tbody>
-                      {RECENT_YEARS.map(year => {
+                      {yearsList.map(year => {
                         const q = quotasMap[year] || {};
                         const c = cutoffsMap[year] || {};
                         return (

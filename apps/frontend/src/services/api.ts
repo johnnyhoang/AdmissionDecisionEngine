@@ -388,10 +388,17 @@ export const fetchG10TravelPoints = async (payload: {
   return res.json();
 };
 
-export const fetchG10Schools = async (search = '', districtId = ''): Promise<{ items: G10SchoolItem[]; total: number }> => {
+export const fetchG10Schools = async (
+  search = '', 
+  districtId = '', 
+  limit?: number, 
+  includeDataCompleteness?: boolean
+): Promise<{ items: G10SchoolItem[]; total: number }> => {
   const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`);
   if (search) url.searchParams.append('search', search);
   if (districtId) url.searchParams.append('districtId', districtId);
+  if (limit) url.searchParams.append('limit', String(limit));
+  if (includeDataCompleteness) url.searchParams.append('includeDataCompleteness', 'true');
   const res = await apiFetch(url.toString());
   if (!res.ok) throw new Error('Không thể tải danh sách trường THPT');
   return res.json();
@@ -591,6 +598,8 @@ export const importAiCutoffs = async (payload: {
   address?: string;
   website?: string;
   description?: string;
+  activities?: string;
+  regulations?: string;
   mapUrl?: string;
   latitude?: number;
   longitude?: number;

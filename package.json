@@ -9,7 +9,7 @@
     "backend": "npm --prefix apps/backend run start:dev",
     "frontend": "npm --prefix apps/frontend run dev",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "build:all": "npm run build --workspaces",
+    "build:all": "npm --prefix apps/backend run build && npm --prefix apps/frontend run build",
     "clear:build": "npm run clear:build -w backend"
   },
   "devDependencies": {

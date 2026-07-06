@@ -190,6 +190,8 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
         address: aiData.address || undefined,
         website: aiData.website || undefined,
         description: aiData.description || undefined,
+        activities: aiData.activities || undefined,
+        regulations: aiData.regulations || undefined,
         mapUrl: aiData.mapUrl || undefined,
         latitude: aiData.latitude || undefined,
         longitude: aiData.longitude || undefined,
@@ -388,7 +390,7 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
               </div>
             </div>
 
-            {type === 'GRADE10' && (aiData.address || aiData.website || aiData.description) && (
+            {type === 'GRADE10' && (aiData.address || aiData.website || aiData.description || aiData.activities || aiData.regulations) && (
               <div className="bg-slate-950/40 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2">
                 <h4 className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">Thông tin trường bổ sung tìm thấy</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-300">
@@ -411,6 +413,18 @@ export default function AiSearchModal({ isOpen, onClose, type, onImportSuccess, 
                     <div className="md:col-span-2 border-t border-slate-800/60 pt-2">
                       📝 <strong>Giới thiệu chung:</strong>
                       <p className="text-slate-400 mt-1 line-clamp-3 leading-relaxed whitespace-pre-line">{aiData.description}</p>
+                    </div>
+                  )}
+                  {aiData.activities && (
+                    <div className="md:col-span-2 border-t border-slate-800/60 pt-2">
+                      🎉 <strong>Hoạt động ngoại khóa & phong trào:</strong>
+                      <p className="text-slate-400 mt-1 line-clamp-3 leading-relaxed whitespace-pre-line">{aiData.activities}</p>
+                    </div>
+                  )}
+                  {aiData.regulations && (
+                    <div className="md:col-span-2 border-t border-slate-800/60 pt-2">
+                      ⚖️ <strong>Nội quy & quy định:</strong>
+                      <p className="text-slate-400 mt-1 line-clamp-3 leading-relaxed whitespace-pre-line">{aiData.regulations}</p>
                     </div>
                   )}
                 </div>

@@ -235,7 +235,9 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
 - competitionRatio = registeredCount / quota (nếu có hoặc tự tính)
 - address: Địa chỉ cụ thể, số nhà, tên đường, phường/xã, quận/huyện của trường
 - website: Địa chỉ website chính thức của trường THPT
-- description: Đoạn văn giới thiệu chi tiết về lịch sử thành lập, cơ sở vật chất, hoạt động phong trào và thành tích nổi bật của trường
+- description: Đoạn văn giới thiệu chi tiết về lịch sử thành lập, cơ sở vật chất và thành tích nổi bật của trường
+- activities: Các câu lạc bộ học thuật/thể thao/nghệ thuật, phong trào thanh niên, ngày hội của học sinh tại trường
+- regulations: Quy định về đồng phục, giờ giấc ra vào, quy định cấm/hạn chế sử dụng điện thoại di động trong lớp, tác phong học sinh
 - mapUrl: Đường dẫn vị trí trên Google Maps (hoặc toạ độ nếu không có link)`;
         } else {
           prompt = `Tìm kiếm chính xác điểm chuẩn tuyển sinh đại học theo phương thức thi tốt nghiệp THPT của trường "${dto.schoolQuery}" cho ngành "${dto.majorQuery}" trong 10 năm qua (từ 2016 đến 2025).`;
@@ -558,6 +560,16 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
               type: 'STRING',
               description:
                 'Bài viết giới thiệu chi tiết về lịch sử, thành tích, cơ sở vật chất của trường (dài khoảng 2-3 đoạn văn)',
+            },
+            activities: {
+              type: 'STRING',
+              description:
+                'Thông tin các hoạt động ngoại khóa, câu lạc bộ, phong trào văn nghệ thể thao của trường',
+            },
+            regulations: {
+              type: 'STRING',
+              description:
+                'Thông tin nội quy, quy định về đồng phục, tác phong học sinh, giờ giấc, sử dụng điện thoại của trường',
             },
             mapUrl: {
               type: 'STRING',
@@ -893,6 +905,8 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
           address: dto.address,
           website: dto.website,
           description: dto.description,
+          activities: dto.activities,
+          regulations: dto.regulations,
           mapUrl: dto.mapUrl,
           latitude:
             dto.latitude !== undefined && dto.latitude !== null
@@ -920,6 +934,14 @@ Giải thích các trường điểm và chỉ tiêu cần lấy:
         }
         if (dto.description && school.description !== dto.description) {
           school.description = dto.description;
+          changed = true;
+        }
+        if (dto.activities && school.activities !== dto.activities) {
+          school.activities = dto.activities;
+          changed = true;
+        }
+        if (dto.regulations && school.regulations !== dto.regulations) {
+          school.regulations = dto.regulations;
           changed = true;
         }
         if (dto.mapUrl && school.mapUrl !== dto.mapUrl) {

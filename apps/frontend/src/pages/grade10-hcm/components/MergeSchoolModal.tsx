@@ -12,13 +12,11 @@ interface MergeSchoolModalProps {
 
 const FIELDS = [
   { key: 'name', label: 'Tên trường' },
-  { key: 'code', label: 'Mã trường' },
   { key: 'address', label: 'Địa chỉ' },
   { key: 'website', label: 'Website' },
   { key: 'mapUrl', label: 'Google Maps URL' },
   { key: 'schoolType', label: 'Loại trường' },
   { key: 'description', label: 'Mô tả (Description)', isLongText: true },
-  { key: 'comments', label: 'Đánh giá/Comments', isLongText: true },
   { key: 'comments', label: 'Đánh giá/Comments', isLongText: true },
 ];
 
@@ -90,8 +88,8 @@ export default function MergeSchoolModal({ isOpen, onClose, school1, school2, on
         <div className="flex-1 overflow-y-auto p-6">
           <div className="grid grid-cols-12 gap-4 text-sm font-semibold text-slate-400 border-b border-slate-800 pb-2 mb-4">
             <div className="col-span-2">Trường dữ liệu</div>
-            <div className="col-span-3 text-indigo-300">Trường 1 (ID: {school1.id.substring(0,6)}...)</div>
-            <div className="col-span-3 text-purple-300">Trường 2 (ID: {school2.id.substring(0,6)}...)</div>
+            <div className="col-span-3 text-indigo-300">Trường chính (Giữ lại)</div>
+            <div className="col-span-3 text-purple-300">Trường phụ (Sẽ gộp & xoá)</div>
             <div className="col-span-4 text-emerald-300">Dữ liệu sau khi gộp (Sẽ lưu)</div>
           </div>
 

@@ -151,6 +151,14 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       };
     });
 
+    if (filters.includeDataCompleteness) {
+      itemsWithScores.sort((a, b) => {
+        const pctA = a.dataCompleteness?.percent ?? 0;
+        const pctB = b.dataCompleteness?.percent ?? 0;
+        return pctA - pctB;
+      });
+    }
+
     return {
       items: itemsWithScores,
       total,
@@ -889,6 +897,42 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       year: c.year,
     }));
 
+    // 11. Top Difficulty (CutoffNV1 * CompetitionRatio)
+    const topDifficultyRaw = await this.cutoffRepo
+      .createQueryBuilder('cutoff')
+      .innerJoin(
+        Grade10Quota,
+        'quota',
+        'cutoff.schoolId = quota.schoolId AND quota.year = :year AND quota.programType = :pt',
+        { year: latestYear, pt: 'REGULAR' }
+      )
+      .leftJoinAndSelect('cutoff.school', 'school')
+      .leftJoinAndSelect('school.district', 'district')
+      .where('cutoff.year = :year', { year: latestYear })
+      .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('cutoff.cutoffNV1 > 0')
+      .andWhere('quota.competitionRatio > 0')
+      .select('school.id', 'schoolId')
+      .addSelect('school.name', 'schoolName')
+      .addSelect('school.code', 'schoolCode')
+      .addSelect('district.name', 'districtName')
+      .addSelect('cutoff.cutoffNV1', 'cutoffNV1')
+      .addSelect('quota.competitionRatio', 'ratio')
+      .addSelect('(cutoff.cutoffNV1 * quota.competitionRatio)', 'difficulty')
+      .orderBy('difficulty', 'DESC')
+      .limit(10)
+      .getRawMany();
+
+    const topDifficulty = topDifficultyRaw.map((r) => ({
+      schoolId: r.schoolId,
+      schoolName: r.schoolName,
+      schoolCode: r.schoolCode,
+      districtName: r.districtName || 'N/A',
+      cutoffNV1: Number(r.cutoffNV1),
+      ratio: Number(r.ratio),
+      difficulty: Number(Number(r.difficulty).toFixed(2)),
+    }));
+
     // Average NV1 Cutoff score by district
     const districtStats = await this.cutoffRepo
       .createQueryBuilder('cutoff')
@@ -909,17 +953,13 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       schoolCount: parseInt(d.schoolCount),
     }));
 
-    // Quota and Registration trend over years
+    // Quota and Registration trend over years (All available years)
     const overallTrends = await this.quotaRepo
       .createQueryBuilder('quota')
       .select('quota.year', 'year')
       .addSelect('SUM(quota.quota)', 'totalQuota')
       .addSelect('SUM(quota.registeredCount)', 'totalRegistered')
       .where('quota.programType = :pt', { pt: 'REGULAR' })
-      .andWhere('quota.year BETWEEN :startYear AND :endYear', {
-        startYear: recentStartYear,
-        endYear: latestYear,
-      })
       .groupBy('quota.year')
       .orderBy('quota.year', 'ASC')
       .getRawMany();
@@ -946,6 +986,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       topSpecialized,
       topDecrease,
       topNV3Gap,
+      topDifficulty,
       districtAverages,
       trends,
     };

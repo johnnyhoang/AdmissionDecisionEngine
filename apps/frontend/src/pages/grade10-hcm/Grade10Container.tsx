@@ -64,6 +64,7 @@ export default function Grade10Container() {
     | 'topRegistered'
     | 'topSpecialized'
     | 'topNV3Gap'
+    | 'topDifficulty'
   >('topSchools');
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,6 +91,8 @@ export default function Grade10Container() {
   const [isLocating, setIsLocating] = useState(false);
   const [distanceSchools, setDistanceSchools] = useState<any[]>([]);
   const [isProximityFilterActive, setIsProximityFilterActive] = useState(false);
+  const [maxNearbyDistance, setMaxNearbyDistance] = useState('10');
+  const [proximityGPS, setProximityGPS] = useState<{lat: number, lon: number} | null>(null);
   // Unified home-location modal (type address / GPS / map) — the context
   // decides what happens after the user confirms a location
   const [homeLocationContext, setHomeLocationContext] = useState<'proximity' | 'combo' | null>(null);
@@ -124,13 +127,107 @@ export default function Grade10Container() {
   // ── Compare List ───────────────────────────────────────────────────────────
   const [compareList, setCompareList] = useState<G10SchoolItem[]>([]);
 
+  const loadUserProfileFromStorage = () => {
+    const key = `g10_advisory_profile_${user?.id || 'guest'}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.mathScore !== undefined) setMathScore(data.mathScore);
+        if (data.literatureScore !== undefined) setLiteratureScore(data.literatureScore);
+        if (data.englishScore !== undefined) setEnglishScore(data.englishScore);
+        if (data.priorityScore !== undefined) setPriorityScore(data.priorityScore);
+        if (data.bonusScore !== undefined) setBonusScore(data.bonusScore);
+        if (data.preferredDistricts !== undefined) setPreferredDistricts(data.preferredDistricts);
+        if (data.targetNV !== undefined) setTargetNV(data.targetNV);
+        if (data.minMath !== undefined) setMinMath(data.minMath);
+        if (data.maxMath !== undefined) setMaxMath(data.maxMath);
+        if (data.minLiterature !== undefined) setMinLiterature(data.minLiterature);
+        if (data.maxLiterature !== undefined) setMaxLiterature(data.maxLiterature);
+        if (data.minEnglish !== undefined) setMinEnglish(data.minEnglish);
+        if (data.maxEnglish !== undefined) setMaxEnglish(data.maxEnglish);
+        if (data.maxCommuteDistance !== undefined) setMaxCommuteDistance(data.maxCommuteDistance);
+        if (data.dreamSchoolCode !== undefined) setDreamSchoolCode(data.dreamSchoolCode);
+        if (data.maxNearbyDistance !== undefined) setMaxNearbyDistance(data.maxNearbyDistance);
+        
+        if (data.homeAddress) {
+          setUserAddress(data.homeAddress);
+          setComboUserAddress(data.homeAddress);
+        }
+        if (data.homeLat && data.homeLon) {
+          const gps = { lat: Number(data.homeLat), lon: Number(data.homeLon) };
+          setComboGPS(gps);
+          setProximityGPS(gps);
+          return gps;
+        }
+      } catch (e) {
+        console.error('Failed to parse saved profile:', e);
+      }
+    }
+    return null;
+  };
+
   useEffect(() => {
     loadDistricts();
+    loadUserProfileFromStorage();
     loadSchools();
     loadAnalytics();
     // Full list (limit 500) for dropdown selectors like "Trường Mơ ước"
     fetchG10AllSchools().then(setAllSchools).catch(() => {});
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    const key = `g10_advisory_profile_${user?.id || 'guest'}`;
+    const profile = {
+      mathScore,
+      literatureScore,
+      englishScore,
+      priorityScore,
+      bonusScore,
+      preferredDistricts,
+      targetNV,
+      minMath,
+      maxMath,
+      minLiterature,
+      maxLiterature,
+      minEnglish,
+      maxEnglish,
+      maxCommuteDistance,
+      dreamSchoolCode,
+      maxNearbyDistance
+    };
+    const currentSaved = localStorage.getItem(key);
+    let homeData: any = {};
+    if (currentSaved) {
+      try {
+        const parsed = JSON.parse(currentSaved);
+        homeData = {
+          homeAddress: parsed.homeAddress,
+          homeLat: parsed.homeLat,
+          homeLon: parsed.homeLon
+        };
+      } catch {}
+    }
+    localStorage.setItem(key, JSON.stringify({ ...homeData, ...profile }));
+  }, [
+    user,
+    mathScore,
+    literatureScore,
+    englishScore,
+    priorityScore,
+    bonusScore,
+    preferredDistricts,
+    targetNV,
+    minMath,
+    maxMath,
+    minLiterature,
+    maxLiterature,
+    minEnglish,
+    maxEnglish,
+    maxCommuteDistance,
+    dreamSchoolCode,
+    maxNearbyDistance
+  ]);
 
   useEffect(() => {
     applyThemeToDocument(theme);
@@ -184,8 +281,40 @@ export default function Grade10Container() {
   const loadSchools = async (search = '', distId = '') => {
     setLoading(true);
     try {
-      const data = await fetchG10Schools(search, distId);
-      setSchools(data.items);
+      const limit = user?.role === 'ADMIN' ? 500 : 150;
+      const includeCompleteness = user?.role === 'ADMIN';
+      const data = await fetchG10Schools(search, distId, limit, includeCompleteness);
+      let items = data.items || [];
+
+      // Calculate distances for all schools if GPS coordinates are saved
+      const savedGps = getSavedGPS();
+      if (savedGps) {
+        items = items.map((s: any) => {
+          if (s.latitude && s.longitude) {
+            const d = getHaversineDistance(savedGps.lat, savedGps.lon, s.latitude, s.longitude);
+            return {
+              ...s,
+              roadDistance: parseFloat(d.toFixed(2)),
+              roadDuration: Math.round(d * 3),
+            };
+          }
+          return s;
+        });
+
+        // Only sort by distance for non-admins (Admins sort by completeness)
+        if (user?.role !== 'ADMIN') {
+          items.sort((a: any, b: any) => {
+            const distA = a.roadDistance ?? 999999;
+            const distB = b.roadDistance ?? 999999;
+            return distA - distB;
+          });
+        }
+      }
+
+      setSchools(items);
+      if (search === '' && distId === '') {
+        setAllSchools(items);
+      }
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -259,13 +388,14 @@ export default function Grade10Container() {
 
 
 
-  const calculateSchoolDistances = async (userLat: number, userLon: number) => {
+  const calculateSchoolDistances = async (userLat: number, userLon: number, maxDist = maxNearbyDistance) => {
     setIsLocating(true);
     try {
       const res = await fetchNearbyG10Schools({
         userLat,
         userLon,
-        limit: 15,
+        limit: 100,
+        maxDistanceKm: parseFloat(maxDist) || undefined,
       });
       setDistanceSchools(
         (res.items || []).map((school: any) => ({
@@ -286,8 +416,8 @@ export default function Grade10Container() {
             roadDuration: Math.round(d * 3),
           };
         })
-        .sort((a, b) => a.roadDistance - b.roadDistance)
-        .slice(0, 15);
+        .filter(s => s.roadDistance <= (parseFloat(maxDist) || 10))
+        .sort((a, b) => a.roadDistance - b.roadDistance);
       setDistanceSchools(finalSchools);
     } finally {
       setIsLocating(false);
@@ -366,13 +496,46 @@ export default function Grade10Container() {
     );
   };
 
+  const saveUserProfile = (updates: any) => {
+    const key = `g10_advisory_profile_${user?.id || 'guest'}`;
+    const currentSaved = localStorage.getItem(key);
+    let currentData: any = {};
+    if (currentSaved) {
+      try { currentData = JSON.parse(currentSaved); } catch {}
+    }
+    const updatedData = { ...currentData, ...updates };
+    localStorage.setItem(key, JSON.stringify(updatedData));
+  };
+
+  const getSavedGPS = () => {
+    const key = `g10_advisory_profile_${user?.id || 'guest'}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.homeLat && data.homeLon) {
+          return { lat: Number(data.homeLat), lon: Number(data.homeLon) };
+        }
+      } catch {}
+    }
+    return comboGPS || proximityGPS;
+  };
+
   // Called when the user finishes the flow inside HomeLocationModal
   const handleHomeLocationConfirm = async ({ latitude, longitude, label }: HomeLocationPick) => {
     const context = homeLocationContext;
     setHomeLocationContext(null);
 
+    // Save location to user profile
+    saveUserProfile({
+      homeAddress: label,
+      homeLat: latitude,
+      homeLon: longitude
+    });
+
     if (context === 'proximity') {
       setUserAddress(label);
+      setProximityGPS({ lat: latitude, lon: longitude });
       setIsLocating(true);
       try {
         await calculateSchoolDistances(latitude, longitude);
@@ -383,6 +546,8 @@ export default function Grade10Container() {
     } else if (context === 'combo') {
       setComboGPS({ lat: latitude, lon: longitude });
       setComboUserAddress(label);
+      setProximityGPS({ lat: latitude, lon: longitude });
+      setUserAddress(label);
     }
   };
 
@@ -715,6 +880,7 @@ export default function Grade10Container() {
                     <option value="topRegistered">👥 Top 10 Số hồ sơ đăng ký đông</option>
                     <option value="topSpecialized">💎 Top 10 Điểm trường chuyên cao</option>
                     <option value="topNV3Gap">⚡ Top 10 Lệch NV3 - NV1 lớn nhất</option>
+                    <option value="topDifficulty">🏆 Top 10 trường khó đỗ nhất</option>
                   </select>
                 </div>
                 
@@ -744,6 +910,9 @@ export default function Grade10Container() {
                       } else if (leaderboardType === 'topNV3Gap') {
                         displayVal = `+${t.gap}đ`;
                         subVal = `(NV3: ${t.cutoffNV3}đ)`;
+                      } else if (leaderboardType === 'topDifficulty') {
+                        displayVal = `${t.difficulty}`;
+                        subVal = `(NV1: ${t.cutoffNV1}đ | chọi: ${t.ratio})`;
                       }
                       
                       return (
@@ -1270,15 +1439,37 @@ export default function Grade10Container() {
 
             {isProximityFilterActive && (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-indigo-950/20 border border-indigo-500/20 p-3 rounded-xl text-xs text-indigo-300 font-semibold shadow-md">
-                <span className="flex items-center gap-2 min-w-0">
+                <span className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
                   <MapPin className="h-4 w-4 text-indigo-400 animate-bounce shrink-0" />
-                  <span className="truncate">Lọc theo cự ly gần nhà: <strong className="text-white">{userAddress || 'GPS'}</strong> (15 trường gần nhất)</span>
+                  <span className="truncate">Lọc theo cự ly gần nhà: <strong className="text-white">{userAddress || 'GPS'}</strong></span>
+                  <span className="flex items-center gap-1 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-500/20 shrink-0">
+                    <span>Phạm vi không quá:</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={maxNearbyDistance}
+                      onChange={async (e) => {
+                        const val = e.target.value;
+                        setMaxNearbyDistance(val);
+                        // Save to profile
+                        saveUserProfile({ maxNearbyDistance: val });
+                        const gps = getSavedGPS();
+                        if (gps) {
+                          await calculateSchoolDistances(gps.lat, gps.lon, val);
+                        }
+                      }}
+                      className="w-12 bg-slate-950 border border-indigo-500/40 rounded px-1.5 py-0.5 text-center text-white text-[10px] font-bold outline-none focus:border-indigo-500"
+                    />
+                    <span>km</span>
+                  </span>
                 </span>
                 <button
                   onClick={() => {
                     setIsProximityFilterActive(false);
                     setDistanceSchools([]);
                     setUserAddress('');
+                    setProximityGPS(null);
                   }}
                   className="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-extrabold cursor-pointer transition shadow"
                 >
@@ -1748,6 +1939,7 @@ export default function Grade10Container() {
         schoolId={editingSchoolId || ''}
         onSave={handleEditSave}
         onAiPrefill={(name, code) => { setAiPrefillSchool({name, code}); setIsAiModalOpen(true); }}
+        districts={districts}
       />
       <CompareDrawer
         isOpen={isCompareOpen}

@@ -86,6 +86,14 @@ export class ImportCutoffsDto {
 
   @IsString()
   @IsOptional()
+  activities?: string;
+
+  @IsString()
+  @IsOptional()
+  regulations?: string;
+
+  @IsString()
+  @IsOptional()
   mapUrl?: string;
 
   @IsOptional()

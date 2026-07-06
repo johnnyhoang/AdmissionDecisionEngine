@@ -559,3 +559,23 @@ body.light-theme nav.bg-slate-900 {
     display: none !important;
   }
 }
+
+@media (max-width: 768px) {
+  /* Bump small text sizes up on mobile so it's easier to read */
+  .text-\[10px\] {
+    font-size: 0.75rem !important; /* 12px instead of 10px */
+  }
+  .text-\[11px\] {
+    font-size: 0.8rem !important; /* 12.8px instead of 11px */
+  }
+  .text-xs {
+    font-size: 0.875rem !important; /* 14px instead of 12px */
+  }
+  .text-sm {
+    font-size: 0.95rem !important; /* ~15px instead of 14px */
+  }
+  .text-base {
+    font-size: 1.05rem !important; /* ~16.8px instead of 16px */
+  }
+}
+
