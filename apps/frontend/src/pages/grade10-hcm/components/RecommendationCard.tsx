@@ -48,7 +48,7 @@ function RecommendationCard({ rec, onOpenSchoolDetail }: RecommendationCardProps
             <span className="font-semibold text-slate-300">{rec.cutoffNV1}đ</span>
           </div>
           <div>
-            TB 3 năm: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span>
+            TB lịch sử: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span>
           </div>
         </div>
 
@@ -84,7 +84,7 @@ function RecommendationCard({ rec, onOpenSchoolDetail }: RecommendationCardProps
             NV3: <span className="font-semibold text-slate-350">{rec.cutoffNV3 ? `${rec.cutoffNV3}đ` : '—'}</span>
           </div>
           <div>
-            TB NV1 3 năm: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span>
+            TB NV1 lịch sử: <span className="font-semibold text-indigo-400">{rec.historicalAvg}đ</span>
           </div>
         </div>
 

@@ -795,7 +795,7 @@ export default function Grade10Container() {
                 </div>
                 <div>
                   <h3 className="text-xs text-slate-400 font-semibold uppercase">Quận / Huyện Hỗ Trợ</h3>
-                  <p className="text-2xl font-black text-white m-0">{districts.length || 6}</p>
+                  <p className="text-2xl font-black text-white m-0">{districts.length === 0 ? '...' : districts.length}</p>
                 </div>
               </div>
 
@@ -822,7 +822,7 @@ export default function Grade10Container() {
                     Chào mừng bạn đến với mô-đun tư vấn và gợi ý nguyện vọng tuyển sinh Lớp 10 các trường THPT Công lập tại TP. Hồ Chí Minh.
                   </p>
                   <p>
-                    Hệ thống lưu trữ lịch sử điểm chuẩn, chỉ tiêu tuyển sinh, số lượng thí sinh đăng ký và tỉ lệ chọi 3 năm gần nhất giúp học sinh và phụ huynh đưa ra quyết định đăng ký nguyện vọng tối ưu nhất.
+                    Hệ thống lưu trữ lịch sử điểm chuẩn, chỉ tiêu tuyển sinh, số lượng thí sinh đăng ký và tỉ lệ chọi theo từng năm giúp học sinh và phụ huynh đưa ra quyết định đăng ký nguyện vọng tối ưu nhất.
                   </p>
                   <p className="bg-slate-950/45 p-3 border border-slate-800 rounded-xl">
                     💡 <strong>Mẹo nhỏ:</strong> Hãy nhập điểm thử của 3 môn (Toán, Văn, Anh) và điểm ưu tiên vào tab <strong>"Đánh giá NV lớp 10"</strong> để nhận đề xuất trường công lập phù hợp nhất dựa trên tỉ lệ đỗ lịch sử!
@@ -835,7 +835,7 @@ export default function Grade10Container() {
                       <div className="bg-slate-950/30 border border-slate-850 p-3 rounded-xl flex items-start gap-2.5">
                         <span className="text-indigo-400 text-lg">📊</span>
                         <div>
-                          <strong className="text-slate-200 block text-[11px] mb-0.5">Dữ liệu lớn lịch sử 3 năm</strong>
+                          <strong className="text-slate-200 block text-[11px] mb-0.5">Dữ liệu lịch sử nhiều năm</strong>
                           <span className="text-slate-400 text-[10px] leading-relaxed block">Lưu trữ và đối sánh trực quan chỉ tiêu, hồ sơ đăng ký, tỉ lệ chọi và điểm chuẩn của 115+ trường THPT.</span>
                         </div>
                       </div>
@@ -1790,7 +1790,7 @@ export default function Grade10Container() {
                       <span>Điểm chuẩn NV1: <strong>{rec.cutoffNV1}đ</strong></span>
                       <span>NV2: <strong>{rec.cutoffNV2 ? `${rec.cutoffNV2}đ` : '—'}</strong></span>
                       <span>NV3: <strong>{rec.cutoffNV3 ? `${rec.cutoffNV3}đ` : '—'}</strong></span>
-                      <span>TB 3 năm: <strong style={{ color: '#4338ca' }}>{rec.historicalAvg}đ</strong></span>
+                      <span>TB lịch sử: <strong style={{ color: '#4338ca' }}>{rec.historicalAvg}đ</strong></span>
                       {rec.nv2Gap !== null && <span>NV2 Chênh: <strong>+{rec.nv2Gap}đ</strong></span>}
                       {rec.nv3Gap !== null && <span>NV3 Chênh: <strong>+{rec.nv3Gap}đ</strong></span>}
                     </div>
