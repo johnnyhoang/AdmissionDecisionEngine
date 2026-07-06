@@ -437,7 +437,10 @@ export default function Grade10Container() {
         userLat: lat,
         userLon: lon,
         dreamSchoolCode: dreamSchoolCode || undefined,
-        maxCommuteDistance: parseFloat(maxCommuteDistance),
+        maxCommuteDistance:
+          comboSelectionMode === 'distance'
+            ? parseFloat(maxCommuteDistance)
+            : undefined,
         selectionMode: comboSelectionMode,
         preferredDistricts: comboSelectionMode === 'district' ? comboDistrictIds : undefined,
       });
@@ -1482,7 +1485,7 @@ export default function Grade10Container() {
                     className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 transition shadow cursor-pointer"
                   >
                     <Sliders className="h-3.5 w-3.5" />
-                    Sửa toàn diện
+                    Sửa
                   </button>
                 )}
               </div>
@@ -1798,22 +1801,18 @@ export default function Grade10Container() {
                       <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Điểm cộng ưu tiên</label>
                       <input type="number" step="0.5" value={priorityScore} onChange={e => setPriorityScore(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
                     </div>
-                    {comboSelectionMode === 'distance' && (
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Cự ly tối đa (km)</label>
-                      <div className="flex gap-1 items-center">
-                        <input
-                          type="number"
-                          min="1"
-                          max="50"
-                          value={maxCommuteDistance}
-                          onChange={(e) => setMaxCommuteDistance(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg p-2 text-xs text-slate-200 outline-none"
-                        />
-                        <span className="text-[10px] text-slate-500 font-bold">km</span>
-                      </div>
+                      <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Nguyện vọng xét</label>
+                      <select
+                        value={targetNV}
+                        onChange={(e) => setTargetNV(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg p-2 text-xs text-white outline-none"
+                      >
+                        <option value="NV1">Nguyện vọng 1</option>
+                        <option value="NV2">Nguyện vọng 2</option>
+                        <option value="NV3">Nguyện vọng 3</option>
+                      </select>
                     </div>
-                    )}
                   </div>
                 </div>
 
@@ -1831,98 +1830,126 @@ export default function Grade10Container() {
                 {/* Candidate scope */}
                 <div className="flex flex-col gap-3">
                   <label className="block text-xs font-semibold text-slate-400">Phạm vi xét trường</label>
-                  <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-950/60 border border-slate-800 p-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-xl bg-slate-950/60 border border-slate-800 p-1">
                     <button
                       type="button"
                       onClick={() => setComboSelectionMode('distance')}
-                      className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${
+                      className={`rounded-lg px-3 py-2.5 text-left transition border ${
                         comboSelectionMode === 'distance'
-                          ? 'bg-indigo-600 text-white shadow'
-                          : 'text-slate-400 hover:text-slate-200'
+                          ? 'bg-indigo-600/15 border-indigo-500/40 text-white'
+                          : 'text-slate-400 hover:text-slate-200 border-transparent hover:border-slate-700'
                       }`}
                     >
-                      Theo khoảng cách
+                      <div className="text-[11px] font-black">Theo khoảng cách</div>
+                      <div className="text-[10px] mt-0.5 leading-snug text-inherit opacity-80">
+                        Dùng vị trí nhà và cự ly tối đa để lọc trường phù hợp.
+                      </div>
                     </button>
                     <button
                       type="button"
                       onClick={() => setComboSelectionMode('district')}
-                      className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${
+                      className={`rounded-lg px-3 py-2.5 text-left transition border ${
                         comboSelectionMode === 'district'
-                          ? 'bg-emerald-600 text-white shadow'
-                          : 'text-slate-400 hover:text-slate-200'
+                          ? 'bg-emerald-600/15 border-emerald-500/40 text-white'
+                          : 'text-slate-400 hover:text-slate-200 border-transparent hover:border-slate-700'
                       }`}
                     >
-                      Theo quận mong muốn
+                      <div className="text-[11px] font-black">Theo quận mong muốn</div>
+                      <div className="text-[10px] mt-0.5 leading-snug text-inherit opacity-80">
+                        Chỉ xét trường thuộc quận/huyện bạn chọn, không dùng cự ly.
+                      </div>
                     </button>
                   </div>
                 </div>
 
                 {comboSelectionMode === 'distance' ? (
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (tính đường đi thực tế)</label>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setHomeLocationContext('combo')}
-                      className={`flex-1 flex items-center gap-1.5 bg-slate-950 border border-slate-800 hover:border-indigo-500 rounded-lg px-3 py-2 text-xs text-left transition cursor-pointer ${
-                        comboGPS ? 'text-slate-200' : 'text-slate-500'
-                      }`}
-                    >
-                      <MapPin className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
-                      <span className="truncate">
-                        {comboGPS ? comboUserAddress || 'Đã đặt vị trí nhà' : 'Đặt vị trí nhà của bạn...'}
+                  <div className="flex flex-col gap-3 rounded-2xl border border-indigo-500/15 bg-indigo-950/15 p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <label className="block text-xs font-semibold text-slate-300">Điều kiện theo khoảng cách</label>
+                      <span className="text-[10px] font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-2 py-0.5">
+                        Cự ly được áp dụng
                       </span>
-                    </button>
-                    {comboGPS && (
-                      <button
-                        type="button"
-                        onClick={() => { setComboGPS(null); setComboUserAddress(''); }}
-                        className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-400 hover:text-white rounded-lg text-xs cursor-pointer"
-                        title="Xóa vị trí"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-[10px] text-slate-500 mt-1.5 mb-0">
-                    Khoảng cách được tính theo quãng đường đi thực tế, không phải đường chim bay.
-                  </p>
-                </div>
-                ) : (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <label className="block text-xs font-semibold text-slate-400">Chọn quận/huyện muốn xét</label>
-                    <button
-                      type="button"
-                      onClick={() => setComboDistrictIds([])}
-                      className="text-[10px] font-bold text-slate-500 hover:text-slate-200"
-                    >
-                      Xóa chọn
-                    </button>
-                  </div>
-                  <div className="max-h-40 overflow-y-auto grid grid-cols-2 gap-2 rounded-xl border border-slate-800 bg-slate-950/40 p-2">
-                    {districts.map((district: any) => {
-                      const checked = comboDistrictIds.includes(district.id);
-                      return (
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 mb-1.5">Địa chỉ nhà (tính đường đi thực tế)</label>
+                      <div className="flex gap-2">
                         <button
-                          key={district.id}
                           type="button"
-                          onClick={() => toggleComboDistrict(district.id)}
-                          className={`rounded-lg border px-2 py-1.5 text-left text-[10px] font-bold transition ${
-                            checked
-                              ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200'
-                              : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-600'
+                          onClick={() => setHomeLocationContext('combo')}
+                          className={`flex-1 flex items-center gap-1.5 bg-slate-950 border border-slate-800 hover:border-indigo-500 rounded-lg px-3 py-2 text-xs text-left transition cursor-pointer ${
+                            comboGPS ? 'text-slate-200' : 'text-slate-500'
                           }`}
                         >
-                          {checked ? '✓ ' : ''}{district.name}
+                          <MapPin className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                          <span className="truncate">
+                            {comboGPS ? comboUserAddress || 'Đã đặt vị trí nhà' : 'Đặt vị trí nhà của bạn...'}
+                          </span>
                         </button>
-                      );
-                    })}
+                        {comboGPS && (
+                          <button
+                            type="button"
+                            onClick={() => { setComboGPS(null); setComboUserAddress(''); }}
+                            className="px-2.5 bg-slate-800 border border-slate-700 hover:border-slate-650 text-slate-400 hover:text-white rounded-lg text-xs cursor-pointer"
+                            title="Xóa vị trí"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-500 mt-1.5 mb-0">
+                        Khoảng cách được tính theo quãng đường đi thực tế, không phải đường chim bay.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 mb-1.5">Cự ly tối đa</label>
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="number"
+                          min="1"
+                          max="50"
+                          value={maxCommuteDistance}
+                          onChange={(e) => setMaxCommuteDistance(e.target.value)}
+                          className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg p-2 text-xs text-slate-200 outline-none"
+                        />
+                        <span className="text-[10px] text-slate-500 font-bold shrink-0">km</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-[10px] text-slate-500 m-0">
-                    Khi chọn quận, hệ thống chỉ xét các trường thuộc các quận này và bỏ hoàn toàn điểm thưởng khoảng cách.
-                  </p>
-                </div>
+                ) : (
+                  <div className="flex flex-col gap-3 rounded-2xl border border-emerald-500/15 bg-emerald-950/15 p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <label className="block text-xs font-semibold text-slate-300">Điều kiện theo quận/huyện</label>
+                      <button
+                        type="button"
+                        onClick={() => setComboDistrictIds([])}
+                        className="text-[10px] font-bold text-slate-400 hover:text-slate-200"
+                      >
+                        Xóa chọn
+                      </button>
+                    </div>
+                    <div className="max-h-40 overflow-y-auto grid grid-cols-2 gap-2 rounded-xl border border-slate-800 bg-slate-950/40 p-2">
+                      {districts.map((district: any) => {
+                        const checked = comboDistrictIds.includes(district.id);
+                        return (
+                          <button
+                            key={district.id}
+                            type="button"
+                            onClick={() => toggleComboDistrict(district.id)}
+                            className={`rounded-lg border px-2 py-1.5 text-left text-[10px] font-bold transition ${
+                              checked
+                                ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-200'
+                                : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-600'
+                            }`}
+                          >
+                            {checked ? '✓ ' : ''}{district.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[10px] text-slate-500 m-0">
+                      Khi chọn quận, hệ thống chỉ xét các trường thuộc quận/huyện này và bỏ hoàn toàn điểm thưởng cự ly.
+                    </p>
+                  </div>
                 )}
 
                 <button

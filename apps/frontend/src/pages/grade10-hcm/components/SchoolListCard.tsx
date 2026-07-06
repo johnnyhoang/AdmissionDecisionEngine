@@ -52,7 +52,7 @@ function SchoolListCard({
       <div>
         <div className="flex justify-between items-start gap-2 mb-2">
           <div className="flex flex-wrap items-center gap-1.5 min-w-0">
-            <span className="rounded-full bg-slate-800/80 border border-slate-700 px-2 py-0.5 text-[10px] font-bold text-slate-300 truncate max-w-[130px]">
+            <span className="rounded-full bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 text-[10px] font-bold text-indigo-200 truncate max-w-[130px]">
               {school.district?.name || 'TP.HCM'}
             </span>
             {isLowCompleteness && (
@@ -100,6 +100,19 @@ function SchoolListCard({
             >
               {isCompared ? 'Bỏ so sánh' : 'So sánh'}
             </button>
+            {isAdmin && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(school.id);
+                }}
+                className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border bg-emerald-600/10 border-emerald-500/20 text-emerald-300 hover:bg-emerald-600/20 hover:border-emerald-500/30 transition"
+                title="Sửa trường"
+              >
+                <Sliders className="w-2.5 h-2.5" />
+                Sửa
+              </button>
+            )}
           </div>
         </div>
 
@@ -166,20 +179,6 @@ function SchoolListCard({
           </div>
         )}
 
-        {isAdmin && (
-          <div className="mt-0.5">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(school.id);
-              }}
-              className="w-full flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/25 border border-emerald-500/20 hover:border-emerald-500/40 text-emerald-400 text-[10px] font-bold transition cursor-pointer"
-            >
-              <Sliders className="h-3 w-3" />
-              Sửa toàn diện
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
