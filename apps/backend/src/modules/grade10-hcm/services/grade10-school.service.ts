@@ -197,9 +197,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       latestQuotaBySchoolId = await this.getLatestQuotaSummaries(schoolIds);
     }
 
-    const completenessBySchoolId = filters.includeDataCompleteness
-      ? await this.calculateDataCompleteness(items)
-      : new Map<string, SchoolDataCompleteness>();
+    const completenessBySchoolId = await this.calculateDataCompleteness(items);
 
     const itemsWithScores = items.map((school) => {
       const schoolCutoffs = latestCutoffs.filter(
@@ -211,9 +209,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       return this.buildSchoolSummary(school, {
         latestCutoff,
         latestQuota,
-        dataCompleteness: filters.includeDataCompleteness
-          ? dataCompleteness
-          : undefined,
+        dataCompleteness,
       });
     });
 
@@ -366,6 +362,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .map((point) => {
         const school = schools.find((item) => item.id === point.id);
         if (!school) return null;
+
+        if (school.schoolType === 'SPECIAL') {
+          return null; // Exclude specialist schools from activities/calculations
+        }
 
         const dataCompleteness = completenessBySchoolId.get(school.id);
         if (dataCompleteness && dataCompleteness.percent < 25) {
@@ -1271,6 +1271,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     const completenessMap = await this.calculateDataCompleteness(allSchools);
     const validIds: string[] = [];
     for (const [id, comp] of completenessMap.entries()) {
+      const school = allSchools.find((s) => s.id === id);
+      if (school && school.schoolType === 'SPECIAL') {
+        continue; // Exclude specialist schools from calculations
+      }
       if (comp.percent >= 25) {
         validIds.push(id);
       }

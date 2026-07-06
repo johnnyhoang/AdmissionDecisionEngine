@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Calculator, BadgeCheck, MapPin, Loader2 } from 'lucide-react';
+import { X, Save } from 'lucide-react';
 import { fetchG10SchoolDetail, resolveG10Location, reverseG10Location } from '../../../services/api';
 import type { G10LocationResult } from '../../../services/api';
-import { formatSchoolYear, getRecentSchoolYears } from '../../../utils/date';
+import { getRecentSchoolYears } from '../../../utils/date';
 import AddressConfirmModal from './AddressConfirmModal';
 import MapPickerModal from './MapPickerModal';
+import EditSchoolBasicSection from './EditSchoolBasicSection';
+import EditSchoolHistorySection from './EditSchoolHistorySection';
 
 interface EditSchoolModalProps {
   isOpen: boolean;
@@ -273,246 +275,25 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, dis
             <div className="flex items-center justify-center py-20 text-slate-400">Đang tải dữ liệu...</div>
           ) : (
             <>
-              {/* Basic Info */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-4">
-                  <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex justify-between items-center">
-                    Thông tin cơ bản
-                  </h3>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Tên trường *</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Loại trường</label>
-                      <select name="schoolType" value={formData.schoolType} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white">
-                        <option value="REGULAR">Thường (Đại trà)</option>
-                        <option value="SPECIALIZED">Chuyên</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Quận/Huyện</label>
-                      <select 
-                        name="districtId" 
-                        value={formData.districtId} 
-                        onChange={handleBasicChange} 
-                        className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white"
-                      >
-                        <option value="">-- Chọn Quận/Huyện --</option>
-                        {districts.map((d: any) => (
-                          <option key={d.id} value={d.id}>{d.name}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Địa chỉ</label>
-                    <div className="flex gap-2">
-                      <input type="text" name="address" value={formData.address} onChange={handleBasicChange} className="flex-1 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" placeholder="Số nhà, tên đường, phường/xã, quận..." />
-                      <button
-                        type="button"
-                        onClick={handleAutoGeocode}
-                        disabled={isGeocoding}
-                        title="Tự động lấy vĩ độ từ địa chỉ"
-                        className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer flex items-center gap-1 shrink-0"
-                      >
-                        {isGeocoding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
-                        {isGeocoding ? 'Đang tìm...' : 'Lấy tọa độ'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setIsMapPickerOpen(true)}
-                        title="Chọn vị trí trên bản đồ"
-                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold rounded-lg transition cursor-pointer shrink-0"
-                      >
-                        🗺️
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Vĩ độ (Latitude)</label>
-                      <input type="number" name="latitude" value={formData.latitude} onChange={handleBasicChange} step="0.000001" className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white font-mono" placeholder="10.7769..." />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Kinh độ (Longitude)</label>
-                      <input type="number" name="longitude" value={formData.longitude} onChange={handleBasicChange} step="0.000001" className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white font-mono" placeholder="106.6956..." />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Website</label>
-                    <input type="text" name="website" value={formData.website} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                  <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2">Mô tả & Đánh giá</h3>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Mô tả (Description)</label>
-                    <textarea name="description" value={formData.description} onChange={handleBasicChange} rows={3} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white resize-y" />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Đánh giá chung (Comments)</label>
-                    <textarea name="comments" value={formData.comments} onChange={handleBasicChange} rows={3} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white resize-y" />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Hoạt động & Phong trào</label>
-                    <textarea name="activities" value={formData.activities} onChange={handleBasicChange} rows={3} placeholder="Câu lạc bộ, văn nghệ, thể thao, hoạt động ngoại khóa..." className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white resize-y" />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Nội quy & Quy định</label>
-                    <textarea name="regulations" value={formData.regulations} onChange={handleBasicChange} rows={3} placeholder="Đồng phục, giờ giấc, quy định về điện thoại, tác phong..." className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white resize-y" />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1 flex items-center justify-between">
-                      Google Maps URL
-                      <button type="button" onClick={handleAutoMapUrl} className="text-indigo-400 hover:text-indigo-300 text-[10px] font-bold underline cursor-pointer">
-                        Tự động tạo từ tên trường
-                      </button>
-                    </label>
-                    <input type="text" name="mapUrl" value={formData.mapUrl} onChange={handleBasicChange} className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-lg px-3 py-2 text-sm text-white" placeholder="https://www.google.com/maps/..." />
-                    {formData.mapUrl && (
-                      <a href={formData.mapUrl} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline text-xs mt-1 inline-block">→ Mở bản đồ để xác nhận</a>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2 mt-2">
-                    <input type="checkbox" id="isActive" name="isActive" checked={formData.isActive} onChange={handleBasicChange} className="w-4 h-4 accent-indigo-500" />
-                    <label htmlFor="isActive" className="text-sm font-medium text-slate-300">Đang hoạt động (Hiển thị cho User)</label>
-                  </div>
-
-                  <div className="flex items-center gap-2 mt-2 bg-indigo-950/20 p-2 rounded-lg border border-indigo-900/30 w-max">
-                    <input type="checkbox" id="isVerified" name="isVerified" checked={formData.isVerified} onChange={handleBasicChange} className="w-4 h-4 accent-indigo-500" />
-                    <label htmlFor="isVerified" className="text-sm font-medium text-indigo-300 flex items-center gap-1"><BadgeCheck className="w-4 h-4" /> Xác thực Trường (Khóa auto update AI)</label>
-                  </div>
-                </div>
-              </div>
+              <EditSchoolBasicSection
+                formData={formData}
+                districts={districts}
+                onBasicChange={handleBasicChange}
+                onAutoGeocode={handleAutoGeocode}
+                onOpenMapPicker={() => setIsMapPickerOpen(true)}
+                onAutoMapUrl={handleAutoMapUrl}
+                isGeocoding={isGeocoding}
+              />
 
               {/* Matrix Data */}
-              <div className="flex flex-col gap-4">
-                <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-2">
-                    <Calculator className="w-4 h-4 text-emerald-400" /> Dữ liệu Lịch sử
-                  </span>
-                  <button 
-                    type="button" 
-                    onClick={handleAddYear} 
-                    className="px-2.5 py-1 bg-indigo-650 hover:bg-indigo-600 text-white rounded text-xs font-bold transition flex items-center gap-1 cursor-pointer"
-                  >
-                    + Thêm năm học
-                  </button>
-                </h3>
-
-                {/* Mobile: one card per school year — the wide table is unusable on phones */}
-                <div className="flex flex-col gap-3 md:hidden">
-                  {yearsList.map(year => {
-                    const q = quotasMap[year] || {};
-                    const c = cutoffsMap[year] || {};
-                    return (
-                      <div key={year} className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 flex flex-col gap-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-white">Năm học {formatSchoolYear(year)}</span>
-                          <span className="text-[10px] font-bold text-emerald-400">Tỉ lệ chọi: {q.competitionRatio || '—'}</span>
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(['cutoffNV1', 'cutoffNV2', 'cutoffNV3'] as const).map((field, i) => (
-                            <div key={field}>
-                              <label className="block text-[10px] text-indigo-300 font-bold mb-1">Điểm NV{i + 1}</label>
-                              <input
-                                type="number" step="0.25" inputMode="decimal"
-                                value={c[field] ?? ''}
-                                onChange={(e) => handleCutoffChange(year, field, e.target.value)}
-                                className="w-full bg-slate-950 border border-indigo-900/50 rounded px-2 py-1.5 text-sm text-indigo-300 font-medium outline-none focus:border-indigo-500"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="block text-[10px] text-slate-400 font-bold mb-1">Chỉ tiêu</label>
-                            <input
-                              type="number" inputMode="numeric"
-                              value={q.quota || ''}
-                              onChange={(e) => handleQuotaChange(year, 'quota', e.target.value)}
-                              className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm outline-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[10px] text-slate-400 font-bold mb-1">Số đăng ký</label>
-                            <input
-                              type="number" inputMode="numeric"
-                              value={q.registeredCount || ''}
-                              onChange={(e) => handleQuotaChange(year, 'registeredCount', e.target.value)}
-                              className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-sm outline-none"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="overflow-x-auto hidden md:block">
-                  <table className="w-full text-left text-sm text-slate-300 whitespace-nowrap border-collapse">
-                    <thead className="bg-slate-800/50 text-xs uppercase text-slate-400">
-                      <tr>
-                        <th className="px-4 py-3 border border-slate-800 w-24">Năm học</th>
-                        <th className="px-4 py-3 border border-slate-800">Chỉ tiêu</th>
-                        <th className="px-4 py-3 border border-slate-800">Số đăng ký</th>
-                        <th className="px-4 py-3 border border-slate-800 bg-emerald-950/20 text-emerald-400">Tỉ lệ chọi (Auto)</th>
-                        <th className="px-4 py-3 border border-slate-800 bg-indigo-950/20 text-indigo-400">Điểm NV1</th>
-                        <th className="px-4 py-3 border border-slate-800 bg-indigo-950/20 text-indigo-400">Điểm NV2</th>
-                        <th className="px-4 py-3 border border-slate-800 bg-indigo-950/20 text-indigo-400">Điểm NV3</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {yearsList.map(year => {
-                        const q = quotasMap[year] || {};
-                        const c = cutoffsMap[year] || {};
-                        return (
-                          <tr key={year} className="bg-slate-900 border-b border-slate-800">
-                            <td className="px-4 py-2 border border-slate-800 font-bold text-slate-200">
-                              {formatSchoolYear(year)}
-                            </td>
-                            <td className="px-4 py-2 border border-slate-800">
-                              <input type="number" value={q.quota || ''} onChange={(e) => handleQuotaChange(year, 'quota', e.target.value)} className="w-20 bg-slate-950 border border-slate-700 rounded px-2 py-1 text-sm outline-none" />
-                            </td>
-                            <td className="px-4 py-2 border border-slate-800">
-                              <input type="number" value={q.registeredCount || ''} onChange={(e) => handleQuotaChange(year, 'registeredCount', e.target.value)} className="w-24 bg-slate-950 border border-slate-700 rounded px-2 py-1 text-sm outline-none" />
-                            </td>
-                            <td className="px-4 py-2 border border-slate-800 bg-emerald-950/10 font-bold text-emerald-300">
-                              {q.competitionRatio || '0.00'}
-                            </td>
-                            <td className="px-4 py-2 border border-slate-800 bg-indigo-950/10">
-                              <input type="number" step="0.25" value={c.cutoffNV1 || ''} onChange={(e) => handleCutoffChange(year, 'cutoffNV1', e.target.value)} className="w-20 bg-slate-950 border border-indigo-900/50 rounded px-2 py-1 text-sm outline-none focus:border-indigo-500 text-indigo-300 font-medium" />
-                            </td>
-                            <td className="px-4 py-2 border border-slate-800 bg-indigo-950/10">
-                              <input type="number" step="0.25" value={c.cutoffNV2 || ''} onChange={(e) => handleCutoffChange(year, 'cutoffNV2', e.target.value)} className="w-20 bg-slate-950 border border-indigo-900/50 rounded px-2 py-1 text-sm outline-none focus:border-indigo-500 text-indigo-300 font-medium" />
-                            </td>
-                            <td className="px-4 py-2 border border-slate-800 bg-indigo-950/10">
-                              <input type="number" step="0.25" value={c.cutoffNV3 || ''} onChange={(e) => handleCutoffChange(year, 'cutoffNV3', e.target.value)} className="w-20 bg-slate-950 border border-indigo-900/50 rounded px-2 py-1 text-sm outline-none focus:border-indigo-500 text-indigo-300 font-medium" />
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                  <p className="text-xs text-slate-500 mt-2">
-                    * Bỏ trống Điểm chuẩn hoặc Chỉ tiêu nếu không có dữ liệu năm đó. Hệ thống sẽ tự động gỡ các bản ghi trắng.
-                  </p>
-                </div>
-              </div>
+              <EditSchoolHistorySection
+                yearsList={yearsList}
+                cutoffsMap={cutoffsMap}
+                quotasMap={quotasMap}
+                onAddYear={handleAddYear}
+                onCutoffChange={handleCutoffChange}
+                onQuotaChange={handleQuotaChange}
+              />
             </>
           )}
         </div>

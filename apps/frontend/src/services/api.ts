@@ -331,6 +331,56 @@ export interface G10RecommendationResult {
   recommendations: G10RecommendationItem[];
 }
 
+export type G10ComboStrategy = 'safe' | 'effort' | 'defense';
+
+export interface G10ComboSchool {
+  schoolId: string;
+  schoolName: string;
+  schoolCode: string;
+  schoolType?: string;
+  districtName: string;
+  address?: string | null;
+  mapUrl?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  cutoffNV1: number;
+  cutoffNV2: number | null;
+  cutoffNV3: number | null;
+  d1: number;
+  d2: number;
+  d3: number;
+  d4: number;
+  probNV1: number;
+  probNV2: number;
+  probNV3: number;
+  distance: number | null;
+  roadDistance: number | null;
+  roadDuration?: number | null;
+  distanceSource?: string | null;
+  commuteBonus?: number;
+  nv2Gap?: number | null;
+  nv3Gap?: number | null;
+}
+
+export interface G10ComboResult {
+  minScore: number;
+  maxScore: number;
+  avgScore: number;
+  combos: Record<G10ComboStrategy, Array<G10ComboSchool | null | undefined>>;
+  explanations: Partial<Record<G10ComboStrategy, string>>;
+  ssf?: number;
+  macroConfig?: any;
+  maxCommuteDistance: number;
+  selectionMode: 'distance' | 'district';
+  filterSummary?: {
+    mode: 'distance' | 'district';
+    candidateCount: number;
+    selectedDistrictCount: number;
+    distanceSource?: string | null;
+  };
+  adjusted?: boolean;
+}
+
 export interface G10SchoolDetail extends G10SchoolItem {
   comments?: string | null;
   description?: string | null;
@@ -553,7 +603,7 @@ export const getG10ComboRecommendations = async (payload: {
   maxCommuteDistance?: number;
   selectionMode?: "distance" | "district";
   preferredDistricts?: string[];
-}): Promise<any> => {
+}): Promise<G10ComboResult> => {
   const res = await apiFetch(
     `${API_BASE_URL}/grade10-hcm/recommendation/combo`,
     {
