@@ -1,4 +1,4 @@
-export const CURRENT_GRADE10_SCHOOL_YEAR = 2027;
+export const CURRENT_GRADE10_SCHOOL_YEAR = 2026;
 export const RECENT_GRADE10_YEAR_COUNT = 3;
 
 export function toLatestGrade10Year(rawYear: unknown): number {

@@ -10,6 +10,7 @@ import { Grade10ActivityLog } from '../entities/activity-log.entity';
 import { CalculateScoreDto } from '../dtos/calculate.dto';
 import { GetRecommendationDto } from '../dtos/recommendation.dto';
 import { Grade10LocationService } from './grade10-location.service';
+import { Grade10SchoolService } from './grade10-school.service';
 import {
   getRecentGrade10StartYear,
   toLatestGrade10Year,
@@ -27,6 +28,7 @@ export class Grade10CalcService {
     @InjectRepository(Grade10ActivityLog)
     private readonly activityLogRepo: Repository<Grade10ActivityLog>,
     private readonly locationService: Grade10LocationService,
+    private readonly schoolService: Grade10SchoolService,
   ) {}
 
   private getMacroConfigPath() {
@@ -137,13 +139,17 @@ export class Grade10CalcService {
     const latestYear = toLatestGrade10Year(latestYearObj?.maxYear);
     const recentStartYear = getRecentGrade10StartYear(latestYear);
 
+    const safeSchoolIds = await this.schoolService.getValidSchoolIds();
+    const safeSchoolIdsStr = safeSchoolIds.length > 0 ? safeSchoolIds : ['00000000-0000-0000-0000-000000000000'];
+
     // Fetch all regular cutoffs for latest year
     const query = this.cutoffRepo
       .createQueryBuilder('cutoff')
       .leftJoinAndSelect('cutoff.school', 'school')
       .leftJoinAndSelect('school.district', 'district')
       .where('cutoff.year = :year', { year: latestYear })
-      .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' });
+      .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr });
 
     if (dto.preferredDistricts && dto.preferredDistricts.length > 0) {
       query.andWhere('school.districtId IN (:...distIds)', {
@@ -235,27 +241,56 @@ export class Grade10CalcService {
         );
       }
 
-      let advice = '';
-      if (safetyCategory === 'VERY_SAFE') {
-        advice =
-          'Điểm của bạn vượt trội hoàn toàn cả 3 nguyện vọng. Cực kỳ an toàn.';
-      } else if (safetyCategory === 'SAFE') {
-        advice =
-          trend === 'UP'
-            ? 'An toàn nhưng điểm trường đang có xu hướng tăng nhẹ. Phù hợp đặt làm NV1 hoặc NV2.'
-            : 'Lựa chọn an toàn cho cả NV1 lẫn NV2. Rất phù hợp để nộp hồ sơ.';
-      } else if (safetyCategory === 'COMPETITIVE') {
-        advice =
-          trend === 'DOWN'
-            ? 'Điểm bám sát điểm chuẩn và trường có xu hướng giảm nhẹ. Rất tốt để làm NV1.'
-            : 'Mức độ cạnh tranh cao. Đây là một NV1 lý tưởng, hãy chuẩn bị thêm NV2 an toàn hơn.';
-      } else if (safetyCategory === 'RISKY') {
-        advice =
-          'Điểm của bạn đang tiệm cận rìa điểm chuẩn. Thích hợp làm NV1 thử thách nếu quyết tâm ôn tập.';
+      let adviceNV1 = '';
+      if (d1 >= 2.0) {
+        adviceNV1 = 'Cực kỳ an toàn. Điểm của bạn vượt trội điểm chuẩn NV1 của trường hơn 2.0 điểm.';
+      } else if (d1 >= 0.8) {
+        adviceNV1 = trend === 'UP'
+          ? 'An toàn. Tuy nhiên, điểm chuẩn NV1 của trường có xu hướng tăng nhẹ.'
+          : 'An toàn. Bạn có cơ hội trúng tuyển NV1 rất cao.';
+      } else if (d1 >= -0.7) {
+        adviceNV1 = trend === 'DOWN'
+          ? 'Mức độ cạnh tranh vừa phải. Điểm chuẩn trường có xu hướng giảm nhẹ, rất thích hợp đặt làm NV1.'
+          : 'Cạnh tranh cao. Đây là NV1 lý tưởng và đầy thử thách, bạn cần cố gắng ôn tập.';
+      } else if (d1 >= -1.8) {
+        adviceNV1 = 'Khá rủi ro. Điểm thi thử đang dưới điểm chuẩn cũ, chỉ nên đặt NV1 nếu quyết tâm bứt phá.';
       } else {
-        advice =
-          'Xác suất đỗ khá thấp ở mọi nguyện vọng. Nên hạ chỉ tiêu xuống trường an toàn hơn làm NV2/3.';
+        adviceNV1 = 'Rủi ro rất cao. Điểm thi thử cách điểm chuẩn NV1 khá xa, không khuyến khích đặt làm NV1.';
       }
+
+      let adviceNV2 = '';
+      if (!c.cutoffNV2) {
+        adviceNV2 = 'Trường không xét tuyển NV2 trong năm vừa qua.';
+      } else {
+        if (d3 >= 2.0) {
+          adviceNV2 = 'Cực kỳ an toàn. Điểm thi thử vượt xa điểm chuẩn NV2 cũ.';
+        } else if (d3 >= 0.8) {
+          adviceNV2 = 'An toàn cao. Phù hợp đặt làm NV2 để dự phòng cho NV1 thử thách.';
+        } else if (d3 >= 0.0) {
+          adviceNV2 = 'Cạnh tranh nhẹ. Cơ hội đỗ NV2 ở mức khá, cần một NV3 an toàn hơn dự phòng.';
+        } else if (d3 >= -1.0) {
+          adviceNV2 = 'Rủi ro. Điểm thi thử tiệm cận sát điểm chuẩn NV2, chỉ nên chọn làm NV2 nếu NV1 cực kỳ an toàn.';
+        } else {
+          adviceNV2 = 'Rủi ro rất cao. Điểm thi thử cách biệt lớn so với điểm chuẩn NV2 cũ.';
+        }
+      }
+
+      let adviceNV3 = '';
+      if (!c.cutoffNV3) {
+        adviceNV3 = 'Trường không xét tuyển NV3 trong năm vừa qua.';
+      } else {
+        if (d4 >= 1.5) {
+          adviceNV3 = 'Rất an toàn. Điểm của bạn dư sức đỗ NV3 làm phao cứu sinh cuối cùng.';
+        } else if (d4 >= 0.5) {
+          adviceNV3 = 'An toàn. Đây là một NV3 chốt hạ tốt để đảm bảo chắc chắn suất học công lập.';
+        } else if (d4 >= -0.5) {
+          adviceNV3 = 'Cạnh tranh trung bình. Cơ hội đỗ NV3 ở mức vừa phải.';
+        } else {
+          adviceNV3 = 'Rủi ro. Điểm thi thử dưới điểm chuẩn NV3, không an toàn để làm nguyện vọng chốt hạ.';
+        }
+      }
+
+      const advice = `${adviceNV1} ${adviceNV2} ${adviceNV3}`;
 
       return {
         schoolId: c.school.id,
@@ -275,6 +310,9 @@ export class Grade10CalcService {
         safetyCategory,
         trend,
         advice,
+        adviceNV1,
+        adviceNV2,
+        adviceNV3,
         probability: Math.round(probability),
         historicalAvg: Number(avgNV1.toFixed(2)),
         last3YearsScores: schoolHist.map((h) => ({
@@ -380,6 +418,9 @@ export class Grade10CalcService {
     const latestYear = toLatestGrade10Year(latestYearObj?.maxYear);
     const recentStartYear = getRecentGrade10StartYear(latestYear);
 
+    const safeSchoolIds = await this.schoolService.getValidSchoolIds();
+    const safeSchoolIdsStr = safeSchoolIds.length > 0 ? safeSchoolIds : ['00000000-0000-0000-0000-000000000000'];
+
     // 2. Fetch all schools and their latest year cutoffs
     const cutoffs = await this.cutoffRepo
       .createQueryBuilder('cutoff')
@@ -387,6 +428,7 @@ export class Grade10CalcService {
       .leftJoinAndSelect('school.district', 'district')
       .where('cutoff.year = :year', { year: latestYear })
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .andWhere(
         selectionMode === 'district' && dto.preferredDistricts?.length
           ? 'school.districtId IN (:...distIds)'

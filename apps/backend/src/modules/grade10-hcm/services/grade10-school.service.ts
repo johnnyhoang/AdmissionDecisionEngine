@@ -126,9 +126,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       latestQuotaBySchoolId = await this.getLatestQuotaSummaries(schoolIds);
     }
 
-    const completenessBySchoolId = filters.includeDataCompleteness
-      ? await this.calculateDataCompleteness(items)
-      : new Map<string, SchoolDataCompleteness>();
+    const completenessBySchoolId = await this.calculateDataCompleteness(items);
 
     const itemsWithScores = items.map((school) => {
       const schoolCutoffs = latestCutoffs.filter(
@@ -234,7 +232,9 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     const query = this.schoolRepo
       .createQueryBuilder('school')
       .leftJoinAndSelect('school.district', 'district')
-      .where('school.isActive = :isActive', { isActive: true });
+      .where('school.isActive = :isActive', { isActive: true })
+      .andWhere('school.latitude IS NOT NULL AND school.latitude != 0')
+      .andWhere('school.longitude IS NOT NULL AND school.longitude != 0');
 
     if (filters.search) {
       query.andWhere(
@@ -291,20 +291,23 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       schools.map((school) => school.id),
     );
 
-    const completenessBySchoolId = filters.includeDataCompleteness
-      ? await this.calculateDataCompleteness(schools)
-      : new Map<string, SchoolDataCompleteness>();
+    const completenessBySchoolId = await this.calculateDataCompleteness(schools);
 
     const items = travelPoints
       .map((point) => {
         const school = schools.find((item) => item.id === point.id);
         if (!school) return null;
+        
+        const dataCompleteness = completenessBySchoolId.get(school.id);
+        if (dataCompleteness && dataCompleteness.percent < 25) {
+          return null; // Exclude incomplete schools from activities
+        }
+
         const schoolCutoffs = latestCutoffs.filter(
           (cutoff) => cutoff.schoolId === school.id,
         );
         const latestCutoff = schoolCutoffs[0] || null;
         const latestQuota = latestQuotaBySchoolId.get(school.id);
-        const dataCompleteness = completenessBySchoolId.get(school.id);
         const straightDistance = point.straightDistanceKm;
         const roadDistance = point.roadDistanceKm ?? straightDistance;
         return {
@@ -476,7 +479,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     return this.districtRepo.find({ order: { name: 'ASC' } } as any);
   }
 
-  private async calculateDataCompleteness(
+  async calculateDataCompleteness(
     schools: Grade10School[],
   ): Promise<Map<string, SchoolDataCompleteness>> {
     const years = this.getCompletenessYears();
@@ -654,6 +657,9 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
   }
 
   async getAnalytics() {
+    const safeSchoolIds = await this.getValidSchoolIds();
+    const safeSchoolIdsStr = safeSchoolIds.length > 0 ? safeSchoolIds : ['00000000-0000-0000-0000-000000000000'];
+
     // 1. Top 10 schools by latest NV1 Cutoff
     const latestYearObj = await this.cutoffRepo
       .createQueryBuilder('cutoff')
@@ -669,6 +675,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .leftJoinAndSelect('school.district', 'district')
       .where('cutoff.year = :year', { year: latestYear })
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('cutoff.cutoffNV1', 'DESC')
       .limit(10)
       .getMany();
@@ -690,6 +697,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .where('cutoff.year = :year', { year: latestYear })
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
       .andWhere('cutoff.cutoffNV1 > 0')
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('cutoff.cutoffNV1', 'ASC')
       .limit(10)
       .getMany();
@@ -710,6 +718,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .leftJoinAndSelect('school.district', 'district')
       .where('quota.year = :year', { year: latestYear })
       .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('quota.quota', 'DESC')
       .limit(10)
       .getMany();
@@ -730,6 +739,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .leftJoinAndSelect('school.district', 'district')
       .where('quota.year = :year', { year: latestYear })
       .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('quota.competitionRatio', 'DESC')
       .limit(10)
       .getMany();
@@ -751,6 +761,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .where('quota.year = :year', { year: latestYear })
       .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
       .andWhere('quota.competitionRatio > 0')
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('quota.competitionRatio', 'ASC')
       .limit(10)
       .getMany();
@@ -784,6 +795,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .addSelect('(c1.cutoffNV1 - c2.cutoffNV1)', 'diff')
       .where('c1.year = :year', { year: latestYear })
       .andWhere('c1.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('diff', 'DESC')
       .limit(10)
       .getRawMany();
@@ -805,6 +817,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .leftJoinAndSelect('school.district', 'district')
       .where('quota.year = :year', { year: latestYear })
       .andWhere('quota.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('quota.registeredCount', 'DESC')
       .limit(10)
       .getMany();
@@ -825,6 +838,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .leftJoinAndSelect('school.district', 'district')
       .where('cutoff.year = :year', { year: latestYear })
       .andWhere('school.schoolType = :st', { st: 'SPECIALIZED' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('cutoff.cutoffNV1', 'DESC')
       .limit(10)
       .getMany();
@@ -859,6 +873,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .where('c1.year = :year', { year: latestYear })
       .andWhere('c1.programType = :pt', { pt: 'REGULAR' })
       .andWhere('c1.cutoffNV1 - c2.cutoffNV1 < 0')
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('diff', 'ASC') // Largest drop first (most negative)
       .limit(10)
       .getRawMany();
@@ -882,6 +897,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
       .andWhere('cutoff.cutoffNV3 > 0')
       .andWhere('cutoff.cutoffNV1 > 0')
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .orderBy('(cutoff.cutoffNV3 - cutoff.cutoffNV1)', 'DESC')
       .limit(10)
       .getMany();
@@ -912,6 +928,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
       .andWhere('cutoff.cutoffNV1 > 0')
       .andWhere('quota.competitionRatio > 0')
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .select('school.id', 'schoolId')
       .addSelect('school.name', 'schoolName')
       .addSelect('school.code', 'schoolCode')
@@ -943,6 +960,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       .addSelect('COUNT(school.id)', 'schoolCount')
       .where('cutoff.year = :year', { year: latestYear })
       .andWhere('cutoff.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .groupBy('district.name')
       .orderBy('avgCutoff', 'DESC')
       .getRawMany();
@@ -956,10 +974,12 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     // Quota and Registration trend over years (All available years)
     const overallTrends = await this.quotaRepo
       .createQueryBuilder('quota')
+      .leftJoin('quota.school', 'school')
       .select('quota.year', 'year')
       .addSelect('SUM(quota.quota)', 'totalQuota')
       .addSelect('SUM(quota.registeredCount)', 'totalRegistered')
       .where('quota.programType = :pt', { pt: 'REGULAR' })
+      .andWhere('school.id IN (:...safeSchoolIdsStr)', { safeSchoolIdsStr })
       .groupBy('quota.year')
       .orderBy('quota.year', 'ASC')
       .getRawMany();
@@ -1172,5 +1192,17 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     await this.schoolRepo.remove(secondary);
 
     return primary;
+  }
+
+  async getValidSchoolIds(): Promise<string[]> {
+    const allSchools = await this.schoolRepo.find({ where: { isActive: true } });
+    const completenessMap = await this.calculateDataCompleteness(allSchools);
+    const validIds: string[] = [];
+    for (const [id, comp] of completenessMap.entries()) {
+      if (comp.percent >= 25) {
+        validIds.push(id);
+      }
+    }
+    return validIds;
   }
 }
