@@ -71,6 +71,77 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
     );
   }
 
+  private buildSchoolSummary(
+    school: Grade10School,
+    extras: {
+      latestCutoff?: Grade10Cutoff | null;
+      latestQuota?: LatestQuotaSummary | null;
+      dataCompleteness?: SchoolDataCompleteness | null;
+      straightDistanceKm?: number;
+      roadDistanceKm?: number;
+      roadDurationMin?: number;
+      distanceSource?: string;
+      distancePrecision?: string;
+    } = {},
+  ) {
+    return {
+      id: school.id,
+      name: school.name,
+      code: school.code,
+      address: school.address,
+      website: school.website,
+      schoolType: school.schoolType,
+      isActive: school.isActive,
+      isVerified: school.isVerified,
+      latitude: school.latitude,
+      longitude: school.longitude,
+      district: school.district
+        ? {
+            id: school.district.id,
+            name: school.district.name,
+            code: school.district.code,
+          }
+        : undefined,
+      latestCutoffNV1: extras.latestCutoff
+        ? Number(extras.latestCutoff.cutoffNV1)
+        : null,
+      latestCutoffNV2: extras.latestCutoff
+        ? extras.latestCutoff.cutoffNV2 != null
+          ? Number(extras.latestCutoff.cutoffNV2)
+          : null
+        : null,
+      latestCutoffNV3: extras.latestCutoff
+        ? extras.latestCutoff.cutoffNV3 != null
+          ? Number(extras.latestCutoff.cutoffNV3)
+          : null
+        : null,
+      latestYear: extras.latestCutoff ? extras.latestCutoff.year : null,
+      latestQuota: extras.latestQuota?.latestQuota ?? null,
+      latestRegisteredCount: extras.latestQuota?.latestRegisteredCount ?? null,
+      latestCompetitionRatio:
+        extras.latestQuota?.latestCompetitionRatio ?? null,
+      latestQuotaYear: extras.latestQuota?.latestQuotaYear ?? null,
+      ...(extras.dataCompleteness
+        ? { dataCompleteness: extras.dataCompleteness }
+        : {}),
+      ...(extras.straightDistanceKm !== undefined
+        ? { straightDistanceKm: extras.straightDistanceKm }
+        : {}),
+      ...(extras.roadDistanceKm !== undefined
+        ? { roadDistanceKm: extras.roadDistanceKm }
+        : {}),
+      ...(extras.roadDurationMin !== undefined
+        ? { roadDurationMin: extras.roadDurationMin }
+        : {}),
+      ...(extras.distanceSource
+        ? { distanceSource: extras.distanceSource }
+        : {}),
+      ...(extras.distancePrecision
+        ? { distancePrecision: extras.distancePrecision }
+        : {}),
+    };
+  }
+
   async findAll(filters: {
     search?: string;
     districtId?: string;
@@ -126,7 +197,9 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       latestQuotaBySchoolId = await this.getLatestQuotaSummaries(schoolIds);
     }
 
-    const completenessBySchoolId = await this.calculateDataCompleteness(items);
+    const completenessBySchoolId = filters.includeDataCompleteness
+      ? await this.calculateDataCompleteness(items)
+      : new Map<string, SchoolDataCompleteness>();
 
     const itemsWithScores = items.map((school) => {
       const schoolCutoffs = latestCutoffs.filter(
@@ -135,18 +208,13 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       const latestCutoff = schoolCutoffs[0] || null;
       const latestQuota = latestQuotaBySchoolId.get(school.id);
       const dataCompleteness = completenessBySchoolId.get(school.id);
-      return {
-        ...school,
-        latestCutoffNV1: latestCutoff ? Number(latestCutoff.cutoffNV1) : null,
-        latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
-        latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
-        latestYear: latestCutoff ? latestCutoff.year : null,
-        latestQuota: latestQuota?.latestQuota ?? null,
-        latestRegisteredCount: latestQuota?.latestRegisteredCount ?? null,
-        latestCompetitionRatio: latestQuota?.latestCompetitionRatio ?? null,
-        latestQuotaYear: latestQuota?.latestQuotaYear ?? null,
-        ...(dataCompleteness ? { dataCompleteness } : {}),
-      };
+      return this.buildSchoolSummary(school, {
+        latestCutoff,
+        latestQuota,
+        dataCompleteness: filters.includeDataCompleteness
+          ? dataCompleteness
+          : undefined,
+      });
     });
 
     if (filters.includeDataCompleteness) {
@@ -291,13 +359,14 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       schools.map((school) => school.id),
     );
 
-    const completenessBySchoolId = await this.calculateDataCompleteness(schools);
+    const completenessBySchoolId =
+      await this.calculateDataCompleteness(schools);
 
     const items = travelPoints
       .map((point) => {
         const school = schools.find((item) => item.id === point.id);
         if (!school) return null;
-        
+
         const dataCompleteness = completenessBySchoolId.get(school.id);
         if (dataCompleteness && dataCompleteness.percent < 25) {
           return null; // Exclude incomplete schools from activities
@@ -310,26 +379,18 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
         const latestQuota = latestQuotaBySchoolId.get(school.id);
         const straightDistance = point.straightDistanceKm;
         const roadDistance = point.roadDistanceKm ?? straightDistance;
-        return {
-          ...school,
-          mapUrl: school.mapUrl || point.mapUrl,
-          latitude: school.latitude ?? point.latitude,
-          longitude: school.longitude ?? point.longitude,
-          latestCutoffNV1: latestCutoff ? Number(latestCutoff.cutoffNV1) : null,
-          latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
-          latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
-          latestYear: latestCutoff ? latestCutoff.year : null,
-          latestQuota: latestQuota?.latestQuota ?? null,
-          latestRegisteredCount: latestQuota?.latestRegisteredCount ?? null,
-          latestCompetitionRatio: latestQuota?.latestCompetitionRatio ?? null,
-          latestQuotaYear: latestQuota?.latestQuotaYear ?? null,
-          straightDistanceKm: straightDistance,
-          roadDistanceKm: roadDistance,
-          roadDurationMin: point.roadDurationMin,
+        return this.buildSchoolSummary(school, {
+          latestCutoff,
+          latestQuota,
+          dataCompleteness: filters.includeDataCompleteness
+            ? dataCompleteness
+            : undefined,
+          straightDistanceKm: straightDistance ?? undefined,
+          roadDistanceKm: roadDistance ?? undefined,
+          roadDurationMin: point.roadDurationMin ?? undefined,
           distanceSource: point.distanceSource,
           distancePrecision: point.precision,
-          ...(dataCompleteness ? { dataCompleteness } : {}),
-        };
+        });
       })
       .filter(Boolean) as any[];
 
@@ -625,8 +686,14 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
       cutoffScores: cutoffs,
       quotaHistory: quotas,
       latestCutoffNV1: latestCutoff ? Number(latestCutoff.cutoffNV1) : null,
-      latestCutoffNV2: latestCutoff ? Number(latestCutoff.cutoffNV2) : null,
-      latestCutoffNV3: latestCutoff ? Number(latestCutoff.cutoffNV3) : null,
+      latestCutoffNV2:
+        latestCutoff && latestCutoff.cutoffNV2 != null
+          ? Number(latestCutoff.cutoffNV2)
+          : null,
+      latestCutoffNV3:
+        latestCutoff && latestCutoff.cutoffNV3 != null
+          ? Number(latestCutoff.cutoffNV3)
+          : null,
       latestYear: latestCutoff ? latestCutoff.year : null,
       latestQuota: latestQuota?.latestQuota ?? null,
       latestRegisteredCount: latestQuota?.latestRegisteredCount ?? null,
@@ -658,7 +725,10 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
 
   async getAnalytics() {
     const safeSchoolIds = await this.getValidSchoolIds();
-    const safeSchoolIdsStr = safeSchoolIds.length > 0 ? safeSchoolIds : ['00000000-0000-0000-0000-000000000000'];
+    const safeSchoolIdsStr =
+      safeSchoolIds.length > 0
+        ? safeSchoolIds
+        : ['00000000-0000-0000-0000-000000000000'];
 
     // 1. Top 10 schools by latest NV1 Cutoff
     const latestYearObj = await this.cutoffRepo
@@ -920,7 +990,7 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
         Grade10Quota,
         'quota',
         'cutoff.schoolId = quota.schoolId AND quota.year = :year AND quota.programType = :pt',
-        { year: latestYear, pt: 'REGULAR' }
+        { year: latestYear, pt: 'REGULAR' },
       )
       .leftJoinAndSelect('cutoff.school', 'school')
       .leftJoinAndSelect('school.district', 'district')
@@ -1195,7 +1265,9 @@ export class Grade10SchoolService implements OnApplicationBootstrap {
   }
 
   async getValidSchoolIds(): Promise<string[]> {
-    const allSchools = await this.schoolRepo.find({ where: { isActive: true } });
+    const allSchools = await this.schoolRepo.find({
+      where: { isActive: true },
+    });
     const completenessMap = await this.calculateDataCompleteness(allSchools);
     const validIds: string[] = [];
     for (const [id, comp] of completenessMap.entries()) {
