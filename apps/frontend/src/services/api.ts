@@ -271,6 +271,9 @@ export interface G10RecommendationItem {
   probability: number;
   historicalAvg: number;
   advice: string;
+  adviceNV1?: string;
+  adviceNV2?: string;
+  adviceNV3?: string;
   last3YearsScores: { year: number; score: number }[];
 }
 

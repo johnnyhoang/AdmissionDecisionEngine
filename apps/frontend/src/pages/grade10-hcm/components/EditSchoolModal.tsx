@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Calculator, Sparkles, BadgeCheck, MapPin, Loader2 } from 'lucide-react';
+import { X, Save, Calculator, BadgeCheck, MapPin, Loader2 } from 'lucide-react';
 import { fetchG10SchoolDetail, resolveG10Location, reverseG10Location } from '../../../services/api';
 import type { G10LocationResult } from '../../../services/api';
 import { formatSchoolYear, getRecentSchoolYears } from '../../../utils/date';
@@ -11,11 +11,10 @@ interface EditSchoolModalProps {
   onClose: () => void;
   schoolId: string;
   onSave: (id: string, data: any) => Promise<void>;
-  onAiPrefill?: (schoolName: string, schoolCode: string) => void;
   districts?: any[];
 }
 
-export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onAiPrefill, districts = [] }: EditSchoolModalProps) {
+export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, districts = [] }: EditSchoolModalProps) {
   const [formData, setFormData] = useState<any>(null);
   const [cutoffsMap, setCutoffsMap] = useState<any>({});
   const [quotasMap, setQuotasMap] = useState<any>({});
@@ -279,14 +278,6 @@ export default function EditSchoolModal({ isOpen, onClose, schoolId, onSave, onA
                 <div className="flex flex-col gap-4">
                   <h3 className="font-bold text-slate-300 border-b border-slate-800 pb-2 flex justify-between items-center">
                     Thông tin cơ bản
-                    {onAiPrefill && !formData.isVerified && (
-                       <button
-                         onClick={() => { onClose(); onAiPrefill(formData.name, formData.code); }}
-                         className="text-xs flex items-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded"
-                       >
-                         <Sparkles className="w-3 h-3" /> Tự động điền AI
-                       </button>
-                    )}
                   </h3>
                   
                   <div>

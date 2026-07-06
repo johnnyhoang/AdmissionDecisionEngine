@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Search as SearchIcon, TrendingUp, Calculator as CalcIcon, MapPin,
-  BadgeCheck, School, HelpCircle, Sparkles, ArrowUpDown,
+  School, HelpCircle, Sparkles, ArrowUpDown,
   BarChart2, BookOpen, Sliders, Award, RefreshCw, Printer, GitMerge
 } from 'lucide-react';
 import {
@@ -14,10 +14,10 @@ import {
   fetchNearbyG10Schools,
 } from '../../services/api';
 import type { G10SchoolItem, G10RecommendationItem } from '../../services/api';
-import AiSearchModal from '../../components/AiSearchModal';
 import HomeLocationModal from './components/HomeLocationModal';
 import type { HomeLocationPick } from './components/HomeLocationModal';
 import SchoolGroupedDropdown from './components/SchoolGroupedDropdown';
+import SchoolListCard from './components/SchoolListCard';
 import BottomNav from '../../components/layout/BottomNav';
 import MergeSchoolModal from './components/MergeSchoolModal';
 import EditSchoolModal from './components/EditSchoolModal';
@@ -76,13 +76,7 @@ export default function Grade10Container() {
   const evalDistrictDropdownRef = useRef<HTMLDivElement>(null);
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [schoolDetail, setSchoolDetail] = useState<any>(null);
-  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-  const [aiPrefillSchool, setAiPrefillSchool] = useState<{
-    name: string;
-    code: string;
-    districtName?: string;
-    districtCode?: string;
-  } | undefined>(undefined);
+
   // What the print button should render into the print area
   const [printTarget, setPrintTarget] = useState<'results' | 'school' | 'compare'>('results');
 
@@ -398,11 +392,13 @@ export default function Grade10Container() {
         maxDistanceKm: parseFloat(maxDist) || undefined,
       });
       setDistanceSchools(
-        (res.items || []).map((school: any) => ({
-          ...school,
-          roadDistance: school.roadDistanceKm ?? school.straightDistanceKm ?? 0,
-          roadDuration: school.roadDurationMin ?? Math.round((school.roadDistanceKm ?? school.straightDistanceKm ?? 0) * 3),
-        })),
+        (res.items || [])
+          .filter((school: any) => school.latitude && school.longitude && (school.roadDistanceKm != null || school.straightDistanceKm != null))
+          .map((school: any) => ({
+            ...school,
+            roadDistance: school.roadDistanceKm ?? school.straightDistanceKm,
+            roadDuration: school.roadDurationMin ?? Math.round((school.roadDistanceKm ?? school.straightDistanceKm) * 3),
+          })),
       );
     } catch (e) {
       console.error(e);
@@ -1246,12 +1242,26 @@ export default function Grade10Container() {
 
 
                           
-                          {rec.advice && (
-                            <div className="mt-3 bg-slate-950/40 p-2.5 border border-slate-800/80 rounded-lg text-[11px] text-slate-300 italic flex items-start gap-2">
-                              <span className="text-indigo-400 text-sm leading-none mt-0.5">💡</span>
-                              <span className="leading-relaxed">{rec.advice}</span>
-                            </div>
-                          )}
+                          <div className="mt-3 bg-slate-950/40 p-2.5 border border-slate-800/80 rounded-lg text-[11px] text-slate-300 flex flex-col gap-2">
+                            {rec.adviceNV1 && (
+                              <div className="flex items-start gap-2 leading-relaxed">
+                                <span className="text-indigo-400 text-xs mt-0.5">💡</span>
+                                <span><strong>Tư vấn NV1:</strong> {rec.adviceNV1}</span>
+                              </div>
+                            )}
+                            {rec.adviceNV2 && (
+                              <div className="flex items-start gap-2 leading-relaxed">
+                                <span className="text-emerald-400 text-xs mt-0.5">💡</span>
+                                <span><strong>Tư vấn NV2:</strong> {rec.adviceNV2}</span>
+                              </div>
+                            )}
+                            {rec.adviceNV3 && (
+                              <div className="flex items-start gap-2 leading-relaxed">
+                                <span className="text-amber-400 text-xs mt-0.5">💡</span>
+                                <span><strong>Tư vấn NV3:</strong> {rec.adviceNV3}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {/* Right Gauge */}
@@ -1280,7 +1290,7 @@ export default function Grade10Container() {
                             onClick={() => openSchoolDetail(rec.schoolId)}
                             className="w-full py-1 px-3 bg-slate-850 border border-slate-700 hover:border-indigo-500 text-[10px] font-semibold text-slate-300 hover:text-white rounded transition"
                           >
-                            Chi tiết lịch sử
+                            Xem trường
                           </button>
                         </div>
                       </div>
@@ -1509,143 +1519,28 @@ export default function Grade10Container() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(isProximityFilterActive ? distanceSchools : schools).map((school) => {
-                const isCompared = compareList.some(item => item.id === school.id);
+                const isCompared = compareList.some((item) => item.id === school.id);
                 const isMergeSelected = selectedMergeIds.includes(school.id);
-                const cardDistance = school.roadDistance ?? school.distance;
-                const latestAdmissionYear = school.latestYear || getCurrentSchoolYear();
-                const latestQuotaYear = school.latestQuotaYear || latestAdmissionYear;
                 return (
-                  <div key={school.id} className={`relative bg-slate-900/60 border rounded-xl p-3.5 shadow-md flex flex-col justify-between gap-3 transition-all duration-200 ${
-                    isMergeSelected
-                      ? 'border-amber-500/60 ring-1 ring-amber-500/30 bg-amber-950/10'
-                      : 'border-slate-800 hover:border-slate-700'
-                  }`}>
-                    <div>
-                      <div className="flex justify-between items-start gap-2 mb-2">
-                        <div className="flex flex-wrap items-center gap-1.5 min-w-0">
-                          <span className="rounded-full bg-slate-800/80 border border-slate-700 px-2 py-0.5 text-[10px] font-bold text-slate-300 truncate max-w-[130px]">
-                            {school.district?.name || 'TP.HCM'}
-                          </span>
-                          {user?.role === 'ADMIN' && school.dataCompleteness && (
-                            <div
-                              className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-black shadow-sm ${getCompletenessTone(school.dataCompleteness.percent)}`}
-                              title={`${school.dataCompleteness.completedFields}/${school.dataCompleteness.totalFields} trường dữ liệu đã hoàn thiện`}
-                            >
-                              <span>{school.dataCompleteness.percent}%</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex gap-1.5 shrink-0">
-                          {user?.role === 'ADMIN' && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedMergeIds(prev => {
-                                  if (prev.includes(school.id)) return prev.filter(id => id !== school.id);
-                                  if (prev.length >= 2) return prev; // max 2
-                                  return [...prev, school.id];
-                                });
-                              }}
-                              className={`text-[10px] px-1.5 py-0.5 rounded transition border flex items-center gap-1 ${
-                                isMergeSelected
-                                  ? 'bg-amber-500 border-amber-400 text-white'
-                                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-amber-500/50 hover:text-amber-400'
-                              }`}
-                              title="Chọn để gộp trường"
-                            >
-                              <GitMerge className="w-2.5 h-2.5" />
-                              {isMergeSelected ? '✓ Đã chọn' : 'Gộp'}
-                            </button>
-                          )}
-                          <button
-                            onClick={() => toggleCompare(school)}
-                            className={`text-[10px] px-1.5 py-0.5 rounded transition border ${
-                              isCompared 
-                                ? 'bg-rose-600 border-rose-500 text-white' 
-                                : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
-                            }`}
-                          >
-                            {isCompared ? 'Bỏ so sánh' : 'So sánh'}
-                          </button>
-                        </div>
-                      </div>
-                      <h3 className="text-[13px] font-black text-white mb-1.5 hover:text-indigo-400 cursor-pointer flex items-center gap-1.5 leading-tight" onClick={() => openSchoolDetail(school.id)}>
-                        <span className="line-clamp-2">{school.name}</span>
-                        {school.isVerified && <span title="Trường đã xác thực"><BadgeCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" /></span>}
-                      </h3>
-                      <p className="text-[11px] text-slate-400 flex items-start gap-1 leading-normal">
-                        <MapPin className="h-3 w-3 text-slate-500 shrink-0 mt-0.5" />
-                        <span className="line-clamp-1">{school.address || 'Hồ Chí Minh'}</span>
-                      </p>
-                    </div>
-
-                    <div className="border-t border-slate-800 pt-3 flex flex-col gap-2">
-                      <div className="grid grid-cols-3 gap-1.5">
-                        <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1.5">
-                          <div className="text-[9px] text-slate-500">NV1 {formatSchoolYear(latestAdmissionYear)}</div>
-                          <div className="text-sm font-black text-indigo-400">{school.latestCutoffNV1 || '—'}đ</div>
-                        </div>
-                        <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1.5">
-                          <div className="text-[9px] text-slate-500">Chỉ tiêu {formatSchoolYear(latestQuotaYear)}</div>
-                          <div className="text-sm font-black text-slate-100">{school.latestQuota?.toLocaleString() || '—'}</div>
-                        </div>
-                        <div className="rounded-lg bg-slate-950/45 border border-slate-800 px-2 py-1.5">
-                          <div className="text-[9px] text-slate-500">Tỷ lệ chọi</div>
-                          <div className="text-sm font-black text-rose-400">{school.latestCompetitionRatio ? `1:${school.latestCompetitionRatio}` : '—'}</div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px] text-slate-400">
-                        <span>NV2 <strong className="text-slate-200">{school.latestCutoffNV2 || '—'}đ</strong></span>
-                        <span>NV3 <strong className="text-slate-200">{school.latestCutoffNV3 || '—'}đ</strong></span>
-                        {school.latestRegisteredCount ? (
-                          <span>ĐK NV1 <strong className="text-slate-200">{school.latestRegisteredCount.toLocaleString()}</strong></span>
-                        ) : null}
-                      </div>
-
-                      {isProximityFilterActive && typeof cardDistance === 'number' && (
-                        <div className="flex justify-between text-[10px] bg-indigo-950/20 border border-indigo-900/30 px-2 py-1.5 rounded-lg text-indigo-300 font-semibold">
-                          <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-indigo-400" /> Đường đi
-                          </span>
-                          <span className="font-extrabold text-indigo-200">
-                            {cardDistance} km{school.roadDuration ? ` (~${school.roadDuration} phút)` : ''}
-                          </span>
-                        </div>
-                      )}
-                      {user?.role === 'ADMIN' && (
-                        <div className="flex gap-2 mt-0.5">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingSchoolId(school.id);
-                            }}
-                            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/25 border border-emerald-500/20 hover:border-emerald-500/40 text-emerald-400 text-[10px] font-bold transition cursor-pointer"
-                          >
-                            <Sliders className="h-3 w-3" />
-                            Sửa toàn diện
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setAiPrefillSchool({
-                                name: school.name,
-                                code: school.code,
-                                districtName: school.district?.name,
-                                districtCode: school.district?.code
-                              });
-                              setIsAiModalOpen(true);
-                            }}
-                            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/25 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 text-[10px] font-bold transition cursor-pointer"
-                          >
-                            <Sparkles className="h-3 w-3" />
-                            Tra cứu AI
-                          </button>
-                        </div>
-                      )}
-
-                    </div>
-                  </div>
+                  <SchoolListCard
+                    key={school.id}
+                    school={school}
+                    isCompared={isCompared}
+                    isMergeSelected={isMergeSelected}
+                    isAdmin={user?.role === 'ADMIN'}
+                    isProximityFilterActive={isProximityFilterActive}
+                    getCompletenessTone={getCompletenessTone}
+                    onOpenDetail={openSchoolDetail}
+                    onToggleCompare={toggleCompare}
+                    onToggleMerge={(schoolId) => {
+                      setSelectedMergeIds((prev) => {
+                        if (prev.includes(schoolId)) return prev.filter((id) => id !== schoolId);
+                        if (prev.length >= 2) return prev;
+                        return [...prev, schoolId];
+                      });
+                    }}
+                    onEdit={setEditingSchoolId}
+                  />
                 );
               })}
             </div>
@@ -1795,7 +1690,7 @@ export default function Grade10Container() {
                   <div className="flex flex-col gap-1.5">
                     <h4 className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
                       <TrendingUp className="h-4 w-4 text-indigo-400" />
-                      Đồ thị biến động điểm chuẩn 3 năm gần đây
+                      Đồ thị biến động điểm chuẩn qua các năm
                     </h4>
                     <div className="h-48 w-full bg-slate-950/60 p-2 rounded-xl border border-slate-800">
                       {schoolDetail.cutoffs.length === 0 ? (
@@ -1938,7 +1833,6 @@ export default function Grade10Container() {
         onClose={() => setEditingSchoolId(null)}
         schoolId={editingSchoolId || ''}
         onSave={handleEditSave}
-        onAiPrefill={(name, code) => { setAiPrefillSchool({name, code}); setIsAiModalOpen(true); }}
         districts={districts}
       />
       <CompareDrawer
@@ -2432,17 +2326,7 @@ export default function Grade10Container() {
         </div>
       )}
 
-            {/* AI Search Modal */}
-      <AiSearchModal 
-        isOpen={isAiModalOpen}
-        onClose={() => { setIsAiModalOpen(false); setAiPrefillSchool(undefined); }}
-        type="GRADE10"
-        prefillSchool={aiPrefillSchool}
-        onImportSuccess={() => {
-          loadSchools(searchQuery, selectedDistricts.join(','));
-          loadAnalytics();
-        }}
-      />
+
 
 
       {/* ── PRINT AREA (screen:hidden, print:visible) ─────────────────────────
@@ -2632,7 +2516,11 @@ export default function Grade10Container() {
                       {rec.nv2Gap !== null && <span>NV2 Chênh: <strong>+{rec.nv2Gap}đ</strong></span>}
                       {rec.nv3Gap !== null && <span>NV3 Chênh: <strong>+{rec.nv3Gap}đ</strong></span>}
                     </div>
-                    {rec.advice && <div style={{ fontSize: 9, color: '#6b7280', marginTop: 4, fontStyle: 'italic' }}>💡 {rec.advice}</div>}
+                    <div style={{ fontSize: 9, color: '#4b5563', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      {rec.adviceNV1 && <div><strong>• Tư vấn NV1:</strong> {rec.adviceNV1}</div>}
+                      {rec.adviceNV2 && <div><strong>• Tư vấn NV2:</strong> {rec.adviceNV2}</div>}
+                      {rec.adviceNV3 && <div><strong>• Tư vấn NV3:</strong> {rec.adviceNV3}</div>}
+                    </div>
                   </div>
                   <div style={{ textAlign: 'center', minWidth: 60, flexShrink: 0, paddingLeft: 10, borderLeft: '1px solid #e0e7ff' }}>
                     <div className="print-prob" style={{ color: probColor }}>{rec.probability}%</div>
