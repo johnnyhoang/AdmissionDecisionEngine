@@ -1753,7 +1753,7 @@ export default function Grade10Container() {
           <div className="max-w-7xl w-full mx-auto p-4 pb-28 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             {/* Input Config Panel */}
-            <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+            <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 md:p-5 shadow-xl flex flex-col gap-3">
               <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                 <Sparkles className="h-5 w-5 text-indigo-400" />
                 <div className="flex items-center gap-1.5">
@@ -1764,14 +1764,14 @@ export default function Grade10Container() {
               </div>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 {/* Score ranges */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2.5">
                   <h4 className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Khoảng điểm dự đoán</h4>
                   
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1 text-center font-semibold">Toán (Min-Max)</label>
+                      <label className="block text-[10px] text-slate-400 mb-1 sm:text-center font-semibold">Toán (Min-Max)</label>
                       <div className="flex gap-0.5 items-center">
                         <input type="number" step="0.25" value={minMath} onChange={e => setMinMath(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
                         <span className="text-slate-500 text-[10px]">-</span>
@@ -1779,7 +1779,7 @@ export default function Grade10Container() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1 text-center font-semibold">Văn (Min-Max)</label>
+                      <label className="block text-[10px] text-slate-400 mb-1 sm:text-center font-semibold">Văn (Min-Max)</label>
                       <div className="flex gap-0.5 items-center">
                         <input type="number" step="0.25" value={minLiterature} onChange={e => setMinLiterature(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
                         <span className="text-slate-500 text-[10px]">-</span>
@@ -1787,7 +1787,7 @@ export default function Grade10Container() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] text-slate-400 mb-1 text-center font-semibold">Anh (Min-Max)</label>
+                      <label className="block text-[10px] text-slate-400 mb-1 sm:text-center font-semibold">Anh (Min-Max)</label>
                       <div className="flex gap-0.5 items-center">
                         <input type="number" step="0.25" value={minEnglish} onChange={e => setMinEnglish(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-center text-xs text-white" />
                         <span className="text-slate-500 text-[10px]">-</span>
@@ -1796,7 +1796,7 @@ export default function Grade10Container() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 border-t border-slate-800 pt-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-slate-800 pt-3">
                     <div>
                       <label className="block text-[10px] text-slate-400 mb-1 font-semibold">Điểm cộng ưu tiên</label>
                       <input type="number" step="0.5" value={priorityScore} onChange={e => setPriorityScore(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white" />
@@ -1841,7 +1841,7 @@ export default function Grade10Container() {
                       }`}
                     >
                       <div className="text-[11px] font-black">Theo khoảng cách</div>
-                      <div className="text-[10px] mt-0.5 leading-snug text-inherit opacity-80">
+                      <div className="hidden sm:block text-[10px] mt-0.5 leading-snug text-inherit opacity-80">
                         Dùng vị trí nhà và cự ly tối đa để lọc trường phù hợp.
                       </div>
                     </button>
@@ -1855,7 +1855,7 @@ export default function Grade10Container() {
                       }`}
                     >
                       <div className="text-[11px] font-black">Theo quận mong muốn</div>
-                      <div className="text-[10px] mt-0.5 leading-snug text-inherit opacity-80">
+                      <div className="hidden sm:block text-[10px] mt-0.5 leading-snug text-inherit opacity-80">
                         Chỉ xét trường thuộc quận/huyện bạn chọn, không dùng cự ly.
                       </div>
                     </button>
@@ -1863,7 +1863,7 @@ export default function Grade10Container() {
                 </div>
 
                 {comboSelectionMode === 'distance' ? (
-                  <div className="flex flex-col gap-3 rounded-2xl border border-indigo-500/15 bg-indigo-950/15 p-4">
+                  <div className="flex flex-col gap-2.5 rounded-2xl border border-indigo-500/15 bg-indigo-950/15 p-3 md:p-4">
                     <div className="flex items-center justify-between gap-2">
                       <label className="block text-xs font-semibold text-slate-300">Điều kiện theo khoảng cách</label>
                       <span className="text-[10px] font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-2 py-0.5">
@@ -1916,7 +1916,7 @@ export default function Grade10Container() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-3 rounded-2xl border border-emerald-500/15 bg-emerald-950/15 p-4">
+                  <div className="flex flex-col gap-2.5 rounded-2xl border border-emerald-500/15 bg-emerald-950/15 p-3 md:p-4">
                     <div className="flex items-center justify-between gap-2">
                       <label className="block text-xs font-semibold text-slate-300">Điều kiện theo quận/huyện</label>
                       <button
