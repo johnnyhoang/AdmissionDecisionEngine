@@ -26,4 +26,8 @@ export default defineConfig({
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
     __COMMIT_HASH__: JSON.stringify(resolveCommit()),
   },
+  server: {
+    port: 5177,
+    strictPort: true,
+  },
 })
