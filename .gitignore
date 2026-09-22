@@ -11,10 +11,9 @@ db.sqlite-journal
 
 # Environment variables & secrets (CRITICAL)
 .env
-.env.local
-.env.production
-.env.development
-.env.staging
+.env.*
+!.env.example
+!.env.sample
 
 # Log files
 *.log
