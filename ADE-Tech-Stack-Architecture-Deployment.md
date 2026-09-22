@@ -49,26 +49,28 @@ Hệ thống lưu trữ trên PostgreSQL (Supabase), cấu hình TypeORM ở ch�
 
 ### A. Phân hệ Phân quyền & User
 
-- `G10HCM_USER`: Lưu thông tin người dùng (id - uuid từ Supabase, email, name, avatar, role `ADMIN` | `USER`).
-- `USER_PERMISSION`: Lưu chi tiết phân quyền động theo từng phân hệ (`module`: `GRADE10` hoặc `UNIVERSITY`, `functionKey`: ví dụ `edit_data`, `view_recommendation`, `canView`: boolean, `canEdit`: boolean).
+- `ts10_user`: Lưu thông tin người dùng (id - uuid từ Supabase, email, name, avatar, role `ADMIN` | `USER`).
+- `ts10_user_permission`: Lưu chi tiết phân quyền động theo từng phân hệ (`module`: `GRADE10` hoặc `UNIVERSITY`, `functionKey`: ví dụ `edit_data`, `view_recommendation`, `canView`: boolean, `canEdit`: boolean).
 
 ### B. Phân hệ Đại học (University)
 
-- `university`: Danh sách trường Đại học (mã trường, tên tiếng Việt/Anh, logo, ranking, học phí...).
-- `campus`: Cơ sở đào tạo của trường.
-- `major`: Danh mục ngành học chung.
-- `program`: Chuyên ngành cụ thể của từng trường (liên kết giữa `university`, `campus` và `major`).
-- `admission_method`: Phương thức xét tuyển (ví dụ: Xét điểm thi THPT, Xét học bạ, Xét điểm ĐGNL).
-- `admission_score`: Điểm chuẩn qua các năm của từng chuyên ngành theo từng phương thức xét tuyển.
-- `admission_rule`: Công thức và điều kiện tính điểm của từng phương thức (sử dụng biểu thức toán học).
-- `evaluation_history`: Lịch sử đánh giá và tối ưu hóa nguyện vọng của người dùng.
+- `ade_universities`: Danh sách trường Đại học (mã trường, tên tiếng Việt/Anh, logo, ranking, học phí...).
+- `ade_campuses`: Cơ sở đào tạo của trường.
+- `ade_majors`: Danh mục ngành học chung.
+- `ade_programs`: Chuyên ngành cụ thể của từng trường (liên kết giữa `university`, `campus` và `major`).
+- `ade_admission_methods`: Phương thức xét tuyển (ví dụ: Xét điểm thi THPT, Xét học bạ, Xét điểm ĐGNL).
+- `ade_admission_scores`: Điểm chuẩn qua các năm của từng chuyên ngành theo từng phương thức xét tuyển.
+- `ade_admission_rules`: Công thức và điều kiện tính điểm của từng phương thức (sử dụng biểu thức toán học).
+- `ade_evaluation_history`: Lịch sử đánh giá và tối ưu hóa nguyện vọng của người dùng.
 
 ### C. Phân hệ Lớp 10 (Grade 10 HCM)
 
-- `grade10_districts`: Danh sách quận/huyện tại TP.HCM.
-- `grade10_schools`: Danh sách trường THPT công lập tại TP.HCM. Ngoài thông tin cơ bản (tên, mã, quận, địa chỉ, website) còn có: `description` (giới thiệu), `comments` (đánh giá chung), `activities` (hoạt động & phong trào: CLB, ngoại khóa, Olympic, giải thưởng, văn nghệ), `regulations` (nội quy & quy định: đồng phục, điện thoại, tác phong...), tọa độ `latitude`/`longitude` phục vụ tính khoảng cách, `mapUrl`, `isVerified`. Dữ liệu activities/regulations được biên tập từ website trường và báo chí, import qua preset `data/imports/g10hcm_activities_regulations_batch*.json` (import service hỗ trợ các trường text này ở cả nhánh tạo mới và cập nhật).
-- `grade10_quotas`: Chỉ tiêu tuyển sinh lớp 10 của các trường THPT qua các năm (chỉ tiêu, số đăng ký NV1, tỷ lệ chọi tự tính).
-- `grade10_cutoffs`: Điểm chuẩn 3 nguyện vọng (NV1, NV2, NV3) thường và chuyên qua các năm của các trường THPT.
+- `ts10_district`: Danh sách quận/huyện tại TP.HCM.
+- `ts10_school`: Danh sách trường THPT công lập tại TP.HCM. Ngoài thông tin cơ bản (tên, mã, quận, địa chỉ, website) còn có: `description` (giới thiệu), `comments` (đánh giá chung), `activities` (hoạt động & phong trào: CLB, ngoại khóa, Olympic, giải thưởng, văn nghệ), `regulations` (nội quy & quy định: đồng phục, điện thoại, tác phong...), tọa độ `latitude`/`longitude` phục vụ tính khoảng cách, `mapUrl`, `isVerified`. Dữ liệu activities/regulations được biên tập từ website trường và báo chí, import qua preset `data/imports/g10hcm_activities_regulations_batch*.json` (import service hỗ trợ các trường text này ở cả nhánh tạo mới và cập nhật).
+- `ts10_quota`: Chỉ tiêu tuyển sinh lớp 10 của các trường THPT qua các năm (chỉ tiêu, số đăng ký NV1, tỷ lệ chọi tự tính).
+- `ts10_cutoff_score`: Điểm chuẩn 3 nguyện vọng (NV1, NV2, NV3) thường và chuyên qua các năm của các trường THPT.
+- `ts10_activity_log`: Nhật ký hoạt động người dùng khi tính điểm & tra cứu nguyện vọng.
+- `ts10_user_search_history`: Lịch sử tính toán điểm và gợi ý nguyện vọng Lớp 10.
 
 > **Quy ước TypeORM quan trọng:** mọi cột entity có kiểu TypeScript dạng union (ví dụ `string | null`) **bắt buộc** khai báo `type` tường minh trong `@Column({ type: 'varchar' | 'int' | 'text'... })`. Nếu thiếu, decorator metadata sẽ emit `Object` và TypeORM ném `DataTypeNotSupportedError` khi khởi tạo trên Vercel, làm sập toàn bộ API (đã xảy ra 2 lần với `address` và `registeredCount`).
 

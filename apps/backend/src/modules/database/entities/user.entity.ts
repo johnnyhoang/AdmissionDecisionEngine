@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { UserPermission } from './user-permission.entity';
 
-@Entity('G10HCM_USER')
+@Entity('ts10_user')
 export class User {
   @PrimaryColumn('uuid')
   id: string;

@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Grade10School } from './school.entity';
 
-@Entity('G10HCM_DISTRICT')
+@Entity('ts10_district')
 export class Grade10District {
   @PrimaryGeneratedColumn('uuid')
   id: string;
