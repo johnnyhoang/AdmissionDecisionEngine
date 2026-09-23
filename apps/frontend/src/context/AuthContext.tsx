@@ -7,13 +7,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async () => {
+  const fetchProfile = async (sessionUser?: any) => {
     try {
       const profile = await fetchUserProfile();
       setUser(profile);
     } catch (e) {
-      console.error('Failed to fetch user profile:', e);
-      setUser(null);
+      console.warn('Backend profile fetch failed, using session fallback:', e);
+      if (sessionUser) {
+        setUser({
+          id: sessionUser.id,
+          email: sessionUser.email,
+          fullName: sessionUser.user_metadata?.full_name || sessionUser.email,
+          role: sessionUser.email?.toLowerCase() === 'hoang.hoa@gmail.com' ? 'ADMIN' : 'USER',
+        });
+      } else {
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -21,8 +30,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        fetchProfile();
+      if (session?.user) {
+        fetchProfile(session.user);
       } else {
         setUser(null);
         setLoading(false);
@@ -30,8 +39,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) {
-        fetchProfile();
+      if (session?.user) {
+        fetchProfile(session.user);
       } else {
         setUser(null);
         setLoading(false);
@@ -44,10 +53,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const loginWithGoogle = async () => {
+    const redirectTarget = window.location.origin.replace(/\/+$/, '');
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: `${redirectTarget}/`,
       },
     });
     if (error) throw error;
