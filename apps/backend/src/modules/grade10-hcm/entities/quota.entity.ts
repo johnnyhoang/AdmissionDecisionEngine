@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Grade10School } from './school.entity';
 
-@Entity('ts10_quota')
+@Entity('ade_quota')
 @Unique(['schoolId', 'year', 'programType'])
 export class Grade10Quota {
   @PrimaryGeneratedColumn('uuid')

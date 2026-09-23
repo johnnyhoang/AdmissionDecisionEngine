@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('ts10_user_permission')
+@Entity('ade_user_permission')
 @Unique(['userId', 'module', 'functionKey'])
 export class UserPermission {
   @PrimaryGeneratedColumn('uuid')

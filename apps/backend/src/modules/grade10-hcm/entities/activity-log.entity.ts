@@ -11,7 +11,7 @@ import {
  *  - 'calculator' : Đánh giá cá nhân / Gợi ý trường (POST /recommendation)
  *  - 'combo'      : Đề xuất Combo 3 NV (POST /recommendation/combo)
  */
-@Entity('ts10_activity_log')
+@Entity('ade_activity_log')
 export class Grade10ActivityLog {
   @PrimaryGeneratedColumn('uuid')
   id: string;

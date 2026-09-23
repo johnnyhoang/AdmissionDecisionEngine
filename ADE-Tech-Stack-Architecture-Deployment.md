@@ -49,8 +49,8 @@ Hệ thống lưu trữ trên PostgreSQL (Supabase), cấu hình TypeORM ở ch�
 
 ### A. Phân hệ Phân quyền & User
 
-- `ts10_user`: Lưu thông tin người dùng (id - uuid từ Supabase, email, name, avatar, role `ADMIN` | `USER`).
-- `ts10_user_permission`: Lưu chi tiết phân quyền động theo từng phân hệ (`module`: `GRADE10` hoặc `UNIVERSITY`, `functionKey`: ví dụ `edit_data`, `view_recommendation`, `canView`: boolean, `canEdit`: boolean).
+- `ade_user`: Lưu thông tin người dùng (id - uuid từ Supabase, email, name, avatar, role `ADMIN` | `USER`).
+- `ade_user_permission`: Lưu chi tiết phân quyền động theo từng phân hệ (`module`: `GRADE10` hoặc `UNIVERSITY`, `functionKey`: ví dụ `edit_data`, `view_recommendation`, `canView`: boolean, `canEdit`: boolean).
 
 ### B. Phân hệ Đại học (University)
 
@@ -65,12 +65,12 @@ Hệ thống lưu trữ trên PostgreSQL (Supabase), cấu hình TypeORM ở ch�
 
 ### C. Phân hệ Lớp 10 (Grade 10 HCM)
 
-- `ts10_district`: Danh sách quận/huyện tại TP.HCM.
-- `ts10_school`: Danh sách trường THPT công lập tại TP.HCM. Ngoài thông tin cơ bản (tên, mã, quận, địa chỉ, website) còn có: `description` (giới thiệu), `comments` (đánh giá chung), `activities` (hoạt động & phong trào: CLB, ngoại khóa, Olympic, giải thưởng, văn nghệ), `regulations` (nội quy & quy định: đồng phục, điện thoại, tác phong...), tọa độ `latitude`/`longitude` phục vụ tính khoảng cách, `mapUrl`, `isVerified`. Dữ liệu activities/regulations được biên tập từ website trường và báo chí, import qua preset `data/imports/g10hcm_activities_regulations_batch*.json` (import service hỗ trợ các trường text này ở cả nhánh tạo mới và cập nhật).
-- `ts10_quota`: Chỉ tiêu tuyển sinh lớp 10 của các trường THPT qua các năm (chỉ tiêu, số đăng ký NV1, tỷ lệ chọi tự tính).
-- `ts10_cutoff_score`: Điểm chuẩn 3 nguyện vọng (NV1, NV2, NV3) thường và chuyên qua các năm của các trường THPT.
-- `ts10_activity_log`: Nhật ký hoạt động người dùng khi tính điểm & tra cứu nguyện vọng.
-- `ts10_user_search_history`: Lịch sử tính toán điểm và gợi ý nguyện vọng Lớp 10.
+- `ade_district`: Danh sách quận/huyện tại TP.HCM.
+- `ade_school`: Danh sách trường THPT công lập tại TP.HCM. Ngoài thông tin cơ bản (tên, mã, quận, địa chỉ, website) còn có: `description` (giới thiệu), `comments` (đánh giá chung), `activities` (hoạt động & phong trào: CLB, ngoại khóa, Olympic, giải thưởng, văn nghệ), `regulations` (nội quy & quy định: đồng phục, điện thoại, tác phong...), tọa độ `latitude`/`longitude` phục vụ tính khoảng cách, `mapUrl`, `isVerified`. Dữ liệu activities/regulations được biên tập từ website trường và báo chí, import qua preset `data/imports/g10hcm_activities_regulations_batch*.json` (import service hỗ trợ các trường text này ở cả nhánh tạo mới và cập nhật).
+- `ade_quota`: Chỉ tiêu tuyển sinh lớp 10 của các trường THPT qua các năm (chỉ tiêu, số đăng ký NV1, tỷ lệ chọi tự tính).
+- `ade_cutoff_score`: Điểm chuẩn 3 nguyện vọng (NV1, NV2, NV3) thường và chuyên qua các năm của các trường THPT.
+- `ade_activity_log`: Nhật ký hoạt động người dùng khi tính điểm & tra cứu nguyện vọng.
+- `ade_user_search_history`: Lịch sử tính toán điểm và gợi ý nguyện vọng Lớp 10.
 
 > **Quy ước TypeORM quan trọng:** mọi cột entity có kiểu TypeScript dạng union (ví dụ `string | null`) **bắt buộc** khai báo `type` tường minh trong `@Column({ type: 'varchar' | 'int' | 'text'... })`. Nếu thiếu, decorator metadata sẽ emit `Object` và TypeORM ném `DataTypeNotSupportedError` khi khởi tạo trên Vercel, làm sập toàn bộ API (đã xảy ra 2 lần với `address` và `registeredCount`).
 

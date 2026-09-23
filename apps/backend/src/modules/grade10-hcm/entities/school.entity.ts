@@ -12,7 +12,7 @@ import { Grade10District } from './district.entity';
 import { Grade10Quota } from './quota.entity';
 import { Grade10Cutoff } from './cutoff.entity';
 
-@Entity('ts10_school')
+@Entity('ade_school')
 export class Grade10School {
   @PrimaryGeneratedColumn('uuid')
   id: string;

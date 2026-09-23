@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('ts10_import_log')
+@Entity('ade_import_log')
 export class Grade10ImportLog {
   @PrimaryGeneratedColumn('uuid')
   id: string;
