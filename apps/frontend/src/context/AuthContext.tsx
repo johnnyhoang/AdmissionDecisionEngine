@@ -29,22 +29,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        fetchProfile(session.user);
+    const handleSessionUser = (sessionUser?: any) => {
+      if (sessionUser) {
+        setUser({
+          id: sessionUser.id,
+          email: sessionUser.email,
+          fullName: sessionUser.user_metadata?.full_name || sessionUser.email,
+          role: sessionUser.email?.toLowerCase() === 'hoang.hoa@gmail.com' ? 'ADMIN' : 'USER',
+        });
+        fetchProfile(sessionUser);
       } else {
         setUser(null);
         setLoading(false);
       }
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      handleSessionUser(session?.user);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        fetchProfile(session.user);
-      } else {
-        setUser(null);
-        setLoading(false);
-      }
+      handleSessionUser(session?.user);
     });
 
     return () => {

@@ -366,7 +366,8 @@ function MainApp() {
 
   // 2. Redirect to Login if not logged in
   const isLoginPath = window.location.pathname === '/login';
-  if (!user && !isLoginPath) {
+  const hasOAuthCallbackInUrl = window.location.hash.includes('access_token') || window.location.search.includes('code=');
+  if (!user && !isLoginPath && !hasOAuthCallbackInUrl) {
     window.history.replaceState({}, '', '/login');
     return <Login />;
   }
