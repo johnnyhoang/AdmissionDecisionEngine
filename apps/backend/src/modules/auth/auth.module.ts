@@ -21,7 +21,7 @@ import { AuthController } from './auth.controller';
           'JWT_SECRET',
           'super_secret_jwt_key_hieu_hoa',
         ),
-        signOptions: { expiresIn: '1d' },
+        signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN', '1h') },
       }),
     }),
   ],
@@ -30,3 +30,4 @@ import { AuthController } from './auth.controller';
   exports: [AuthService, PassportModule],
 })
 export class AuthModule {}
+

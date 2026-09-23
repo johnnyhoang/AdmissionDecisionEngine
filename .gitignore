@@ -1,28 +1,36 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 
-# Production builds
+# Production & Build Outputs
 dist/
 build/
+.next/
+.turbo/
+.vite/
+*.tsbuildinfo
 
-# Local database fallback
+# Local Database & Cache Fallbacks
 db.sqlite
 db.sqlite-journal
-
-# Environment variables & secrets (CRITICAL)
-.env
-.env.*
-!.env.example
-!.env.sample
-
-# Log files
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Editor / OS config
+# Environment Variables & Secrets (CRITICAL SECURITY)
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Editor, OS & System Config
 .vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
 .DS_Store
 Thumbs.db
+*.swp
