@@ -1,7 +1,11 @@
 import { supabase } from "./supabase";
 
+const DEFAULT_PROD_API_URL = "https://ade-backend.vercel.app/api/v1";
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? DEFAULT_PROD_API_URL
+    : "http://localhost:3000/api/v1");
 
 async function apiFetch(url: string | URL, options: RequestInit = {}) {
   const session = (await supabase.auth.getSession()).data.session;
@@ -194,14 +198,14 @@ export interface ImportHistoryItem {
 }
 
 export const fetchImportPresets = async (): Promise<ImportPresetItem[]> => {
-  const res = await apiFetch(`http://localhost:3000/import/presets`);
+  const res = await apiFetch(`${API_BASE_URL}/import/presets`);
   if (!res.ok) throw new Error("Không thể tải danh sách presets");
   return res.json();
 };
 
 export const runImportPreset = async (filename: string): Promise<any> => {
   const res = await apiFetch(
-    `http://localhost:3000/import/presets/${filename}/run`,
+    `${API_BASE_URL}/import/presets/${filename}/run`,
     {
       method: "POST",
     },
@@ -211,13 +215,13 @@ export const runImportPreset = async (filename: string): Promise<any> => {
 };
 
 export const fetchImportHistory = async (): Promise<ImportHistoryItem[]> => {
-  const res = await apiFetch(`http://localhost:3000/import/history`);
+  const res = await apiFetch(`${API_BASE_URL}/import/history`);
   if (!res.ok) throw new Error("Không thể tải nhật ký import");
   return res.json();
 };
 
 export const triggerImportPayload = async (payload: any): Promise<any> => {
-  const res = await apiFetch(`http://localhost:3000/import`, {
+  const res = await apiFetch(`${API_BASE_URL}/import`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
