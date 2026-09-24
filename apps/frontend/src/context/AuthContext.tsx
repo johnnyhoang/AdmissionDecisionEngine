@@ -29,38 +29,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    const hasOAuthCallbackInUrl =
-      window.location.hash.includes('access_token') ||
-      window.location.search.includes('code=');
-
-    const handleSessionUser = (sessionUser?: any) => {
-      if (sessionUser) {
-        setUser({
-          id: sessionUser.id,
-          email: sessionUser.email,
-          fullName: sessionUser.user_metadata?.full_name || sessionUser.email,
-          role: sessionUser.email?.toLowerCase() === 'hoang.hoa@gmail.com' ? 'ADMIN' : 'USER',
-        });
-        fetchProfile(sessionUser);
+    // INITIAL_SESSION fires after supabase-js has processed any OAuth tokens in the URL.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setTimeout(() => fetchProfile(session.user), 0); // never call supabase inside this callback synchronously (auth lock)
       } else {
         setUser(null);
-        if (!hasOAuthCallbackInUrl) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
-    };
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      handleSessionUser(session?.user);
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      handleSessionUser(session?.user);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const loginWithGoogle = async () => {

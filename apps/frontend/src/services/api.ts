@@ -1,11 +1,7 @@
 import { supabase } from "./supabase";
 
-const DEFAULT_PROD_API_URL = "/api/v1";
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD
-    ? DEFAULT_PROD_API_URL
-    : "http://localhost:3000/api/v1");
+// Same-origin in production (vercel.json routes /api/* to the backend function).
+const API_BASE_URL = import.meta.env.PROD ? "/api/v1" : "http://localhost:3000/api/v1";
 
 async function apiFetch(url: string | URL, options: RequestInit = {}) {
   const session = (await supabase.auth.getSession()).data.session;
