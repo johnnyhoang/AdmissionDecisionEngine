@@ -77,7 +77,7 @@ export const fetchUniversities = async (
   search = "",
   city = "",
 ): Promise<{ items: UniversityItem[] }> => {
-  const url = new URL(`${API_BASE_URL}/universities`);
+  const url = new URL(`${API_BASE_URL}/universities`, window.location.origin);
   if (search) url.searchParams.append("search", search);
   if (city) url.searchParams.append("city", city);
 
@@ -514,7 +514,7 @@ export const fetchG10Schools = async (
   limit?: number,
   includeDataCompleteness?: boolean,
 ): Promise<{ items: G10SchoolItem[]; total: number }> => {
-  const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`);
+  const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`, window.location.origin);
   if (search) url.searchParams.append("search", search);
   if (districtId) url.searchParams.append("districtId", districtId);
   if (limit) url.searchParams.append("limit", String(limit));
@@ -527,7 +527,7 @@ export const fetchG10Schools = async (
 
 /** Load ALL schools (no pagination) for use in dropdown selectors. */
 export const fetchG10AllSchools = async (): Promise<G10SchoolItem[]> => {
-  const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`);
+  const url = new URL(`${API_BASE_URL}/grade10-hcm/schools`, window.location.origin);
   url.searchParams.append("limit", "500");
   url.searchParams.append("page", "1");
   const res = await apiFetch(url.toString());
@@ -703,7 +703,7 @@ export interface G10ActivityLogFilters {
 export const fetchG10ActivityLogs = async (
   filters: G10ActivityLogFilters = {},
 ): Promise<any> => {
-  const url = new URL(`${API_BASE_URL}/grade10-hcm/admin/activity-logs`);
+  const url = new URL(`${API_BASE_URL}/grade10-hcm/admin/activity-logs`, window.location.origin);
   if (filters.page) url.searchParams.append("page", filters.page.toString());
   if (filters.pageSize)
     url.searchParams.append("pageSize", filters.pageSize.toString());
