@@ -44,7 +44,7 @@ import { Grade10ActivityLog } from './modules/grade10-hcm/entities/activity-log.
         const url = config.get<string>('DATABASE_URL');
         return {
           type: 'postgres',
-          url: url || undefined,
+          url: url || 'postgresql://postgres.czngbleeeiljsrpbaksg:B1gh13u1977dtnt@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres',
           host: url
             ? undefined
             : config.get<string>(
@@ -58,7 +58,7 @@ import { Grade10ActivityLog } from './modules/grade10-hcm/entities/activity-log.
                 'DB_USERNAME',
                 'postgres.czngbleeeiljsrpbaksg',
               ),
-          password: url ? undefined : config.get<string>('DB_PASSWORD', ''),
+          password: url ? undefined : config.get<string>('DB_PASSWORD', 'B1gh13u1977dtnt'),
           database: url
             ? undefined
             : config.get<string>('DB_DATABASE', 'postgres'),
@@ -84,7 +84,7 @@ import { Grade10ActivityLog } from './modules/grade10-hcm/entities/activity-log.
             Grade10ImportLog,
             Grade10ActivityLog,
           ],
-          synchronize: true,
+          synchronize: false,
           ssl: {
             rejectUnauthorized: false,
           },
