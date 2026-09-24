@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-const DEFAULT_PROD_API_URL = "https://ade-backend.vercel.app/api/v1";
+const DEFAULT_PROD_API_URL = "/api/v1";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   (import.meta.env.PROD

@@ -29,6 +29,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    const hasOAuthCallbackInUrl =
+      window.location.hash.includes('access_token') ||
+      window.location.search.includes('code=');
+
     const handleSessionUser = (sessionUser?: any) => {
       if (sessionUser) {
         setUser({
@@ -40,7 +44,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchProfile(sessionUser);
       } else {
         setUser(null);
-        setLoading(false);
+        if (!hasOAuthCallbackInUrl) {
+          setLoading(false);
+        }
       }
     };
 
@@ -62,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${redirectTarget}/`,
+        redirectTo: redirectTarget,
       },
     });
     if (error) throw error;
